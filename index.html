@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programación III — EIF206 | UNA</title>
+    
+    <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    
+    <style>
+        :root {
+            --una-red: #e66a6a;
+            --una-gold: #d4ac0d;
+            --accent-blue: #5dade2;
+            --bg-main: #F8FAFC;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-main);
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                radial-gradient(circle at 15% 50%, var(--una-red) 0%, transparent 25%),
+                radial-gradient(circle at 85% 30%, var(--una-gold) 0%, transparent 25%);
+            opacity: 0.04;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .hero-card {
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .clase-card {
+            background: white;
+            border-radius: 1.25rem;
+            padding: 1.75rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.06);
+            border-left: 5px solid var(--una-red);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .clase-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.1);
+            border-left-color: var(--una-gold);
+        }
+
+        .clase-card.pendiente {
+            border-left-color: #ccc;
+            cursor: default;
+            opacity: 0.55;
+        }
+        .clase-card.pendiente:hover {
+            transform: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            border-left-color: #ccc;
+        }
+
+        .clase-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            flex-shrink: 0;
+        }
+
+        .footer-note {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-6">
+    
+    <div class="w-full max-w-3xl">
+        
+        <!-- Hero -->
+        <div class="hero-card p-8 md:p-10 mb-10 text-center">
+            <div class="mb-4">
+                <img src="assets/img/Logo-UNA-Rojo_FondoTransparente.png" 
+                     alt="Logo UNA" class="h-24 object-contain mx-auto"
+                     onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png';">
+            </div>
+            <p class="text-sm uppercase tracking-[0.25em] text-gray-400 font-bold mb-3">Sección Regional Central Occidente</p>
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-2">
+                Programación <span style="color: var(--una-red);">III</span>
+            </h1>
+            <p class="text-gray-500 text-lg mb-1">CÓDIGO: EIF206 — NRC: 52906</p>
+            <p class="text-gray-400">Prof. Siandi Araya Bello · Martes 13:00 – 16:20</p>
+        </div>
+
+        <!-- Lista de Clases -->
+        <h2 class="text-2xl font-bold mb-1 flex items-center gap-2">
+            <i class="fa-solid fa-laptop-code" style="color: var(--una-red);"></i> Presentaciones
+        </h2>
+        <p class="text-gray-400 mb-6 text-sm">Hacé clic en cada clase para ver la presentación interactiva.</p>
+
+        <div class="flex flex-col gap-4">
+
+            <!-- Clase 1 — Disponible -->
+            <a href="clases/clase-01/" class="clase-card">
+                <div class="clase-icon" style="background: rgba(230,106,106,0.12); color: var(--una-red);">
+                    <i class="fa-solid fa-1"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold">Clase 1 — Bienvenida y Fundamentos</h3>
+                    <p class="text-sm text-gray-500">Rompehielo, reglas del curso, pilares del software profesional, stack tecnológico y Git colaborativo.</p>
+                </div>
+                <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
+            </a>
+
+            <!-- Clase 2 — Pendiente -->
+            <div class="clase-card pendiente">
+                <div class="clase-icon" style="background: rgba(0,0,0,0.04); color: #bbb;">
+                    <i class="fa-solid fa-2"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold text-gray-400">Clase 2 — Próximamente</h3>
+                    <p class="text-sm text-gray-400">Introducción a Java y POO.</p>
+                </div>
+                <span class="text-xs text-gray-300 font-bold uppercase tracking-wide">Pendiente</span>
+            </div>
+
+            <!-- Clase 3+ — Placeholders -->
+            <div class="clase-card pendiente">
+                <div class="clase-icon" style="background: rgba(0,0,0,0.04); color: #bbb;">
+                    <i class="fa-solid fa-ellipsis"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold text-gray-400">Próximas clases</h3>
+                    <p class="text-sm text-gray-400">Se irán agregando conforme avance el curso.</p>
+                </div>
+                <span class="text-xs text-gray-300 font-bold uppercase tracking-wide">—</span>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <p class="footer-note text-center mt-10">
+            <i class="fa-solid fa-code-branch mr-1"></i> 
+            Repositorio en <a href="https://github.com/SiandiAB/progra-iii" class="underline" style="color: var(--accent-blue);">GitHub</a> · 
+            Powered by <a href="https://pages.github.com/" class="underline" style="color: var(--accent-blue);">GitHub Pages</a>
+        </p>
+
+    </div>
+
+</body>
+</html>

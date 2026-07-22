@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 1 - Programación III</title>
+    
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    
+    <style>
+        /* Variables dinámicas para el Modo Claro (Por defecto) - ¡Pasteles estrictos! */
+        :root, [data-theme="light"] {
+            --bg-main: #F8FAFC;       
+            --bg-panel: #FFFFFF;      
+            --text-main: #334155;     
+            --text-muted: #64748B;    
+            --border-panel: rgba(0, 0, 0, 0.08);
+            --shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.05);
+            
+            /* Paleta UNA y Acentos Pasteles Originales */
+            --una-red: #e66a6a;       
+            --una-gold: #d4ac0d;      
+            --accent-blue: #5dade2;
+            --accent-purple: #af7ac5;
+            --accent-peach: #eb984e;
+            --accent-red: #e74c3c;
+            --accent-green: #48c9b0;
+            
+            --bg-terminal: #1e1e2e;
+            --text-terminal: #cdd6f4;
+        }
+
+        /* Variables dinámicas para el Modo Oscuro */
+        [data-theme="dark"] {
+            --bg-main: #121216;       
+            --bg-panel: #1c1c24;      
+            --text-main: #F8FAFC;     
+            --text-muted: #9CA3AF;    
+            --border-panel: rgba(255, 255, 255, 0.08);
+            --shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.3);
+            
+            --una-red: #ff8a8a;       
+            --una-gold: #f4d03f;      
+            --accent-blue: #85c1e9;
+            --accent-purple: #d7bde2;
+            --accent-peach: #f5cba7;
+            --accent-red: #f1948a;
+            --accent-green: #a9dfbf;
+            
+            --bg-terminal: #11111b;
+            --text-terminal: #cdd6f4;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                radial-gradient(circle at 15% 50%, var(--una-red) 0%, transparent 25%),
+                radial-gradient(circle at 85% 30%, var(--una-gold) 0%, transparent 25%);
+            opacity: 0.06; 
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Clases Tint (Fondos y bordes pasteles suaves) */
+        .tint-red { background-color: rgba(230, 106, 106, 0.12); color: var(--una-red); border: 1px solid rgba(230, 106, 106, 0.2); }
+        .tint-gold { background-color: rgba(244, 208, 63, 0.12); color: var(--una-gold); border: 1px solid rgba(244, 208, 63, 0.2); }
+        .tint-blue { background-color: rgba(93, 173, 226, 0.12); color: var(--accent-blue); border: 1px solid rgba(93, 173, 226, 0.2); }
+        .tint-green { background-color: rgba(72, 201, 176, 0.12); color: var(--accent-green); border: 1px solid rgba(72, 201, 176, 0.2); }
+        .tint-purple { background-color: rgba(175, 122, 197, 0.12); color: var(--accent-purple); border: 1px solid rgba(175, 122, 197, 0.2); }
+        .tint-peach { background-color: rgba(235, 152, 78, 0.12); color: var(--accent-peach); border: 1px solid rgba(235, 152, 78, 0.2); }
+
+        .slides-container { position: relative; width: 100vw; height: 100vh; }
+
+        .slide {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 2rem 4rem; pointer-events: none; transform: translateY(20px); visibility: hidden;
+        }
+
+        .slide.active { opacity: 1; pointer-events: auto; transform: translateY(0); z-index: 10; visibility: visible; }
+
+        .glass-panel {
+            background: var(--bg-panel); border: 1px solid var(--border-panel);
+            border-radius: 1.25rem; box-shadow: var(--shadow-panel); padding: 2.5rem;
+            transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, transform 0.3s ease;
+        }
+
+        .interactive-card {
+            cursor: pointer; transition: all 0.3s ease;
+        }
+        .interactive-card:hover {
+            transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        
+        .tech-card {
+            background: var(--bg-panel); border: 2px solid transparent; border-radius: 1rem;
+            padding: 2rem; cursor: pointer; transition: all 0.3s ease;
+            display: flex; flex-direction: column; align-items: center; width: 200px; box-shadow: var(--shadow-panel);
+        }
+        .tech-card:hover { transform: translateY(-8px); border-color: var(--accent-blue); }
+
+        .modal-backdrop {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); z-index: 100;
+            display: flex; justify-content: center; align-items: center; opacity: 0;
+            pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .modal-backdrop.active { opacity: 1; pointer-events: auto; }
+
+        .modal-content {
+            background: var(--bg-panel); border-radius: 1.5rem; width: 90%; max-width: 800px;
+            max-height: 85vh; overflow-y: auto; padding: 3.5rem; transform: scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.4s ease;
+            position: relative; border: 1px solid var(--border-panel);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3); color: var(--text-main);
+        }
+        .modal-backdrop.active .modal-content { transform: scale(1); }
+
+        .close-modal {
+            position: absolute; top: 1.5rem; right: 1.5rem; background: var(--border-panel);
+            border: none; color: var(--text-main); width: 45px; height: 45px; border-radius: 50%;
+            cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s, color 0.2s;
+        }
+        .close-modal:hover { background: var(--una-red); color: white; }
+
+        .float-btn {
+            position: fixed; background: var(--bg-panel); border: 1px solid var(--border-panel);
+            color: var(--text-main); width: 55px; height: 55px; border-radius: 50%; cursor: pointer;
+            z-index: 50; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;
+            box-shadow: var(--shadow-panel); font-size: 1.2rem;
+        }
+        .float-btn:hover { background: var(--una-red); color: white; transform: scale(1.1); }
+
+        #prevBtn { bottom: 2.5rem; left: 2.5rem; }
+        #nextBtn { bottom: 2.5rem; right: 2.5rem; }
+        #theme-toggle { top: 2.5rem; right: 2.5rem; }
+        
+        .progress-container { position: fixed; bottom: 0; left: 0; width: 100%; height: 6px; background: var(--border-panel); z-index: 50; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--una-red), var(--una-gold)); transition: width 0.4s ease; border-radius: 0 3px 3px 0; }
+
+        .bg-icon { position: absolute; opacity: 0.04; z-index: -1; pointer-events: none; }
+        
+        @keyframes steam {
+            0% { transform: translateY(0) scaleX(1); opacity: 0; }
+            50% { transform: translateY(-20px) scaleX(1.2); opacity: 0.8; }
+            100% { transform: translateY(-40px) scaleX(1.5); opacity: 0; }
+        }
+        .steam-1 { animation: steam 3s ease-out infinite; }
+        .steam-2 { animation: steam 3s ease-out infinite 1s; }
+        .steam-3 { animation: steam 3s ease-out infinite 2s; }
+    </style>
+</head>
+<body>
+
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar Modo">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+
+    <div class="slides-container" id="slides-container">
+        
+        <div class="slide active">
+            <div class="text-center w-full max-w-5xl z-10 relative">
+                <i class="fa-solid fa-laptop-code bg-icon text-[350px] -top-20 -left-20" style="color: var(--una-red);"></i>
+                <div class="bg-white px-8 py-4 rounded-3xl inline-block mb-6 shadow-md border border-gray-100 relative z-10">
+                    <img src="Logo-UNA-Rojo_FondoTransparente.png" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png';" alt="Logo UNA" class="h-28 object-contain">
+                </div>
+                
+                <h2 class="text-lg md:text-xl font-bold tracking-[0.2em] mb-4 uppercase" style="color: var(--text-muted);">Sección Regional Central Occidente, UNA</h2>
+                
+                <h1 class="text-6xl md:text-8xl font-extrabold mb-8 tracking-tight">
+                    Programación <span style="color: var(--una-red);">III</span>
+                </h1>
+                
+                <div class="flex flex-wrap justify-center gap-4 mb-12 text-sm md:text-base font-mono">
+                    <span class="tint-red px-6 py-2 rounded-full font-semibold"><i class="fa-solid fa-barcode mr-2"></i>CÓDIGO: EIF206</span>
+                    <span class="tint-gold px-6 py-2 rounded-full font-semibold"><i class="fa-solid fa-hashtag mr-2"></i>NRC: 52906</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-10 relative z-10">
+                    <div class="glass-panel text-left flex items-center gap-6 border-l-4" style="border-left-color: var(--una-red);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-red flex items-center justify-center text-2xl"><i class="fa-solid fa-chalkboard-user"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Docente Titular</p>
+                            <p class="text-xl font-bold">Prof. Siandi Araya Bello</p>
+                        </div>
+                    </div>
+                    <div class="glass-panel text-left flex items-center gap-6 border-l-4" style="border-left-color: var(--una-gold);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-gold flex items-center justify-center text-2xl"><i class="fa-regular fa-clock"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Horarios</p>
+                            <p class="text-base mb-1"><strong>Clase:</strong> M 13:00 - 16:20</p>
+                            <p class="text-base"><strong>Atención:</strong> M 10:00 - 12:00</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-sm animate-pulse mt-6" style="color: var(--text-muted);"><i class="fa-solid fa-keyboard mr-2"></i>Usa las flechas del teclado para navegar</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="w-full max-w-6xl mx-auto flex flex-col items-center">
+                <i class="fa-solid fa-users bg-icon text-[400px] top-0 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-8 relative z-10">
+                    <h2 class="text-5xl font-bold mb-2">Rompiendo el Hielo <i class="fa-solid fa-snowflake ml-2" style="color: var(--accent-blue);"></i></h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Vamos a conocernos antes de entrar en código.</p>
+                </div>
+                
+                <div class="glass-panel w-full max-w-4xl mb-6 relative z-10">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center divide-y md:divide-y-0 md:divide-x divide-gray-200">
+                        <div class="p-4">
+                            <i class="fa-solid fa-address-card text-4xl mb-4" style="color: var(--accent-blue);"></i>
+                            <h3 class="font-bold text-2xl mb-2">1. ¿Quién es?</h3>
+                            <p class="text-gray-500">Su nombre completo y de qué parte del país viene.</p>
+                        </div>
+                        <div class="p-4">
+                            <i class="fa-solid fa-bolt text-4xl mb-4" style="color: var(--accent-peach);"></i>
+                            <h3 class="font-bold text-2xl mb-2">2. Superpoder</h3>
+                            <p class="text-gray-500">Si pudiera tener uno en la vida real, ¿cuál elegiría?</p>
+                        </div>
+                        <div class="p-4">
+                            <i class="fa-solid fa-briefcase text-4xl mb-4" style="color: var(--accent-purple);"></i>
+                            <h3 class="font-bold text-2xl mb-2">3. Al graduarse</h3>
+                            <p class="text-gray-500">¿Cuál es su rol soñado en la industria de TI?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-8 flex flex-wrap justify-center items-center gap-3 relative z-10">
+                    <span class="text-sm font-bold text-gray-400 mr-2 flex items-center">¿Falta de inspiración?</span>
+                    <button class="px-4 py-1.5 rounded-full text-sm font-bold tint-blue transition-transform hover:scale-105" onclick="openModal('modal-rol-backend')">Backend</button>
+                    <button class="px-4 py-1.5 rounded-full text-sm font-bold tint-peach transition-transform hover:scale-105" onclick="openModal('modal-rol-frontend')">Frontend</button>
+                    <button class="px-4 py-1.5 rounded-full text-sm font-bold tint-green transition-transform hover:scale-105" onclick="openModal('modal-rol-qa')">QA/Tester</button>
+                    <button class="px-4 py-1.5 rounded-full text-sm font-bold tint-purple transition-transform hover:scale-105" onclick="openModal('modal-rol-datos')">Datos/IA</button>
+                    <button class="px-4 py-1.5 rounded-full text-sm font-bold tint-red transition-transform hover:scale-105" onclick="openModal('modal-rol-ciber')">Ciberseguridad</button>
+                    <button class="px-4 py-1.5 rounded-full text-sm font-bold tint-gold transition-transform hover:scale-105" onclick="openModal('modal-rol-cloud')">Cloud/DevOps</button>
+                </div>
+
+                <button onclick="const r = document.getElementById('regla-memoria'); r.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none'); r.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto'); this.classList.add('hidden');" class="px-8 py-3 rounded-full font-bold tint-gold transition-transform hover:scale-105 text-lg shadow-lg relative z-10">
+                    <i class="fa-solid fa-gift mr-2"></i> Regla Sorpresa
+                </button>
+                
+                <div id="regla-memoria" class="glass-panel py-5 px-8 relative overflow-hidden text-center w-full max-w-2xl transition-all duration-700 opacity-0 translate-y-4 pointer-events-none border-2" style="border-color: var(--una-gold); z-index: 10;">
+                    <h3 class="text-2xl font-bold mb-2" style="color: var(--una-gold);">El Reto de Memoria</h3>
+                    <p class="text-lg">Al final, debe decir el <strong>superpoder</strong> de la persona anterior. <strong>Opcional:</strong> Cumplir el deseo de la persona anterior, pero arruinarlo con una condición.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="w-full max-w-5xl mx-auto relative z-10">
+                <i class="fa-solid fa-map-location-dot bg-icon text-[350px] top-10 right-0 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-10">
+                    <h2 class="text-5xl font-bold mb-2">Agenda de Hoy</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Ruta de navegación (1:00 PM - 4:20 PM)</p>
+                </div>
+
+                <div class="relative wrap overflow-hidden p-4 h-full">
+                    <div class="absolute border-opacity-20 border-gray-400 h-full border-2" style="left: 50%;"></div>
+                    
+                    <div class="mb-8 flex justify-between items-center w-full right-timeline group">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-12 h-12 rounded-full tint-gold justify-center font-bold text-lg border-4 border-white transition-transform group-hover:scale-110">1</div>
+                        <div class="order-1 glass-panel w-5/12 px-6 py-4 transition-transform group-hover:-translate-x-2 border-r-4" style="border-right-color: var(--una-gold);">
+                            <h3 class="font-bold text-xl mb-1 text-right">1:00 PM - Rompehielo</h3>
+                            <p class="text-sm text-gray-500 text-right">Presentaciones y dinámicas.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-8 flex justify-between items-center w-full left-timeline group">
+                        <div class="order-1 glass-panel w-5/12 px-6 py-4 transition-transform group-hover:translate-x-2 border-l-4" style="border-left-color: var(--una-red);">
+                            <h3 class="font-bold text-xl mb-1 text-left">1:40 PM - Programa</h3>
+                            <p class="text-sm text-gray-500 text-left">Reglas de juego y evaluación.</p>
+                        </div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-12 h-12 rounded-full tint-red justify-center font-bold text-lg border-4 border-white transition-transform group-hover:scale-110">2</div>
+                        <div class="order-1 w-5/12"></div>
+                    </div>
+
+                    <div class="mb-8 flex justify-between items-center w-full right-timeline group">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-12 h-12 rounded-full tint-blue justify-center font-bold text-lg border-4 border-white transition-transform group-hover:scale-110">3</div>
+                        <div class="order-1 glass-panel w-5/12 px-6 py-4 transition-transform group-hover:-translate-x-2 border-r-4" style="border-right-color: var(--accent-blue);">
+                            <h3 class="font-bold text-xl mb-1 text-right">2:00 PM - Pilares y Caso</h3>
+                            <p class="text-sm text-gray-500 text-right">Fundamentos de Software.</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-8 flex justify-center items-center w-full group relative z-30">
+                        <div class="glass-panel px-8 py-3 flex items-center gap-4 bg-gray-50 border-2 border-dashed transition-transform group-hover:scale-105" style="border-color: var(--text-muted);">
+                            <i class="fa-solid fa-mug-hot text-3xl" style="color: var(--accent-peach);"></i>
+                            <h3 class="font-bold text-xl">2:40 PM - Receso Oficial</h3>
+                        </div>
+                    </div>
+
+                    <div class="mb-8 flex justify-between items-center w-full left-timeline group">
+                        <div class="order-1 glass-panel w-5/12 px-6 py-4 transition-transform group-hover:translate-x-2 border-l-4" style="border-left-color: var(--accent-purple);">
+                            <h3 class="font-bold text-xl mb-1 text-left">2:55 PM - Stack & BD</h3>
+                            <p class="text-sm text-gray-500 text-left">Herramientas y Bases de Datos Remotas.</p>
+                        </div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-12 h-12 rounded-full tint-purple justify-center font-bold text-lg border-4 border-white transition-transform group-hover:scale-110">4</div>
+                        <div class="order-1 w-5/12"></div>
+                    </div>
+                    
+                    <div class="mb-8 flex justify-between items-center w-full right-timeline group">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-12 h-12 rounded-full tint-green justify-center font-bold text-lg border-4 border-white transition-transform group-hover:scale-110">5</div>
+                        <div class="order-1 glass-panel w-5/12 px-6 py-4 transition-transform group-hover:-translate-x-2 border-r-4" style="border-right-color: var(--accent-green);">
+                            <h3 class="font-bold text-xl mb-1 text-right">3:30 PM - Laboratorio 0</h3>
+                            <p class="text-sm text-gray-500 text-right">Git Colaborativo.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="w-full max-w-6xl mx-auto relative z-10">
+                <i class="fa-solid fa-scale-balanced bg-icon text-[350px] -bottom-10 right-10 opacity-5" style="color: var(--text-main);"></i>
+                <div class="flex justify-between items-end mb-10">
+                    <div>
+                        <h2 class="text-5xl font-bold mb-2">Las Reglas del Juego</h2>
+                        <p class="text-xl" style="color: var(--text-muted);">Basado en el Programa Oficial del Curso.</p>
+                    </div>
+                    <a href="https://drive.google.com/file/d/1HzcTJfrBZCKR3oZo84Jm7ze1hYxUsfK9/view?usp=sharing" target="_blank" class="transition-transform hover:scale-110 cursor-pointer" title="Abrir Programa de Curso">
+                        <i class="fa-solid fa-file-pdf text-5xl drop-shadow-md" style="color: var(--una-red);"></i>
+                    </a>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                    <div class="glass-panel hover:-translate-y-2 transition-transform border-t-4 flex flex-col items-center text-center" style="border-color: var(--accent-blue);">
+                        <div class="w-16 h-16 rounded-full flex items-center justify-center mb-4 tint-blue text-2xl">
+                            <i class="fa-solid fa-users-gear text-3xl"></i>
+                        </div>
+                        <h3 class="text-4xl font-bold mb-2">40%</h3>
+                        <h4 class="text-xl font-bold mb-3" style="color: var(--accent-blue);">Proyectos (2)</h4>
+                        <p class="text-sm" style="color: var(--text-muted);">En grupos de 2 a 3 estudiantes. Esencial para demostrar la aplicación real de la teoría.</p>
+                    </div>
+                    
+                    <div class="glass-panel hover:-translate-y-2 transition-transform border-t-4 flex flex-col items-center text-center" style="border-color: var(--accent-green);">
+                        <div class="w-16 h-16 rounded-full flex items-center justify-center mb-4 tint-green text-2xl">
+                            <i class="fa-solid fa-file-signature text-3xl"></i>
+                        </div>
+                        <h3 class="text-4xl font-bold mb-2">25%</h3>
+                        <h4 class="text-xl font-bold mb-3" style="color: var(--accent-green);">Exámenes</h4>
+                        <p class="text-sm" style="color: var(--text-muted);">Un parcial (12.5%) y un final (12.5%). Trabajo individual teórico-práctico.</p>
+                    </div>
+                    
+                    <div class="glass-panel hover:-translate-y-2 transition-transform border-t-4 flex flex-col items-center text-center" style="border-color: var(--accent-purple);">
+                        <div class="w-16 h-16 rounded-full flex items-center justify-center mb-4 tint-purple text-2xl">
+                            <i class="fa-solid fa-list-check text-3xl"></i>
+                        </div>
+                        <h3 class="text-4xl font-bold mb-2">35%</h3>
+                        <h4 class="text-xl font-bold mb-3" style="color: var(--accent-purple);">Evaluaciones Cortas</h4>
+                        <p class="text-sm" style="color: var(--text-muted);">Quices, tareas, laboratorios, participación e investigaciones.</p>
+                    </div>
+                </div>
+
+                <div class="glass-panel py-5 px-6 flex items-center gap-5" style="border-left: 4px solid var(--una-red);">
+                    <div class="tint-red w-12 h-12 flex items-center justify-center rounded-full shrink-0">
+                        <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+                    </div>
+                    <p class="text-lg"><strong>Aviso Importante:</strong> El aula virtual rige las entregas. No se aceptarán trabajos fuera de las fechas establecidas salvo casos de fuerza mayor comprobada.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="w-full max-w-6xl mx-auto flex flex-col lg:flex-row gap-12 items-center relative z-10">
+                <i class="fa-solid fa-laptop-code bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="lg:w-1/3">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-4">¿Qué hace a un software <span style="color: var(--accent-blue);">Profesional</span>?</h2>
+                    <p class="text-xl mb-8" style="color: var(--text-muted);">Más allá de que "funcione", un código universitario o corporativo debe cumplir con 5 pilares fundamentales de calidad. <br><br><strong>Haga clic en cada pilar para ver su definición y caso práctico.</strong></p>
+                </div>
+                
+                <div class="lg:w-2/3 flex flex-col gap-4 w-full">
+                    <div class="glass-panel pillar-card py-5 px-6 flex items-center gap-5" style="border-left-color: var(--una-red);" onclick="openModal('modal-robustez')">
+                        <div class="w-12 h-12 shrink-0 rounded-lg flex items-center justify-center tint-red text-xl">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold">1. Robustez (Tolerancia a cambios)</h4>
+                            <p class="text-sm mt-1" style="color: var(--text-muted);">El sistema maneja errores sin colapsar. <span class="font-bold text-xs px-2 py-1 rounded tint-red ml-2 border border-red-500/30">Ver Explicación</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-panel pillar-card py-5 px-6 flex items-center gap-5" style="border-left-color: var(--accent-green);" onclick="openModal('modal-flexibilidad')">
+                        <div class="w-12 h-12 shrink-0 rounded-lg flex items-center justify-center tint-green text-xl">
+                            <i class="fa-solid fa-puzzle-piece"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold">2. Flexibilidad</h4>
+                            <p class="text-sm mt-1" style="color: var(--text-muted);">Facilidad para incorporar cambios futuros sin reescribir todo. <span class="font-bold text-xs px-2 py-1 rounded tint-green ml-2 border border-green-500/30">Ver Explicación</span></p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel pillar-card py-5 px-6 flex items-center gap-5" style="border-left-color: var(--accent-blue);" onclick="openModal('modal-fluidez')">
+                        <div class="w-12 h-12 shrink-0 rounded-lg flex items-center justify-center tint-blue text-xl">
+                            <i class="fa-solid fa-water"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold">3. Fluidez</h4>
+                            <p class="text-sm mt-1" style="color: var(--text-muted);">El código es limpio y la estructura es fácil de comprender. <span class="font-bold text-xs px-2 py-1 rounded tint-blue ml-2 border border-blue-500/30">Ver Explicación</span></p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel pillar-card py-5 px-6 flex items-center gap-5" style="border-left-color: var(--accent-purple);" onclick="openModal('modal-portabilidad')">
+                        <div class="w-12 h-12 shrink-0 rounded-lg flex items-center justify-center tint-purple text-xl">
+                            <i class="fa-solid fa-laptop-code"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold">4. Portabilidad</h4>
+                            <p class="text-sm mt-1" style="color: var(--text-muted);">Independencia del sistema operativo (Magia de Java). <span class="font-bold text-xs px-2 py-1 rounded tint-purple ml-2 border border-purple-500/30">Ver Explicación</span></p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel pillar-card py-5 px-6 flex items-center gap-5" style="border-left-color: var(--una-gold);" onclick="openModal('modal-reutilizacion')">
+                        <div class="w-12 h-12 shrink-0 rounded-lg flex items-center justify-center tint-gold text-xl">
+                            <i class="fa-solid fa-recycle"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold">5. Reutilización de Código</h4>
+                            <p class="text-sm mt-1" style="color: var(--text-muted);">No reinventar la rueda. Uso inteligente de bibliotecas. <span class="font-bold text-xs px-2 py-1 rounded tint-gold ml-2 border border-yellow-500/30">Ver Explicación</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="w-full max-w-5xl mx-auto text-center relative z-10">
+                <i class="fa-solid fa-cubes bg-icon text-[350px] -right-10 opacity-5" style="color: var(--una-gold);"></i>
+                <h2 class="text-5xl font-bold mb-8">Reutilización: El Poder de las Librerías</h2>
+                <div class="glass-panel text-left p-10 border-l-8" style="border-color: var(--una-gold);">
+                    <div class="flex items-center gap-6 mb-6">
+                        <div class="w-16 h-16 tint-gold rounded-2xl flex justify-center items-center text-4xl">
+                            <i class="fa-solid fa-cubes-stacked"></i>
+                        </div>
+                        <h3 class="text-3xl font-bold">La analogía de LEGO</h3>
+                    </div>
+                    <p class="text-2xl mb-6 leading-relaxed"><strong>¿Qué son las librerías?</strong> Son bloques de código (como piezas de Lego) que otros programadores expertos ya escribieron y probaron para resolver problemas comunes.</p>
+                    <p class="text-xl leading-relaxed" style="color: var(--text-muted);">En lugar de fabricar el plástico y moldear la pieza desde cero (lo que equivaldría a meses de ensayo y error programando matemática compleja), usted importa la librería y la "conecta" a su proyecto en un par de minutos de forma segura.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="w-full max-w-6xl mx-auto text-center relative z-10">
+                <i class="fa-solid fa-ticket bg-icon text-[350px] top-10 left-1/2 -translate-x-1/2 opacity-5" style="color: var(--una-red);"></i>
+                <div class="inline-block px-4 py-1 rounded-full tint-red font-bold text-sm mb-4">
+                    CASO DE ESTUDIO DEL MUNDO REAL
+                </div>
+                <h2 class="text-5xl font-bold mb-4">TicketNow: Colapso en la Preventa</h2>
+                <p class="text-xl mb-10" style="color: var(--text-muted);">Desarrollamos el backend para vender entradas al concierto más esperado del año.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
+                    <div class="glass-panel p-6 border-t-4 hover:-translate-y-2 transition-transform" style="border-color: var(--una-red);">
+                        <h4 class="font-bold mb-4 flex items-center gap-2 text-lg"><i class="fa-solid fa-server" style="color: var(--una-red);"></i> Falla de Robustez</h4>
+                        <p class="text-sm" style="color: var(--text-main);"><strong>Problema:</strong> 100,000 personas hacen click en "Comprar" a la vez.<br><br>Un sistema no robusto se apaga y borra las reservas. Uno robusto implementa una <strong>Fila Virtual</strong> sin crashear.</p>
+                    </div>
+                    
+                    <div class="glass-panel p-6 border-t-4 hover:-translate-y-2 transition-transform" style="border-color: var(--accent-green);">
+                        <h4 class="font-bold mb-4 flex items-center gap-2 text-lg"><i class="fa-solid fa-credit-card" style="color: var(--accent-green);"></i> Poca Flexibilidad</h4>
+                        <p class="text-sm" style="color: var(--text-main);"><strong>Problema:</strong> Solo aceptaban Tarjeta de Crédito. El jefe exige agregar SINPE Móvil mañana mismo.<br><br>Si el código es rígido, es imposible; toca reescribir todo el módulo.</p>
+                    </div>
+
+                    <div class="glass-panel p-6 border-t-4 hover:-translate-y-2 transition-transform" style="border-color: var(--accent-blue);">
+                        <h4 class="font-bold mb-4 flex items-center gap-2 text-lg"><i class="fa-solid fa-users" style="color: var(--accent-blue);"></i> Falla de Fluidez</h4>
+                        <p class="text-sm" style="color: var(--text-main);"><strong>Problema:</strong> El servidor falla. Llaman a ingenieros de apoyo de emergencia.<br><br>Si el código es espagueti, los nuevos no entenderán nada y no podrán arreglar el problema a tiempo.</p>
+                    </div>
+
+                    <div class="glass-panel p-6 border-t-4 hover:-translate-y-2 transition-transform" style="border-color: var(--una-gold);">
+                        <h4 class="font-bold mb-4 flex items-center gap-2 text-lg"><i class="fa-solid fa-code" style="color: var(--una-gold);"></i> No Reutilización</h4>
+                        <p class="text-sm" style="color: var(--text-main);"><strong>Problema:</strong> El equipo decidió programar su propia bóveda de encriptación bancaria desde cero.<br><br>Terminaron hackeados. Debieron reutilizar librerías (Stripe, PayPal) certificadas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="w-full h-full flex flex-col justify-center items-center text-center">
+                <div class="relative mb-10">
+                    <div class="absolute -top-10 left-1/2 w-2 h-10 bg-gray-300 rounded-full blur-sm steam-1" style="transform-origin: bottom;"></div>
+                    <div class="absolute -top-12 left-1/3 w-3 h-12 bg-gray-300 rounded-full blur-sm steam-2" style="transform-origin: bottom;"></div>
+                    <div class="absolute -top-8 left-2/3 w-2 h-10 bg-gray-300 rounded-full blur-sm steam-3" style="transform-origin: bottom;"></div>
+                    <i class="fa-solid fa-mug-hot text-[140px]" style="color: var(--una-gold);"></i>
+                </div>
+                
+                <h1 class="text-6xl font-extrabold mb-6">¡Receso Oficial!</h1>
+                <h2 class="text-4xl text-gray-500 font-mono mb-10 bg-white px-8 py-3 rounded-2xl border border-gray-200 shadow-sm">2:40 PM - 2:55 PM</h2>
+                
+                <div class="glass-panel inline-block max-w-3xl">
+                    <p class="text-2xl mb-4">Es momento de estirar las piernas, tomar agua o un café y relajar la mente.</p>
+                    <p class="text-xl" style="color: var(--una-red);">Volvemos en <strong>15 minutos exactos</strong> para hablar de nuestro Stack y Bases de Datos Remotas.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="w-full max-w-6xl mx-auto text-center relative z-10">
+                <h2 class="text-5xl font-bold mb-4">Nuestro Arsenal Tecnológico</h2>
+                <p class="text-xl mb-12" style="color: var(--text-muted);">Haga clic en cada herramienta para descubrir su rol en el curso.</p>
+                
+                <div class="flex flex-wrap justify-center gap-8">
+                    <div class="tech-card" onclick="openModal('modal-java')">
+                        <i class="fa-brands fa-java text-7xl mb-4" style="color: var(--accent-peach);"></i>
+                        <h3 class="text-xl font-bold mb-1">Java</h3>
+                        <p class="text-xs text-center uppercase tracking-wide" style="color: var(--text-muted);">Lenguaje Core</p>
+                        <div class="mt-4 px-3 py-1 rounded-full text-xs" style="background: var(--border-panel);">Ver detalles</div>
+                    </div>
+
+                    <div class="tech-card" onclick="openModal('modal-mysql')">
+                        <i class="fa-solid fa-database text-7xl mb-4" style="color: var(--accent-blue);"></i>
+                        <h3 class="text-xl font-bold mb-1">MySQL 8+</h3>
+                        <p class="text-xs text-center uppercase tracking-wide" style="color: var(--text-muted);">Base de Datos</p>
+                        <div class="mt-4 px-3 py-1 rounded-full text-xs" style="background: var(--border-panel);">Ver detalles</div>
+                    </div>
+
+                    <div class="tech-card" onclick="openModal('modal-intellij')">
+                        <i class="fa-solid fa-code text-7xl mb-4" style="color: var(--accent-purple);"></i>
+                        <h3 class="text-xl font-bold mb-1">IntelliJ IDEA</h3>
+                        <p class="text-xs text-center uppercase tracking-wide" style="color: var(--text-muted);">Nuestro IDE</p>
+                        <div class="mt-4 px-3 py-1 rounded-full text-xs" style="background: var(--border-panel);">Ver detalles</div>
+                    </div>
+
+                    <div class="tech-card" onclick="openModal('modal-git-general')">
+                        <i class="fa-brands fa-git-alt text-7xl mb-4" style="color: var(--una-red);"></i>
+                        <h3 class="text-xl font-bold mb-1">Git & GitHub</h3>
+                        <p class="text-xs text-center uppercase tracking-wide" style="color: var(--text-muted);">Control Versiones</p>
+                        <div class="mt-4 px-3 py-1 rounded-full text-xs" style="background: var(--border-panel);">Ver detalles</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="w-full max-w-6xl mx-auto relative z-10">
+                <i class="fa-solid fa-cloud-arrow-up bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-12">
+                    <h2 class="text-5xl font-bold mb-4">¿Y dónde viven los datos?</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Superando el "Localhost" para crear proyectos en equipo de verdad.</p>
+                </div>
+                
+                <div class="flex flex-col md:flex-row gap-8">
+                    <div class="md:w-1/3 flex flex-col gap-6">
+                        <div class="glass-panel tint-red p-6 border-l-4" style="border-color: var(--una-red);">
+                            <h3 class="text-xl font-bold mb-3"><i class="fa-solid fa-house-laptop"></i> Base de Datos Local</h3>
+                            <p class="text-sm">Si guarda la BD en su PC (localhost), sus compañeros no podrán ver los registros ni probar el sistema en sus computadoras.</p>
+                        </div>
+                        <div class="glass-panel tint-green p-6 border-l-4" style="border-color: var(--accent-green);">
+                            <h3 class="text-xl font-bold mb-3"><i class="fa-solid fa-earth-americas"></i> Base de Datos Remota</h3>
+                            <p class="text-sm">Desplegar en la Nube permite que toda la aplicación Java se conecte a los mismos datos desde cualquier parte del mundo 24/7.</p>
+                        </div>
+                    </div>
+
+                    <div class="md:w-2/3 glass-panel p-8">
+                        <h3 class="text-2xl font-bold mb-6 border-b pb-4"><i class="fa-solid fa-star" style="color: var(--una-gold);"></i> Recomendaciones (Opciones Gratuitas)</h3>
+                        
+                        <div class="space-y-6">
+                            <div class="flex items-start gap-5 p-4 rounded-xl border border-transparent hover:border-gray-200 hover:bg-gray-50 transition">
+                                <div class="w-14 h-14 shrink-0 tint-red rounded-xl flex items-center justify-center text-2xl font-bold">A</div>
+                                <div>
+                                    <h4 class="font-bold text-xl mb-1">Aiven</h4>
+                                    <p class="text-base" style="color: var(--text-muted);">Altamente recomendada para este curso. Ofrecen un plan gratuito muy generoso (MySQL/PostgreSQL) ideal para estudiantes.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-5 p-4 rounded-xl border border-transparent hover:border-gray-200 hover:bg-gray-50 transition">
+                                <div class="w-14 h-14 shrink-0 tint-purple rounded-xl flex items-center justify-center text-2xl font-bold">R</div>
+                                <div>
+                                    <h4 class="font-bold text-xl mb-1">Railway / Render</h4>
+                                    <p class="text-base" style="color: var(--text-muted);">Plataformas modernas para desarrolladores. Permiten levantar una base de datos MySQL en literally 3 clics.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-5 p-4 rounded-xl border border-transparent hover:border-gray-200 hover:bg-gray-50 transition">
+                                <div class="w-14 h-14 shrink-0 tint-gold rounded-xl flex items-center justify-center text-3xl"><i class="fa-brands fa-aws"></i></div>
+                                <div>
+                                    <h4 class="font-bold text-xl mb-1">AWS RDS (Free Tier)</h4>
+                                    <p class="text-base" style="color: var(--text-muted);">El estándar de la industria. Si configuran su capa gratuita (12 meses), aprenderán a gestionar infraestructura real corporativa.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="w-full max-w-5xl mx-auto relative z-10">
+                <div class="flex items-center justify-center gap-6 mb-10">
+                    <div class="w-16 h-16 tint-blue flex justify-center items-center rounded-2xl text-3xl font-bold shadow-sm">
+                        <i class="fa-solid fa-flask"></i>
+                    </div>
+                    <div class="text-left">
+                        <h2 class="text-4xl font-bold">Lab 0: Entorno de Versiones</h2>
+                        <p class="text-xl" style="color: var(--text-muted);">Decisión arquitectónica para los laboratorios UNA.</p>
+                    </div>
+                </div>
+
+                <div class="glass-panel text-center py-12 mb-8 border-t-8" style="border-color: var(--una-red);">
+                    <i class="fa-brands fa-github text-7xl mb-6" style="color: var(--text-main);"></i>
+                    <h3 class="text-4xl font-bold mb-6">Uso Exclusivo de GitHub Desktop</h3>
+                    <p class="text-xl max-w-3xl mx-auto leading-relaxed" style="color: var(--text-muted);">
+                        Para evitar problemas con los <strong>permisos de Administrador</strong> y las restricciones de seguridad (DeepFreeze) en las computadoras de la universidad, <strong>no instalaremos Git por consola</strong>.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-8">
+                    <div class="glass-panel tint-green flex items-start gap-5 p-6">
+                        <i class="fa-solid fa-check-circle text-4xl mt-1"></i>
+                        <div>
+                            <h4 class="font-bold text-xl mb-2">Ventaja Principal</h4>
+                            <p class="text-base">GitHub Desktop se instala en la carpeta de usuario, por lo que <strong>no requiere permisos de administrador</strong> ni ser instalado por el técnico.</p>
+                        </div>
+                    </div>
+                    <div class="glass-panel tint-blue flex items-start gap-5 p-6">
+                        <i class="fa-solid fa-laptop-file text-4xl mt-1"></i>
+                        <div>
+                            <h4 class="font-bold text-xl mb-2">El Reto de Hoy</h4>
+                            <p class="text-base">Busque "GitHub Desktop" o descárguelo. Iniciaremos sesión y crearemos nuestro primer proyecto.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="w-full max-w-6xl mx-auto text-center relative z-10">
+                <h2 class="text-5xl font-bold mb-2">Git Multijugador</h2>
+                <p class="text-xl mb-8" style="color: var(--text-muted);">Comandos esenciales para proyectos en equipo. <br><strong>Haga clic en cada uno para ver su explicación práctica.</strong></p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="glass-panel p-5 flex flex-col items-center text-center cursor-pointer hover:-translate-y-2 transition-transform border-t-4" style="border-color: var(--una-red);" onclick="openModal('modal-git-commit')">
+                        <i class="fa-solid fa-camera-retro text-5xl mb-3" style="color: var(--una-red);"></i>
+                        <h3 class="text-xl font-bold mb-2">Commit</h3>
+                        <p class="font-mono bg-gray-100 px-3 py-1 rounded text-sm font-bold text-gray-600 mb-2">Tomar Foto</p>
+                        <p class="text-sm" style="color: var(--text-muted);">Guarda una versión oficial de tu progreso local.</p>
+                    </div>
+
+                    <div class="glass-panel p-5 flex flex-col items-center text-center cursor-pointer hover:-translate-y-2 transition-transform border-t-4" style="border-color: var(--una-gold);" onclick="openModal('modal-git-push-repo')">
+                        <i class="fa-solid fa-cloud-arrow-up text-5xl mb-3" style="color: var(--una-gold);"></i>
+                        <h3 class="text-xl font-bold mb-2">Push Repo</h3>
+                        <p class="font-mono bg-gray-100 px-3 py-1 rounded text-sm font-bold text-gray-600 mb-2">Subir Todo</p>
+                        <p class="text-sm" style="color: var(--text-muted);">Envía todos tus cambios a la nube (GitHub).</p>
+                    </div>
+
+                    <div class="glass-panel p-5 flex flex-col items-center text-center cursor-pointer hover:-translate-y-2 transition-transform border-t-4" style="border-color: var(--accent-blue);" onclick="openModal('modal-git-push-branch')">
+                        <i class="fa-solid fa-code-branch text-5xl mb-3" style="color: var(--accent-blue);"></i>
+                        <h3 class="text-xl font-bold mb-2">Push Branch</h3>
+                        <p class="font-mono bg-gray-100 px-3 py-1 rounded text-sm font-bold text-gray-600 mb-2">Subir Rama</p>
+                        <p class="text-sm" style="color: var(--text-muted);">Sube tu línea de trabajo alterna sin afectar lo principal.</p>
+                    </div>
+
+                    <div class="glass-panel p-5 flex flex-col items-center text-center cursor-pointer hover:-translate-y-2 transition-transform border-t-4" style="border-color: var(--accent-green);" onclick="openModal('modal-git-clone')">
+                        <i class="fa-solid fa-clone text-5xl mb-3" style="color: var(--accent-green);"></i>
+                        <h3 class="text-xl font-bold mb-2">Clone</h3>
+                        <p class="font-mono bg-gray-100 px-3 py-1 rounded text-sm font-bold text-gray-600 mb-2">Duplicar</p>
+                        <p class="text-sm" style="color: var(--text-muted);">Descarga el proyecto entero a tu PC por primera vez.</p>
+                    </div>
+
+                    <div class="glass-panel p-5 flex flex-col items-center text-center cursor-pointer hover:-translate-y-2 transition-transform border-t-4" style="border-color: var(--accent-blue);" onclick="openModal('modal-git-fetch')">
+                        <i class="fa-solid fa-satellite-dish text-5xl mb-3" style="color: var(--accent-blue);"></i>
+                        <h3 class="text-xl font-bold mb-2">Fetch</h3>
+                        <p class="font-mono bg-gray-100 px-3 py-1 rounded text-sm font-bold text-gray-600 mb-2">Revisar Radar</p>
+                        <p class="text-sm" style="color: var(--text-muted);">Revisa seguro si hay cambios en la nube.</p>
+                    </div>
+
+                    <div class="glass-panel p-5 flex flex-col items-center text-center cursor-pointer hover:-translate-y-2 transition-transform border-t-4" style="border-color: var(--accent-green);" onclick="openModal('modal-git-pull')">
+                        <i class="fa-solid fa-download text-5xl mb-3" style="color: var(--accent-green);"></i>
+                        <h3 class="text-xl font-bold mb-2">Pull</h3>
+                        <p class="font-mono bg-gray-100 px-3 py-1 rounded text-sm font-bold text-gray-600 mb-2">Descargar</p>
+                        <p class="text-sm" style="color: var(--text-muted);">Trae los cambios directamente a tu PC.</p>
+                    </div>
+
+                    <div class="glass-panel p-5 flex flex-col items-center text-center cursor-pointer hover:-translate-y-2 transition-transform border-t-4" style="border-color: var(--accent-peach);" onclick="openModal('modal-git-merge')">
+                        <i class="fa-solid fa-code-merge text-5xl mb-3" style="color: var(--accent-peach);"></i>
+                        <h3 class="text-xl font-bold mb-2">Merge</h3>
+                        <p class="font-mono bg-gray-100 px-3 py-1 rounded text-sm font-bold text-gray-600 mb-2">Fusionar</p>
+                        <p class="text-sm" style="color: var(--text-muted);">Une tu código nuevo con el de tu equipo.</p>
+                    </div>
+
+                    <div class="glass-panel p-5 flex flex-col items-center text-center cursor-pointer hover:-translate-y-2 transition-transform border-t-4" style="border-color: var(--accent-purple);" onclick="openModal('modal-git-pr')">
+                        <i class="fa-solid fa-code-pull-request text-5xl mb-3" style="color: var(--accent-purple);"></i>
+                        <h3 class="text-xl font-bold mb-2">Pull Request</h3>
+                        <p class="font-mono bg-gray-100 px-3 py-1 rounded text-sm font-bold text-gray-600 mb-2">Pedir Permiso</p>
+                        <p class="text-sm" style="color: var(--text-muted);">Solicitar revisión experta antes de unir.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="w-full max-w-6xl mx-auto flex flex-col items-center relative z-10">
+                <i class="fa-brands fa-github bg-icon text-[400px] opacity-5 top-0"></i>
+                <h2 class="text-5xl font-bold mb-4 text-center">Reto: "Mi Primer Repositorio"</h2>
+                <p class="text-xl mb-5 text-center font-bold" style="color: var(--text-muted);">
+                    GitHub es como un <span style="color: var(--accent-green);">Google Drive para desarrolladores</span>.<br>
+                    El flujo es: <i class="fa-solid fa-laptop ml-2"></i> PC ➡️ <i class="fa-brands fa-github-square"></i> Desktop ➡️ <i class="fa-solid fa-cloud"></i> GitHub.com
+                </p>
+                
+                <div class="glass-panel w-full p-8 relative overflow-hidden shadow-xl border-t-8" style="border-color: var(--una-gold);">
+                    <ol class="list-decimal pl-6 space-y-4 text-lg font-semibold text-left" style="color: var(--text-main);">
+                        <li>
+                            <strong>Crear:</strong> En GitHub Desktop, haga clic en <span class="font-mono tint-blue px-2 py-0.5 rounded text-base">File -> New Repository</span>.
+                        </li>
+                        <li>
+                            <strong>Ubicar:</strong> En su PC, vaya a la ruta <code>Documentos -> GitHub -> [Su Repo]</code> y cree un archivo <code>Laboratorio0.txt</code> vacío.
+                        </li>
+                        <li>
+                            <strong>Commit 1:</strong> Regrese a Desktop, haga su primer Commit (foto al archivo vacío) y presione <span class="font-mono tint-purple px-2 py-0.5 rounded text-base">Publish Repository</span>.
+                        </li>
+                        <li>
+                            <strong>Modificar:</strong> Abra el archivo de texto, escriba <em>"Hola, mi nombre es [Su Nombre]"</em> y <strong>guarde</strong> el archivo.<br>
+                            <span class="text-sm font-normal text-gray-500 flex items-center gap-2 mt-1">
+                                <i class="fa-solid fa-triangle-exclamation" style="color: var(--una-gold);"></i> 
+                                Nota: En la pestaña <strong>Changes</strong> se ven los cambios actuales. Si está vacía, es porque olvidó guardar el archivo.
+                            </span>
+                        </li>
+                        <li>
+                            <strong>Commit 2:</strong> Haga un segundo Commit con la modificación y presione <span class="font-mono tint-peach px-2 py-0.5 rounded text-base">Push origin</span> para subirlo.
+                        </li>
+                        <li>
+                            <strong>Auditar:</strong> Revise la pestaña <strong>History</strong>. Ahí vive el historial de versiones tanto suyas como de sus compañeros.
+                        </li>
+                        <li>
+                            <strong>Destrucción y Resurrección:</strong> Borre la carpeta local de su PC. Luego, use el comando <strong>Clone</strong> en GitHub para recuperarlo intacto desde la nube.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="text-center">
+                <i class="fa-solid fa-mug-hot text-8xl mb-8" style="color: var(--accent-peach);"></i>
+                <h2 class="text-6xl font-bold mb-6">¡Sobrevivimos a la Clase 1!</h2>
+                <p class="text-2xl mb-12" style="color: var(--text-muted);">¿Alguna duda final sobre el curso o el laboratorio?</p>
+                
+                <div class="glass-panel inline-block px-10 py-6 border-b-4" style="border-color: var(--accent-blue);">
+                    <p class="text-lg mb-2" style="color: var(--text-muted);">Siguiente semana:</p>
+                    <p class="text-3xl font-bold">Introducción a <span style="color: var(--accent-peach);">Java</span> y POO</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <button class="float-btn" id="prevBtn" onclick="changeSlide(-1)"><i class="fa-solid fa-arrow-left"></i></button>
+    <button class="float-btn" id="nextBtn" onclick="changeSlide(1)"><i class="fa-solid fa-arrow-right"></i></button>
+    
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar" style="width: 10%;"></div>
+    </div>
+
+    <div class="modal-backdrop" id="modal-rol-backend"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-rol-backend')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-blue rounded-xl flex items-center justify-center text-3xl"><i class="fa-solid fa-server"></i></div><h2 class="text-4xl font-bold">Backend Developer</h2></div>
+        <p class="text-xl mb-4 leading-relaxed">Es el "cerebro" detrás de la aplicación. Trabajan con Java, Bases de Datos, servidores y APIs, asegurando que la lógica invisible funcione rápido y seguro.</p>
+        <div class="glass-panel bg-gray-50 p-4 border-l-4" style="border-left-color: var(--accent-blue);"><p class="text-base" style="color: var(--text-muted);"><strong>Ejemplo:</strong> Construyen la lógica matemática que verifica el saldo y transfiere dinero de su cuenta al banco de la universidad sin que nadie se robe los datos.</p></div>
+    </div></div>
+    
+    <div class="modal-backdrop" id="modal-rol-frontend"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-rol-frontend')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-peach rounded-xl flex items-center justify-center text-3xl"><i class="fa-solid fa-desktop"></i></div><h2 class="text-4xl font-bold">Frontend Developer</h2></div>
+        <p class="text-xl mb-4 leading-relaxed">Son los artistas y arquitectos visuales. Trabajan con HTML, CSS, JavaScript y React para crear todo lo que el usuario ve y toca.</p>
+        <div class="glass-panel bg-gray-50 p-4 border-l-4" style="border-left-color: var(--accent-peach);"><p class="text-base" style="color: var(--text-muted);"><strong>Ejemplo:</strong> Diseñan los botones, las animaciones suaves y aseguran que el sistema de matrícula se vea perfecto tanto en una PC gigante como en la pantalla de su celular.</p></div>
+    </div></div>
+
+    <div class="modal-backdrop" id="modal-rol-qa"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-rol-qa')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-green rounded-xl flex items-center justify-center text-3xl"><i class="fa-solid fa-bug-slash"></i></div><h2 class="text-4xl font-bold">QA / Tester</h2></div>
+        <p class="text-xl mb-4 leading-relaxed">Los cazadores de errores. Su trabajo es asegurar la calidad del software antes de que llegue al público, protegiendo la reputación de la empresa.</p>
+        <div class="glass-panel bg-gray-50 p-4 border-l-4" style="border-left-color: var(--accent-green);"><p class="text-base" style="color: var(--text-muted);"><strong>Ejemplo:</strong> Intentan "romper" el sistema a propósito ingresando letras donde van números o haciendo 1000 clics por segundo para asegurar que el sistema es a prueba de balas.</p></div>
+    </div></div>
+
+    <div class="modal-backdrop" id="modal-rol-datos"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-rol-datos')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-purple rounded-xl flex items-center justify-center text-3xl"><i class="fa-solid fa-database"></i></div><h2 class="text-4xl font-bold">Data Science / DB</h2></div>
+        <p class="text-xl mb-4 leading-relaxed">Dueños de la información. Administran bases de datos de millones de registros, crean estadísticas útiles y programan modelos de Inteligencia Artificial.</p>
+        <div class="glass-panel bg-gray-50 p-4 border-l-4" style="border-left-color: var(--accent-purple);"><p class="text-base" style="color: var(--text-muted);"><strong>Ejemplo:</strong> Son los genios matemáticos que diseñan el algoritmo que sabe exactamente qué película recomendarle en Netflix basándose en lo que vio ayer.</p></div>
+    </div></div>
+
+    <div class="modal-backdrop" id="modal-rol-ciber"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-rol-ciber')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-red rounded-xl flex items-center justify-center text-3xl"><i class="fa-solid fa-shield-halved"></i></div><h2 class="text-4xl font-bold">Ciberseguridad</h2></div>
+        <p class="text-xl mb-4 leading-relaxed">Los guardianes de la muralla. Se dedican a buscar vulnerabilidades en el código y diseñar arquitecturas invulnerables contra ataques externos.</p>
+        <div class="glass-panel bg-gray-50 p-4 border-l-4" style="border-left-color: var(--una-red);"><p class="text-base" style="color: var(--text-muted);"><strong>Ejemplo:</strong> Analizan la plataforma de pagos del concierto de TicketNow para asegurar que los hackers rusos no puedan robarse las tarjetas de crédito clonadas durante el evento.</p></div>
+    </div></div>
+
+    <div class="modal-backdrop" id="modal-rol-cloud"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-rol-cloud')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-gold rounded-xl flex items-center justify-center text-3xl"><i class="fa-solid fa-cloud"></i></div><h2 class="text-4xl font-bold">Cloud / DevOps</h2></div>
+        <p class="text-xl mb-4 leading-relaxed">Los ingenieros de la nube. Automatizan la subida de código y mantienen los servidores (AWS, Google Cloud, Azure) saludables y escalables.</p>
+        <div class="glass-panel bg-gray-50 p-4 border-l-4" style="border-left-color: var(--una-gold);"><p class="text-base" style="color: var(--text-muted);"><strong>Ejemplo:</strong> Si el sistema de Matrícula colapsa por muchos estudiantes, ellos programan la nube para encender 5 servidores extra automáticamente de forma mágica.</p></div>
+    </div></div>
+
+    <div class="modal-backdrop" id="modal-robustez"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-robustez')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-red rounded-xl flex items-center justify-center text-3xl"><i class="fa-solid fa-shield-halved"></i></div><h2 class="text-4xl font-bold">1. Robustez</h2></div>
+        <div class="glass-panel mb-6 bg-gray-50"><h3 class="font-bold text-xl mb-2">En palabras simples:</h3><p class="text-lg" style="color: var(--text-muted);">El código es como un tanque blindado. No se "cae" (crashea) ni se cierra abruptamente si el usuario comete un error grave al usarlo o si hay un fallo en la red.</p></div>
+        <p class="text-lg leading-relaxed"><strong>Ejemplo Práctico:</strong> En un cajero automático, si usted intenta retirar 10 millones (y no los tiene), el sistema robusto no se apaga lanzando código raro en pantalla, simplemente atrapa el error y muestra un mensaje rojo que dice "Fondos insuficientes", permitiéndole intentar de nuevo.</p>
+    </div></div>
+    
+    <div class="modal-backdrop" id="modal-flexibilidad"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-flexibilidad')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-green rounded-xl flex items-center justify-center text-3xl"><i class="fa-solid fa-puzzle-piece"></i></div><h2 class="text-4xl font-bold">2. Flexibilidad</h2></div>
+        <div class="glass-panel mb-6 bg-gray-50"><h3 class="font-bold text-xl mb-2">En palabras simples:</h3><p class="text-lg" style="color: var(--text-muted);">Capacidad del código de agregar nuevas y complejas funciones mañana sin tener que borrar todo lo que construimos hoy.</p></div>
+        <p class="text-lg leading-relaxed"><strong>Ejemplo Práctico:</strong> La aplicación de Uber empezó aceptando solo efectivo. Gracias a tener un diseño flexible y modular, a los 3 meses pudieron agregar pago con Tarjeta y PayPal solo conectando "piezas nuevas", sin tener que reescribir todo el algoritmo de viajes y mapas.</p>
+    </div></div>
+
+    <div class="modal-backdrop" id="modal-fluidez"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-fluidez')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-blue rounded-xl flex items-center justify-center text-3xl"><i class="fa-solid fa-water"></i></div><h2 class="text-4xl font-bold">3. Fluidez</h2></div>
+        <div class="glass-panel mb-6 bg-gray-50"><h3 class="font-bold text-xl mb-2">En palabras simples:</h3><p class="text-lg" style="color: var(--text-muted);">Código extremadamente limpio, organizado por carpetas lógicas y fácil de leer para otros seres humanos, no solo para la máquina.</p></div>
+        <p class="text-lg leading-relaxed"><strong>Ejemplo Práctico:</strong> Si a usted la contratan hoy, entrar a un proyecto ajeno y que las variables se llamen <code>totalFactura</code> y las clases <code>GestorDePagos</code> en lugar de <code>x1</code> o <code>Archivo3</code>. La fluidez permite que usted entienda la lógica del proyecto en 5 minutos en vez de 5 meses.</p>
+    </div></div>
+
+    <div class="modal-backdrop" id="modal-portabilidad"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-portabilidad')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-purple rounded-xl flex items-center justify-center text-3xl"><i class="fa-solid fa-laptop-code"></i></div><h2 class="text-4xl font-bold">4. Portabilidad</h2></div>
+        <div class="glass-panel mb-6 bg-gray-50"><h3 class="font-bold text-xl mb-2">En palabras simples:</h3><p class="text-lg" style="color: var(--text-muted);">La independencia técnica. Programar una sola vez y que su código corra igual de bien en computadoras Windows, Mac o servidores Linux.</p></div>
+        <p class="text-lg leading-relaxed"><strong>Ejemplo Práctico:</strong> Usted programa el proyecto en su MacBook personal toda la noche. Al llevarlo a la universidad para presentarlo en una PC de laboratorio con Windows 10, funciona mágicamente a la perfección. Ese es el superpoder principal de <strong>Java</strong>.</p>
+    </div></div>
+
+    <div class="modal-backdrop" id="modal-reutilizacion"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-reutilizacion')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-gold rounded-xl flex items-center justify-center text-3xl"><i class="fa-solid fa-recycle"></i></div><h2 class="text-4xl font-bold">5. Reutilización</h2></div>
+        <div class="glass-panel mb-6 bg-gray-50"><h3 class="font-bold text-xl mb-2">En palabras simples:</h3><p class="text-lg" style="color: var(--text-muted);">No reinventar la rueda. Usar "Librerías" confiables ya hechas y probadas para resolver tareas genéricas comunes.</p></div>
+        <p class="text-lg leading-relaxed"><strong>Ejemplo Práctico:</strong> En lugar de programar la matemática y geometría para dibujar gráficos estadísticos de barras desde cero (tomaría meses), importamos la librería profesional "JFreeChart" y dibujamos un gráfico hermoso en 3 simples líneas de código.</p>
+    </div></div>
+
+    <div class="modal-backdrop" id="modal-git-commit"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-git-commit')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-red rounded-xl flex items-center justify-center text-3xl"><i class="fa-solid fa-camera-retro"></i></div><h2 class="text-4xl font-bold">Commit</h2></div>
+        <div class="glass-panel mb-6 bg-gray-50"><h3 class="font-bold text-xl mb-2">En palabras simples:</h3><p class="text-lg" style="color: var(--text-muted);">Tomar una "fotografía" o guardar una versión oficial de los cambios en tu código local.</p></div>
+        <p class="text-lg leading-relaxed"><strong>Ejemplo Práctico:</strong> Acabas de terminar la pantalla de inicio de sesión. Haces un "Commit" con el mensaje "Login terminado". Si mañana rompes todo el código, puedes volver en el tiempo a esta foto donde todo funcionaba perfecto.</p>
+    </div></div>
+
+    <div class="modal-backdrop" id="modal-git-push-repo"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-git-push-repo')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-gold rounded-xl flex items-center justify-center text-3xl"><i class="fa-solid fa-cloud-arrow-up"></i></div><h2 class="text-4xl font-bold">Push Repository</h2></div>
+        <div class="glass-panel mb-6 bg-gray-50"><h3 class="font-bold text-xl mb-2">En palabras simples:</h3><p class="text-lg" style="color: var(--text-muted);">Literalmente "Empujar". Es enviar todos tus Commits (fotos locales) a la nube de GitHub para que estén seguros y tu equipo los pueda ver.</p></div>
+        <p class="text-lg leading-relaxed"><strong>Ejemplo Práctico:</strong> Trabajaste todo el día en tu computadora sin internet haciendo varios Commits. Al llegar a tu casa, te conectas al Wi-Fi y haces "Push". Tu código viaja a los servidores de GitHub y queda respaldado.</p>
+    </div></div>
+
+    <div class="modal-backdrop" id="modal-git-push-branch"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-git-push-branch')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-blue rounded-xl flex items-center justify-center text-3xl"><i class="fa-solid fa-code-branch"></i></div><h2 class="text-4xl font-bold">Push Branch</h2></div>
+        <div class="glass-panel mb-6 bg-gray-50"><h3 class="font-bold text-xl mb-2">En palabras simples:</h3><p class="text-lg" style="color: var(--text-muted);">Subir a la nube solo una "rama" o versión alternativa del proyecto, sin afectar el código principal (la versión de producción).</p></div>
+        <p class="text-lg leading-relaxed"><strong>Ejemplo Práctico:</strong> Estás experimentando con un nuevo diseño oscuro para la app. Creas una rama llamada "diseño-oscuro". Cuando haces "Push Branch", subes a la nube únicamente tus experimentos, permitiendo que tu equipo los revise sin riesgo de romper el diseño actual que usan los clientes.</p>
+    </div></div>
+
+    <div class="modal-backdrop" id="modal-git-clone"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-git-clone')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-green rounded-xl flex items-center justify-center text-3xl"><i class="fa-solid fa-clone"></i></div><h2 class="text-4xl font-bold">Clone</h2></div>
+        <div class="glass-panel mb-6 bg-gray-50"><h3 class="font-bold text-xl mb-2">En palabras simples:</h3><p class="text-lg" style="color: var(--text-muted);">Es la primera descarga completa de un proyecto que vive en la nube hacia tu computadora.</p></div>
+        <p class="text-lg leading-relaxed"><strong>Ejemplo Práctico:</strong> Es tu primer día de trabajo en la empresa. El código de la aplicación ya está en GitHub. Abres GitHub Desktop, pegas el enlace del repositorio y haces "Clone". Automáticamente se descarga toda la historia, carpetas y archivos para que empieces a trabajar.</p>
+    </div></div>
+
+    <div class="modal-backdrop" id="modal-git-fetch"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-git-fetch')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-blue rounded-xl flex items-center justify-center text-3xl"><i class="fa-solid fa-satellite-dish"></i></div><h2 class="text-4xl font-bold">Fetch</h2></div>
+        <div class="glass-panel mb-6 bg-gray-50"><h3 class="font-bold text-xl mb-2">En palabras simples:</h3><p class="text-lg" style="color: var(--text-muted);">Literalmente "Ir a buscar". Es prender el radar de Git para revisar si alguien del equipo subió cambios nuevos a la nube.</p></div>
+        <p class="text-lg leading-relaxed"><strong>Ejemplo Práctico:</strong> Usted inicia su turno y ejecuta "Fetch". Git le avisa: <em>"Oye, María subió un archivo nuevo anoche"</em>. Lo genial es que <strong>no altera ni descarga nada a su computadora todavía</strong>, es 100% seguro de ejecutar.</p>
+    </div></div>
+
+    <div class="modal-backdrop" id="modal-git-pull"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-git-pull')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-green rounded-xl flex items-center justify-center text-3xl"><i class="fa-solid fa-download"></i></div><h2 class="text-4xl font-bold">Pull</h2></div>
+        <div class="glass-panel mb-6 bg-gray-50"><h3 class="font-bold text-xl mb-2">En palabras simples:</h3><p class="text-lg" style="color: var(--text-muted);">Descargar y aplicar. Trae los cambios detectados en la nube directamente a su computadora local.</p></div>
+        <p class="text-lg leading-relaxed"><strong>Ejemplo Práctico:</strong> Después de ver que María subió código útil anoche, usted hace un "Pull". Automáticamente los archivos de su PC se actualizan para incluir el excelente trabajo que ella hizo.</p>
+    </div></div>
+
+    <div class="modal-backdrop" id="modal-git-merge"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-git-merge')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-peach rounded-xl flex items-center justify-center text-3xl"><i class="fa-solid fa-code-merge"></i></div><h2 class="text-4xl font-bold">Merge</h2></div>
+        <div class="glass-panel mb-6 bg-gray-50"><h3 class="font-bold text-xl mb-2">En palabras simples:</h3><p class="text-lg" style="color: var(--text-muted);">La Fusión. Es el proceso automático donde Git une inteligentemente su código con el de su compañero.</p></div>
+        <p class="text-lg leading-relaxed"><strong>Ejemplo Práctico (Conflicto):</strong> Git fusiona archivos sin problema el 99% de las veces. Pero, si usted y su amigo editan la <em>misma línea</em> del <em>mismo archivo</em> al mismo tiempo, Git causa un "Conflicto de Merge" y le pide a un humano que elija manualmente qué versión conservar para no arruinar nada.</p>
+    </div></div>
+
+    <div class="modal-backdrop" id="modal-git-pr"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-git-pr')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-purple rounded-xl flex items-center justify-center text-3xl"><i class="fa-solid fa-code-pull-request"></i></div><h2 class="text-4xl font-bold">Pull Request (PR)</h2></div>
+        <div class="glass-panel mb-6 bg-gray-50"><h3 class="font-bold text-xl mb-2">En palabras simples:</h3><p class="text-lg" style="color: var(--text-muted);">Pedir permiso antes de guardar. Usted sube su código y pide que otro humano experto lo revise formalmente.</p></div>
+        <p class="text-lg leading-relaxed"><strong>Ejemplo Práctico:</strong> En la vida real, usted no sube su código directo a la rama de Producción (porque si falla, se cae el sistema del banco). Usted abre un PR diciendo: <em>"Líder, terminé la tarea. ¿Puede revisar el código?"</em>. Si está correcto, el líder lo aprueba y lo une (Merge).</p>
+    </div></div>
+
+    <div class="modal-backdrop" id="modal-java"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-java')"><i class="fa-solid fa-xmark"></i></button><div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-peach rounded-xl flex items-center justify-center text-4xl"><i class="fa-brands fa-java"></i></div><h2 class="text-4xl font-bold">Java (Core)</h2></div><p class="text-xl mb-4 leading-relaxed"><strong>¿Qué es?</strong> Es un lenguaje de programación multiparadigma, orientado a objetos y sumamente robusto.</p><p class="text-lg" style="color: var(--text-muted);">Se usa corporativamente porque su <em>Máquina Virtual (JVM)</em> garantiza portabilidad, y su estructura fuertemente tipada obliga a aplicar buenas arquitecturas de diseño, haciéndolo ideal para formar ingenieros.</p></div></div>
+    <div class="modal-backdrop" id="modal-mysql"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-mysql')"><i class="fa-solid fa-xmark"></i></button><div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-blue rounded-xl flex items-center justify-center text-3xl"><i class="fa-solid fa-database"></i></div><h2 class="text-4xl font-bold">MySQL 8+</h2></div><p class="text-xl mb-4 leading-relaxed"><strong>¿Qué es?</strong> Un Sistema Gestor de Bases de Datos Relacionales (SGBD) líder en la industria.</p><p class="text-lg" style="color: var(--text-muted);">Lo usaremos para aplicar la <strong>Persistencia de Datos</strong>: Que nuestra app de Java no borre sus registros al cerrarse, usando tablas y sentencias SQL.</p></div></div>
+    <div class="modal-backdrop" id="modal-intellij"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-intellij')"><i class="fa-solid fa-xmark"></i></button><div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-purple rounded-xl flex items-center justify-center text-3xl"><i class="fa-solid fa-code"></i></div><h2 class="text-4xl font-bold">IntelliJ IDEA</h2></div><p class="text-xl mb-4 leading-relaxed"><strong>¿Qué es?</strong> Un Entorno de Desarrollo Integrado (IDE) creado por JetBrains para maximizar la productividad.</p><p class="text-lg" style="color: var(--text-muted);">Lo preferimos sobre otros editores porque incluye herramientas para conectarse directamente a la Base de Datos sin instalar otros programas, autocompletado inteligente y refactorización segura.</p></div></div>
+    <div class="modal-backdrop" id="modal-git-general"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-git-general')"><i class="fa-solid fa-xmark"></i></button><div class="flex items-center gap-4 mb-6"><div class="w-16 h-16 tint-red rounded-xl flex items-center justify-center text-4xl"><i class="fa-brands fa-git-alt"></i></div><h2 class="text-4xl font-bold">Git & GitHub</h2></div><p class="text-xl mb-4 leading-relaxed"><strong>Git</strong> es el motor local que toma el historial (fotos) del código. <strong>GitHub</strong> es la nube donde alojaremos ese repositorio.</p><p class="text-lg" style="color: var(--text-muted);">Es obligatorio porque nos salvará de catástrofes al permitirnos retroceder en el tiempo, y es la única manera profesional de trabajar los proyectos de grupo de este curso.</p></div></div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const progressBar = document.getElementById('progressBar');
+        
+        function updateProgress() {
+            const percentage = ((currentSlide + 1) / totalSlides) * 100;
+            progressBar.style.width = percentage + '%';
+        }
+
+        function changeSlide(direction) {
+            if(document.querySelector('.modal-backdrop.active')) return;
+
+            slides[currentSlide].classList.remove('active');
+            currentSlide += direction;
+            
+            if (currentSlide < 0) currentSlide = 0;
+            if (currentSlide >= totalSlides) currentSlide = totalSlides - 1;
+            
+            slides[currentSlide].classList.add('active');
+            updateProgress();
+            checkButtons();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'Space') {
+                changeSlide(1);
+            } else if (e.key === 'ArrowLeft') {
+                changeSlide(-1);
+            } else if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-backdrop').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+            }
+        });
+
+        function checkButtons() {
+            const prev = document.getElementById('prevBtn');
+            const next = document.getElementById('nextBtn');
+            
+            prev.style.opacity = currentSlide === 0 ? '0.3' : '1';
+            prev.style.pointerEvents = currentSlide === 0 ? 'none' : 'auto';
+            
+            next.style.opacity = currentSlide === totalSlides - 1 ? '0.3' : '1';
+            next.style.pointerEvents = currentSlide === totalSlides - 1 ? 'none' : 'auto';
+        }
+
+        updateProgress();
+        checkButtons();
+
+        function openModal(modalId) { document.getElementById(modalId).classList.add('active'); }
+        function closeModal(modalId) { document.getElementById(modalId).classList.remove('active'); }
+
+        document.querySelectorAll('.modal-backdrop').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) this.classList.remove('active');
+            });
+        });
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            
+            if (html.getAttribute('data-theme') === 'light') {
+                html.setAttribute('data-theme', 'dark');
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        }
+    </script>
+</body>
+</html>

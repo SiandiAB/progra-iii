@@ -1,0 +1,175 @@
+/* ============================================================
+   presentacion.css — Estilos compartidos para presentaciones
+   Programación III (EIF206) — UNA, Sede Regional Central Occidente
+   ============================================================ */
+
+/* --- Reset & Base --- */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.4s ease, color 0.4s ease;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: 
+        radial-gradient(circle at 15% 50%, var(--una-red) 0%, transparent 25%),
+        radial-gradient(circle at 85% 30%, var(--una-gold) 0%, transparent 25%);
+    opacity: 0.06; 
+    z-index: -1;
+    pointer-events: none;
+}
+
+.font-mono { font-family: 'JetBrains Mono', monospace; }
+
+/* --- Variables: Tema Claro (por defecto) --- */
+:root, [data-theme="light"] {
+    --bg-main: #F8FAFC;       
+    --bg-panel: #FFFFFF;      
+    --text-main: #334155;     
+    --text-muted: #64748B;    
+    --border-panel: rgba(0, 0, 0, 0.08);
+    --shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.05);
+    
+    --una-red: #e66a6a;       
+    --una-gold: #d4ac0d;      
+    --accent-blue: #5dade2;
+    --accent-purple: #af7ac5;
+    --accent-peach: #eb984e;
+    --accent-red: #e74c3c;
+    --accent-green: #48c9b0;
+    
+    --bg-terminal: #1e1e2e;
+    --text-terminal: #cdd6f4;
+}
+
+/* --- Variables: Tema Oscuro --- */
+[data-theme="dark"] {
+    --bg-main: #121216;       
+    --bg-panel: #1c1c24;      
+    --text-main: #F8FAFC;     
+    --text-muted: #9CA3AF;    
+    --border-panel: rgba(255, 255, 255, 0.08);
+    --shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.3);
+    
+    --una-red: #ff8a8a;       
+    --una-gold: #f4d03f;      
+    --accent-blue: #85c1e9;
+    --accent-purple: #d7bde2;
+    --accent-peach: #f5cba7;
+    --accent-red: #f1948a;
+    --accent-green: #a9dfbf;
+    
+    --bg-terminal: #11111b;
+    --text-terminal: #cdd6f4;
+}
+
+/* --- Tints (fondos y bordes semitransparentes) --- */
+.tint-red    { background-color: rgba(230, 106, 106, 0.12); color: var(--una-red);      border: 1px solid rgba(230, 106, 106, 0.2); }
+.tint-gold   { background-color: rgba(244, 208, 63, 0.12);  color: var(--una-gold);     border: 1px solid rgba(244, 208, 63, 0.2); }
+.tint-blue   { background-color: rgba(93, 173, 226, 0.12);  color: var(--accent-blue);  border: 1px solid rgba(93, 173, 226, 0.2); }
+.tint-green  { background-color: rgba(72, 201, 176, 0.12);  color: var(--accent-green); border: 1px solid rgba(72, 201, 176, 0.2); }
+.tint-purple { background-color: rgba(175, 122, 197, 0.12); color: var(--accent-purple);border: 1px solid rgba(175, 122, 197, 0.2); }
+.tint-peach  { background-color: rgba(235, 152, 78, 0.12);  color: var(--accent-peach); border: 1px solid rgba(235, 152, 78, 0.2); }
+
+/* --- Slides --- */
+.slides-container { position: relative; width: 100vw; height: 100vh; }
+
+.slide {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0; transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 2rem 4rem; pointer-events: none; transform: translateY(20px); visibility: hidden;
+}
+
+.slide.active { opacity: 1; pointer-events: auto; transform: translateY(0); z-index: 10; visibility: visible; }
+
+/* --- Paneles de vidrio (glassmorphism) --- */
+.glass-panel {
+    background: var(--bg-panel); border: 1px solid var(--border-panel);
+    border-radius: 1.25rem; box-shadow: var(--shadow-panel); padding: 2.5rem;
+    transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, transform 0.3s ease;
+}
+
+/* --- Tarjetas interactivas --- */
+.interactive-card {
+    cursor: pointer; transition: all 0.3s ease;
+}
+.interactive-card:hover {
+    transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+.tech-card {
+    background: var(--bg-panel); border: 2px solid transparent; border-radius: 1rem;
+    padding: 2rem; cursor: pointer; transition: all 0.3s ease;
+    display: flex; flex-direction: column; align-items: center; width: 200px; box-shadow: var(--shadow-panel);
+}
+.tech-card:hover { transform: translateY(-8px); border-color: var(--accent-blue); }
+
+.pillar-card { cursor: pointer; transition: all 0.3s ease; }
+.pillar-card:hover { transform: translateX(8px); }
+
+/* --- Modal --- */
+.modal-backdrop {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); z-index: 100;
+    display: flex; justify-content: center; align-items: center; opacity: 0;
+    pointer-events: none; transition: opacity 0.3s ease;
+}
+.modal-backdrop.active { opacity: 1; pointer-events: auto; }
+
+.modal-content {
+    background: var(--bg-panel); border-radius: 1.5rem; width: 90%; max-width: 800px;
+    max-height: 85vh; overflow-y: auto; padding: 3.5rem; transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.4s ease;
+    position: relative; border: 1px solid var(--border-panel);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3); color: var(--text-main);
+}
+.modal-backdrop.active .modal-content { transform: scale(1); }
+
+.close-modal {
+    position: absolute; top: 1.5rem; right: 1.5rem; background: var(--border-panel);
+    border: none; color: var(--text-main); width: 45px; height: 45px; border-radius: 50%;
+    cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, color 0.2s;
+}
+.close-modal:hover { background: var(--una-red); color: white; }
+
+/* --- Botones flotantes --- */
+.float-btn {
+    position: fixed; background: var(--bg-panel); border: 1px solid var(--border-panel);
+    color: var(--text-main); width: 55px; height: 55px; border-radius: 50%; cursor: pointer;
+    z-index: 50; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-panel); font-size: 1.2rem;
+}
+.float-btn:hover { background: var(--una-red); color: white; transform: scale(1.1); }
+
+#prevBtn { bottom: 2.5rem; left: 2.5rem; }
+#nextBtn { bottom: 2.5rem; right: 2.5rem; }
+#theme-toggle { top: 2.5rem; right: 2.5rem; }
+
+/* --- Barra de progreso --- */
+.progress-container { position: fixed; bottom: 0; left: 0; width: 100%; height: 6px; background: var(--border-panel); z-index: 50; }
+.progress-bar { height: 100%; background: linear-gradient(90deg, var(--una-red), var(--una-gold)); transition: width 0.4s ease; border-radius: 0 3px 3px 0; }
+
+/* --- Iconos de fondo decorativos --- */
+.bg-icon { position: absolute; opacity: 0.04; z-index: -1; pointer-events: none; }
+
+/* --- Animación de vapor (slide de receso) --- */
+@keyframes steam {
+    0% { transform: translateY(0) scaleX(1); opacity: 0; }
+    50% { transform: translateY(-20px) scaleX(1.2); opacity: 0.8; }
+    100% { transform: translateY(-40px) scaleX(1.5); opacity: 0; }
+}
+.steam-1 { animation: steam 3s ease-out infinite; }
+.steam-2 { animation: steam 3s ease-out infinite 1s; }
+.steam-3 { animation: steam 3s ease-out infinite 2s; }
