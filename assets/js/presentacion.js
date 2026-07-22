@@ -96,6 +96,88 @@
         }
     };
 
+    /* --- Descargar presentación offline --- */
+    window.downloadPresentation = async function () {
+        var btn = document.getElementById('downloadBtn');
+        var originalHTML = btn ? btn.innerHTML : '';
+
+        try {
+            // Mostrar estado "descargando..."
+            if (btn) {
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+                btn.style.pointerEvents = 'none';
+            }
+
+            // Obtener CSS del proyecto (incrustado para que funcione offline)
+            var cssContent = '';
+            var cssLink = document.querySelector('link[href*="presentacion.css"]');
+            if (cssLink) {
+                var resp = await fetch(cssLink.href);
+                cssContent = await resp.text();
+            }
+
+            // Obtener JS del proyecto
+            var jsContent = '';
+            var jsScript = document.querySelector('script[src*="presentacion.js"]');
+            if (jsScript) {
+                var jsResp = await fetch(jsScript.src);
+                jsContent = await jsResp.text();
+            }
+
+            // Clonar el HTML completo
+            var html = document.documentElement.outerHTML;
+
+            // Reemplazar link CSS externo por <style> inline
+            html = html.replace(
+                /<link[^>]*presentacion\.css[^>]*\s*\/?>/gi,
+                '<style>\n/* presentacion.css (offline) */\n' + cssContent + '\n</style>'
+            );
+
+            // Reemplazar script JS externo por <script> inline
+            html = html.replace(
+                /<script[^>]*presentacion\.js[^>]*>\s*<\/script>/gi,
+                '<script>\n/* presentacion.js (offline) */\n' + jsContent + '\n<\/script>'
+            );
+
+            // Asegurar DOCTYPE
+            if (!/^\s*<!DOCTYPE/i.test(html)) {
+                html = '<!DOCTYPE html>\n' + html;
+            }
+
+            // Descargar
+            var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            // Nombre del archivo basado en el título de la página
+            var title = document.title.replace(/[^a-zA-Z0-9áéíóúñÁÉÍÓÚÑ\- ]/g, '').replace(/\s+/g, '-');
+            a.download = title + '.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            // Mostrar confirmación
+            if (btn) {
+                btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+                setTimeout(function () {
+                    btn.innerHTML = originalHTML;
+                    btn.style.pointerEvents = 'auto';
+                }, 2000);
+            }
+        } catch (err) {
+            console.error('Error al descargar:', err);
+            if (btn) {
+                btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+                btn.style.pointerEvents = 'auto';
+                setTimeout(function () {
+                    btn.innerHTML = originalHTML;
+                }, 2000);
+            }
+            alert('No se pudo generar la descarga. Intentalo de nuevo.');
+        }
+    };
+
     /* --- Inicialización --- */
     if (totalSlides > 0) {
         updateProgress();

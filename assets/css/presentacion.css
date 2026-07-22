@@ -177,6 +177,7 @@ body::before {
 #prevBtn { bottom: clamp(1.5rem, 3vh, 2.5rem); left: clamp(1.5rem, 3vh, 2.5rem); }
 #nextBtn { bottom: clamp(1.5rem, 3vh, 2.5rem); right: clamp(1.5rem, 3vh, 2.5rem); }
 #theme-toggle { top: clamp(1.5rem, 3vh, 2.5rem); right: clamp(1.5rem, 3vh, 2.5rem); }
+#downloadBtn { top: clamp(1.5rem, 3vh, 2.5rem); left: clamp(1.5rem, 3vh, 2.5rem); }
 
 /* --- Barra de progreso --- */
 .progress-container { position: fixed; bottom: 0; left: 0; width: 100%; height: clamp(3px, 0.6vh, 6px); background: var(--border-panel); z-index: 50; }
