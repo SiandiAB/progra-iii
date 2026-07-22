@@ -6,6 +6,20 @@
 /* --- Reset & Base --- */
 *, *::before, *::after { box-sizing: border-box; }
 
+/* 
+   Escalado responsive: el tamaño base de fuente se ajusta según la altura
+   de la pantalla. Así los text-6xl, text-8xl, etc. (en rem) se reducen
+   automáticamente en pantallas más pequeñas sin tocar el HTML.
+   
+   1080px alto (Full HD)  → 16px base  (óptimo para proyector)
+   900px  alto (laptop)   → 14px base
+   768px  alto (laptop)   → 12px base
+   600px  alto (mínimo)   → 11px base
+*/
+html {
+    font-size: clamp(11px, 1.6vh, 16px);
+}
+
 body {
     font-family: 'Nunito', sans-serif;
     background-color: var(--bg-main);
@@ -88,7 +102,8 @@ body::before {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     opacity: 0; transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex; flex-direction: column; justify-content: center; align-items: center;
-    padding: 2rem 4rem; pointer-events: none; transform: translateY(20px); visibility: hidden;
+    padding: clamp(1rem, 3vh, 3rem) clamp(0.5rem, 6vw, 4rem);
+    pointer-events: none; transform: translateY(20px); visibility: hidden;
 }
 
 .slide.active { opacity: 1; pointer-events: auto; transform: translateY(0); z-index: 10; visibility: visible; }
@@ -96,7 +111,8 @@ body::before {
 /* --- Paneles de vidrio (glassmorphism) --- */
 .glass-panel {
     background: var(--bg-panel); border: 1px solid var(--border-panel);
-    border-radius: 1.25rem; box-shadow: var(--shadow-panel); padding: 2.5rem;
+    border-radius: 1.25rem; box-shadow: var(--shadow-panel);
+    padding: clamp(1.25rem, 3vh, 2.5rem);
     transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, transform 0.3s ease;
 }
 
@@ -110,8 +126,9 @@ body::before {
 
 .tech-card {
     background: var(--bg-panel); border: 2px solid transparent; border-radius: 1rem;
-    padding: 2rem; cursor: pointer; transition: all 0.3s ease;
-    display: flex; flex-direction: column; align-items: center; width: 200px; box-shadow: var(--shadow-panel);
+    padding: clamp(1rem, 2.5vh, 2rem); cursor: pointer; transition: all 0.3s ease;
+    display: flex; flex-direction: column; align-items: center;
+    width: clamp(140px, 18vw, 200px); box-shadow: var(--shadow-panel);
 }
 .tech-card:hover { transform: translateY(-8px); border-color: var(--accent-blue); }
 
@@ -129,7 +146,7 @@ body::before {
 
 .modal-content {
     background: var(--bg-panel); border-radius: 1.5rem; width: 90%; max-width: 800px;
-    max-height: 85vh; overflow-y: auto; padding: 3.5rem; transform: scale(0.95);
+    max-height: 85vh; overflow-y: auto; padding: clamp(1.5rem, 4vh, 3.5rem); transform: scale(0.95);
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.4s ease;
     position: relative; border: 1px solid var(--border-panel);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3); color: var(--text-main);
@@ -137,9 +154,12 @@ body::before {
 .modal-backdrop.active .modal-content { transform: scale(1); }
 
 .close-modal {
-    position: absolute; top: 1.5rem; right: 1.5rem; background: var(--border-panel);
-    border: none; color: var(--text-main); width: 45px; height: 45px; border-radius: 50%;
-    cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+    position: absolute; top: clamp(0.75rem, 1.5vh, 1.5rem); right: clamp(0.75rem, 1.5vh, 1.5rem);
+    background: var(--border-panel);
+    border: none; color: var(--text-main);
+    width: clamp(32px, 4vh, 45px); height: clamp(32px, 4vh, 45px); border-radius: 50%;
+    cursor: pointer; font-size: clamp(0.9rem, 1.3vh, 1.2rem);
+    display: flex; align-items: center; justify-content: center;
     transition: background 0.2s, color 0.2s;
 }
 .close-modal:hover { background: var(--una-red); color: white; }
@@ -147,18 +167,19 @@ body::before {
 /* --- Botones flotantes --- */
 .float-btn {
     position: fixed; background: var(--bg-panel); border: 1px solid var(--border-panel);
-    color: var(--text-main); width: 55px; height: 55px; border-radius: 50%; cursor: pointer;
+    color: var(--text-main); width: clamp(40px, 5vh, 55px); height: clamp(40px, 5vh, 55px);
+    border-radius: 50%; cursor: pointer;
     z-index: 50; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;
-    box-shadow: var(--shadow-panel); font-size: 1.2rem;
+    box-shadow: var(--shadow-panel); font-size: clamp(0.9rem, 1.4vh, 1.2rem);
 }
 .float-btn:hover { background: var(--una-red); color: white; transform: scale(1.1); }
 
-#prevBtn { bottom: 2.5rem; left: 2.5rem; }
-#nextBtn { bottom: 2.5rem; right: 2.5rem; }
-#theme-toggle { top: 2.5rem; right: 2.5rem; }
+#prevBtn { bottom: clamp(1.5rem, 3vh, 2.5rem); left: clamp(1.5rem, 3vh, 2.5rem); }
+#nextBtn { bottom: clamp(1.5rem, 3vh, 2.5rem); right: clamp(1.5rem, 3vh, 2.5rem); }
+#theme-toggle { top: clamp(1.5rem, 3vh, 2.5rem); right: clamp(1.5rem, 3vh, 2.5rem); }
 
 /* --- Barra de progreso --- */
-.progress-container { position: fixed; bottom: 0; left: 0; width: 100%; height: 6px; background: var(--border-panel); z-index: 50; }
+.progress-container { position: fixed; bottom: 0; left: 0; width: 100%; height: clamp(3px, 0.6vh, 6px); background: var(--border-panel); z-index: 50; }
 .progress-bar { height: 100%; background: linear-gradient(90deg, var(--una-red), var(--una-gold)); transition: width 0.4s ease; border-radius: 0 3px 3px 0; }
 
 /* --- Iconos de fondo decorativos --- */
