@@ -17,6 +17,7 @@
     
     <!-- Recursos compartidos del proyecto -->
     <link rel="stylesheet" href="../../assets/css/presentacion.css">
+    <script src="../../assets/js/curso-info.js"></script>
     
 </head>
 <body>
@@ -61,8 +62,8 @@
                         <div class="w-14 h-14 shrink-0 rounded-full tint-red flex items-center justify-center text-2xl"><i class="fa-solid fa-chalkboard-user"></i></div>
                         <div>
                             <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Docente — Grupo 41</p>
-                            <p class="text-lg font-bold">Prof. Siandi Araya Bello</p>
-                            <p class="text-xs mt-1" style="color: var(--text-muted);">Martes 13:00 - 16:20 · NRC: 52906</p>
+                            <p class="text-lg font-bold" data-curso="41-docente"></p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);" data-curso="41-horario"></p>
                         </div>
                     </div>
                     <!-- Grupo 40 -->
@@ -70,8 +71,8 @@
                         <div class="w-14 h-14 shrink-0 rounded-full tint-blue flex items-center justify-center text-2xl"><i class="fa-solid fa-chalkboard-user"></i></div>
                         <div>
                             <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Docente — Grupo 40</p>
-                            <p class="text-lg font-bold">Prof. Kristel Duarte Pérez</p>
-                            <p class="text-xs mt-1" style="color: var(--text-muted);">Miércoles 08:00 - 11:20 · NRC: 52907</p>
+                            <p class="text-lg font-bold" data-curso="40-docente"></p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);" data-curso="40-horario"></p>
                         </div>
                     </div>
                 </div>
@@ -81,14 +82,14 @@
                         <div class="w-10 h-10 shrink-0 rounded-full tint-gold flex items-center justify-center text-lg"><i class="fa-regular fa-clock"></i></div>
                         <div>
                             <p class="text-xs uppercase tracking-wider" style="color: var(--text-muted);">Atención Grupo 41</p>
-                            <p class="text-sm"><strong>Martes</strong> 10:00 - 12:00</p>
+                            <p class="text-sm" data-curso="41-atencion"></p>
                         </div>
                     </div>
                     <div class="glass-panel text-left flex items-center gap-4 border-l-4" style="border-left-color: var(--accent-green);">
                         <div class="w-10 h-10 shrink-0 rounded-full tint-green flex items-center justify-center text-lg"><i class="fa-regular fa-clock"></i></div>
                         <div>
                             <p class="text-xs uppercase tracking-wider" style="color: var(--text-muted);">Atención Grupo 40</p>
-                            <p class="text-sm"><strong>Miércoles</strong> 13:00 - 14:00</p>
+                            <p class="text-sm" data-curso="40-atencion"></p>
                         </div>
                     </div>
                 </div>

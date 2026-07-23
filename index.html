@@ -13,6 +13,16 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    <script src="assets/js/curso-info.js"></script>
+    <script>
+        // Inyectar datos del curso en elementos con data-curso
+        document.addEventListener('DOMContentLoaded', function () {
+            var el = document.querySelector('[data-curso="lineaHub"]');
+            if (el && typeof CursoInfo !== 'undefined') {
+                el.innerHTML = CursoInfo.getLineaHub();
+            }
+        });
+    </script>
     
     <style>
         :root {
@@ -115,11 +125,7 @@
                 Programación <span style="color: var(--una-red);">III</span>
             </h1>
             <p class="text-gray-500 text-lg mb-1">CÓDIGO: EIF206</p>
-            <div class="flex flex-wrap justify-center gap-4 text-sm text-gray-400 mt-2">
-                <span><strong>Grupo 41</strong> — Prof. Siandi Araya Bello · Martes 13:00-16:20 · NRC: 52906</span>
-                <span class="hidden md:inline text-gray-300">|</span>
-                <span><strong>Grupo 40</strong> — Prof. Kristel Duarte Pérez · Miércoles 08:00-11:20 · NRC: 52907</span>
-            </div>
+            <div class="flex flex-wrap justify-center gap-4 text-sm text-gray-400 mt-2" data-curso="lineaHub"></div>
         </div>
 
         <!-- Lista de Clases -->

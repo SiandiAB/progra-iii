@@ -178,7 +178,37 @@
         }
     };
 
+    /* --- Inyectar datos del curso en elementos con data-curso --- */
+    function initCursoInfo() {
+        if (typeof CursoInfo === 'undefined') return;
+        var elements = document.querySelectorAll('[data-curso]');
+        elements.forEach(function (el) {
+            var key = el.getAttribute('data-curso');
+            var grupo = key.split('-')[0]; // "41" o "40"
+            var campo = key.split('-')[1]; // "docente", "horario", etc.
+
+            if (campo === 'lineaHub') {
+                el.innerHTML = CursoInfo.getLineaHub();
+                return;
+            }
+
+            var info = CursoInfo.grupos[grupo];
+            if (!info) return;
+
+            if (campo === 'docente') {
+                el.textContent = info.docente;
+            } else if (campo === 'horario') {
+                el.textContent = info.dia + ' ' + info.horario + ' · NRC: ' + info.nrc;
+            } else if (campo === 'atencion') {
+                el.textContent = info.atencionDia + ' ' + info.atencionHorario;
+            } else if (campo === 'color') {
+                el.style.color = info.color;
+            }
+        });
+    }
+
     /* --- Inicialización --- */
+    initCursoInfo();
     if (totalSlides > 0) {
         updateProgress();
         checkButtons();
