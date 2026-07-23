@@ -1,0 +1,25 @@
+{
+  "name": "programacion-iii",
+  "version": "1.0.0",
+  "description": "Presentaciones interactivas — Programación III (EIF206), UNA",
+  "scripts": {
+    "build:css": "npx @tailwindcss/cli -i assets/css/tailwind-input.css -o assets/css/tailwind.css --minify --content \"index.html,clases/**/*.html\"",
+    "build": "npm run build:css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SiandiAB/progra-iii.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/SiandiAB/progra-iii/issues"
+  },
+  "homepage": "https://github.com/SiandiAB/progra-iii#readme",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "tailwindcss": "^4.3.3"
+  }
+}

@@ -1,3 +1,6 @@
+# Dependencias Node.js
+node_modules/
+
 # Sistema operativo
 .DS_Store
 Thumbs.db
