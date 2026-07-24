@@ -2,7 +2,9 @@
 
 **Sección Regional Central Occidente, Universidad Nacional de Costa Rica**
 
-Prof. Siandi Araya Bello · NRC: 52906 · Martes 13:00 – 16:20
+Prof. Siandi Araya Bello · NRC: 52906 · Martes 13:00 – 16:20.
+
+Prof. Kristel Duarte Pérez · NRC: 52907 · Miércoles 08:00 – 11:20.
 
 ---
 
