@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 2 — Programación III</title>
+    
+    <link rel="icon" type="image/svg+xml" href="../../assets/img/favicon.svg">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Estilos compilados (Tailwind optimizado) -->
+    <link rel="stylesheet" href="../../assets/css/tailwind.css">
+    <!-- Font Awesome: core + solo íconos usados (solid + regular + brands) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/fontawesome.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/solid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/regular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/brands.min.js"></script>
+    
+    <!-- Recursos compartidos del proyecto -->
+    <link rel="stylesheet" href="../../assets/css/presentacion.css">
+    <script src="../../assets/js/curso-info.js"></script>
+    
+</head>
+<body>
+
+    <!-- Botón de tema claro/oscuro -->
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar Modo">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+
+    <!-- Botón de descarga offline -->
+    <button class="float-btn" id="downloadBtn" onclick="downloadPresentation()" title="Descargar presentación para ver sin internet">
+        <i class="fa-solid fa-download"></i>
+    </button>
+
+    <!-- ========== CONTENEDOR DE SLIDES ========== -->
+    <div class="slides-container" id="slides-container">
+        
+        <!-- ==================== SLIDE 0: Portada ==================== -->
+        <div class="slide active">
+            <div class="text-center w-full max-w-5xl z-10 relative">
+                <i class="fa-solid fa-gear bg-icon text-[350px] -top-20 -left-20" style="color: var(--una-red);"></i>
+                <i class="fa-brands fa-java bg-icon text-[250px] -bottom-10 right-10" style="color: var(--accent-blue);"></i>
+                
+                <div class="bg-white px-8 py-4 rounded-3xl inline-block mb-6 shadow-md border border-gray-100 relative z-10">
+                    <img src="../../assets/img/Logo-UNA-Rojo_FondoTransparente.png" 
+                         alt="Logo UNA" class="h-28 object-contain"
+                         onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png';">
+                </div>
+                
+                <h2 class="text-lg md:text-xl font-bold tracking-[0.2em] mb-4 uppercase" style="color: var(--text-muted);">Sección Regional Central Occidente, UNA</h2>
+                
+                <h1 class="text-5xl md:text-7xl font-extrabold mb-4 tracking-tight">
+                    Programación <span style="color: var(--una-red);">III</span>
+                </h1>
+                <h2 class="text-3xl md:text-4xl font-bold mb-8" style="color: var(--text-main);">Semana 2</h2>
+                <h3 class="text-xl md:text-2xl font-semibold mb-10" style="color: var(--text-muted);">
+                    Características del Lenguaje Java
+                </h3>
+                
+                <div class="mb-10 relative z-10">
+                    <span class="tint-gold px-6 py-3 rounded-full font-bold text-lg">
+                        <i class="fa-solid fa-chalkboard-user mr-2"></i>Ing. Kristel Duarte Pérez
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-8 relative z-10">
+                    <div class="glass-panel text-left flex items-center gap-4 border-l-4" style="border-left-color: var(--una-red);">
+                        <div class="w-12 h-12 shrink-0 rounded-full tint-red flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-bullhorn"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm"><strong>Recordatorio:</strong> Revisar y aceptar el Programa del Curso (Aula Virtual)</p>
+                        </div>
+                    </div>
+                    <div class="glass-panel text-left flex items-center gap-4 border-l-4" style="border-left-color: var(--accent-purple);">
+                        <div class="w-12 h-12 shrink-0 rounded-full tint-purple flex items-center justify-center text-xl">
+                            <i class="fa-brands fa-github"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm"><strong>GitHub:</strong> Las contribuciones son visibles. ¡Todos deben participar en los proyectos!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel inline-block px-8 py-4 border-l-4 relative z-10" style="border-left-color: var(--accent-blue);">
+                    <p class="text-lg font-semibold">
+                        <i class="fa-solid fa-hand-sparkles mr-2" style="color: var(--accent-blue);"></i>
+                        ¿Qué área de la carrera te apasiona más? (BD, Web, IA, Videojuegos, Móviles...)
+                    </p>
+                </div>
+
+                <p class="text-sm animate-pulse mt-6" style="color: var(--text-muted);"><i class="fa-solid fa-keyboard mr-2"></i>Usa las flechas del teclado para navegar</p>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 1: Agenda del Día ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-5xl mx-auto relative z-10">
+                <i class="fa-solid fa-map-location-dot bg-icon text-[350px] top-10 right-0 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-10">
+                    <h2 class="text-5xl font-bold mb-2">¿Qué vamos a ver hoy?</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Teoría para sentar bases sólidas antes del Laboratorio #1.</p>
+                </div>
+
+                <div class="relative wrap overflow-hidden p-4 h-full">
+                    <div class="absolute border-opacity-20 border-gray-400 h-full border-2" style="left: 50%;"></div>
+                    
+                    <div class="mb-8 flex justify-between items-center w-full right-timeline group">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-12 h-12 rounded-full tint-gold justify-center font-bold text-lg border-4 border-white transition-transform group-hover:scale-110">1</div>
+                        <div class="order-1 glass-panel w-5/12 px-6 py-4 transition-transform group-hover:-translate-x-2 border-r-4" style="border-right-color: var(--una-gold);">
+                            <h3 class="font-bold text-xl mb-1 text-right">El Secreto de la Portabilidad</h3>
+                            <p class="text-sm text-gray-500 text-right">JVM y Bytecode.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-8 flex justify-between items-center w-full left-timeline group">
+                        <div class="order-1 glass-panel w-5/12 px-6 py-4 transition-transform group-hover:translate-x-2 border-l-4" style="border-left-color: var(--accent-green);">
+                            <h3 class="font-bold text-xl mb-1 text-left">El Jardinero Automático</h3>
+                            <p class="text-sm text-gray-500 text-left">Garbage Collector.</p>
+                        </div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-12 h-12 rounded-full tint-green justify-center font-bold text-lg border-4 border-white transition-transform group-hover:scale-110">2</div>
+                        <div class="order-1 w-5/12"></div>
+                    </div>
+
+                    <div class="mb-8 flex justify-between items-center w-full right-timeline group">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-12 h-12 rounded-full tint-blue justify-center font-bold text-lg border-4 border-white transition-transform group-hover:scale-110">3</div>
+                        <div class="order-1 glass-panel w-5/12 px-6 py-4 transition-transform group-hover:-translate-x-2 border-r-4" style="border-right-color: var(--accent-blue);">
+                            <h3 class="font-bold text-xl mb-1 text-right">Duelo de Datos</h3>
+                            <p class="text-sm text-gray-500 text-right">int vs Integer (Tipos elementales y Wrappers).</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-8 flex justify-between items-center w-full left-timeline group">
+                        <div class="order-1 glass-panel w-5/12 px-6 py-4 transition-transform group-hover:translate-x-2 border-l-4" style="border-left-color: var(--accent-purple);">
+                            <h3 class="font-bold text-xl mb-1 text-left">La Palabra Clave</h3>
+                            <p class="text-sm text-gray-500 text-left">static (Pertenece a la Clase).</p>
+                        </div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-12 h-12 rounded-full tint-purple justify-center font-bold text-lg border-4 border-white transition-transform group-hover:scale-110">4</div>
+                        <div class="order-1 w-5/12"></div>
+                    </div>
+                    
+                    <div class="mb-8 flex justify-between items-center w-full right-timeline group">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-12 h-12 rounded-full tint-red justify-center font-bold text-lg border-4 border-white transition-transform group-hover:scale-110">5</div>
+                        <div class="order-1 glass-panel w-5/12 px-6 py-4 transition-transform group-hover:-translate-x-2 border-r-4" style="border-right-color: var(--una-red);">
+                            <h3 class="font-bold text-xl mb-1 text-right">COMPARATIVA EN VIVO</h3>
+                            <p class="text-sm text-gray-500 text-right">C++ vs C# vs Java (Recursividad).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 2: JVM y Bytecode ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-6xl mx-auto relative z-10">
+                <i class="fa-solid fa-microchip bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-8">
+                    <h2 class="text-5xl font-bold mb-2">Write Once, Run Anywhere</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">El superpoder de la portabilidad en Java.</p>
+                </div>
+
+                <!-- Diagrama de flujo -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <!-- C++ -->
+                    <div class="glass-panel border-t-4" style="border-color: var(--una-red);">
+                        <h3 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                            <span class="tint-red w-12 h-12 rounded-xl flex items-center justify-center text-xl">C++</span>
+                            Compilación Nativa
+                        </h3>
+                        <div class="flex items-center gap-3 text-lg font-mono">
+                            <span class="tint-red px-3 py-1 rounded-lg">Código.cpp</span>
+                            <i class="fa-solid fa-arrow-right" style="color: var(--text-muted);"></i>
+                            <span class="tint-red px-3 py-1 rounded-lg">Compilador</span>
+                            <i class="fa-solid fa-arrow-right" style="color: var(--text-muted);"></i>
+                            <span class="tint-red px-3 py-1 rounded-lg font-bold">.exe</span>
+                        </div>
+                        <p class="mt-4 text-sm" style="color: var(--text-muted);">
+                            <i class="fa-solid fa-triangle-exclamation mr-1" style="color: var(--una-red);"></i> 
+                            Atado a Windows. Necesita recompilarse para cada SO.
+                        </p>
+                    </div>
+
+                    <!-- Java -->
+                    <div class="glass-panel border-t-4" style="border-color: var(--accent-blue);">
+                        <h3 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                            <i class="fa-brands fa-java text-3xl" style="color: var(--accent-peach);"></i>
+                            Compilación Híbrida
+                        </h3>
+                        <div class="flex flex-wrap items-center gap-2 text-base font-mono">
+                            <span class="tint-blue px-3 py-1 rounded-lg">Código.java</span>
+                            <i class="fa-solid fa-arrow-right" style="color: var(--text-muted);"></i>
+                            <span class="tint-blue px-3 py-1 rounded-lg">javac</span>
+                            <i class="fa-solid fa-arrow-right" style="color: var(--text-muted);"></i>
+                            <span class="tint-gold px-3 py-1 rounded-lg font-bold">.class (Bytecode)</span>
+                            <i class="fa-solid fa-arrow-right" style="color: var(--text-muted);"></i>
+                            <span class="tint-green px-3 py-1 rounded-lg">JVM</span>
+                            <i class="fa-solid fa-arrow-right" style="color: var(--text-muted);"></i>
+                            <span class="tint-green px-3 py-1 rounded-lg">Win/Mac/Linux</span>
+                        </div>
+                        <p class="mt-4 text-sm" style="color: var(--accent-green);">
+                            <i class="fa-solid fa-check-circle mr-1"></i> 
+                            El mismo .class corre en cualquier SO que tenga JVM.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Conceptos clave -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass-panel p-6 border-l-4" style="border-left-color: var(--una-gold);">
+                        <h4 class="text-xl font-bold mb-2">
+                            <i class="fa-solid fa-cube mr-2" style="color: var(--una-gold);"></i>Bytecode
+                        </h4>
+                        <p class="text-lg" style="color: var(--text-muted);">"El idioma universal de Java." Es un código intermedio que ni es fuente ni es máquina. Lo entiende cualquier JVM.</p>
+                    </div>
+                    <div class="glass-panel p-6 border-l-4" style="border-left-color: var(--accent-purple);">
+                        <h4 class="text-xl font-bold mb-2">
+                            <i class="fa-solid fa-desktop mr-2" style="color: var(--accent-purple);"></i>JVM (Java Virtual Machine)
+                        </h4>
+                        <p class="text-lg" style="color: var(--text-muted);">"El traductor que habla con cada sistema operativo." Lee bytecode y lo convierte en instrucciones nativas.</p>
+                    </div>
+                </div>
+
+                <div class="glass-panel mt-6 py-4 px-6 text-center border-2 border-dashed" style="border-color: var(--text-muted);">
+                    <p class="text-base font-mono">
+                        <span class="tint-gold px-2 py-0.5 rounded font-bold">javac</span> 
+                        = Java Compiler. Convierte <code>.java</code> en <code>.class</code>.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 3: Garbage Collector ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-6xl mx-auto relative z-10">
+                <i class="fa-solid fa-recycle bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-8">
+                    <h2 class="text-5xl font-bold mb-2">Olvídate del <span style="color: var(--una-red);">delete</span> (C++ → Java)</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Java tiene un robot jardinero que limpia la memoria por ti.</p>
+                </div>
+
+                <div class="flex items-center justify-center mb-8">
+                    <div class="relative">
+                        <i class="fa-solid fa-robot text-[120px]" style="color: var(--accent-green);"></i>
+                        <i class="fa-solid fa-trash-can text-[50px] absolute -top-2 -right-2" style="color: var(--una-red);"></i>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <!-- Stack -->
+                    <div class="glass-panel border-t-4 text-center" style="border-color: var(--accent-blue);">
+                        <div class="w-16 h-16 mx-auto rounded-full tint-blue flex items-center justify-center text-2xl mb-4">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">Memoria Stack</h3>
+                        <p class="text-sm" style="color: var(--text-muted);">Rápida, ordenada (LIFO). Para variables locales y tipos elementales. Se limpia sola al salir del método.</p>
+                    </div>
+
+                    <!-- Heap -->
+                    <div class="glass-panel border-t-4 text-center" style="border-color: var(--accent-peach);">
+                        <div class="w-16 h-16 mx-auto rounded-full tint-peach flex items-center justify-center text-2xl mb-4">
+                            <i class="fa-solid fa-mound"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">Memoria Heap</h3>
+                        <p class="text-sm" style="color: var(--text-muted);">Donde viven los objetos. Es dinámica, compartida y más lenta. El GC la monitorea constantemente.</p>
+                    </div>
+
+                    <!-- GC -->
+                    <div class="glass-panel border-t-4 text-center" style="border-color: var(--accent-green);">
+                        <div class="w-16 h-16 mx-auto rounded-full tint-green flex items-center justify-center text-2xl mb-4">
+                            <i class="fa-solid fa-broom"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">Garbage Collector</h3>
+                        <p class="text-sm" style="color: var(--text-muted);">Monitorea el Heap y elimina objetos sin referencias. Automático, pero no mágico.</p>
+                    </div>
+                </div>
+
+                <!-- Definiciones clave -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--accent-blue);">
+                        <h4 class="font-bold mb-1 flex items-center gap-2">
+                            <span class="font-mono tint-blue px-2 py-0.5 rounded text-sm">new</span>
+                        </h4>
+                        <p class="text-sm" style="color: var(--text-muted);">Operador que reserva memoria en el <strong>Heap</strong> para crear un objeto.</p>
+                    </div>
+                    <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--accent-peach);">
+                        <h4 class="font-bold mb-1 flex items-center gap-2">
+                            <span class="font-mono tint-peach px-2 py-0.5 rounded text-sm">Heap</span>
+                        </h4>
+                        <p class="text-sm" style="color: var(--text-muted);">Zona de la RAM donde viven <strong>todos los objetos</strong>. Es dinámica y compartida.</p>
+                    </div>
+                    <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--una-red);">
+                        <h4 class="font-bold mb-1 flex items-center gap-2">
+                            <span class="font-mono tint-red px-2 py-0.5 rounded text-sm">Memory Leak</span>
+                        </h4>
+                        <p class="text-sm" style="color: var(--text-muted);">Cuando un programa ocupa memoria que nunca libera, volviéndose lento hasta colapsar.</p>
+                    </div>
+                </div>
+
+                <div class="glass-panel py-5 px-6 flex items-center gap-5" style="border-left: 4px solid var(--una-gold);">
+                    <div class="tint-gold w-12 h-12 flex items-center justify-center rounded-full shrink-0">
+                        <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+                    </div>
+                    <p class="text-lg"><strong>Advertencia:</strong> No es perfecto: si guardas referencias innecesarias, el GC no actúa y puedes provocar un <em>Memory Leak</em>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 4: int vs Integer ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-6xl mx-auto relative z-10">
+                <i class="fa-solid fa-code-compare bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-8">
+                    <h2 class="text-5xl font-bold mb-2">La misma esencia, diferente naturaleza</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">int vs Integer: Tipos elementales y Wrapper Classes.</p>
+                </div>
+
+                <!-- Tabla comparativa -->
+                <div class="glass-panel overflow-hidden mb-8">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="p-4 text-xl font-bold border-b-2" style="border-color: var(--accent-blue); color: var(--accent-blue);">
+                                    <i class="fa-solid fa-cube mr-2"></i>int (Tipo Elemental)
+                                </th>
+                                <th class="p-4 text-xl font-bold border-b-2" style="border-color: var(--accent-purple); color: var(--accent-purple);">
+                                    <i class="fa-solid fa-box mr-2"></i>Integer (Wrapper Class)
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-lg">
+                            <tr>
+                                <td class="p-4 border-b border-gray-100">Vive en el <span class="tint-blue px-2 py-0.5 rounded font-bold">Stack</span> (Rápido)</td>
+                                <td class="p-4 border-b border-gray-100">Vive en el <span class="tint-peach px-2 py-0.5 rounded font-bold">Heap</span> (Objeto)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 border-b border-gray-100">No puede ser <span class="font-mono tint-red px-2 py-0.5 rounded">null</span></td>
+                                <td class="p-4 border-b border-gray-100">Puede ser <span class="font-mono tint-red px-2 py-0.5 rounded">null</span></td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 border-b border-gray-100">Perfecto para <strong>matemáticas</strong> y contadores</td>
+                                <td class="p-4 border-b border-gray-100">Necesario para <strong>Colecciones</strong> (ArrayList)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 border-b border-gray-100">
+                                    <code class="font-mono text-base tint-blue px-2 py-0.5 rounded">int edad = 25;</code>
+                                </td>
+                                <td class="p-4 border-b border-gray-100">
+                                    <code class="font-mono text-base tint-purple px-2 py-0.5 rounded">Integer edadObj = 25;</code>
+                                    <span class="text-sm ml-2" style="color: var(--text-muted);">(Autoboxing)</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Definiciones clave -->
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--accent-blue);">
+                        <h4 class="font-bold mb-1">Stack</h4>
+                        <p class="text-sm" style="color: var(--text-muted);">Memoria rápida y ordenada (LIFO) para variables locales y llamadas a métodos.</p>
+                    </div>
+                    <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--accent-purple);">
+                        <h4 class="font-bold mb-1">Wrapper Class</h4>
+                        <p class="text-sm" style="color: var(--text-muted);">"Envoltura" que convierte un tipo elemental en un objeto.</p>
+                    </div>
+                    <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--accent-peach);">
+                        <h4 class="font-bold mb-1">Objeto</h4>
+                        <p class="text-sm" style="color: var(--text-muted);">Instancia de una clase, vive en el Heap.</p>
+                    </div>
+                    <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--accent-green);">
+                        <h4 class="font-bold mb-1">Colecciones</h4>
+                        <p class="text-sm" style="color: var(--text-muted);">Estructuras dinámicas como ArrayList, HashMap (solo guardan objetos).</p>
+                    </div>
+                    <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--una-gold);">
+                        <h4 class="font-bold mb-1">Autoboxing</h4>
+                        <p class="text-sm" style="color: var(--text-muted);">Conversión automática de elemental → Wrapper.</p>
+                    </div>
+                    <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--una-red);">
+                        <h4 class="font-bold mb-1">Unboxing</h4>
+                        <p class="text-sm" style="color: var(--text-muted);">Conversión automática de Wrapper → elemental.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 5: static ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-6xl mx-auto relative z-10">
+                <i class="fa-solid fa-sitemap bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Pertenece a la Clase, NO al Objeto</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">La palabra clave <span class="font-mono tint-purple px-3 py-1 rounded text-lg">static</span></p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                    <!-- Código -->
+                    <div class="lg:col-span-3 glass-panel overflow-hidden" style="background: var(--bg-terminal); border: 1px solid rgba(255,255,255,0.1);">
+                        <div class="flex items-center gap-2 px-4 py-2 border-b border-gray-700">
+                            <span class="w-3 h-3 rounded-full" style="background: #ff5f57;"></span>
+                            <span class="w-3 h-3 rounded-full" style="background: #febc2e;"></span>
+                            <span class="w-3 h-3 rounded-full" style="background: #28c840;"></span>
+                            <span class="ml-3 text-xs font-mono" style="color: #6c7086;">Carro.java</span>
+                        </div>
+                        <pre class="p-5 text-sm md:text-base leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #cba6f7;">public class</span> <span style="color: #89b4fa;">Carro</span> {
+    <span style="color: #6c7086;">// ATRIBUTO DE INSTANCIA (Cada carro tiene el suyo)</span>
+    <span style="color: #cba6f7;">private</span> <span style="color: #f9e2af;">String</span> <span style="color: #a6e3a1;">color</span>;
+
+    <span style="color: #6c7086;">// ATRIBUTO ESTÁTICO (Pertenece a la CLASE)</span>
+    <span style="color: #cba6f7;">private static</span> <span style="color: #f9e2af;">int</span> <span style="color: #a6e3a1;">totalCarros</span> = <span style="color: #fab387;">0</span>;
+
+    <span style="color: #cba6f7;">public</span> <span style="color: #89dceb;">Carro</span>(<span style="color: #f9e2af;">String</span> color) {
+        <span style="color: #cba6f7;">this</span>.<span style="color: #a6e3a1;">color</span> = color;
+        <span style="color: #a6e3a1;">totalCarros</span>++;  <span style="color: #6c7086;">// Aumenta el contador GLOBAL</span>
+    }
+
+    <span style="color: #cba6f7;">public static int</span> <span style="color: #89dceb;">getTotalCarros</span>() {
+        <span style="color: #cba6f7;">return</span> <span style="color: #a6e3a1;">totalCarros</span>;  <span style="color: #6c7086;">// Método de clase</span>
+    }
+}</code></pre>
+                    </div>
+
+                    <!-- Usos comunes -->
+                    <div class="lg:col-span-2 flex flex-col gap-4">
+                        <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-blue);">
+                            <h4 class="font-bold text-lg mb-2 flex items-center gap-2">
+                                <span class="tint-blue w-10 h-10 rounded-lg flex items-center justify-center text-sm font-mono">1</span>
+                                Constantes
+                            </h4>
+                            <code class="font-mono text-base tint-blue px-3 py-1 rounded block">Math.PI</code>
+                        </div>
+                        <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-green);">
+                            <h4 class="font-bold text-lg mb-2 flex items-center gap-2">
+                                <span class="tint-green w-10 h-10 rounded-lg flex items-center justify-center text-sm font-mono">2</span>
+                                Métodos de utilería
+                            </h4>
+                            <code class="font-mono text-base tint-green px-3 py-1 rounded block">Integer.parseInt()</code>
+                        </div>
+                        <div class="glass-panel p-5 border-t-4" style="border-color: var(--una-red);">
+                            <h4 class="font-bold text-lg mb-2 flex items-center gap-2">
+                                <span class="tint-red w-10 h-10 rounded-lg flex items-center justify-center text-sm font-mono">3</span>
+                                Punto de entrada
+                            </h4>
+                            <code class="font-mono text-sm tint-red px-3 py-1 rounded block">public static void main(String[] args)</code>
+                        </div>
+                        <div class="glass-panel p-5 border-t-4 text-center" style="border-color: var(--una-gold);">
+                            <h4 class="font-bold text-lg mb-1" style="color: var(--una-gold);">
+                                <i class="fa-solid fa-star mr-2"></i>Regla de oro
+                            </h4>
+                            <p class="text-base">"Si no estás seguro, <strong>NO uses static</strong>. Hazlo de instancia."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 6: COMPARATIVA TRIPLE ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-6xl mx-auto relative z-10">
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">El mismo problema, 3 acentos diferentes</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Factorial Recursivo: C++ vs C# vs Java</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
+                    <!-- C++ -->
+                    <div class="glass-panel overflow-hidden" style="border-top: 4px solid var(--accent-blue);">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="tint-blue w-10 h-10 rounded-lg flex items-center justify-center font-bold text-lg">C++</span>
+                            <span class="text-sm font-bold" style="color: var(--accent-blue);">Lenguaje Nativo</span>
+                        </div>
+                        <div style="background: var(--bg-terminal); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
+                            <div class="flex items-center gap-2 px-3 py-2 border-b border-gray-700">
+                                <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                                <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                                <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                                <span class="ml-2 text-xs font-mono" style="color: #6c7086;">factorial.cpp</span>
+                            </div>
+                            <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #cba6f7;">#include</span> <span style="color: #a6e3a1;">&lt;iostream&gt;</span>
+<span style="color: #cba6f7;">using namespace</span> <span style="color: #89dceb;">std</span>;
+
+<span style="color: #f9e2af;">int</span> <span style="color: #89dceb;">factorial</span>(<span style="color: #f9e2af;">int</span> n) {
+    <span style="color: #cba6f7;">if</span> (n &lt;= <span style="color: #fab387;">1</span>) <span style="color: #cba6f7;">return</span> <span style="color: #fab387;">1</span>;
+    <span style="color: #cba6f7;">return</span> n * factorial(n - <span style="color: #fab387;">1</span>);
+}
+
+<span style="color: #f9e2af;">int</span> <span style="color: #89dceb;">main</span>() {
+    <span style="color: #f9e2af;">int</span> num = <span style="color: #fab387;">5</span>;
+    cout &lt;&lt; <span style="color: #a6e3a1;">"Factorial: "</span> &lt;&lt; factorial(num) &lt;&lt; endl;
+    <span style="color: #cba6f7;">return</span> <span style="color: #fab387;">0</span>;
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- C# -->
+                    <div class="glass-panel overflow-hidden" style="border-top: 4px solid var(--accent-purple);">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="tint-purple w-10 h-10 rounded-lg flex items-center justify-center font-bold text-lg">C#</span>
+                            <span class="text-sm font-bold" style="color: var(--accent-purple);">.NET Framework</span>
+                        </div>
+                        <div style="background: var(--bg-terminal); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
+                            <div class="flex items-center gap-2 px-3 py-2 border-b border-gray-700">
+                                <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                                <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                                <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                                <span class="ml-2 text-xs font-mono" style="color: #6c7086;">Program.cs</span>
+                            </div>
+                            <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #cba6f7;">using</span> <span style="color: #89dceb;">System</span>;
+
+<span style="color: #cba6f7;">namespace</span> <span style="color: #89dceb;">RecursividadEjemplo</span> {
+    <span style="color: #cba6f7;">class</span> <span style="color: #89b4fa;">Program</span> {
+        <span style="color: #cba6f7;">static</span> <span style="color: #f9e2af;">int</span> <span style="color: #89dceb;">Factorial</span>(<span style="color: #f9e2af;">int</span> n) {
+            <span style="color: #cba6f7;">if</span> (n &lt;= <span style="color: #fab387;">1</span>) <span style="color: #cba6f7;">return</span> <span style="color: #fab387;">1</span>;
+            <span style="color: #cba6f7;">return</span> n * Factorial(n - <span style="color: #fab387;">1</span>);
+        }
+        <span style="color: #cba6f7;">static void</span> <span style="color: #89dceb;">Main</span>(<span style="color: #f9e2af;">string</span>[] args) {
+            <span style="color: #f9e2af;">int</span> num = <span style="color: #fab387;">5</span>;
+            Console.WriteLine(<span style="color: #a6e3a1;">"Factorial: "</span> + Factorial(num));
+        }
+    }
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Java -->
+                    <div class="glass-panel overflow-hidden" style="border-top: 4px solid var(--accent-peach);">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="tint-peach w-10 h-10 rounded-lg flex items-center justify-center font-bold text-lg">
+                                <i class="fa-brands fa-java"></i>
+                            </span>
+                            <span class="text-sm font-bold" style="color: var(--accent-peach);">JVM Platform</span>
+                        </div>
+                        <div style="background: var(--bg-terminal); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
+                            <div class="flex items-center gap-2 px-3 py-2 border-b border-gray-700">
+                                <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                                <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                                <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                                <span class="ml-2 text-xs font-mono" style="color: #6c7086;">FactorialEjemplo.java</span>
+                            </div>
+                            <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #cba6f7;">public class</span> <span style="color: #89b4fa;">FactorialEjemplo</span> {
+    <span style="color: #cba6f7;">public static</span> <span style="color: #f9e2af;">int</span> <span style="color: #89dceb;">factorial</span>(<span style="color: #f9e2af;">int</span> n) {
+        <span style="color: #cba6f7;">if</span> (n &lt;= <span style="color: #fab387;">1</span>) <span style="color: #cba6f7;">return</span> <span style="color: #fab387;">1</span>;
+        <span style="color: #cba6f7;">return</span> n * factorial(n - <span style="color: #fab387;">1</span>);
+    }
+    <span style="color: #cba6f7;">public static void</span> <span style="color: #89dceb;">main</span>(<span style="color: #f9e2af;">String</span>[] args) {
+        <span style="color: #f9e2af;">int</span> num = <span style="color: #fab387;">5</span>;
+        System.out.println(<span style="color: #a6e3a1;">"Factorial: "</span> + factorial(num));
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notas al pie -->
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                    <div class="glass-panel p-3 text-center border-t-4" style="border-color: var(--accent-blue);">
+                        <span class="font-mono font-bold text-sm" style="color: var(--accent-blue);">std</span>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">Espacio de nombres estándar de C++</p>
+                    </div>
+                    <div class="glass-panel p-3 text-center border-t-4" style="border-color: var(--accent-purple);">
+                        <span class="font-mono font-bold text-sm" style="color: var(--accent-purple);">using System;</span>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">Importa el espacio de nombres base de C#</p>
+                    </div>
+                    <div class="glass-panel p-3 text-center border-t-4" style="border-color: var(--accent-green);">
+                        <span class="font-mono font-bold text-sm" style="color: var(--accent-green);">PascalCase</span>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">Primera letra de cada palabra en mayúscula</p>
+                    </div>
+                    <div class="glass-panel p-3 text-center border-t-4" style="border-color: var(--accent-peach);">
+                        <span class="font-mono font-bold text-sm" style="color: var(--accent-peach);">camelCase</span>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">Primera en minúscula, siguientes en mayúscula</p>
+                    </div>
+                    <div class="glass-panel p-3 text-center border-t-4" style="border-color: var(--una-gold);">
+                        <span class="font-mono font-bold text-sm" style="color: var(--una-gold);">String[] args</span>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">Arreglo de argumentos desde terminal</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 7: Tabla Resumen ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-6xl mx-auto relative z-10">
+                <i class="fa-solid fa-table bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-8">
+                    <h2 class="text-5xl font-bold mb-2">Diferencias Clave en un Vistazo</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">C++ vs C# vs Java — Comparativa lado a lado.</p>
+                </div>
+
+                <div class="glass-panel overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr style="background: rgba(0,0,0,0.02);">
+                                <th class="p-4 text-lg font-bold border-b-2" style="border-color: var(--border-panel);">Característica</th>
+                                <th class="p-4 text-lg font-bold border-b-2 text-center" style="border-color: var(--border-panel); color: var(--accent-blue);">
+                                    <i class="fa-solid fa-code mr-1"></i>C++
+                                </th>
+                                <th class="p-4 text-lg font-bold border-b-2 text-center" style="border-color: var(--border-panel); color: var(--accent-purple);">
+                                    <i class="fa-solid fa-hashtag mr-1"></i>C#
+                                </th>
+                                <th class="p-4 text-lg font-bold border-b-2 text-center" style="border-color: var(--border-panel); color: var(--accent-peach);">
+                                    <i class="fa-brands fa-java mr-1"></i>Java
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-base">
+                            <tr>
+                                <td class="p-4 font-bold border-b border-gray-100">Preprocesador</td>
+                                <td class="p-4 text-center border-b border-gray-100">
+                                    <code class="font-mono tint-blue px-3 py-1 rounded">#include</code>
+                                </td>
+                                <td class="p-4 text-center border-b border-gray-100">
+                                    <span style="color: var(--una-red);">No</span> (usa <code class="font-mono tint-purple px-2 py-0.5 rounded">using</code>)
+                                </td>
+                                <td class="p-4 text-center border-b border-gray-100">
+                                    <span style="color: var(--una-red);">No</span> (usa <code class="font-mono tint-peach px-2 py-0.5 rounded">import</code>)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-bold border-b border-gray-100">Funciones sueltas</td>
+                                <td class="p-4 text-center border-b border-gray-100">
+                                    <span style="color: var(--accent-green);">✅ Sí</span> (globales)
+                                </td>
+                                <td class="p-4 text-center border-b border-gray-100">
+                                    <span style="color: var(--una-red);">❌ No</span> (todo en clases)
+                                </td>
+                                <td class="p-4 text-center border-b border-gray-100">
+                                    <span style="color: var(--una-red);">❌ No</span> (todo en clases)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-bold border-b border-gray-100">Organización</td>
+                                <td class="p-4 text-center border-b border-gray-100">Archivos sueltos</td>
+                                <td class="p-4 text-center border-b border-gray-100">
+                                    <code class="font-mono tint-purple px-3 py-1 rounded">namespace</code>
+                                </td>
+                                <td class="p-4 text-center border-b border-gray-100">
+                                    <code class="font-mono tint-peach px-3 py-1 rounded">package</code>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-bold border-b border-gray-100">Punto de entrada</td>
+                                <td class="p-4 text-center border-b border-gray-100">
+                                    <code class="font-mono tint-blue px-3 py-1 rounded text-sm">int main()</code>
+                                </td>
+                                <td class="p-4 text-center border-b border-gray-100">
+                                    <code class="font-mono tint-purple px-3 py-1 rounded text-sm">static void Main()</code>
+                                </td>
+                                <td class="p-4 text-center border-b border-gray-100">
+                                    <code class="font-mono tint-peach px-3 py-1 rounded text-xs">static void main(String[] args)</code>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-bold border-b border-gray-100">Impresión en consola</td>
+                                <td class="p-4 text-center border-b border-gray-100">
+                                    <code class="font-mono tint-blue px-3 py-1 rounded">cout &lt;&lt; ...</code>
+                                </td>
+                                <td class="p-4 text-center border-b border-gray-100">
+                                    <code class="font-mono tint-purple px-3 py-1 rounded text-sm">Console.WriteLine()</code>
+                                </td>
+                                <td class="p-4 text-center border-b border-gray-100">
+                                    <code class="font-mono tint-peach px-3 py-1 rounded text-sm">System.out.println()</code>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-bold">Gestión de memoria</td>
+                                <td class="p-4 text-center">
+                                    <span style="color: var(--una-red);">Manual</span> (new/delete)
+                                </td>
+                                <td class="p-4 text-center">
+                                    <span style="color: var(--accent-green);">Automática</span> (GC)
+                                </td>
+                                <td class="p-4 text-center">
+                                    <span style="color: var(--accent-green);">Automática</span> (GC)
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 8: Cierre ==================== -->
+        <div class="slide">
+            <div class="text-center w-full max-w-4xl relative z-10">
+                <i class="fa-solid fa-gears bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <i class="fa-solid fa-code bg-icon text-[350px] -right-10 opacity-5" style="color: var(--una-red);"></i>
+                
+                <div class="glass-panel inline-block px-8 py-4 rounded-full mb-10 border-2" style="border-color: var(--una-gold);">
+                    <h2 class="text-5xl font-bold">Manos a la obra</h2>
+                </div>
+
+                <div class="glass-panel text-left p-10 mb-8 border-l-8" style="border-color: var(--accent-blue);">
+                    <div class="space-y-6">
+                        <div class="flex items-start gap-5">
+                            <div class="w-10 h-10 shrink-0 mt-1 rounded-full tint-blue flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <p class="text-xl">Hoy sentamos las bases de la <strong>JVM</strong>, la <strong>memoria</strong> y las <strong>diferencias clave</strong> entre lenguajes.</p>
+                        </div>
+                        <div class="flex items-start gap-5">
+                            <div class="w-10 h-10 shrink-0 mt-1 rounded-full tint-green flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-flask"></i>
+                            </div>
+                            <p class="text-xl"><strong style="color: var(--accent-green);">Laboratorio #1:</strong> Vamos a tomar el código de C++ (o C#) y migrarlo a Java.</p>
+                        </div>
+                        <div class="flex items-start gap-5">
+                            <div class="w-10 h-10 shrink-0 mt-1 rounded-full tint-purple flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-list-check"></i>
+                            </div>
+                            <p class="text-xl">¡Usaremos <strong style="color: var(--accent-purple);">ArrayList</strong> y aplicaremos todo lo que vimos!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-center gap-6">
+                    <i class="fa-solid fa-gear text-6xl animate-spin" style="color: var(--una-gold); animation-duration: 8s;"></i>
+                    <i class="fa-solid fa-laptop-code text-6xl" style="color: var(--accent-blue);"></i>
+                    <i class="fa-solid fa-keyboard text-6xl" style="color: var(--accent-purple);"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Botones de navegación -->
+    <button class="float-btn" id="prevBtn" onclick="changeSlide(-1)"><i class="fa-solid fa-arrow-left"></i></button>
+    <button class="float-btn" id="nextBtn" onclick="changeSlide(1)"><i class="fa-solid fa-arrow-right"></i></button>
+    
+    <!-- Barra de progreso -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar" style="width: 11%;"></div>
+    </div>
+
+    <!-- Script compartido -->
+    <script src="../../assets/js/presentacion.js"></script>
+</body>
+</html>
