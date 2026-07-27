@@ -28,7 +28,6 @@ var CursoInfo = {
         }
     },
 
-    // Retorna el texto formateado para el hub principal
     getLineaHub: function () {
         var g41 = this.grupos["41"];
         var g40 = this.grupos["40"];
@@ -37,3 +36,22 @@ var CursoInfo = {
                '<strong>Grupo 40</strong> &mdash; ' + g40.docente + ' &middot; ' + g40.dia + ' ' + g40.horario + ' &middot; NRC: ' + g40.nrc;
     }
 };
+
+// Rellenar elementos con data-curso
+(function () {
+    'use strict';
+    var data = {
+        '41-docente':   CursoInfo.grupos["41"].docente,
+        '41-horario':   CursoInfo.grupos["41"].dia + ' ' + CursoInfo.grupos["41"].horario,
+        '41-atencion':  CursoInfo.grupos["41"].atencionDia + ' ' + CursoInfo.grupos["41"].atencionHorario,
+        '40-docente':   CursoInfo.grupos["40"].docente,
+        '40-horario':   CursoInfo.grupos["40"].dia + ' ' + CursoInfo.grupos["40"].horario,
+        '40-atencion':  CursoInfo.grupos["40"].atencionDia + ' ' + CursoInfo.grupos["40"].atencionHorario,
+    };
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('[data-curso]').forEach(function (el) {
+            var key = el.getAttribute('data-curso');
+            if (data[key]) el.textContent = data[key];
+        });
+    });
+})();
