@@ -67,7 +67,7 @@
         .clase-card {
             background: white;
             border-radius: 1rem;
-            padding: 1rem 1.25rem;
+            padding: 1.25rem;
             box-shadow: 0 4px 20px rgba(0,0,0,0.04);
             border: 1px solid rgba(0,0,0,0.06);
             border-left: 4px solid var(--una-red);
@@ -118,37 +118,35 @@
     
     <div class="w-full max-w-5xl">
         
-        <!-- Hero -->
-        <div class="hero-card p-8 md:p-10 mb-10 text-center">
-            <div class="mb-4">
+        <!-- Hero (compacto) -->
+        <div class="hero-card p-5 md:p-6 mb-8 text-center">
+            <div class="flex items-center justify-center gap-4">
                 <img src="assets/img/Logo-UNA-Rojo_FondoTransparente.png" 
-                     alt="Logo UNA" class="h-24 object-contain mx-auto"
+                     alt="Logo UNA" class="h-14 object-contain"
                      onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png';">
+                <div class="text-left">
+                    <p class="text-xs uppercase tracking-[0.2em] text-gray-400 font-bold">Sección Regional Central Occidente</p>
+                    <h1 class="text-2xl md:text-3xl font-extrabold">
+                        Programación <span style="color: var(--una-red);">III</span>
+                        <span class="text-sm font-normal text-gray-400 ml-2">EIF206</span>
+                    </h1>
+                </div>
             </div>
-            <p class="text-sm uppercase tracking-[0.25em] text-gray-400 font-bold mb-3">Sección Regional Central Occidente</p>
-            <h1 class="text-4xl md:text-5xl font-extrabold mb-2">
-                Programación <span style="color: var(--una-red);">III</span>
-            </h1>
-            <p class="text-gray-500 text-lg mb-1">CÓDIGO: EIF206</p>
-            <div class="flex flex-wrap justify-center gap-4 text-sm text-gray-400 mt-2" data-curso="lineaHub"></div>
         </div>
 
         <!-- Lista de Clases — Dos columnas -->
-        <h2 class="text-2xl font-bold mb-1 flex items-center gap-2">
-            <i class="fa-solid fa-laptop-code" style="color: var(--una-red);"></i> Presentaciones
-        </h2>
-        <p class="text-gray-400 mb-6 text-sm">Hacé clic en tu grupo para ver las presentaciones interactivas.</p>
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             <!-- ===== COLUMNA: Prof. Siandi — Grupo 41 ===== -->
             <div>
-                <div class="flex items-center gap-2 mb-3">
-                    <div class="w-8 h-8 rounded-full tint-red flex items-center justify-center text-sm">
+                <div class="flex items-center gap-2 mb-3 pb-2 border-b" style="border-color: rgba(230,106,106,0.2);">
+                    <div class="w-9 h-9 rounded-full tint-red flex items-center justify-center text-sm">
                         <i class="fa-solid fa-chalkboard-user"></i>
                     </div>
-                    <h3 class="text-base font-bold" style="color: var(--una-red);">Prof. Siandi Araya Bello</h3>
-                    <span class="text-xs text-gray-400 ml-auto">Grupo 41 · NRC 52906</span>
+                    <div>
+                        <h3 class="text-base font-bold leading-tight" style="color: var(--una-red);">Prof. Siandi Araya Bello</h3>
+                        <p class="text-xs text-gray-400">Grupo 41 · Martes 13:00 · NRC 52906</p>
+                    </div>
                 </div>
 
                 <div class="flex flex-col gap-2">
@@ -175,12 +173,14 @@
 
             <!-- ===== COLUMNA: Prof. Kristel — Grupo 40 ===== -->
             <div>
-                <div class="flex items-center gap-2 mb-3">
-                    <div class="w-8 h-8 rounded-full tint-blue flex items-center justify-center text-sm">
+                <div class="flex items-center gap-2 mb-3 pb-2 border-b" style="border-color: rgba(93,173,226,0.2);">
+                    <div class="w-9 h-9 rounded-full tint-blue flex items-center justify-center text-sm">
                         <i class="fa-solid fa-chalkboard-user"></i>
                     </div>
-                    <h3 class="text-base font-bold" style="color: var(--accent-blue);">Prof. Kristel Duarte Pérez</h3>
-                    <span class="text-xs text-gray-400 ml-auto">Grupo 40 · NRC 52907</span>
+                    <div>
+                        <h3 class="text-base font-bold leading-tight" style="color: var(--accent-blue);">Prof. Kristel Duarte Pérez</h3>
+                        <p class="text-xs text-gray-400">Grupo 40 · Miércoles 08:00 · NRC 52907</p>
+                    </div>
                 </div>
 
                 <div class="flex flex-col gap-2">
