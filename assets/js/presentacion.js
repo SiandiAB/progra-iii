@@ -217,4 +217,15 @@
     /* Exponer cambio de slide globalmente (útil si se necesita desde el HTML) */
     window.changeSlide = changeSlide;
 
+    /* Ir a un slide específico por índice */
+    window.goToSlide = function (index) {
+        if (index < 0 || index >= totalSlides) return;
+        if (document.querySelector('.modal-backdrop.active')) return;
+        slides[currentSlide].classList.remove('active');
+        currentSlide = index;
+        slides[currentSlide].classList.add('active');
+        updateProgress();
+        checkButtons();
+    };
+
 })();
