@@ -149,7 +149,7 @@
                     <div class="flex items-center mb-3 relative">
                         <div class="w-1/2"></div>
                         <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-gold font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">1</div>
-                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(2)">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(6)">
                             <div class="glass-panel py-2.5 px-5 border-r-4" style="border-right-color: var(--una-gold);">
                                 <h3 class="font-bold text-base md:text-lg text-right">JVM y Bytecode</h3>
                             </div>
@@ -158,7 +158,7 @@
 
                     <!-- 2. Garbage Collector (izquierda) -->
                     <div class="flex items-center mb-3 relative">
-                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(3)">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(7)">
                             <div class="glass-panel py-2.5 px-5 border-l-4" style="border-left-color: var(--accent-green);">
                                 <h3 class="font-bold text-base md:text-lg text-left">Garbage Collector</h3>
                             </div>
@@ -171,7 +171,7 @@
                     <div class="flex items-center mb-3 relative">
                         <div class="w-1/2"></div>
                         <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-blue font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">3</div>
-                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(4)">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(8)">
                             <div class="glass-panel py-2.5 px-5 border-r-4" style="border-right-color: var(--accent-blue);">
                                 <h3 class="font-bold text-base md:text-lg text-right">Tipos Elementales</h3>
                             </div>
@@ -180,7 +180,7 @@
 
                     <!-- 4. Wrapper Classes (izquierda) -->
                     <div class="flex items-center mb-3 relative">
-                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(5)">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(9)">
                             <div class="glass-panel py-2.5 px-5 border-l-4" style="border-left-color: var(--accent-purple);">
                                 <h3 class="font-bold text-base md:text-lg text-left">Wrapper Classes</h3>
                             </div>
@@ -193,7 +193,7 @@
                     <div class="flex items-center mb-3 relative">
                         <div class="w-1/2"></div>
                         <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-red font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">5</div>
-                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(6)">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(10)">
                             <div class="glass-panel py-2.5 px-5 border-r-4" style="border-right-color: var(--una-red);">
                                 <h3 class="font-bold text-base md:text-lg text-right">Static</h3>
                             </div>
@@ -202,7 +202,7 @@
 
                     <!-- 6. C++ vs C# vs Java (izquierda) -->
                     <div class="flex items-center mb-3 relative">
-                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(9)">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(13)">
                             <div class="glass-panel py-2.5 px-5 border-l-4" style="border-left-color: var(--accent-peach);">
                                 <h3 class="font-bold text-base md:text-lg text-left">C++ vs C# vs Java</h3>
                             </div>
@@ -224,7 +224,7 @@
 
                     <!-- 8. Laboratorio #1 (izquierda) -->
                     <div class="flex items-center relative">
-                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(12)">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(16)">
                             <div class="glass-panel py-2.5 px-5 border-l-4" style="border-left-color: var(--accent-green);">
                                 <h3 class="font-bold text-base md:text-lg text-left">Laboratorio #1</h3>
                             </div>
@@ -235,6 +235,339 @@
                 </div>
             </div>
         </div>
+
+
+
+
+                <!-- ==================== SLIDE 2: Control de Versiones ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-clock-rotate-left bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-8">
+                    <h2 class="text-5xl font-bold mb-2">¿Qué es el Control de Versiones?</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">El historial de cambios de tu código, como un "guardado automático" pero con superpoderes.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Definición -->
+                    <div class="glass-panel p-6 border-t-4" style="border-color: var(--accent-blue);">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="tint-blue w-12 h-12 rounded-xl flex items-center justify-center text-2xl"><i class="fa-solid fa-list-check"></i></span>
+                            <h3 class="text-2xl font-bold">Sistema de control de versiones (VCS)</h3>
+                        </div>
+                        <p class="text-lg leading-relaxed" style="color: var(--text-muted);">
+                            Es un <strong>software</strong> que registra <strong>todos los cambios</strong> que se hacen en los archivos de un proyecto a lo largo del tiempo.
+                            Te permite <strong>volver atrás</strong>, <strong>ver quién hizo qué</strong> y <strong>colaborar sin pisar el código</strong> de los demás.
+                        </p>
+                        <div class="mt-4 glass-panel p-3 text-center" style="background: var(--bg-terminal); border: 1px solid rgba(255,255,255,0.1);">
+                            <code style="color: #a6e3a1; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;">
+                                <span style="color: #6c7086;">// Ejemplo: historial de commits</span><br>
+                                <span style="color: #fab387;">feat:</span> agregar botón de pago<br>
+                                <span style="color: #fab387;">fix:</span> corregir error en cálculo<br>
+                                <span style="color: #fab387;">docs:</span> actualizar README
+                            </code>
+                        </div>
+                    </div>
+
+                    <!-- Analogía + Beneficios -->
+                    <div class="glass-panel p-6 border-t-4" style="border-color: var(--accent-green);">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="tint-green w-12 h-12 rounded-xl flex items-center justify-center text-2xl"><i class="fa-solid fa-lightbulb"></i></span>
+                            <h3 class="text-2xl font-bold">Analogía y beneficios</h3>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-3">
+                                <span class="tint-green w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">1</span>
+                                <p><strong>Como un "historial de versiones" en Google Docs</strong>, pero para código. Puedes ver quién escribió cada línea y cuándo.</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="tint-green w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">2</span>
+                                <p><strong>Colaboración sin caos:</strong> varios desarrolladores trabajan en paralelo sin sobrescribir el trabajo de los demás.</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="tint-green w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">3</span>
+                                <p><strong>Reversión:</strong> si introduces un error, puedes volver a una versión anterior en segundos.</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="tint-green w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">4</span>
+                                <p><strong>Ramas (branches):</strong> puedes experimentar sin afectar el código principal, y luego fusionar (merge) los cambios.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Antes vs Después -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--una-red);">
+                        <h4 class="font-bold text-lg mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-exclamation" style="color: var(--una-red);"></i> Antes de VCS
+                        </h4>
+                        <ul class="space-y-2 text-sm" style="color: var(--text-muted);">
+                            <li><strong>Carpetas con fechas:</strong> <code class="font-mono tint-red px-1 rounded text-xs">proyecto_final_v2_ultimo_final.zip</code></li>
+                            <li><strong>Pérdida de cambios:</strong> difícil saber quién hizo qué y cuándo.</li>
+                            <li><strong>Sin colaboración eficiente:</strong> un solo archivo, turnos para editar.</li>
+                        </ul>
+                    </div>
+                    <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--accent-green);">
+                        <h4 class="font-bold text-lg mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-check" style="color: var(--accent-green);"></i> Con VCS (Git)
+                        </h4>
+                        <ul class="space-y-2 text-sm" style="color: var(--text-muted);">
+                            <li><strong>Historial completo:</strong> cada cambio queda registrado con autor, fecha y mensaje.</li>
+                            <li><strong>Trabajo en equipo:</strong> múltiples personas pueden editar al mismo tiempo.</li>
+                            <li><strong>Ramas y fusiones:</strong> desarrollo paralelo sin conflictos.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 3: Historia de Git ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-timeline bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Historia de Git</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Del caos al orden: el nacimiento del sistema más usado del mundo.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Línea de tiempo -->
+                    <div class="glass-panel p-6 border-t-4" style="border-color: var(--accent-purple);">
+                        <h3 class="text-2xl font-bold mb-4 flex items-center gap-2">
+                            <span class="tint-purple w-10 h-10 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-road"></i></span>
+                            Cronología
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-4">
+                                <div class="tint-purple w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold">2002</div>
+                                <div>
+                                    <p class="font-bold">BitKeeper</p>
+                                    <p class="text-sm" style="color: var(--text-muted);">El kernel de Linux usaba un VCS comercial llamado BitKeeper (gratuito solo para open source).</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="tint-purple w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold">2005</div>
+                                <div>
+                                    <p class="font-bold"><span class="tint-red px-2 py-0.5 rounded text-xs">¡Conflicto!</span> BitKeeper retira la licencia gratuita.</p>
+                                    <p class="text-sm" style="color: var(--text-muted);">Linus Torvalds (creador de Linux) decide escribir su propio sistema en <strong>solo 10 días</strong>.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="tint-purple w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold">2005</div>
+                                <div>
+                                    <p class="font-bold">Nace Git</p>
+                                    <p class="text-sm" style="color: var(--text-muted);">Diseñado para ser <strong>rápido</strong>, <strong>distribuido</strong> y manejar proyectos enormes como el kernel de Linux.</p>
+                                    <p class="text-xs mt-1" style="color: var(--text-muted);"><i class="fa-regular fa-gem mr-1" style="color: var(--accent-purple);"></i> El nombre "git" es un insulto en inglés británico, que Linus usó con humor.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Centralizado vs Distribuido -->
+                    <div class="glass-panel p-6 border-t-4" style="border-color: var(--accent-blue);">
+                        <h3 class="text-2xl font-bold mb-4 flex items-center gap-2">
+                            <span class="tint-blue w-10 h-10 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-diagram-project"></i></span>
+                            Centralizado vs Distribuido
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--una-red);">
+                                <p class="font-bold text-base">Modelo Centralizado (SVN, CVS)</p>
+                                <ul class="text-sm space-y-1 mt-2" style="color: var(--text-muted);">
+                                    <li><strong>Un solo servidor</strong> con el historial completo.</li>
+                                    <li><strong>Necesitas internet</strong> para casi todo (commits, historia, etc.).</li>
+                                    <li><strong>Punto único de fallo:</strong> si el servidor cae, no puedes trabajar.</li>
+                                </ul>
+                            </div>
+                            <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--accent-green);">
+                                <p class="font-bold text-base">Modelo Distribuido (Git, Mercurial)</p>
+                                <ul class="text-sm space-y-1 mt-2" style="color: var(--text-muted);">
+                                    <li><strong>Cada desarrollador tiene una copia completa</strong> del repositorio (historial incluido).</li>
+                                    <li><strong>Trabajo offline:</strong> puedes hacer commits, ver historial, crear ramas sin internet.</li>
+                                    <li><strong>Sincronización flexible:</strong> solo necesitas conexión para <code class="font-mono tint-green px-1 rounded text-xs">push</code> y <code class="font-mono tint-green px-1 rounded text-xs">pull</code>.</li>
+                                </ul>
+                            </div>
+                            <p class="text-sm mt-2" style="color: var(--text-muted);">
+                                <i class="fa-regular fa-circle-check" style="color: var(--accent-green);"></i> Git es <strong>distribuido</strong>, lo que lo hace más rápido, seguro y flexible que sus predecesores.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 4: Plataformas y Herramientas ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-cloud-upload-alt bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-peach);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Plataformas y Herramientas de Git</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Donde alojas tu código y cómo interactúas con él.</p>
+                </div>
+
+                <!-- Plataformas de alojamiento -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="glass-panel p-5 text-center border-t-4" style="border-color: #f0f6fc; background: #161b22;">
+                        <i class="fa-brands fa-github text-6xl mb-3" style="color: #ffffff;"></i>
+                        <h3 class="font-bold text-xl">GitHub</h3>
+                        <p class="text-sm" style="color: var(--text-muted);">La más popular. Ideal para open source, portafolio y trabajo en equipo. Integración con acciones, proyectos y comunidad.</p>
+                        <div class="mt-2 text-xs" style="color: var(--text-muted);"><i class="fa-regular fa-heart"></i> Gratuito para repositorios públicos y privados con límites.</div>
+                    </div>
+                    <div class="glass-panel p-5 text-center border-t-4" style="border-color: #fc6d26; background: #1a1a2e;">
+                        <i class="fa-brands fa-gitlab text-6xl mb-3" style="color: #fc6d26;"></i>
+                        <h3 class="font-bold text-xl">GitLab</h3>
+                        <p class="text-sm" style="color: var(--text-muted);">Todo en uno: repositorios, CI/CD (integración/despliegue continuo), seguimiento de issues y wikis. Muy usado en empresas.</p>
+                        <div class="mt-2 text-xs" style="color: var(--text-muted);"><i class="fa-regular fa-gem"></i> Versión self-hosted (en tus propios servidores).</div>
+                    </div>
+                    <div class="glass-panel p-5 text-center border-t-4" style="border-color: #0052cc; background: #172b4d;">
+                        <i class="fa-brands fa-bitbucket text-6xl mb-3" style="color: #2684ff;"></i>
+                        <h3 class="font-bold text-xl">Bitbucket</h3>
+                        <p class="text-sm" style="color: var(--text-muted);">De Atlassian, integración nativa con Jira y Trello. Muy usado en entornos empresariales con metodologías ágiles.</p>
+                        <div class="mt-2 text-xs" style="color: var(--text-muted);"><i class="fa-regular fa-users"></i> Ideal para equipos que usan el ecosistema Atlassian.</div>
+                    </div>
+                </div>
+
+                <!-- Herramientas de escritorio / GUI -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="glass-panel p-4 text-center border-l-4" style="border-left-color: #6e5494;">
+                        <i class="fa-brands fa-github text-4xl" style="color: #6e5494;"></i>
+                        <h4 class="font-bold text-lg">GitHub Desktop</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">Interfaz gráfica oficial de GitHub. Sencilla, ideal para principiantes.</p>
+                    </div>
+                    <div class="glass-panel p-4 text-center border-l-4" style="border-left-color: #f5a623;">
+                        <i class="fa-solid fa-crab text-4xl" style="color: #f5a623;"></i>
+                        <h4 class="font-bold text-lg">GitKraken</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">Herramienta visual poderosa, con gráficos de ramas y flujo de trabajo muy intuitivo.</p>
+                    </div>
+                    <div class="glass-panel p-4 text-center border-l-4" style="border-left-color: #0078d4;">
+                        <i class="fa-solid fa-code text-4xl" style="color: #0078d4;"></i>
+                        <h4 class="font-bold text-lg">IDEs (IntelliJ, VS Code)</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">Integración nativa de Git en tu editor favorito. Haces commits, pushes y pulls sin salir del código.</p>
+                    </div>
+                </div>
+                <p class="text-sm text-center mt-4" style="color: var(--text-muted);">
+                    <i class="fa-regular fa-lightbulb" style="color: var(--una-gold);"></i> 
+                    En este curso usaremos <strong>GitHub</strong> y puedes usar la terminal, GitHub Desktop o el integrado de IntelliJ.
+                </p>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 5: Conceptos Clave y Flujo ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-diagram-project bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Conceptos Clave y Flujo de Trabajo</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Las piezas fundamentales para usar Git en tu día a día.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Conceptos -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-blue);">
+                        <h3 class="text-2xl font-bold mb-4 flex items-center gap-2">
+                            <span class="tint-blue w-10 h-10 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-cubes"></i></span>
+                            Vocabulario esencial
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3">
+                                <span class="tint-blue w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                                <div>
+                                    <p class="font-bold">Repositorio (repo)</p>
+                                    <p class="text-sm" style="color: var(--text-muted);">El almacén donde Git guarda todos los archivos y el historial de cambios. Puede ser <strong>local</strong> (en tu PC) o <strong>remoto</strong> (en GitHub, GitLab, etc.).</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="tint-blue w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                                <div>
+                                    <p class="font-bold">Commit</p>
+                                    <p class="text-sm" style="color: var(--text-muted);">Una <strong>captura del estado</strong> de los archivos en un momento dado. Cada commit tiene un mensaje descriptivo y un identificador único (hash).</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="tint-blue w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                                <div>
+                                    <p class="font-bold">Rama (branch)</p>
+                                    <p class="text-sm" style="color: var(--text-muted);">Una <strong>línea de desarrollo independiente</strong>. Puedes crear ramas para experimentar o agregar características sin afectar la rama principal (main/master).</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="tint-blue w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold">4</span>
+                                <div>
+                                    <p class="font-bold">Merge (fusión)</p>
+                                    <p class="text-sm" style="color: var(--text-muted);">Unir los cambios de una rama a otra. Por ejemplo, cuando terminas una característica, la fusionas con la rama principal.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flujo de trabajo -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-green);">
+                        <h3 class="text-2xl font-bold mb-4 flex items-center gap-2">
+                            <span class="tint-green w-10 h-10 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-arrows-spin"></i></span>
+                            Flujo básico (GitHub)
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3">
+                                <span class="tint-green w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                                <div>
+                                    <p class="font-bold"><code class="font-mono tint-green px-2 py-0.5 rounded text-sm">git clone</code></p>
+                                    <p class="text-sm" style="color: var(--text-muted);">Clonar (bajar) un repositorio remoto a tu computadora.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="tint-green w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                                <div>
+                                    <p class="font-bold"><code class="font-mono tint-green px-2 py-0.5 rounded text-sm">git add</code></p>
+                                    <p class="text-sm" style="color: var(--text-muted);">Añadir archivos al área de preparación (staging). Les dices a Git qué cambios quieres guardar.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="tint-green w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                                <div>
+                                    <p class="font-bold"><code class="font-mono tint-green px-2 py-0.5 rounded text-sm">git commit -m "mensaje"</code></p>
+                                    <p class="text-sm" style="color: var(--text-muted);">Guardar los cambios en el repositorio local con un mensaje que explique <strong>qué</strong> y <strong>por qué</strong>.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="tint-green w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold">4</span>
+                                <div>
+                                    <p class="font-bold"><code class="font-mono tint-green px-2 py-0.5 rounded text-sm">git push</code></p>
+                                    <p class="text-sm" style="color: var(--text-muted);">Subir tus commits locales al repositorio remoto (GitHub).</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="tint-green w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold">5</span>
+                                <div>
+                                    <p class="font-bold"><code class="font-mono tint-green px-2 py-0.5 rounded text-sm">git pull</code></p>
+                                    <p class="text-sm" style="color: var(--text-muted);">Bajar los cambios del repositorio remoto a tu máquina. Así mantienes tu código actualizado con el de tus compañeros.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recordatorio de buenas prácticas -->
+                <div class="glass-panel py-3 px-6 flex items-center gap-4 mt-4" style="border-left: 4px solid var(--una-gold);">
+                    <div class="tint-gold w-9 h-9 flex items-center justify-center rounded-full shrink-0">
+                        <i class="fa-solid fa-circle-check text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold">Buenas prácticas</p>
+                        <p class="text-sm" style="color: var(--text-muted);">
+                            <strong>Commits atómicos:</strong> cada commit debe representar un cambio lógico y completo. <br>
+                            <strong>Mensajes claros:</strong> usa prefijos como <code class="font-mono tint-blue px-1 rounded text-xs">feat:</code>, <code class="font-mono tint-red px-1 rounded text-xs">fix:</code>, <code class="font-mono tint-purple px-1 rounded text-xs">docs:</code> (ya los vimos la semana pasada). <br>
+                            <strong>Push frecuente:</strong> sube tu trabajo regularmente para que el equipo lo vea.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
 
         <!-- ==================== SLIDE 2: JVM y Bytecode ==================== -->
         <div class="slide">
