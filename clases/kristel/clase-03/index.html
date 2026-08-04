@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 3 — Programación III</title>
+    
+    <link rel="icon" type="image/svg+xml" href="../../../assets/img/favicon.svg">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Dependencias externas -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    
+    <!-- Recursos compartidos del proyecto -->
+    <link rel="stylesheet" href="../../../assets/css/presentacion.css">
+    <script src="../../../assets/js/curso-info.js"></script>
+    
+    <!-- Tooltips interactivos para palabras clave -->
+    <style>
+        .keyword {
+            position: relative;
+            cursor: help;
+        }
+        .keyword::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e1e2e;
+            color: #cdd6f4;
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-family: 'Nunito', sans-serif;
+            white-space: normal;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            z-index: 999;
+            max-width: 260px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+            line-height: 1.4;
+        }
+        .keyword:hover::after,
+        .keyword:focus::after {
+            opacity: 1;
+        }
+    </style>
+    
+</head>
+<body>
+
+    <!-- Botón de tema claro/oscuro -->
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar Modo">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+
+    <!-- Botón de descarga offline -->
+    <button class="float-btn" id="downloadBtn" onclick="downloadPresentation()" title="Descargar presentación para ver sin internet">
+        <i class="fa-solid fa-download"></i>
+    </button>
+
+    <!-- ========== CONTENEDOR DE SLIDES ========== -->
+    <div class="slides-container" id="slides-container">
+        
+        <!-- ==================== SLIDE 0: Portada ==================== -->
+        <div class="slide active">
+            <div class="text-center w-full max-w-6xl z-10 relative">
+                <i class="fa-solid fa-sitemap bg-icon text-[350px] -top-20 -left-20 opacity-10" style="color: var(--accent-purple);"></i>
+                <i class="fa-brands fa-java bg-icon text-[250px] -bottom-10 right-10 opacity-10" style="color: var(--accent-peach);"></i>
+                
+                <div class="bg-white px-8 py-4 rounded-3xl inline-block mb-6 shadow-md border border-gray-100 relative z-10">
+                    <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png" 
+                         alt="Logo UNA" class="h-28 object-contain"
+                         onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png';">
+                </div>
+                
+                <h2 class="text-lg md:text-xl font-bold tracking-[0.2em] mb-4 uppercase" style="color: var(--text-muted);">Sección Regional Central Occidente, UNA</h2>
+                
+                <h1 class="text-3xl md:text-3xl font-extrabold mb-4 tracking-tight">
+                    Programación <span style="color: var(--una-red);">III</span>
+                </h1>
+                <h2 class="text-5xl md:text-6xl font-extrabold mb-2" style="color: var(--text-main);">Semana 3</h2>
+                <h3 class="text-3xl md:text-6xl font-bold mb-6" style="color: var(--una-red);">
+                    Herencia, Interfaces, Paquetes y Colecciones
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-6 relative z-10">
+                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--una-red);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-red flex items-center justify-center text-2xl"><i class="fa-solid fa-chalkboard-user"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Docente — Grupo 41</p>
+                            <p class="text-lg font-bold" data-curso="41-docente"></p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);" data-curso="41-horario"></p>
+                        </div>
+                    </div>
+                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--accent-blue);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-blue flex items-center justify-center text-2xl"><i class="fa-solid fa-chalkboard-user"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Docente — Grupo 40</p>
+                            <p class="text-lg font-bold" data-curso="40-docente"></p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);" data-curso="40-horario"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto relative z-10">
+                    <div class="glass-panel text-left flex items-center gap-4 border-l-4" style="border-left-color: var(--una-gold);">
+                        <div class="w-10 h-10 shrink-0 rounded-full tint-gold flex items-center justify-center text-lg"><i class="fa-regular fa-clock"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider" style="color: var(--text-muted);">Atención Grupo 41</p>
+                            <p class="text-sm" data-curso="41-atencion"></p>
+                        </div>
+                    </div>
+                    <div class="glass-panel text-left flex items-center gap-4 border-l-4" style="border-left-color: var(--accent-green);">
+                        <div class="w-10 h-10 shrink-0 rounded-full tint-green flex items-center justify-center text-lg"><i class="fa-regular fa-clock"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider" style="color: var(--text-muted);">Atención Grupo 40</p>
+                            <p class="text-sm" data-curso="40-atencion"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-sm animate-pulse mt-6" style="color: var(--text-muted);"><i class="fa-solid fa-keyboard mr-2"></i>Usa las flechas del teclado para navegar</p>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 1: Agenda del Día ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-list-check bg-icon text-[350px] top-10 right-0 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-8">
+                    <h2 class="text-5xl font-bold mb-2">¿Qué vamos a ver hoy?</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Reutilización y organización de código en Java.</p>
+                    <p class="text-sm mt-2" style="color: var(--text-muted);"><i class="fa-solid fa-hand-pointer mr-1"></i> Hacé clic en cada tema para ir directamente a esa diapositiva.</p>
+                </div>
+
+                <div class="relative max-w-2xl mx-auto">
+                    <!-- Línea central -->
+                    <div class="absolute border-l-2 border-dashed border-gray-300 h-full" style="left: 50%; transform: translateX(-50%);"></div>
+
+                    <!-- 1. Herencia (derecha) -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-gold font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">1</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(2)">
+                            <div class="glass-panel py-2.5 px-5 border-r-4" style="border-right-color: var(--una-gold);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Herencia <span style="font-weight: normal; font-size: 0.8rem; color: var(--text-muted);">(extends)</span></h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Interfaces (izquierda) -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(3)">
+                            <div class="glass-panel py-2.5 px-5 border-l-4" style="border-left-color: var(--accent-green);">
+                                <h3 class="font-bold text-base md:text-lg text-left">Interfaces <span style="font-weight: normal; font-size: 0.8rem; color: var(--text-muted);">(implements)</span></h3>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-green font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">2</div>
+                        <div class="w-1/2"></div>
+                    </div>
+
+                    <!-- 3. Paquetes (derecha) -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-blue font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">3</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(4)">
+                            <div class="glass-panel py-2.5 px-5 border-r-4" style="border-right-color: var(--accent-blue);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Paquetes <span style="font-weight: normal; font-size: 0.8rem; color: var(--text-muted);">(package / import)</span></h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Genéricos (izquierda) -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(5)">
+                            <div class="glass-panel py-2.5 px-5 border-l-4" style="border-left-color: var(--accent-purple);">
+                                <h3 class="font-bold text-base md:text-lg text-left">Programación Genérica <span style="font-weight: normal; font-size: 0.8rem; color: var(--text-muted);">(&lt;T&gt;)</span></h3>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-purple font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">4</div>
+                        <div class="w-1/2"></div>
+                    </div>
+
+                    <!-- 5. Colecciones (ArrayList / HashMap) (derecha) -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-red font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">5</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(6)">
+                            <div class="glass-panel py-2.5 px-5 border-r-4" style="border-right-color: var(--una-red);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Colecciones <span style="font-weight: normal; font-size: 0.8rem; color: var(--text-muted);">(ArrayList, HashMap)</span></h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. Resumen y conexión a laboratorio (izquierda) -->
+                    <div class="flex items-center relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(8)">
+                            <div class="glass-panel py-2.5 px-5 border-l-4" style="border-left-color: var(--accent-peach);">
+                                <h3 class="font-bold text-base md:text-lg text-left">Laboratorio #2</h3>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-peach font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">6</div>
+                        <div class="w-1/2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 2: Herencia ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-diagram-project bg-icon text-[350px] -left-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">Herencia <span style="font-size: 0.6em; font-weight: normal; color: var(--text-muted);">(extends)</span></h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Una clase <strong style="color: var(--una-gold);">hereda</strong> atributos y métodos de otra clase.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    <!-- Izquierda: Jerarquía -->
+                    <div class="glass-panel p-5 text-center border-t-4" style="border-color: var(--una-gold);">
+                        <h4 class="font-bold text-xl mb-4">Jerarquía de clases</h4>
+                        <div class="flex flex-col items-center space-y-2">
+                            <div class="tint-gold px-6 py-3 rounded-xl text-lg font-bold shadow-md">Animal</div>
+                            <i class="fa-solid fa-arrow-down text-lg" style="color: var(--text-muted);"></i>
+                            <div class="flex gap-6">
+                                <div class="tint-blue px-6 py-3 rounded-xl text-lg font-bold shadow-md">Perro</div>
+                                <div class="tint-blue px-6 py-3 rounded-xl text-lg font-bold shadow-md">Gato</div>
+                            </div>
+                            <p class="text-sm mt-3" style="color: var(--text-muted);">Perro y Gato <strong>heredan</strong> de Animal</p>
+                            <p class="text-sm" style="color: var(--text-muted);"><span class="keyword" tabindex="0" data-tooltip="Palabra clave para heredar de una superclase" style="border-bottom: 2px dotted var(--una-gold);">extends</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Derecha: Código -->
+                    <div class="glass-panel overflow-hidden" style="background: var(--bg-terminal); border: 1px solid rgba(255,255,255,0.1);">
+                        <div class="flex items-center gap-2 px-3 py-2 border-b border-gray-700">
+                            <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                            <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                            <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                            <span class="ml-2 text-xs font-mono" style="color: #6c7086;">Herencia.java</span>
+                        </div>
+                        <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #cba6f7;">public class</span> <span style="color: #89b4fa;">Animal</span> {
+    <span style="color: #cba6f7;">protected</span> <span style="color: #f9e2af;">String</span> <span style="color: #a6e3a1;">nombre</span>;
+
+    <span style="color: #cba6f7;">public</span> <span style="color: #89dceb;">Animal</span>(<span style="color: #f9e2af;">String</span> nombre) {
+        <span style="color: #cba6f7;">this</span>.nombre = nombre;
+    }
+
+    <span style="color: #cba6f7;">public void</span> <span style="color: #89dceb;">hacerSonido</span>() {
+        System.out.println(<span style="color: #a6e3a1;">"Sonido genérico"</span>);
+    }
+}
+
+<span style="color: #cba6f7;">public class</span> <span style="color: #89b4fa;">Perro</span> <span style="color: #cba6f7;">extends</span> <span style="color: #89b4fa;">Animal</span> {
+    <span style="color: #cba6f7;">public</span> <span style="color: #89dceb;">Perro</span>(<span style="color: #f9e2af;">String</span> nombre) {
+        <span style="color: #cba6f7;">super</span>(nombre); <span style="color: #6c7086;">// Llama al constructor de Animal</span>
+    }
+
+    <span style="color: #cba6f7;">@Override</span>
+    <span style="color: #cba6f7;">public void</span> <span style="color: #89dceb;">hacerSonido</span>() {
+        System.out.println(nombre + <span style="color: #a6e3a1;">" dice: ¡Guau!"</span>);
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex flex-wrap gap-4 justify-center">
+                    <span class="keyword glass-panel px-4 py-2 text-sm" tabindex="0" data-tooltip="Palabra clave para heredar de una clase padre" style="border-bottom: 2px dotted var(--una-gold);">extends</span>
+                    <span class="keyword glass-panel px-4 py-2 text-sm" tabindex="0" data-tooltip="Llama al constructor de la superclase" style="border-bottom: 2px dotted var(--accent-blue);">super()</span>
+                    <span class="keyword glass-panel px-4 py-2 text-sm" tabindex="0" data-tooltip="Indica que se está sobrescribiendo un método de la superclase" style="border-bottom: 2px dotted var(--accent-green);">@Override</span>
+                    <span class="keyword glass-panel px-4 py-2 text-sm" tabindex="0" data-tooltip="Visibilidad: accesible desde subclases y mismo paquete" style="border-bottom: 2px dotted var(--accent-purple);">protected</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 3: Interfaces ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-handshake bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">Interfaces <span style="font-size: 0.6em; font-weight: normal; color: var(--text-muted);">(implements)</span></h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Un <strong style="color: var(--accent-green);">contrato</strong> que las clases deben cumplir.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    <!-- Izquierda: conceptos -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-green);">
+                        <h4 class="font-bold text-xl mb-3">Características</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-start gap-2"><span class="tint-green w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</span> Define <strong>qué</strong> hacer, no <strong>cómo</strong> hacerlo.</li>
+                            <li class="flex items-start gap-2"><span class="tint-green w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">2</span> Solo contiene métodos <strong>abstractos</strong> (sin cuerpo) y constantes.</li>
+                            <li class="flex items-start gap-2"><span class="tint-green w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">3</span> Una clase puede implementar <strong>varias</strong> interfaces.</li>
+                            <li class="flex items-start gap-2"><span class="tint-green w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">4</span> Palabra clave: <span class="keyword" tabindex="0" data-tooltip="Una clase usa implements para aceptar un contrato" style="border-bottom: 2px dotted var(--accent-green);">implements</span></li>
+                        </ul>
+                        <div class="glass-panel mt-3 p-3 text-center" style="background: var(--bg-terminal);">
+                            <code style="color: #a6e3a1; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;">
+                                <span style="color: #cba6f7;">public interface</span> <span style="color: #89b4fa;">Volador</span> { <span style="color: #cba6f7;">void</span> <span style="color: #89dceb;">volar</span>(); }
+                            </code>
+                        </div>
+                    </div>
+
+                    <!-- Derecha: Código -->
+                    <div class="glass-panel overflow-hidden" style="background: var(--bg-terminal); border: 1px solid rgba(255,255,255,0.1);">
+                        <div class="flex items-center gap-2 px-3 py-2 border-b border-gray-700">
+                            <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                            <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                            <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                            <span class="ml-2 text-xs font-mono" style="color: #6c7086;">Interfaz.java</span>
+                        </div>
+                        <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #cba6f7;">public interface</span> <span style="color: #89b4fa;">Volador</span> {
+    <span style="color: #cba6f7;">void</span> <span style="color: #89dceb;">volar</span>();  <span style="color: #6c7086;">// Método abstracto (sin cuerpo)</span>
+}
+
+<span style="color: #cba6f7;">public class</span> <span style="color: #89b4fa;">Pajaro</span> <span style="color: #cba6f7;">extends</span> <span style="color: #89b4fa;">Animal</span> <span style="color: #cba6f7;">implements</span> <span style="color: #89b4fa;">Volador</span> {
+    <span style="color: #cba6f7;">public</span> <span style="color: #89dceb;">Pajaro</span>(<span style="color: #f9e2af;">String</span> nombre) {
+        <span style="color: #cba6f7;">super</span>(nombre);
+    }
+
+    <span style="color: #cba6f7;">@Override</span>
+    <span style="color: #cba6f7;">public void</span> <span style="color: #89dceb;">volar</span>() {
+        System.out.println(nombre + <span style="color: #a6e3a1;">" está volando"</span>);
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex flex-wrap gap-4 justify-center">
+                    <span class="keyword glass-panel px-4 py-2 text-sm" tabindex="0" data-tooltip="Palabra clave para implementar una interfaz" style="border-bottom: 2px dotted var(--accent-green);">implements</span>
+                    <span class="keyword glass-panel px-4 py-2 text-sm" tabindex="0" data-tooltip="Una clase puede tener una superclase y múltiples interfaces" style="border-bottom: 2px dotted var(--accent-purple);">múltiples interfaces</span>
+                </div>
+
+                <!-- Diferencia clave -->
+                <div class="grid grid-cols-2 gap-3 mt-4">
+                    <div class="glass-panel p-3 border-l-4 text-center" style="border-left-color: var(--una-gold);">
+                        <p class="font-bold">Herencia <span style="color: var(--una-gold);">(extends)</span></p>
+                        <p class="text-sm" style="color: var(--text-muted);">"Es un" (IS-A)<br>Una sola clase padre</p>
+                    </div>
+                    <div class="glass-panel p-3 border-l-4 text-center" style="border-left-color: var(--accent-green);">
+                        <p class="font-bold">Interfaz <span style="color: var(--accent-green);">(implements)</span></p>
+                        <p class="text-sm" style="color: var(--text-muted);">"Puede hacer" (CAN-DO)<br>Múltiples interfaces</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 4: Paquetes ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-folder-tree bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">Paquetes <span style="font-size: 0.6em; font-weight: normal; color: var(--text-muted);">(package / import)</span></h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Organización física del código en carpetas.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    <!-- Izquierda: estructura -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-blue);">
+                        <h4 class="font-bold text-xl mb-3">Estructura de carpetas</h4>
+                        <div class="font-mono text-sm" style="color: var(--text-terminal); background: var(--bg-terminal); padding: 1rem; border-radius: 0.75rem;">
+                            <div>📁 src/</div>
+                            <div class="pl-4">📁 com/</div>
+                            <div class="pl-8">📁 universidad/</div>
+                            <div class="pl-12">📁 programacion3/</div>
+                            <div class="pl-16">📁 modelos/</div>
+                            <div class="pl-20">📄 Estudiante.java</div>
+                            <div class="pl-16">📁 main/</div>
+                            <div class="pl-20">📄 Main.java</div>
+                        </div>
+                        <div class="glass-panel mt-2 p-2 text-center" style="background: var(--bg-terminal);">
+                            <code style="color: #a6e3a1; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;">
+                                <span style="color: #6c7086;">// Estudiante.java</span><br>
+                                <span style="color: #cba6f7;">package</span> com.universidad.programacion3.modelos;
+                            </code>
+                        </div>
+                        <div class="glass-panel mt-2 p-2 text-center" style="background: var(--bg-terminal);">
+                            <code style="color: #a6e3a1; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;">
+                                <span style="color: #6c7086;">// Main.java</span><br>
+                                <span style="color: #cba6f7;">package</span> com.universidad.programacion3.main;<br>
+                                <span style="color: #cba6f7;">import</span> com.universidad.programacion3.modelos.Estudiante;
+                            </code>
+                        </div>
+                    </div>
+
+                    <!-- Derecha: conceptos -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-blue);">
+                        <h4 class="font-bold text-xl mb-3">Conceptos clave</h4>
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex items-start gap-2">
+                                <span class="tint-blue w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0">1</span>
+                                <div>
+                                    <span class="font-bold">package</span>
+                                    <p style="color: var(--text-muted);">Declara a qué paquete pertenece la clase. Va al inicio del archivo.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="tint-blue w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0">2</span>
+                                <div>
+                                    <span class="font-bold">import</span>
+                                    <p style="color: var(--text-muted);">Permite usar clases de otros paquetes. Sin import, hay que usar el nombre completo.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="tint-blue w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0">3</span>
+                                <div>
+                                    <span class="font-bold">Dominio invertido</span>
+                                    <p style="color: var(--text-muted);">Convención: <code class="font-mono text-xs">com.universidad.programacion3</code></p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex flex-wrap gap-4 justify-center">
+                    <span class="keyword glass-panel px-4 py-2 text-sm" tabindex="0" data-tooltip="Declara el paquete de la clase" style="border-bottom: 2px dotted var(--accent-blue);">package</span>
+                    <span class="keyword glass-panel px-4 py-2 text-sm" tabindex="0" data-tooltip="Importa clases de otros paquetes" style="border-bottom: 2px dotted var(--accent-green);">import</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 5: Programación Genérica ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-cube bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">Programación Genérica <span style="font-size: 0.6em; font-weight: normal; color: var(--text-muted);">(&lt;T&gt;)</span></h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Escribir código que funciona con <strong style="color: var(--accent-purple);">cualquier tipo</strong> de dato.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    <!-- Izquierda: concepto -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-purple);">
+                        <h4 class="font-bold text-xl mb-3">¿Qué es <span class="keyword" tabindex="0" data-tooltip="Type Parameter: permite que la clase trabaje con cualquier tipo" style="border-bottom: 2px dotted var(--accent-purple);">&lt;T&gt;</span> ?</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-start gap-2"><span class="tint-purple w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</span> Parámetro de tipo (Type Parameter).</li>
+                            <li class="flex items-start gap-2"><span class="tint-purple w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">2</span> Permite <strong>reutilizar</strong> la misma clase con distintos tipos.</li>
+                            <li class="flex items-start gap-2"><span class="tint-purple w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">3</span> <strong>Seguridad de tipos</strong> en tiempo de compilación.</li>
+                            <li class="flex items-start gap-2"><span class="tint-purple w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">4</span> Evita <code class="font-mono text-xs">casting</code> innecesario.</li>
+                        </ul>
+                        <div class="glass-panel mt-3 p-3 text-center" style="background: var(--bg-terminal);">
+                            <code style="color: #a6e3a1; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;">
+                                <span style="color: #cba6f7;">public class</span> <span style="color: #89b4fa;">Caja</span>&lt;<span style="color: #89dceb;">T</span>&gt; { ... }
+                            </code>
+                        </div>
+                    </div>
+
+                    <!-- Derecha: código -->
+                    <div class="glass-panel overflow-hidden" style="background: var(--bg-terminal); border: 1px solid rgba(255,255,255,0.1);">
+                        <div class="flex items-center gap-2 px-3 py-2 border-b border-gray-700">
+                            <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                            <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                            <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                            <span class="ml-2 text-xs font-mono" style="color: #6c7086;">Caja.java</span>
+                        </div>
+                        <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #cba6f7;">public class</span> <span style="color: #89b4fa;">Caja</span>&lt;<span style="color: #89dceb;">T</span>&gt; {
+    <span style="color: #cba6f7;">private</span> <span style="color: #89dceb;">T</span> <span style="color: #a6e3a1;">contenido</span>;
+
+    <span style="color: #cba6f7;">public void</span> <span style="color: #89dceb;">guardar</span>(<span style="color: #89dceb;">T</span> contenido) {
+        <span style="color: #cba6f7;">this</span>.contenido = contenido;
+    }
+
+    <span style="color: #cba6f7;">public</span> <span style="color: #89dceb;">T</span> <span style="color: #89dceb;">obtener</span>() {
+        <span style="color: #cba6f7;">return</span> contenido;
+    }
+}
+
+<span style="color: #6c7086;">// Uso:</span>
+<span style="color: #89b4fa;">Caja</span>&lt;<span style="color: #f9e2af;">String</span>&gt; cajaTexto = <span style="color: #cba6f7;">new</span> <span style="color: #89b4fa;">Caja</span>&lt;&gt;();
+cajaTexto.<span style="color: #89dceb;">guardar</span>(<span style="color: #a6e3a1;">"Hola"</span>);
+<span style="color: #f9e2af;">String</span> s = cajaTexto.<span style="color: #89dceb;">obtener</span>();  <span style="color: #6c7086;">// Sin casting</span></code></pre>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex flex-wrap gap-4 justify-center">
+                    <span class="keyword glass-panel px-4 py-2 text-sm" tabindex="0" data-tooltip="Parámetro de tipo" style="border-bottom: 2px dotted var(--accent-purple);">&lt;T&gt;</span>
+                    <span class="keyword glass-panel px-4 py-2 text-sm" tabindex="0" data-tooltip="El compilador verifica que los tipos sean compatibles" style="border-bottom: 2px dotted var(--accent-green);">type safety</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 6: Colecciones – ArrayList ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-list bg-icon text-[350px] -left-10 opacity-5" style="color: var(--una-red);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">Colecciones: <span class="font-mono tint-red px-3 py-1 rounded-xl text-4xl">ArrayList</span></h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Lista dinámica que puede crecer y encogerse.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    <!-- Izquierda: comparativa -->
+                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--una-red);">
+                        <h4 class="font-bold text-lg mb-3">Arreglo vs <span class="keyword" tabindex="0" data-tooltip="ArrayList: implementación de List que usa un arreglo dinámico" style="border-bottom: 2px dotted var(--una-red);">ArrayList</span></h4>
+                        <table class="w-full text-sm border-collapse">
+                            <thead>
+                                <tr style="background: rgba(0,0,0,0.02);">
+                                    <th class="p-2 border-b-2 text-left" style="border-color: var(--border-panel);">Característica</th>
+                                    <th class="p-2 border-b-2 text-left" style="border-color: var(--border-panel);">Arreglo []</th>
+                                    <th class="p-2 border-b-2 text-left" style="border-color: var(--border-panel);">ArrayList</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td class="p-2 border-b border-gray-100">Tamaño</td><td class="p-2 border-b border-gray-100">Fijo</td><td class="p-2 border-b border-gray-100">Dinámico</td></tr>
+                                <tr><td class="p-2 border-b border-gray-100">Tipo</td><td class="p-2 border-b border-gray-100">Primitivos u objetos</td><td class="p-2 border-b border-gray-100">Solo objetos</td></tr>
+                                <tr><td class="p-2 border-b border-gray-100">Métodos</td><td class="p-2 border-b border-gray-100"><code class="font-mono text-xs">.length</code></td><td class="p-2 border-b border-gray-100"><code class="font-mono text-xs">.add()</code>, <code class="font-mono text-xs">.remove()</code>, <code class="font-mono text-xs">.get()</code>, <code class="font-mono text-xs">.size()</code></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Derecha: código -->
+                    <div class="glass-panel overflow-hidden" style="background: var(--bg-terminal); border: 1px solid rgba(255,255,255,0.1);">
+                        <div class="flex items-center gap-2 px-3 py-2 border-b border-gray-700">
+                            <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                            <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                            <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                            <span class="ml-2 text-xs font-mono" style="color: #6c7086;">ArrayListDemo.java</span>
+                        </div>
+                        <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #cba6f7;">import</span> java.util.ArrayList;
+
+<span style="color: #cba6f7;">public class</span> <span style="color: #89b4fa;">ArrayListDemo</span> {
+    <span style="color: #cba6f7;">public static void</span> <span style="color: #89dceb;">main</span>(<span style="color: #f9e2af;">String</span>[] args) {
+        <span style="color: #89b4fa;">ArrayList</span>&lt;<span style="color: #f9e2af;">String</span>&gt; nombres = <span style="color: #cba6f7;">new</span> <span style="color: #89b4fa;">ArrayList</span>&lt;&gt;();
+        nombres.<span style="color: #89dceb;">add</span>(<span style="color: #a6e3a1;">"Ana"</span>);
+        nombres.<span style="color: #89dceb;">add</span>(<span style="color: #a6e3a1;">"Carlos"</span>);
+        nombres.<span style="color: #89dceb;">add</span>(<span style="color: #a6e3a1;">"María"</span>);
+
+        <span style="color: #6c7086;">// Recorrido for-each</span>
+        <span style="color: #cba6f7;">for</span> (<span style="color: #f9e2af;">String</span> n : nombres) {
+            System.out.println(n);
+        }
+
+        System.out.println(<span style="color: #a6e3a1;">"Tamaño: "</span> + nombres.<span style="color: #89dceb;">size</span>());
+        nombres.<span style="color: #89dceb;">remove</span>(<span style="color: #fab387;">1</span>);  <span style="color: #6c7086;">// Elimina a Carlos</span>
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex flex-wrap gap-4 justify-center">
+                    <span class="keyword glass-panel px-4 py-2 text-sm" tabindex="0" data-tooltip="ArrayList solo guarda objetos (no primitivos)" style="border-bottom: 2px dotted var(--una-red);">ArrayList&lt;T&gt;</span>
+                    <span class="keyword glass-panel px-4 py-2 text-sm" tabindex="0" data-tooltip="Los métodos más usados de ArrayList" style="border-bottom: 2px dotted var(--accent-blue);">add / remove / get / size</span>
+                    <span class="keyword glass-panel px-4 py-2 text-sm" tabindex="0" data-tooltip="Recorrido simplificado" style="border-bottom: 2px dotted var(--accent-green);">for-each</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 7: Colecciones – HashMap ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-table-cells-large bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">Colecciones: <span class="font-mono tint-purple px-3 py-1 rounded-xl text-4xl">HashMap</span></h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Mapa clave-valor: accede a un valor usando una clave única.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    <!-- Izquierda: concepto -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-purple);">
+                        <h4 class="font-bold text-xl mb-3">Características</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-start gap-2"><span class="tint-purple w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</span> Almacena pares <strong>clave → valor</strong>.</li>
+                            <li class="flex items-start gap-2"><span class="tint-purple w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">2</span> Clave <strong>única</strong> (no se pueden repetir).</li>
+                            <li class="flex items-start gap-2"><span class="tint-purple w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">3</span> Búsqueda muy rápida (<span class="keyword" tabindex="0" data-tooltip="Complejidad O(1) en promedio" style="border-bottom: 2px dotted var(--accent-purple);">O(1)</span>).</li>
+                            <li class="flex items-start gap-2"><span class="tint-purple w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">4</span> Métodos clave: <code class="font-mono text-xs">put()</code>, <code class="font-mono text-xs">get()</code>, <code class="font-mono text-xs">remove()</code>, <code class="font-mono text-xs">containsKey()</code></li>
+                        </ul>
+                    </div>
+
+                    <!-- Derecha: código -->
+                    <div class="glass-panel overflow-hidden" style="background: var(--bg-terminal); border: 1px solid rgba(255,255,255,0.1);">
+                        <div class="flex items-center gap-2 px-3 py-2 border-b border-gray-700">
+                            <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                            <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                            <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                            <span class="ml-2 text-xs font-mono" style="color: #6c7086;">HashMapDemo.java</span>
+                        </div>
+                        <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #cba6f7;">import</span> java.util.HashMap;
+<span style="color: #cba6f7;">import</span> java.util.Map;
+
+<span style="color: #cba6f7;">public class</span> <span style="color: #89b4fa;">HashMapDemo</span> {
+    <span style="color: #cba6f7;">public static void</span> <span style="color: #89dceb;">main</span>(<span style="color: #f9e2af;">String</span>[] args) {
+        <span style="color: #89b4fa;">HashMap</span>&lt;<span style="color: #f9e2af;">String</span>, <span style="color: #f9e2af;">Integer</span>&gt; edades = <span style="color: #cba6f7;">new</span> <span style="color: #89b4fa;">HashMap</span>&lt;&gt;();
+        edades.<span style="color: #89dceb;">put</span>(<span style="color: #a6e3a1;">"Ana"</span>, <span style="color: #fab387;">20</span>);
+        edades.<span style="color: #89dceb;">put</span>(<span style="color: #a6e3a1;">"Carlos"</span>, <span style="color: #fab387;">22</span>);
+        edades.<span style="color: #89dceb;">put</span>(<span style="color: #a6e3a1;">"María"</span>, <span style="color: #fab387;">21</span>);
+
+        <span style="color: #6c7086;">// Acceso por clave</span>
+        System.out.println(edades.<span style="color: #89dceb;">get</span>(<span style="color: #a6e3a1;">"Ana"</span>));  <span style="color: #6c7086;">// → 20</span>
+
+        <span style="color: #6c7086;">// Recorrido con entrySet</span>
+        <span style="color: #cba6f7;">for</span> (Map.Entry&lt;<span style="color: #f9e2af;">String</span>, <span style="color: #f9e2af;">Integer</span>&gt; entry : edades.<span style="color: #89dceb;">entrySet</span>()) {
+            System.out.println(entry.<span style="color: #89dceb;">getKey</span>() + <span style="color: #a6e3a1;">": "</span> + entry.<span style="color: #89dceb;">getValue</span>());
+        }
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex flex-wrap gap-4 justify-center">
+                    <span class="keyword glass-panel px-4 py-2 text-sm" tabindex="0" data-tooltip="HashMap implementa la interfaz Map" style="border-bottom: 2px dotted var(--accent-purple);">HashMap&lt;K,V&gt;</span>
+                    <span class="keyword glass-panel px-4 py-2 text-sm" tabindex="0" data-tooltip="put: insertar, get: obtener, remove: eliminar" style="border-bottom: 2px dotted var(--accent-blue);">put / get / remove</span>
+                    <span class="keyword glass-panel px-4 py-2 text-sm" tabindex="0" data-tooltip="Clave no puede repetirse, valor sí" style="border-bottom: 2px dotted var(--una-red);">clave única</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 8: Resumen y conexión a laboratorio ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-flag-checkered bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Manos a la obra</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Laboratorio #2 – Sistema de Figuras Geométricas</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl mx-auto">
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--una-red);">
+                        <h4 class="font-bold text-xl mb-3 flex items-center gap-2"><i class="fa-solid fa-diagram-project" style="color: var(--una-red);"></i> Jerarquía</h4>
+                        <div class="font-mono text-sm" style="background: var(--bg-terminal); padding: 0.75rem; border-radius: 0.75rem;">
+                            <div>Figura (abstracta)</div>
+                            <div class="pl-4">├── Circulo</div>
+                            <div class="pl-4">├── Rectangulo</div>
+                            <div class="pl-4">└── Triangulo</div>
+                            <div class="mt-2">Dibujable (interfaz)</div>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-blue);">
+                        <h4 class="font-bold text-xl mb-3 flex items-center gap-2"><i class="fa-solid fa-list-check" style="color: var(--accent-blue);"></i> Requisitos</h4>
+                        <ul class="space-y-1.5 text-sm">
+                            <li class="flex items-start gap-2"><span class="tint-blue w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</span> Clase abstracta <code>Figura</code> con <code>calcularArea()</code>.</li>
+                            <li class="flex items-start gap-2"><span class="tint-blue w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">2</span> Interfaz <code>Dibujable</code> con <code>dibujar()</code>.</li>
+                            <li class="flex items-start gap-2"><span class="tint-blue w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">3</span> Clases concretas: <code>Circulo</code>, <code>Rectangulo</code>, <code>Triangulo</code>.</li>
+                            <li class="flex items-start gap-2"><span class="tint-blue w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">4</span> <code>ArrayList&lt;Figura&gt;</code> para almacenar figuras.</li>
+                            <li class="flex items-start gap-2"><span class="tint-blue w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">5</span> <code>HashMap&lt;String, Figura&gt;</code> para buscar por nombre.</li>
+                            <li class="flex items-start gap-2"><span class="tint-blue w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">6</span> Organización en paquetes: <code>modelos</code> y <code>main</code>.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="glass-panel mt-5 py-4 px-6 text-center border-2 mx-auto max-w-2xl" style="border-color: var(--una-gold);">
+                    <p class="text-lg font-bold mb-2" style="color: var(--una-gold);">
+                        <i class="fa-regular fa-calendar-check mr-2"></i> Entrega: 13/09
+                    </p>
+                    <p class="text-sm" style="color: var(--text-muted);">
+                        <i class="fa-solid fa-code mr-1"></i> Commit con prefijo <span class="font-mono tint-red px-1.5 py-0.5 rounded text-xs">feat:</span> y <span class="font-mono tint-red px-1.5 py-0.5 rounded text-xs">push</span> a GitHub.
+                    </p>
+                </div>
+
+                <div class="text-center mt-4">
+                    <p class="text-sm" style="color: var(--text-muted);">
+                        <i class="fa-solid fa-lightbulb mr-1" style="color: var(--una-gold);"></i> 
+                        Aplica herencia, interfaces, paquetes, genéricos y colecciones.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 9: Cierre ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto text-center relative z-10">
+                <i class="fa-solid fa-check-circle bg-icon text-[350px] -top-20 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="glass-panel p-8 max-w-3xl mx-auto border-t-4" style="border-color: var(--accent-green);">
+                    <h2 class="text-4xl font-bold mb-4">¡Hoy aprendimos!</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                        <div>
+                            <ul class="space-y-2 text-base">
+                                <li><i class="fa-solid fa-check-circle text-sm" style="color: var(--accent-green);"></i> <span class="font-bold">Herencia</span> (<code class="font-mono tint-blue px-1 rounded text-xs">extends</code>)</li>
+                                <li><i class="fa-solid fa-check-circle text-sm" style="color: var(--accent-green);"></i> <span class="font-bold">Interfaces</span> (<code class="font-mono tint-blue px-1 rounded text-xs">implements</code>)</li>
+                                <li><i class="fa-solid fa-check-circle text-sm" style="color: var(--accent-green);"></i> <span class="font-bold">Paquetes</span> (<code class="font-mono tint-blue px-1 rounded text-xs">package</code> / <code class="font-mono tint-blue px-1 rounded text-xs">import</code>)</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <ul class="space-y-2 text-base">
+                                <li><i class="fa-solid fa-check-circle text-sm" style="color: var(--accent-green);"></i> <span class="font-bold">Genéricos</span> (<code class="font-mono tint-blue px-1 rounded text-xs">&lt;T&gt;</code>)</li>
+                                <li><i class="fa-solid fa-check-circle text-sm" style="color: var(--accent-green);"></i> <span class="font-bold">ArrayList</span> y <span class="font-bold">HashMap</span></li>
+                                <li><i class="fa-solid fa-check-circle text-sm" style="color: var(--accent-green);"></i> <span class="font-bold">Laboratorio #2</span> – Figuras</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mt-6 p-4 glass-panel text-center" style="background: var(--bg-terminal);">
+                        <p class="text-sm" style="color: var(--text-muted);">
+                            <i class="fa-regular fa-clock mr-1"></i> 
+                            La próxima semana: <strong style="color: var(--una-red);">Interfaces Gráficas de Usuario (Swing)</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- /slides-container -->
+
+    <!-- ========== NAVEGACIÓN ========== -->
+    <button class="float-btn" id="prevBtn" onclick="changeSlide(-1)"><i class="fa-solid fa-arrow-left"></i></button>
+    <button class="float-btn" id="nextBtn" onclick="changeSlide(1)"><i class="fa-solid fa-arrow-right"></i></button>
+    
+    <!-- Barra de progreso -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar" style="width: 10%;"></div>
+    </div>
+
+    <!-- Script compartido -->
+    <script src="../../../assets/js/presentacion.js"></script>
+</body>
+</html>
