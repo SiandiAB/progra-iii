@@ -982,20 +982,20 @@ var evento = new LogEvento("admin", "LOGIN_EXITOSO",
                             "adivinando" el tipo. El compilador <strong>no podia verificar</strong> si el casting era correcto:
                         </p>
                         <div class="bg-gray-900 text-red-300 rounded-xl p-3 font-mono text-[0.65rem] leading-relaxed mb-3 overflow-x-auto">
-<pre><code><span style="color: #629755;">// ⚠ ANTES de Java 5: codigo peligroso</span>
+<pre><code><span style="color: #629755;">//  ANTES de Java 5: codigo peligroso</span>
 
-<span style="color: #629755;">// 1️⃣ Creamos una lista SIN etiqueta de tipo</span>
+<span style="color: #629755;">// 1 Creamos una lista SIN etiqueta de tipo</span>
 ArrayList lista = new ArrayList();
 
-<span style="color: #629755;">// 2️⃣ Guardamos un Usuario... ✅</span>
+<span style="color: #629755;">// 2 Guardamos un Usuario... </span>
 lista.add(new Usuario("admin"));
 
-<span style="color: #629755;">// 3️⃣ ...y tambien un String por accidente</span>
-lista.add("texto arbitrario"); <span style="color: #629755;">// El compilador NO avisa 😱</span>
+<span style="color: #629755;">// 3 ...y tambien un String por accidente</span>
+lista.add("texto arbitrario"); <span style="color: #629755;">// El compilador NO avisa </span>
 
-<span style="color: #629755;">// 4️⃣ Al sacar el elemento, "adivinamos" que es Usuario</span>
+<span style="color: #629755;">// 4 Al sacar el elemento, "adivinamos" que es Usuario</span>
 Usuario u = (Usuario) lista.get(1);
-<span style="color: #629755;">// 💥 ClassCastException en tiempo de ejecucion!</span>
+<span style="color: #629755;">//  ClassCastException en tiempo de ejecucion!</span>
 <span style="color: #629755;">// El programa truena porque el elemento #1 es String</span></code></pre>
                         </div>
                         <p class="text-sm leading-relaxed">
@@ -1018,20 +1018,20 @@ Usuario u = (Usuario) lista.get(1);
                             El compilador se convierte en un guardia que <strong>rechaza cualquier objeto de otro tipo</strong>:
                         </p>
                         <div class="bg-gray-900 text-green-300 rounded-xl p-3 font-mono text-[0.65rem] leading-relaxed mb-3 overflow-x-auto">
-<pre><code><span style="color: #629755;">// ✅ DESDE Java 5+: codigo seguro</span>
+<pre><code><span style="color: #629755;">//  DESDE Java 5+: codigo seguro</span>
 
-<span style="color: #629755;">// 1️⃣ La etiqueta &lt;Usuario&gt; es un CONTRATO:</span>
+<span style="color: #629755;">// 1 La etiqueta &lt;Usuario&gt; es un CONTRATO:</span>
 <span style="color: #629755;">//    "Esta lista solo guarda objetos de tipo Usuario"</span>
 ArrayList&lt;Usuario&gt; lista = new ArrayList&lt;&gt;();
 
-<span style="color: #629755;">// 2️⃣ Guardamos un Usuario ✅</span>
+<span style="color: #629755;">// 2 Guardamos un Usuario </span>
 lista.add(new Usuario("admin"));
 
-<span style="color: #629755;">// 3️⃣ Si intentamos guardar otra cosa...</span>
-<span style="color: #629755;">// lista.add("texto"); // ❌ ERROR DE COMPILACION</span>
+<span style="color: #629755;">// 3 Si intentamos guardar otra cosa...</span>
+<span style="color: #629755;">// lista.add("texto"); //  ERROR DE COMPILACION</span>
 <span style="color: #629755;">// IntelliJ lo subraya en rojo ANTES de ejecutar</span>
 
-<span style="color: #629755;">// 4️⃣ Al sacar, NO necesitamos adivinar el tipo</span>
+<span style="color: #629755;">// 4 Al sacar, NO necesitamos adivinar el tipo</span>
 Usuario u = lista.get(0); <span style="color: #629755;">// Sin casting, el tipo esta 100% garantizado</span></code></pre>
                         </div>
                         <div class="tint-green rounded-xl p-3 text-sm">
@@ -1057,7 +1057,7 @@ Usuario u = lista.get(0); <span style="color: #629755;">// Sin casting, el tipo 
                             <strong>Con Generics</strong>, crea <strong>una sola clase</strong> que se adapta a cualquier tipo:
                         </p>
                         <div class="bg-gray-900 text-green-300 rounded-xl p-3 font-mono text-[0.62rem] leading-relaxed overflow-x-auto">
-<pre><code><span style="color: #629755;">// ✅ UNA sola clase, INFINITOS usos</span>
+<pre><code><span style="color: #629755;">//  UNA sola clase, INFINITOS usos</span>
 <span style="color: #629755;">// &lt;T&gt; significa "T va a ser el tipo que YO (el programador) decida al usarla"</span>
 public class RespuestaSeguridad&lt;T&gt; {
     private boolean exito;       <span style="color: #629755;">// ¿La operacion funciono?</span>
@@ -1076,22 +1076,22 @@ public class RespuestaSeguridad&lt;T&gt; {
 
 <span style="color: #629755;">// === USO: la misma clase, tres tipos distintos ===</span>
 
-<span style="color: #629755;">// 1️⃣ Cuando T = Usuario (respuesta de login)</span>
+<span style="color: #629755;">// 1 Cuando T = Usuario (respuesta de login)</span>
 RespuestaSeguridad&lt;Usuario&gt; r1 =
     new RespuestaSeguridad&lt;&gt;(true, "Autenticado", admin);
 Usuario user = r1.getDatos(); <span style="color: #629755;">// El compilador SABE que es Usuario</span>
 
-<span style="color: #629755;">// 2️⃣ Cuando T = LogEvento (respuesta de auditoria)</span>
+<span style="color: #629755;">// 2 Cuando T = LogEvento (respuesta de auditoria)</span>
 RespuestaSeguridad&lt;LogEvento&gt; r2 =
     new RespuestaSeguridad&lt;&gt;(true, "Evento registrado", evento);
 LogEvento log = r2.getDatos(); <span style="color: #629755;">// El compilador SABE que es LogEvento</span>
 
-<span style="color: #629755;">// 3️⃣ Cuando T = List&lt;LogEvento&gt; (respuesta de historial)</span>
+<span style="color: #629755;">// 3 Cuando T = List&lt;LogEvento&gt; (respuesta de historial)</span>
 RespuestaSeguridad&lt;List&lt;LogEvento&gt;&gt; r3 =
     new RespuestaSeguridad&lt;&gt;(true, "Historial completo", listaEventos);
 
-<span style="color: #629755;">// Sin Generics → 3 clases distintas (RespuestaUsuario, RespuestaLog, RespuestaLista)</span>
-<span style="color: #629755;">// Con Generics  → 1 sola clase. El compilador verifica cada uso.</span></code></pre>
+<span style="color: #629755;">// Sin Generics  3 clases distintas (RespuestaUsuario, RespuestaLog, RespuestaLista)</span>
+<span style="color: #629755;">// Con Generics   1 sola clase. El compilador verifica cada uso.</span></code></pre>
                         </div>
                         <div class="tint-blue rounded-xl p-3 text-sm mt-3 text-center">
                             <i class="fa-solid fa-lightbulb mr-1"></i>
@@ -1126,19 +1126,19 @@ RespuestaSeguridad&lt;List&lt;LogEvento&gt;&gt; r3 =
                                 <p class="font-bold text-base"><code>extends</code></p>
                                 <p class="font-bold mb-1">= Herencia</p>
                                 <p class="text-xs opacity-80">Palabra clave de Java. Relacion <strong>"es-un"</strong>. La subclase recibe automaticamente todos los metodos y atributos (no privados) de la superclase.</p>
-                                <p class="text-xs mt-1"><code>Admin extends Usuario</code><br>→ Admin <strong>es</strong> un Usuario</p>
+                                <p class="text-xs mt-1"><code>Admin extends Usuario</code><br> Admin <strong>es</strong> un Usuario</p>
                             </div>
                             <div class="tint-blue rounded-xl p-3">
                                 <p class="font-bold text-base"><code>implements</code></p>
                                 <p class="font-bold mb-1">= Interfaces</p>
                                 <p class="text-xs opacity-80">Palabra clave de Java. Relacion <strong>"cumple-el-contrato-de"</strong>. La clase se compromete a implementar ciertos metodos, pero no recibe codigo heredado.</p>
-                                <p class="text-xs mt-1"><code>Usuario implements Auditable</code><br>→ Usuario <strong>cumple</strong> el contrato Auditable</p>
+                                <p class="text-xs mt-1"><code>Usuario implements Auditable</code><br> Usuario <strong>cumple</strong> el contrato Auditable</p>
                             </div>
                             <div class="tint-green rounded-xl p-3">
                                 <p class="font-bold text-base">Composicion</p>
                                 <p class="font-bold mb-1">≠ Interfaces</p>
                                 <p class="text-xs opacity-80"><strong>Principio de diseño</strong> (no una palabra clave). Relacion <strong>"tiene-un"</strong>. Una clase guarda una referencia a otra como atributo y le delega trabajo.</p>
-                                <p class="text-xs mt-1"><code>Auditor tiene un Usuario</code><br>→ Auditor <strong>usa</strong> un Usuario, no lo extiende</p>
+                                <p class="text-xs mt-1"><code>Auditor tiene un Usuario</code><br> Auditor <strong>usa</strong> un Usuario, no lo extiende</p>
                             </div>
                         </div>
                     </div>
@@ -1174,9 +1174,9 @@ public class Administrador extends Usuario {
     
     private String nivelAcceso; <span style="color: #629755;">// "TOTAL", "AUDITORIA"</span>
     
-    <span style="color: #629755;">// ✅ Hereda autenticar() sin escribir ni una linea</span>
-    <span style="color: #629755;">// ✅ Hereda nombreUsuario y contraseñaHash</span>
-    <span style="color: #629755;">// ❌ NO hereda intentosFallidos (es private)</span>
+    <span style="color: #629755;">//  Hereda autenticar() sin escribir ni una linea</span>
+    <span style="color: #629755;">//  Hereda nombreUsuario y contraseñaHash</span>
+    <span style="color: #629755;">//  NO hereda intentosFallidos (es private)</span>
     
     <span style="color: #629755;">// Nuevo metodo EXCLUSIVO del administrador:</span>
     public void desbloquearUsuario(Usuario u) {
@@ -1189,8 +1189,8 @@ public class Administrador extends Usuario {
 }</code></pre>
                         </div>
                         <div class="tint-purple rounded-xl p-2 text-xs">
-                            <strong>Regla mental:</strong> Preguntese "¿X <strong>ES</strong> un Y?" → Si la respuesta es un SI rotundo, use <code>extends</code>.
-                            "¿Administrador ES un Usuario?" → SI ✅
+                            <strong>Regla mental:</strong> Preguntese "¿X <strong>ES</strong> un Y?"  Si la respuesta es un SI rotundo, use <code>extends</code>.
+                            "¿Administrador ES un Usuario?"  SI 
                         </div>
                     </div>
 
@@ -1240,8 +1240,8 @@ public class Usuario implements Auditable {
 }</code></pre>
                         </div>
                         <div class="tint-blue rounded-xl p-2 text-xs">
-                            <strong>Regla mental:</strong> Preguntese "¿X DEBE cumplir con el comportamiento Y?" → Use <code>implements</code>.
-                            "¿Usuario DEBE ser Auditable?" → SI ✅ (todo usuario debe dejar rastro).
+                            <strong>Regla mental:</strong> Preguntese "¿X DEBE cumplir con el comportamiento Y?"  Use <code>implements</code>.
+                            "¿Usuario DEBE ser Auditable?"  SI  (todo usuario debe dejar rastro).
                         </div>
                     </div>
                 </div>
@@ -1263,10 +1263,10 @@ public class Usuario implements Auditable {
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <!-- Herencia: como NO hacerlo -->
                             <div class="tint-red rounded-xl p-3">
-                                <h4 class="font-bold mb-2 text-sm">❌ Herencia forzada (lo que NO debe hacer)</h4>
+                                <h4 class="font-bold mb-2 text-sm"> Herencia forzada (lo que NO debe hacer)</h4>
                                 <p class="text-xs mb-2 opacity-80">Un <code>Auditor</code> <strong>NO</strong> es un <code>Usuario</code>. Es un empleado que <strong>usa</strong> usuarios. Si igual fuerza <code>extends</code>, arrastra atributos que no necesita.</p>
                                 <div class="bg-gray-900 text-red-300 rounded-xl p-2 font-mono text-[0.6rem] leading-relaxed overflow-x-auto">
-<pre><code><span style="color: #629755;">// ❌ MAL: Auditor NO es un Usuario</span>
+<pre><code><span style="color: #629755;">//  MAL: Auditor NO es un Usuario</span>
 public class Auditor extends Usuario {
     <span style="color: #629755;">// Hereda cosas SIN SENTIDO:</span>
     <span style="color: #629755;">// contraseñaHash, intentosFallidos, autenticar()...</span>
@@ -1278,13 +1278,13 @@ public class Auditor extends Usuario {
                             </div>
                             <!-- Composicion: como SI hacerlo -->
                             <div class="tint-green rounded-xl p-3">
-                                <h4 class="font-bold mb-2 text-sm">✅ Composicion: "tiene-un" (lo correcto)</h4>
+                                <h4 class="font-bold mb-2 text-sm"> Composicion: "tiene-un" (lo correcto)</h4>
                                 <p class="text-xs mb-2 opacity-80">El <code>Auditor</code> <strong>tiene</strong> una lista de usuarios para revisar. No hereda nada: simplemente guarda referencias y les pide datos.</p>
                                 <div class="bg-gray-900 text-green-300 rounded-xl p-2 font-mono text-[0.6rem] leading-relaxed overflow-x-auto">
-<pre><code><span style="color: #629755;">// ✅ BIEN: Auditor TIENE usuarios (no ES uno)</span>
+<pre><code><span style="color: #629755;">//  BIEN: Auditor TIENE usuarios (no ES uno)</span>
 public class Auditor {
     private String nombreEmpleado;
-    private List&lt;Usuario&gt; usuariosAsignados; <span style="color: #629755;">// ← composicion</span>
+    private List&lt;Usuario&gt; usuariosAsignados; <span style="color: #629755;">//  composicion</span>
     
     public Auditor(String nombre, List&lt;Usuario&gt; users) {
         this.nombreEmpleado = nombre;
