@@ -1,0 +1,1957 @@
+﻿<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 3 — Programación III</title>
+    
+    <link rel="icon" type="image/svg+xml" href="../../../assets/img/favicon.svg">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Dependencias externas -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    
+    <!-- Recursos compartidos del proyecto -->
+    <link rel="stylesheet" href="../../../assets/css/presentacion.css">
+    <script src="../../../assets/js/curso-info.js"></script>
+    
+    <!-- Tooltips interactivos para palabras clave -->
+    <style>
+        .keyword {
+            position: relative;
+            cursor: help;
+            border-bottom: 1px dashed var(--accent-blue);
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        /* --- Tooltip global (position: fixed, controlado por JS) --- */
+        #global-tooltip {
+            position: fixed;
+            z-index: 9999;
+            max-width: 340px;
+            max-height: 240px;
+            overflow-y: auto;
+            background: #1e1e2e;
+            color: #cdd6f4;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-family: 'Nunito', sans-serif;
+            line-height: 1.5;
+            font-weight: 400;
+            text-align: left;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.45);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+        #global-tooltip.visible {
+            opacity: 1;
+        }
+
+        /* Slide de hoja de ruta: tarjetas de bloques horarios */
+        .bloque-horario {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .bloque-horario:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+        }
+
+        /* Tarjeta de verificacion conceptual (Slide 10) */
+        .verificacion-card .respuesta {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.4s ease;
+            padding: 0 1rem;
+        }
+        .verificacion-card.revelada .respuesta {
+            max-height: 500px;
+            padding: 1rem;
+        }
+        
+        /* Tabla comparativa */
+        .tabla-tecnica {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 1rem;
+            overflow: hidden;
+            font-size: 0.9rem;
+        }
+        .tabla-tecnica th {
+            background: var(--bg-terminal);
+            color: var(--text-terminal);
+            padding: 0.6rem 1rem;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+        .tabla-tecnica td {
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid var(--border-panel);
+        }
+        .tabla-tecnica tbody tr:hover {
+            background: rgba(93, 173, 226, 0.05);
+        }
+
+        /* --- Correccion de overflow: evitar que el contenido se corte --- */
+        .slide {
+            justify-content: flex-start;
+            padding-top: clamp(1.5rem, 3vh, 2.5rem);
+        }
+
+        /* --- Resaltado de sintaxis estilo IntelliJ IDEA (Darcula) --- */
+        .syn-kw  { color: #CC7832; font-weight: bold; } /* public class static void new return if else for */
+        .syn-co  { color: #629755; font-style: italic; } /* // comentarios y /* bloques */
+        .syn-st  { color: #6A8759; }                     /* "cadenas de texto" */
+        .syn-nu  { color: #6897BB; }                     /* 123 3.14 */
+        .syn-an  { color: #BBB529; }                     /* @Override @Deprecated */
+        .syn-ty  { color: #FFC66D; }                     /* String Integer List */
+        .syn-op  { color: #A9B7C6; }                     /* = ; . ( ) { } */
+        .syn-me  { color: #FFC66D; }                     /* llamadas a metodos */
+        .syn-pkg { color: #A9B7C6; }                     /* package import */
+    </style>
+</head>
+<body>
+
+    <!-- Tooltip global unico (position: fixed, nunca se corta) -->
+    <div id="global-tooltip"></div>
+
+    <!-- Boton de tema claro/oscuro -->
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar Modo">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+
+    <!-- Boton de descarga offline -->
+    <button class="float-btn" id="downloadBtn" onclick="downloadPresentation()" title="Descargar presentacion para ver sin internet">
+        <i class="fa-solid fa-download"></i>
+    </button>
+
+    <!-- ========== CONTENEDOR DE SLIDES ========== -->
+    <div class="slides-container" id="slides-container">
+        
+        <!-- ==================== SLIDE 1: Portada Formal ==================== -->
+        <div class="slide active">
+            <div class="text-center w-full max-w-6xl z-10 relative">
+                <i class="fa-solid fa-shield-haltered bg-icon text-[350px] -top-20 -left-20" style="color: var(--una-red);"></i>
+                <i class="fa-solid fa-lock bg-icon text-[220px] -bottom-10 right-10" style="color: var(--accent-blue);"></i>
+                
+                <div class="bg-white px-8 py-4 rounded-3xl inline-block mb-6 shadow-md border border-gray-100 relative z-10">
+                    <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png" 
+                         alt="Logo UNA" class="h-28 object-contain"
+                         onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png';">
+                </div>
+                
+                <h2 class="text-lg md:text-xl font-bold tracking-[0.2em] mb-4 uppercase" style="color: var(--text-muted);">Seccion Regional Central Occidente, UNA</h2>
+                
+                <h1 class="text-3xl md:text-3xl font-extrabold mb-4 tracking-tight">
+                    Programacion <span style="color: var(--una-red);">III</span>
+                </h1>
+                <h2 class="text-5xl md:text-6xl font-extrabold mb-2" style="color: var(--text-main);">Semana 3</h2>
+                <h3 class="text-3xl md:text-5xl font-bold mb-4" style="color: var(--una-red);">
+                    Clases, Objetos, Referencias y Modularidad
+                </h3>
+                <h4 class="text-xl md:text-2xl font-semibold mb-8" style="color: var(--text-muted);">
+                    Arquitectura de Seguridad, Gestion de Memoria y Especializacion de Roles
+                </h4>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-6 relative z-10">
+                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--una-red);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-red flex items-center justify-center text-2xl"><i class="fa-solid fa-chalkboard-user"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Docente &mdash; Grupo 41</p>
+                            <p class="text-lg font-bold" data-curso="41-docente"></p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);" data-curso="41-horario"></p>
+                        </div>
+                    </div>
+                    <div class="glass-panel text-left flex items-center gap-4 border-l-4" style="border-left-color: var(--una-gold);">
+                        <div class="w-10 h-10 shrink-0 rounded-full tint-gold flex items-center justify-center text-lg"><i class="fa-regular fa-clock"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider" style="color: var(--text-muted);">Atencion a Estudiantes</p>
+                            <p class="text-sm" data-curso="41-atencion"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-sm animate-pulse mt-6" style="color: var(--text-muted);"><i class="fa-solid fa-keyboard mr-2"></i>Use las flechas del teclado para navegar</p>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 2: Agenda del Dia ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-map-location-dot bg-icon text-[350px] top-10 right-0 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-8">
+                    <h2 class="text-5xl font-bold mb-2">Que vamos a ver hoy?</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Clases, objetos, referencias y modularidad en un sistema de seguridad backend.</p>
+                    <p class="text-sm mt-2" style="color: var(--text-muted);"><i class="fa-solid fa-hand-pointer mr-1"></i> Seleccione cada tema para ir directamente a esa diapositiva.</p>
+                </div>
+
+                <div class="relative max-w-2xl mx-auto">
+                    <!-- Linea central -->
+                    <div class="absolute border-l-2 border-dashed border-gray-300 h-full" style="left: 50%; transform: translateX(-50%);"></div>
+
+                    <!-- 1. Primitivos y Wrappers (derecha) -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-blue font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">1</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="changeSlideTo(2)">
+                            <div class="glass-panel py-2.5 px-5 border-r-4" style="border-right-color: var(--accent-blue);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Primitivos y Wrappers</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Stack vs. Heap (izquierda) -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="changeSlideTo(3)">
+                            <div class="glass-panel py-2.5 px-5 border-l-4" style="border-left-color: var(--accent-green);">
+                                <h3 class="font-bold text-base md:text-lg text-left">Stack vs. Heap</h3>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-green font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">2</div>
+                        <div class="w-1/2"></div>
+                    </div>
+
+                    <!-- 3. Referencias y Aliasing (derecha) -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-purple font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">3</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="changeSlideTo(4)">
+                            <div class="glass-panel py-2.5 px-5 border-r-4" style="border-right-color: var(--accent-purple);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Referencias y Aliasing</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Modularidad y Paquetes (izquierda) -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="changeSlideTo(5)">
+                            <div class="glass-panel py-2.5 px-5 border-l-4" style="border-left-color: var(--una-gold);">
+                                <h3 class="font-bold text-base md:text-lg text-left">Modularidad y Paquetes</h3>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-gold font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">4</div>
+                        <div class="w-1/2"></div>
+                    </div>
+
+                    <!-- 5. Miembros Estaticos (derecha) -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-peach font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">5</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="changeSlideTo(6)">
+                            <div class="glass-panel py-2.5 px-5 border-r-4" style="border-right-color: var(--accent-peach);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Miembros Estaticos</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. Records e Inmutabilidad (izquierda) -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="changeSlideTo(7)">
+                            <div class="glass-panel py-2.5 px-5 border-l-4" style="border-left-color: var(--una-red);">
+                                <h3 class="font-bold text-base md:text-lg text-left">Records e Inmutabilidad</h3>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-red font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">6</div>
+                        <div class="w-1/2"></div>
+                    </div>
+
+                    <!-- 7. Programacion Generica (derecha) -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-purple font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">7</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="changeSlideTo(8)">
+                            <div class="glass-panel py-2.5 px-5 border-r-4" style="border-right-color: var(--accent-purple);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Programacion Generica</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 8. Receso (izquierda) -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2">
+                            <div class="glass-panel py-2.5 px-5 border-l-4 border-dashed opacity-60" style="border-left-color: var(--accent-purple);">
+                                <h3 class="font-bold text-base md:text-lg text-left">Receso (20 min)</h3>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-purple font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">8</div>
+                        <div class="w-1/2"></div>
+                    </div>
+
+                    <!-- 9. Herencia e Interfaces (derecha) -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-blue font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">9</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="changeSlideTo(9)">
+                            <div class="glass-panel py-2.5 px-5 border-r-4" style="border-right-color: var(--accent-blue);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Herencia e Interfaces</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 10. Laboratorio y Cierre (izquierda) -->
+                    <div class="flex items-center relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="changeSlideTo(10)">
+                            <div class="glass-panel py-2.5 px-5 border-l-4" style="border-left-color: var(--una-gold);">
+                                <h3 class="font-bold text-base md:text-lg text-left">Laboratorio y Cierre</h3>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-gold font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">10</div>
+                        <div class="w-1/2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 3: Puente de Refuerzo — Primitivos, Wrappers y Memoria ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[90%] mx-auto relative z-10">
+                <i class="fa-solid fa-link bg-icon text-[280px] -top-10 -left-10" style="color: var(--accent-blue); opacity: 0.05;"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-4xl font-bold mb-2">Puente de Refuerzo: Primitivos, Wrappers y Memoria en Backend</h2>
+                    <p class="text-lg" style="color: var(--text-muted);">Conexion arquitectonica con la Semana 2 &mdash; Del dato en RAM al dato en base de datos</p>
+                </div>
+
+                <!-- Introduccion contextual para estudiantes sin experiencia en bases de datos -->
+                <div class="max-w-6xl mx-auto mb-6">
+                    <div class="glass-panel p-4 tint-blue border-l-4" style="border-left-color: var(--accent-blue);">
+                        <h3 class="font-bold text-lg mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info" style="color: var(--accent-blue);"></i>
+                            Contexto previo: Que es una base de datos?
+                        </h3>
+                        <p class="text-sm leading-relaxed">
+                            Imagine un <strong>archivo de Excel gigante</strong> que vive en un servidor remoto (otra computadora), no en su maquina personal. 
+                            Ese archivo esta organizado en <strong>hojas</strong> (tablas), cada hoja tiene <strong>columnas</strong> con nombres fijos 
+                            (<code>id</code>, <code>email</code>, <code>contraseña</code>) y cada <strong>fila</strong> representa un registro 
+                            (en nuestro caso, un usuario del sistema). A eso se le llama <span class="keyword" tabindex="0" data-tooltip="Base de datos relacional: Sistema que almacena datos organizados en tablas con filas y columnas, similar a un libro de Excel pero con capacidad para millones de registros, acceso concurrente desde muchas computadoras a la vez y mecanismos de seguridad y respaldo. Ejemplos: PostgreSQL, MySQL, Oracle.">base de datos relacional</span>.
+                        </p>
+                        <p class="text-sm leading-relaxed mt-2">
+                            En esta clase <strong>no necesita saber SQL ni administrar bases de datos</strong>. Solo necesita entender que 
+                            cuando su programa Java se conecta a una base de datos para leer o guardar informacion, 
+                            algunos campos pueden estar <strong>vacios</strong> (<code>NULL</code>). 
+                            Ese hecho &mdash;aparentemente inocente&mdash; tiene consecuencias profundas en como declaramos nuestras variables en Java. 
+                            En una sesion futura del curso se explicaran las bases de datos con todo detalle.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+                    <!-- Columna izquierda: Problema de negocio -->
+                    <div class="glass-panel p-5 border-l-4" style="border-left-color: var(--accent-blue);">
+                        <h3 class="font-bold text-xl mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-database" style="color: var(--accent-blue);"></i>
+                            El Problema Real en Backend
+                        </h3>
+                        <p class="mb-3 text-sm leading-relaxed">
+                            Considere una tabla <code>usuarios</code> en una base de datos relacional remota (PostgreSQL, MySQL). 
+                            El campo <code>token_recuperacion</code> es <strong>opcional</strong>: solo existe si el usuario solicito un reseteo de contraseña. 
+                            Si nadie lo ha solicitado, la base de datos almacena <span class="keyword" tabindex="0" data-tooltip="SQL NULL: Marcador que indica ausencia total de valor. No es cero, no es cadena vacia. Representa 'desconocido' o 'no aplica' en el modelo relacional.">NULL</span>.
+                        </p>
+                        <div class="bg-gray-900 text-green-300 rounded-xl p-3 font-mono text-xs mb-3 overflow-x-auto">
+<pre><code>-- Consulta SQL: el campo puede ser NULL
+SELECT id, email, token_recuperacion 
+FROM usuarios 
+WHERE id = 1042;
+
+-- Resultado posible:
+-- 1042 | admin@sistema.com | NULL</code></pre>
+                        </div>
+                        <p class="text-sm leading-relaxed">
+                            Si en su codigo Java declara <code>long tokenRecuperacion;</code> (primitivo) y la base de datos devuelve <code>NULL</code>, 
+                            el <span class="keyword" tabindex="0" data-tooltip="JDBC (Java Database Connectivity): API estandar de Java para conectarse a bases de datos relacionales. Usa ResultSet.getLong() que retorna 0 si el valor SQL es NULL, perdiendo la distincion entre 'ausente' y 'cero'.">driver JDBC</span> 
+                            asignara <strong>0</strong> al primitivo, <strong>destruyendo la distincion semantica</strong> entre "token不存在" y "token con valor 0".
+                        </p>
+                    </div>
+
+                    <!-- Columna derecha: Solucion con wrappers -->
+                    <div class="glass-panel p-5 border-l-4" style="border-left-color: var(--accent-green);">
+                        <h3 class="font-bold text-xl mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-box" style="color: var(--accent-green);"></i>
+                            La Solucion: Wrapper Classes
+                        </h3>
+                        <p class="mb-3 text-sm leading-relaxed">
+                            Declare <code>Long tokenRecuperacion;</code> (clase envoltura). Al ser un <strong>objeto</strong> (no un primitivo), 
+                            puede contener o bien un valor numerico valido o bien <code>null</code>, reflejando fielmente el estado del campo en la base de datos.
+                        </p>
+                        <div class="bg-gray-900 text-green-300 rounded-xl p-3 font-mono text-xs mb-3 overflow-x-auto">
+<pre><code>// CORRECTO: Wrapper Class tolera null
+public class Usuario {
+    private Long id;               // null = no persistido aun
+    private String email;
+    private <strong>Long</strong> tokenRecuperacion;  // null = no hay token activo
+    private Integer intentosFallidos; // null = nunca ha fallado
+    
+    public boolean tieneTokenActivo() {
+        return tokenRecuperacion != null;
+    }
+}</code></pre>
+                        </div>
+
+                        <!-- Tarjeta clickeable para modal comparativo -->
+                        <div class="interactive-card glass-panel p-3 mt-3 tint-blue text-center" onclick="openModal('modal-stack-heap')">
+                            <i class="fa-solid fa-microchip text-xl mb-1"></i>
+                            <p class="font-bold text-sm">Stack vs. Heap: Rendimiento vs. Seguridad</p>
+                            <p class="text-xs" style="color: var(--text-muted);">Seleccione para ver la comparacion completa de memoria</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 4: Stack vs. Heap — Arquitectura de Memoria JVM ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[90%] mx-auto relative z-10">
+                <i class="fa-solid fa-microchip bg-icon text-[250px] -top-10 -right-5" style="color: var(--accent-blue); opacity: 0.05;"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-4xl font-bold mb-2">Stack vs. Heap: Arquitectura de Memoria en la <span class="keyword" tabindex="0" data-tooltip="JVM (Java Virtual Machine): Programa que ejecuta el bytecode Java compilado. Actua como una 'computadora virtual' que aisla la aplicacion del sistema operativo real. Esto permite que el mismo codigo Java funcione en Windows, Linux y macOS sin cambios. La JVM gestiona la memoria (Stack y Heap), carga clases y ejecuta el Garbage Collector.">JVM</span></h2>
+                    <p class="text-lg" style="color: var(--text-muted);">Rendimiento, seguridad y ciclo de vida de los datos en la Maquina Virtual de Java</p>
+                </div>
+
+                <!-- Tabla comparativa Stack vs Heap -->
+                <div class="max-w-6xl mx-auto mt-5">
+                    <div class="glass-panel p-4">
+                        <h3 class="font-bold text-lg mb-3 text-center">Comparacion Formal: Almacenamiento en Pila (Stack) vs. Monton (Heap)</h3>
+                        <table class="tabla-tecnica">
+                            <thead>
+                                <tr>
+                                    <th style="width:20%;">Criterio</th>
+                                    <th style="width:40%;">Stack (Pila)</th>
+                                    <th style="width:40%;">Heap (Monton)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-bold">Almacena</td>
+                                    <td>Primitivos (<code>int</code>, <code>boolean</code>, <code>double</code>) y referencias a objetos</td>
+                                    <td>Objetos completos (<code>String</code>, <code>Usuario</code>, <span class="keyword" tabindex="0" data-tooltip="ArrayList: Coleccion redimensionable que almacena objetos en un arreglo interno. A diferencia de un arreglo comun (array[]), puede crecer y decrecer dinamicamente. Es la lista mas usada en Java. No es thread-safe; para concurrencia use CopyOnWriteArrayList.">ArrayList</span>) con su estado interno</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold">Velocidad</td>
+                                    <td class="tint-green">Extremadamente rapida (operacion <span class="keyword" tabindex="0" data-tooltip="LIFO (Last In, First Out): El ultimo dato en entrar es el primero en salir. Como una pila de platos: solo puede retirar el de arriba. Las llamadas a metodos en el Stack siguen este principio.">LIFO</span> de CPU)</td>
+                                    <td class="tint-gold">Mas lenta (requiere recoleccion de basura y desfragmentacion)</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold">Gestion</td>
+                                    <td>Automatica por marco de metodo (stack frame). Se libera al salir del metodo.</td>
+                                    <td>Gestionada por el <span class="keyword" tabindex="0" data-tooltip="Garbage Collector (GC): Hilo del JVM que identifica y libera objetos inalcanzables en el Heap. En JDK 25 se usa G1GC por defecto; ZGC esta disponible para latencias ultrabajas con recoleccion generacional.">Garbage Collector</span>. El objeto vive mientras sea alcanzable.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold">Tamaño</td>
+                                    <td>Limitado (~1 MB por hilo en JVM estandar). <span class="keyword" tabindex="0" data-tooltip="StackOverflowError: Error que ocurre cuando la pila de llamadas (Stack) se desborda, tipicamente por recursion infinita o excesiva profundidad de llamadas. La unica solucion es aumentar el tamano del stack con -Xss o corregir la recursion.">StackOverflowError</span> si se agota.</td>
+                                    <td>Configurable con <span class="keyword" tabindex="0" data-tooltip="-Xmx: Bandera de la JVM que define el tamano maximo del Heap. Ejemplo: java -Xmx2g asigna 2 GB. Si la aplicacion supera este limite, se lanza OutOfMemoryError. En servidores de produccion se ajusta segun la RAM disponible.">-Xmx</span>. Puede crecer hasta gigabytes.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold">Seguridad</td>
+                                    <td>Datos confinados al hilo actual. <span class="keyword" tabindex="0" data-tooltip="Thread-safe: Codigo que funciona correctamente cuando multiples hilos lo ejecutan simultaneamente. El Stack es inherentemente thread-safe porque cada hilo tiene su propia pila aislada. El Heap requiere sincronizacion explicita.">Thread-safe</span> por diseño.</td>
+                                    <td>Datos compartidos entre hilos. Requiere sincronizacion explicita para seguridad concurrente.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold">Analogia</td>
+                                    <td>Nota adhesiva en el escritorio del operador: inmediata, desechable.</td>
+                                    <td>Boveda del Data Center: acceso mas lento pero almacenamiento masivo y persistente durante la sesion.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 5: Referencias en Memoria, Aliasing y Paso por Valor ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[90%] mx-auto relative z-10">
+                <i class="fa-solid fa-memory bg-icon text-[250px] -top-10 -right-5" style="color: var(--accent-purple); opacity: 0.05;"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-4xl font-bold mb-2">Referencias en Memoria, Aliasing y Paso por Valor</h2>
+                    <p class="text-lg" style="color: var(--text-muted);">¿Cómo Java gestiona los objetos en tiempo de ejecucion y por qué dos variables pueden modificar el mismo estado?</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+                    <!-- Panel: Referencia como puntero -->
+                    <div class="glass-panel p-5 border-l-4" style="border-left-color: var(--accent-purple);">
+                        <h3 class="font-bold text-xl mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-location-crosshairs" style="color: var(--accent-purple);"></i>
+                            La Variable como Puntero de Memoria
+                        </h3>
+                        <p class="text-sm leading-relaxed mb-3">
+                            Cuando usted escribe <code>Usuario admin = new Usuario("root");</code>, el JVM realiza <strong>dos acciones distintas</strong>:
+                        </p>
+                        <ol class="list-decimal pl-5 text-sm space-y-2 mb-4 leading-relaxed">
+                            <li><strong>Stack (Pila):</strong> Crea la variable <code>admin</code>, que almacena una <span class="keyword" tabindex="0" data-tooltip="Referencia: Valor numerico (direccion de memoria) que apunta al objeto en el Heap. No es un puntero crudo estilo C++ (no admite aritmetica). Es un 'gafete de acceso' de solo lectura.">referencia</span> (direccion de memoria, como un "gafete de acceso" o "credencial de visitante").</li>
+                            <li><strong>Heap (Monton):</strong> Reserva espacio para el objeto <code>Usuario</code> con todos sus atributos (el "expediente completo" en la "boveda del Data Center").</li>
+                        </ol>
+                        <div class="bg-gray-900 text-green-300 rounded-xl p-3 font-mono text-xs mb-3 overflow-x-auto">
+<pre><code>// La variable 'admin' esta en el Stack
+// El objeto 'new Usuario("root")' reside en el Heap
+Usuario admin = new Usuario("root");
+
+// 'admin' NO contiene al objeto.
+// 'admin' contiene la direccion donde esta el objeto.
+// Analogia: admin es el numero de casillero, no el contenido.</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Panel: Aliasing -->
+                    <div class="glass-panel p-5 border-l-4" style="border-left-color: var(--una-red);">
+                        <h3 class="font-bold text-xl mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-clone" style="color: var(--una-red);"></i>
+                            El Fenomeno de Aliasing
+                        </h3>
+                        <p class="text-sm leading-relaxed mb-3">
+                            El <span class="keyword" tabindex="0" data-tooltip="Aliasing: Situacion en la que dos o mas referencias distintas apuntan al mismo objeto en el Heap. Modificar el objeto a traves de cualquiera de ellas afecta a todas las demas. Es una de las fuentes mas comunes de bugs en sistemas concurrentes.">aliasing</span> ocurre cuando <strong>dos referencias distintas apuntan al mismo objeto en el Heap</strong>. 
+                            Cualquier modificacion a traves de una referencia es visible a traves de la otra.
+                        </p>
+                        <div class="bg-gray-900 text-red-300 rounded-xl p-3 font-mono text-xs mb-3 overflow-x-auto">
+<pre><code>Usuario admin1 = new Usuario("root");
+admin1.setIntentosFallidos(2);
+
+// ALIASING: admin2 apunta al MISMO objeto que admin1
+Usuario admin2 = admin1;  // NO copia el objeto, copia la referencia
+
+admin2.setIntentosFallidos(5); // Modifica el unico objeto en el Heap
+
+System.out.println(admin1.getIntentosFallidos()); // Imprime 5, no 2
+// admin1 y admin2 son dos gafetes distintos 
+// colgados en la misma puerta de la boveda</code></pre>
+                        </div>
+                        <p class="text-sm leading-relaxed">
+                            <i class="fa-solid fa-triangle-exclamation mr-1" style="color: var(--una-gold);"></i>
+                            <strong>Riesgo de ciberseguridad:</strong> Si un metodo recibe una referencia a <code>Usuario</code> y la almacena sin copia defensiva, 
+                            el codigo externo puede modificar el estado interno del objeto fuera del control del sistema de autenticacion.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Panel inferior: Paso por valor -->
+                <div class="max-w-6xl mx-auto mt-5 grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div class="glass-panel p-4 border-l-4 tint-blue md:col-span-2" style="border-left-color: var(--accent-blue);">
+                        <h3 class="font-bold text-lg mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-right-arrow-left" style="color: var(--accent-blue);"></i>
+                            Principio Fundamental: Java Siempre Pasa Argumentos por Valor
+                        </h3>
+                        <p class="text-sm leading-relaxed mb-3">
+                            En Java <strong>no existe el paso por referencia</strong> como en C++ (<code>&amp;</code>) o C# (<code>ref</code>). 
+                            Cuando se pasa un objeto como argumento, <strong>se pasa el valor de la referencia</strong> (la direccion de memoria), no la variable original. 
+                            Esto significa que:
+                        </p>
+                        <ul class="list-disc pl-5 text-sm space-y-1 leading-relaxed">
+                            <li>Dentro del metodo <strong>no puede reasignar</strong> la variable original del llamante a un nuevo objeto.</li>
+                            <li>Pero <strong>si puede modificar el estado interno</strong> del objeto apuntado (porque la copia de la referencia sigue apuntando al mismo objeto en el Heap).</li>
+                        </ul>
+                    </div>
+                    <div class="interactive-card glass-panel p-4 text-center tint-red flex flex-col items-center justify-center" onclick="openModal('modal-nullpointer')">
+                        <i class="fa-solid fa-bug text-2xl mb-2" style="color: var(--una-red);"></i>
+                        <p class="font-bold text-sm">Anatomia del NullPointerException</p>
+                        <p class="text-xs" style="color: var(--text-muted);">Seleccione para entender por que ocurre y como prevenirlo estructuralmente</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 6: Modularidad, Paquetes y Principio de Menor Privilegio ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[90%] mx-auto relative z-10">
+                <i class="fa-solid fa-cubes bg-icon text-[250px] -top-10 -left-5" style="color: var(--accent-green); opacity: 0.05;"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-4xl font-bold mb-2">Modularidad, Paquetes y Principio de Menor Privilegio</h2>
+                    <p class="text-lg" style="color: var(--text-muted);">Como la division en carpetas dentro de IntelliJ IDEA materializa la seguridad en capas del backend</p>
+                </div>
+
+                <!-- Introduccion: Que es un paquete? -->
+                <div class="max-w-6xl mx-auto mb-4">
+                    <div class="glass-panel p-4 tint-blue border-l-4" style="border-left-color: var(--accent-blue);">
+                        <h3 class="font-bold text-base mb-1 flex items-center gap-2">
+                            <i class="fa-solid fa-folder-tree" style="color: var(--accent-blue);"></i>
+                            Que es un paquete (<code>package</code>) en Java?
+                        </h3>
+                        <p class="text-sm leading-relaxed">
+                            Un <span class="keyword" tabindex="0" data-tooltip="Paquete (package): Carpeta dentro del disco duro que organiza archivos .java. Se declara con 'package seguridad.model;' al inicio del archivo. La JVM usa esta linea para encontrar las clases compiladas en la estructura de carpetas correcta.">paquete</span> 
+                            es simplemente <strong>una carpeta dentro del disco duro</strong> para organizar los archivos <code>.java</code>. 
+                            Usted lo crea en IntelliJ IDEA con clic derecho en <code>src</code> &rarr; New &rarr; Package, escribe <code>seguridad.model</code> 
+                            (el punto crea una subcarpeta), y al inicio de cada archivo declara <code>package seguridad.model;</code>. 
+                            <strong>Sin esta organizacion, un proyecto de 300 clases seria imposible de mantener.</strong>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Tres capas / paquetes del sistema -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-6xl mx-auto mb-4">
+                    <div class="glass-panel p-4 text-center border-t-4" style="border-top-color: var(--accent-blue);">
+                        <i class="fa-solid fa-shield-haltered text-2xl mb-2" style="color: var(--accent-blue);"></i>
+                        <h3 class="font-bold text-sm">seguridad.auth</h3>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">Capa de Autenticacion: los <strong>guardias de seguridad</strong> que verifican usuarios y contrasenas. <code>Autenticador</code>, <code>GestorSesion</code>.</p>
+                    </div>
+                    <div class="glass-panel p-4 text-center border-t-4" style="border-top-color: var(--una-red);">
+                        <i class="fa-solid fa-clipboard-list text-2xl mb-2" style="color: var(--una-red);"></i>
+                        <h3 class="font-bold text-sm">seguridad.audit</h3>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">Capa de Auditoria: la <strong>camara de seguridad</strong> que registra quien entro y a que hora. <code>LogEvento</code>, <code>Auditor</code>.</p>
+                    </div>
+                    <div class="glass-panel p-4 text-center border-t-4" style="border-top-color: var(--accent-green);">
+                        <i class="fa-solid fa-diagram-project text-2xl mb-2" style="color: var(--accent-green);"></i>
+                        <h3 class="font-bold text-sm">seguridad.model</h3>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">Capa de Modelo: las <strong>fichas de datos</strong> del negocio. <code>Usuario</code>, <code>Administrador</code>, <code>Rol</code>.</p>
+                    </div>
+                </div>
+
+                <!-- Que es un modificador? + Tabla + PoLP -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-6xl mx-auto">
+                    <!-- Tabla de modificadores -->
+                    <div class="glass-panel p-4">
+                        <h3 class="font-bold text-base mb-2 text-center">Modificadores de Acceso: Quien puede ver cada atributo?</h3>
+                        <p class="text-xs mb-3 text-center" style="color: var(--text-muted);">
+                            Un <span class="keyword" tabindex="0" data-tooltip="Modificador de acceso: Palabra clave que se coloca antes de un atributo o metodo para controlar quien puede leerlo o modificarlo. Define las 'puertas de visibilidad' del objeto. Los cuatro niveles son: private, default, protected, public.">modificador de acceso</span> 
+                            es la palabra que define <strong>quien desde afuera puede ver y cambiar</strong> un atributo o metodo. 
+                            La tabla responde: "Si pongo este modificador, que clases pueden acceder?"
+                        </p>
+                        <table class="tabla-tecnica text-xs">
+                            <thead>
+                                <tr>
+                                    <th>Modificador</th>
+                                    <th>Clase</th>
+                                    <th>Paquete</th>
+                                    <th>Subclase</th>
+                                    <th>Mundo</th>
+                                    <th style="font-weight:400; font-size:0.75rem;">Analogia</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-bold font-mono text-red-500">private</td>
+                                    <td class="tint-green"><i class="fa-solid fa-check"></i></td>
+                                    <td class="tint-red"><i class="fa-solid fa-xmark"></i></td>
+                                    <td class="tint-red"><i class="fa-solid fa-xmark"></i></td>
+                                    <td class="tint-red"><i class="fa-solid fa-xmark"></i></td>
+                                    <td class="text-xs">Su contraseña bancaria</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold font-mono" style="color: var(--accent-peach);">(default)</td>
+                                    <td class="tint-green"><i class="fa-solid fa-check"></i></td>
+                                    <td class="tint-green"><i class="fa-solid fa-check"></i></td>
+                                    <td class="tint-red"><i class="fa-solid fa-xmark"></i></td>
+                                    <td class="tint-red"><i class="fa-solid fa-xmark"></i></td>
+                                    <td class="text-xs">Nota en la refri de su casa</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold font-mono" style="color: var(--accent-blue);">protected</td>
+                                    <td class="tint-green"><i class="fa-solid fa-check"></i></td>
+                                    <td class="tint-green"><i class="fa-solid fa-check"></i></td>
+                                    <td class="tint-green"><i class="fa-solid fa-check"></i></td>
+                                    <td class="tint-red"><i class="fa-solid fa-xmark"></i></td>
+                                    <td class="text-xs">El carro familiar</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold font-mono" style="color: var(--accent-green);">public</td>
+                                    <td class="tint-green"><i class="fa-solid fa-check"></i></td>
+                                    <td class="tint-green"><i class="fa-solid fa-check"></i></td>
+                                    <td class="tint-green"><i class="fa-solid fa-check"></i></td>
+                                    <td class="tint-green"><i class="fa-solid fa-check"></i></td>
+                                    <td class="text-xs">Letrero en la calle</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Principio de Menor Privilegio -->
+                    <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--una-red);">
+                        <h3 class="font-bold text-base mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-shield-haltered" style="color: var(--una-red);"></i>
+                            Aplicacion directa al Principio de Menor Privilegio
+                        </h3>
+                        <p class="text-xs leading-relaxed mb-3">
+                            <span class="keyword" tabindex="0" data-tooltip="Principio de Menor Privilegio (PoLP): Cada modulo, proceso o usuario debe operar con el conjunto minimo de permisos necesario para completar su funcion. Si un componente es comprometido, el daño queda contenido por sus privilegios limitados.">PoLP</span>: 
+                            cada clase debe tener <strong>exclusivamente los permisos indispensables</strong>. 
+                            <code>private</code> es la opcion por defecto. Solo se sube el nivel cuando sea estrictamente necesario.
+                        </p>
+                        <div class="bg-gray-900 text-red-300 rounded-xl p-3 font-mono text-[0.65rem] leading-relaxed mb-2 overflow-x-auto">
+<pre><code>// INSEGURO: atributos public = cualquiera los modifica
+public class UsuarioInseguro {
+    public String contraseñaHash;  // Un hacker puede leerla y cambiarla
+    public int intentosFallidos;   // Un atacante resetea el bloqueo
+}
+// ataque: usuario.intentosFallidos = 0;  // Bloqueo burlado
+
+// SEGURO: encapsulamiento estricto con private
+public class Usuario {
+    private String contraseñaHash;      // Solo esta clase accede
+    private int intentosFallidos;       // Solo se modifica via metodo
+
+    public boolean verificarContraseña(String intento) {
+        // Toda interaccion pasa por este metodo controlado
+        // que aplica bcrypt/scrypt, registra intentos y bloquea
+    }
+}</code></pre>
+                        </div>
+                        <div class="tint-red rounded-xl p-2 text-xs">
+                            <i class="fa-solid fa-circle-exclamation mr-1"></i>
+                            <strong>Regla de ingenieria:</strong> Ponga <code>private</code> a todos sus atributos por defecto. 
+                            Si otra clase necesita acceder, crea un metodo que valide y audite la operacion. 
+                            <strong>Nunca</strong> exponga un atributo como <code>public</code>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 7: Miembros Estaticos Avanzados y Ciclo de Vida ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[90%] mx-auto relative z-10">
+                <i class="fa-solid fa-circle-nodes bg-icon text-[250px] -bottom-10 right-0" style="color: var(--accent-peach); opacity: 0.05;"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-4xl font-bold mb-2">Miembros Estaticos Avanzados y Ciclo de Vida</h2>
+                    <p class="text-lg" style="color: var(--text-muted);">Del estado individual del usuario a la alarma perimetral global del sistema</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-6xl mx-auto mb-5">
+                    <div class="glass-panel p-5 border-l-4" style="border-left-color: var(--accent-peach);">
+                        <h3 class="font-bold text-xl mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-user" style="color: var(--accent-peach);"></i>
+                            Atributos de Instancia vs. Atributos Estaticos
+                        </h3>
+                        <p class="text-sm leading-relaxed mb-3">
+                            Un atributo de <strong>instancia</strong> (sin <code>static</code>) pertenece a <strong>cada objeto individual</strong>. 
+                            Un atributo <strong>estatico</strong> pertenece a <strong>la clase misma</strong> y es compartido por todas las instancias.
+                        </p>
+                        <div class="bg-gray-900 text-green-300 rounded-xl p-3 font-mono text-xs mb-3 overflow-x-auto">
+<pre><code>public class Usuario {
+    // INSTANCIA: cada usuario tiene su propio contador
+    private int intentosFallidos = 0;       
+    
+    // ESTATICO: UNICO contador global para toda la aplicacion
+    private static int totalAtaquesGlobales = 0;
+    
+    public void registrarIntentoFallido() {
+        this.intentosFallidos++;       // Afecta solo a ESTE usuario
+        Usuario.totalAtaquesGlobales++; // Afecta el contador GLOBAL
+    }
+}
+
+// En Main:
+Usuario u1 = new Usuario("admin");
+Usuario u2 = new Usuario("operador");
+
+u1.registrarIntentoFallido(); // u1.intentos=1, totalAtaques=1
+u1.registrarIntentoFallido(); // u1.intentos=2, totalAtaques=2
+u2.registrarIntentoFallido(); // u2.intentos=1, totalAtaques=3
+
+// u1.intentosFallidos != u2.intentosFallidos (instancia)
+// Ambos comparten totalAtaquesGlobales (estatico)</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-5 border-l-4" style="border-left-color: var(--accent-blue);">
+                        <h3 class="font-bold text-xl mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-bolt" style="color: var(--accent-blue);"></i>
+                            Bloques Estaticos y Constantes de Seguridad
+                        </h3>
+                        <p class="text-sm leading-relaxed mb-3">
+                            Un <span class="keyword" tabindex="0" data-tooltip="Bloque estatico (static { }): Segmento de codigo que se ejecuta UNA sola vez, cuando el ClassLoader carga la clase en la JVM, antes de que se cree cualquier instancia. Ideal para inicializar configuraciones globales, cargar politicas de seguridad o registrar drivers.">bloque estatico</span> 
+                            se ejecuta <strong>una unica vez</strong>, cuando la clase es cargada por el <span class="keyword" tabindex="0" data-tooltip="ClassLoader: Subsistema de la JVM responsable de localizar, cargar y enlazar los archivos .class en memoria. Busca en el classpath los bytecodes compilados. Existen tres niveles: Bootstrap (carga clases del JDK), Extension/Platform, y Application (carga tus clases).">ClassLoader</span>, 
+                            antes de que exista ninguna instancia. Es el lugar ideal para inicializar politicas de seguridad del sistema.
+                        </p>
+                        <div class="bg-gray-900 text-green-300 rounded-xl p-3 font-mono text-xs mb-3 overflow-x-auto">
+<pre><code>public class PoliticaSeguridad {
+    // Constante de seguridad: inmutable, global, garantia de integridad
+    public static final int MAX_INTENTOS_PERMITIDOS = 3;
+    public static final int TIEMPO_BLOQUEO_MINUTOS = 15;
+    public static final int LONGITUD_MINIMA_CONTRASEÑA = 12;
+    
+    private static List&lt;String&gt; ipsBloqueadas;
+    
+    // Bloque estatico: se ejecuta al cargar la clase
+    static {
+        System.out.println("[SEGURIDAD] Inicializando politicas...");
+        ipsBloqueadas = new ArrayList&lt;&gt;();
+        cargarConfiguracionSeguridad();
+        System.out.println("[SEGURIDAD] MAX_INTENTOS = " 
+            + MAX_INTENTOS_PERMITIDOS);
+    }
+    
+    private static void cargarConfiguracionSeguridad() {
+        // Carga desde archivo de configuracion o variable de entorno
+    }
+}</code></pre>
+                        </div>
+                        <div class="tint-blue rounded-xl p-3 text-sm">
+                            <i class="fa-solid fa-lightbulb mr-1"></i>
+                            <strong>Analogia de ciberseguridad:</strong> <code>intentosFallidos</code> es el contador del detector de humo en la oficina de <em>cada</em> usuario. 
+                            <code>totalAtaquesGlobales</code> es la <strong>alarma perimetral central</strong> del edificio: si alcanza un umbral critico, 
+                            activa protocolos de contencion para <em>todo</em> el sistema, independientemente de quien gatillo la alerta.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta: Ciclo de vida -->
+                <div class="max-w-6xl mx-auto">
+                    <div class="glass-panel p-4">
+                        <h3 class="font-bold text-lg mb-3 text-center">Ciclo de Vida de un Miembro Estatico</h3>
+                        <div class="grid grid-cols-4 gap-3 text-center text-sm">
+                            <div class="tint-blue rounded-xl p-3">
+                                <i class="fa-solid fa-1 text-lg mb-1"></i>
+                                <p class="font-bold">Carga de Clase</p>
+                                <p class="text-xs opacity-80">El <span class="keyword" tabindex="0" data-tooltip="ClassLoader: Subsistema de la JVM que busca, carga y enlaza archivos .class en memoria. Sin el, el codigo Java compilado jamas se ejecutaria.">ClassLoader</span> carga <code>Usuario.class</code>. Se asigna memoria para atributos <code>static</code> en el <span class="keyword" tabindex="0" data-tooltip="Metaspace: Region de memoria nativa (fuera del Heap) introducida en Java 8 que reemplazo a PermGen. Almacena metadatos de clases, incluyendo atributos estaticos. No tiene limite por defecto.">Metaspace</span>.</p>
+                            </div>
+                            <div class="tint-purple rounded-xl p-3">
+                                <i class="fa-solid fa-2 text-lg mb-1"></i>
+                                <p class="font-bold">Inicializacion</p>
+                                <p class="text-xs opacity-80">Se ejecutan los bloques <code>static { }</code> y se asignan valores iniciales en orden textual.</p>
+                            </div>
+                            <div class="tint-green rounded-xl p-3">
+                                <i class="fa-solid fa-3 text-lg mb-1"></i>
+                                <p class="font-bold">Vida Util</p>
+                                <p class="text-xs opacity-80">Los atributos <code>static</code> viven mientras la clase permanece cargada. Sobreviven a todas las instancias.</p>
+                            </div>
+                            <div class="tint-red rounded-xl p-3">
+                                <i class="fa-solid fa-4 text-lg mb-1"></i>
+                                <p class="font-bold">Descarga</p>
+                                <p class="text-xs opacity-80">Cuando el <span class="keyword" tabindex="0" data-tooltip="ClassLoader: Subsistema de la JVM que busca, carga y enlaza archivos .class en memoria. Sin el, el codigo Java compilado jamas se ejecutaria.">ClassLoader</span> es descargado (raro en aplicaciones convencionales; comun en servidores de aplicaciones al redeployar).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 8: Arquitectura en JDK 25 — Inmutabilidad y Records ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[90%] mx-auto relative z-10">
+                <i class="fa-solid fa-database bg-icon text-[250px] -top-10 -right-5" style="color: var(--una-red); opacity: 0.05;"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-4xl font-bold mb-2">Arquitectura en JDK 25: Inmutabilidad y <span class="keyword" tabindex="0" data-tooltip="Record: Tipo especial de clase Java (desde JDK 14, estable en JDK 16+) que define un portador de datos inmutable en una sola linea. El compilador genera automaticamente constructor canonico, accessors sin 'get', equals, hashCode y toString. Todos sus campos son private final. Se declara con: public record Nombre(campos) {}">Records</span></h2>
+                    <p class="text-lg" style="color: var(--text-muted);">Del <span class="keyword" tabindex="0" data-tooltip="POJO (Plain Old Java Object): Objeto Java simple sin dependencias de frameworks. Solo tiene atributos privados, constructor, getters y setters. Es el patron tradicional para modelar datos antes de los records.">POJO</span> tradicional al <span class="keyword" tabindex="0" data-tooltip="Record: Clase especial inmutable de Java. Se define en una linea y el compilador genera automaticamente constructor, accessors, equals, hashCode y toString. Todos los campos son private final. Ideal para DTOs, registros de auditoria y cualquier objeto que solo transporte datos.">Record</span> inmutable &mdash; Como Java moderno garantiza la integridad de la auditoria</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-6xl mx-auto">
+                    <!-- Antes: POJO -->
+                    <div class="glass-panel p-5 border-l-4" style="border-left-color: var(--text-muted); opacity: 0.85;">
+                        <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-clock-rotate-left" style="color: var(--text-muted);"></i>
+                            Antes (Java 8-20): POJO para Auditoria
+                        </h3>
+                        <p class="text-xs mb-2" style="color: var(--text-muted);">Clase tradicional con constructor, getters, setters, toString, equals y <span class="keyword" tabindex="0" data-tooltip="hashCode(): Metodo de Object que retorna un entero representando al objeto. Esencial para colecciones como HashMap y HashSet. Dos objetos iguales (segun equals) DEBEN tener el mismo hashCode. Los records lo generan automaticamente.">hashCode</span> manuales o via IDE.</p>
+                        <div class="bg-gray-900 text-yellow-300 rounded-xl p-3 font-mono text-[0.7rem] leading-relaxed mb-3 overflow-x-auto">
+<pre><code>// Java 8: ~55 lineas para un simple <span class="keyword" tabindex="0" data-tooltip="DTO (Data Transfer Object): Objeto que solo transporta datos entre capas de la aplicacion, sin logica de negocio. Enviar un DTO por la red es mas eficiente que enviar una entidad completa con todas sus dependencias.">DTO</span> de auditoria
+public class LogEvento {
+    private final String usuario;
+    private final String accion;
+    private final long timestamp;
+    
+    public LogEvento(String usuario, String accion, long timestamp) {
+        this.usuario = usuario;
+        this.accion = accion;
+        this.timestamp = timestamp;
+    }
+    
+    public String getUsuario() { return usuario; }
+    public String getAccion()  { return accion; }
+    public long getTimestamp() { return timestamp; }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LogEvento)) return false;
+        LogEvento that = (LogEvento) o;
+        return timestamp == that.timestamp 
+            && usuario.equals(that.usuario) 
+            && accion.equals(that.accion);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(usuario, accion, timestamp);
+    }
+    
+    @Override
+    public String toString() {
+        return "LogEvento{usuario='" + usuario 
+            + "', accion='" + accion 
+            + "', timestamp=" + timestamp + "}";
+    }
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Ahora: Record -->
+                    <div class="glass-panel p-5 border-l-4" style="border-left-color: var(--accent-green);">
+                        <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-rocket" style="color: var(--accent-green);"></i>
+                            Ahora (JDK 25): Record Inmutable
+                        </h3>
+                        <p class="text-xs mb-2" style="color: var(--text-muted);">Una sola linea. El compilador genera automaticamente constructor canonico, accessors, equals, hashCode y toString.</p>
+                        <div class="bg-gray-900 text-green-300 rounded-xl p-3 font-mono text-[0.75rem] leading-relaxed mb-3 overflow-x-auto">
+<pre><code>// JDK 25: 1 linea. Inmutable por diseño.
+public record LogEvento(
+    String usuario, 
+    String accion, 
+    long timestamp
+) {
+    // Constructor compacto: validacion sin redundancia
+    public LogEvento {
+        if (usuario == null || usuario.isBlank()) {
+            throw new IllegalArgumentException(
+                "usuario no puede ser nulo ni vacio");
+        }
+        if (accion == null || accion.isBlank()) {
+            throw new IllegalArgumentException(
+                "accion no puede ser nula ni vacia");
+        }
+    }
+    
+    // Metodo de consulta derivado (no almacena dato extra)
+    public boolean esReciente() {
+        long ahora = System.currentTimeMillis();
+        return (ahora - timestamp) < 3600_000; // 1 hora
+    }
+}
+
+// Uso: inmutable, legible, sin boilerplate
+var evento = new LogEvento("admin", "LOGIN_EXITOSO", 
+    System.currentTimeMillis());</code></pre>
+                        </div>
+                        <div class="tint-green rounded-xl p-3 text-sm">
+                            <i class="fa-solid fa-circle-check mr-1"></i>
+                            <strong>Resultado:</strong> De ~55 lineas de codigo repetitivo y propenso a errores a <strong>1 linea declarativa</strong>. 
+                            El compilador garantiza la correccion de <code>equals</code>, <code>hashCode</code> y <code>toString</code>.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nota condensada de ciberseguridad -->
+                <div class="max-w-6xl mx-auto mt-4">
+                    <div class="tint-red rounded-xl p-3 text-sm text-center">
+                        <i class="fa-solid fa-shield-haltered mr-1" style="color: var(--una-red);"></i>
+                        <strong>Impacto en ciberseguridad:</strong> La inmutabilidad del <code>record</code> garantiza el 
+                        <span class="keyword" tabindex="0" data-tooltip="No repudio: Propiedad de seguridad que impide que una entidad niegue haber realizado una accion. La inmutabilidad de los registros garantiza que nadie puede alterar el historial para borrar evidencia.">no repudio</span> 
+                        (nadie puede modificar retroactivamente la auditoria), la 
+                        <span class="keyword" tabindex="0" data-tooltip="Thread-safe: Un objeto es thread-safe si puede ser utilizado por multiples hilos concurrentemente sin riesgo de condiciones de carrera. Los objetos inmutables son thread-safe por definicion.">thread-safety</span> 
+                        (multiples hilos leen sin sincronizacion) y la integridad referencial (los accessors no exponen referencias mutables).
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 9: Programacion Generica en Java (Generics) ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[90%] mx-auto relative z-10">
+                <i class="fa-solid fa-code bg-icon text-[250px] -top-10 -right-5" style="color: var(--accent-purple); opacity: 0.05;"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-4xl font-bold mb-2">Programacion Generica en Java (Generics)</h2>
+                    <p class="text-lg" style="color: var(--text-muted);">Como los tipos parametrizados <code>&lt;T&gt;</code> eliminan errores en tiempo de ejecucion y refuerzan la seguridad del backend</p>
+                </div>
+
+                <!-- Introduccion conceptual: analogia sencilla -->
+                <div class="max-w-6xl mx-auto mb-4">
+                    <div class="glass-panel p-4 tint-blue border-l-4" style="border-left-color: var(--accent-blue);">
+                        <h3 class="font-bold text-base mb-1 flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb" style="color: var(--accent-blue);"></i>
+                            Analogia: El problema que resuelven los Generics
+                        </h3>
+                        <p class="text-sm leading-relaxed">
+                            Imagine que tiene una <strong>caja de carton</strong> (<code>ArrayList</code>) donde puede guardar cualquier cosa: 
+                            un libro, un sandwich, una llave. Cuando mete la mano para sacar algo, <strong>no sabe que va a encontrar</strong>. 
+                            Podria esperar un libro y sacar un sandwich podrido. Eso es lo que pasaba antes de Java 5: 
+                            la caja aceptaba cualquier objeto (<code>Object</code>) y al sacarlo habia que "adivinar" que era 
+                            (<span class="keyword" tabindex="0" data-tooltip="Casting: Operacion que le dice al compilador 'confia en mi, este objeto es de tipo X'. Se escribe poniendo el tipo entre parentesis antes del objeto: (Usuario) objeto. Si el objeto NO es realmente de ese tipo, la JVM lanza ClassCastException en tiempo de ejecucion.">casting</span>). 
+                            Con <strong>Generics</strong>, usted le pone una <strong>etiqueta</strong> a la caja: 
+                            <code>ArrayList&lt;Libro&gt;</code> solo acepta libros. El compilador se convierte en un guardia que revisa la etiqueta 
+                            <strong>al escribir el codigo</strong>, no cuando el programa ya esta corriendo.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-6xl mx-auto mb-4">
+                    <!-- Columna izquierda: El problema -->
+                    <div class="glass-panel p-5 border-l-4" style="border-left-color: var(--una-red);">
+                        <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation" style="color: var(--una-red);"></i>
+                            El Problema Historico (Antes de Java 5)
+                        </h3>
+                        <p class="text-sm leading-relaxed mb-3">
+                            Antes de <span class="keyword" tabindex="0" data-tooltip="Generics: Mecanismo de Java (desde JDK 5, año 2004) que permite parametrizar clases, interfaces y metodos con tipos (<T>, <E>, <K,V>). El compilador verifica la compatibilidad de tipos en tiempo de compilacion, eliminando la necesidad de castings manuales y previniendo ClassCastException.">Generics</span>, 
+                            un <span class="keyword" tabindex="0" data-tooltip="ArrayList: Coleccion de Java que almacena objetos en una lista redimensionable. Es como un arreglo que puede crecer y decrecer automaticamente. Sin Generics, almacena Object (cualquier cosa). Con Generics, solo almacena el tipo declarado.">ArrayList</span> 
+                            era una caja sin etiqueta: guardaba <strong>cualquier tipo de objeto</strong>. 
+                            Para recuperar un elemento, el programador debia hacer un 
+                            <span class="keyword" tabindex="0" data-tooltip="Casting: Operacion que le dice al compilador 'trata este objeto como si fuera de tipo X'. Se escribe (Tipo) antes de la variable. Ejemplo: (Usuario) objeto. El peligro es que si el objeto NO es realmente un Usuario, el programa truena con ClassCastException en plena ejecucion, cuando ya es demasiado tarde.">casting manual</span>, 
+                            "adivinando" el tipo. El compilador <strong>no podia verificar</strong> si el casting era correcto:
+                        </p>
+                        <div class="bg-gray-900 text-red-300 rounded-xl p-3 font-mono text-[0.65rem] leading-relaxed mb-3 overflow-x-auto">
+<pre><code><span style="color: #629755;">//  ANTES de Java 5: codigo peligroso</span>
+
+<span style="color: #629755;">// 1 Creamos una lista SIN etiqueta de tipo</span>
+ArrayList lista = new ArrayList();
+
+<span style="color: #629755;">// 2 Guardamos un Usuario... </span>
+lista.add(new Usuario("admin"));
+
+<span style="color: #629755;">// 3 ...y tambien un String por accidente</span>
+lista.add("texto arbitrario"); <span style="color: #629755;">// El compilador NO avisa </span>
+
+<span style="color: #629755;">// 4 Al sacar el elemento, "adivinamos" que es Usuario</span>
+Usuario u = (Usuario) lista.get(1);
+<span style="color: #629755;">//  ClassCastException en tiempo de ejecucion!</span>
+<span style="color: #629755;">// El programa truena porque el elemento #1 es String</span></code></pre>
+                        </div>
+                        <p class="text-sm leading-relaxed">
+                            El <span class="keyword" tabindex="0" data-tooltip="ClassCastException: Excepcion (error grave) que la JVM lanza en tiempo de ejecucion cuando intenta convertir un objeto a un tipo que no es. Ejemplo: tratar un String como si fuera Usuario. Con Generics, este error se vuelve imposible porque el compilador lo detecta antes.">ClassCastException</span> 
+                            ocurre <strong>mientras el programa esta corriendo</strong>, quizas frente al usuario final. 
+                            En un sistema de seguridad, esto podria <strong>tumbar todo el backend</strong>.
+                        </p>
+                    </div>
+
+                    <!-- Columna derecha: La solucion -->
+                    <div class="glass-panel p-5 border-l-4" style="border-left-color: var(--accent-green);">
+                        <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-shield-check" style="color: var(--accent-green);"></i>
+                            La Solucion Moderna: Type Safety
+                        </h3>
+                        <p class="text-sm leading-relaxed mb-3">
+                            Con <span class="keyword" tabindex="0" data-tooltip="Type Safety (Seguridad de Tipos): Propiedad que garantiza que una variable solo contenga objetos del tipo declarado. El compilador revisa esto al escribir el codigo (tiempo de compilacion), no cuando el programa ya esta ejecutandose. Es como un inspector de calidad que revisa las cajas ANTES de enviarlas.">type safety</span>, 
+                            usted <strong>etiqueta</strong> el <code>ArrayList</code> al declararlo: 
+                            <code>ArrayList&lt;Usuario&gt;</code> significa "esta caja <strong>solo acepta Usuarios</strong>". 
+                            El compilador se convierte en un guardia que <strong>rechaza cualquier objeto de otro tipo</strong>:
+                        </p>
+                        <div class="bg-gray-900 text-green-300 rounded-xl p-3 font-mono text-[0.65rem] leading-relaxed mb-3 overflow-x-auto">
+<pre><code><span style="color: #629755;">//  DESDE Java 5+: codigo seguro</span>
+
+<span style="color: #629755;">// 1 La etiqueta &lt;Usuario&gt; es un CONTRATO:</span>
+<span style="color: #629755;">//    "Esta lista solo guarda objetos de tipo Usuario"</span>
+ArrayList&lt;Usuario&gt; lista = new ArrayList&lt;&gt;();
+
+<span style="color: #629755;">// 2 Guardamos un Usuario </span>
+lista.add(new Usuario("admin"));
+
+<span style="color: #629755;">// 3 Si intentamos guardar otra cosa...</span>
+<span style="color: #629755;">// lista.add("texto"); //  ERROR DE COMPILACION</span>
+<span style="color: #629755;">// IntelliJ lo subraya en rojo ANTES de ejecutar</span>
+
+<span style="color: #629755;">// 4 Al sacar, NO necesitamos adivinar el tipo</span>
+Usuario u = lista.get(0); <span style="color: #629755;">// Sin casting, el tipo esta 100% garantizado</span></code></pre>
+                        </div>
+                        <div class="tint-green rounded-xl p-3 text-sm">
+                            <i class="fa-solid fa-circle-check mr-1"></i>
+                            <strong>Resultado:</strong> El error se detecta <strong>mientras usted escribe</strong> (IntelliJ lo subraya en rojo), 
+                            no cuando el sistema ya esta en produccion. Es como que el arquitecto revise los planos <strong>antes</strong> de construir el edificio.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ejemplo aplicado a seguridad -->
+                <div class="max-w-6xl mx-auto">
+                    <div class="glass-panel p-5 border-l-4" style="border-left-color: var(--accent-blue);">
+                        <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-server" style="color: var(--accent-blue);"></i>
+                            Aplicacion Real: Una Clase de Respuesta para Gobernarlos a Todos
+                        </h3>
+                        <p class="text-sm leading-relaxed mb-3">
+                            En un sistema de seguridad, el metodo <code>login()</code> devuelve un <code>Usuario</code>, 
+                            pero <code>consultarAuditoria()</code> devuelve una <code>List&lt;LogEvento&gt;</code>. 
+                            <strong>Sin Generics</strong> necesitaria crear una clase distinta para cada tipo de respuesta 
+                            (<code>RespuestaUsuario</code>, <code>RespuestaLogEvento</code>, <code>RespuestaLista</code>...). 
+                            <strong>Con Generics</strong>, crea <strong>una sola clase</strong> que se adapta a cualquier tipo:
+                        </p>
+                        <div class="bg-gray-900 text-green-300 rounded-xl p-3 font-mono text-[0.62rem] leading-relaxed overflow-x-auto">
+<pre><code><span style="color: #629755;">//  UNA sola clase, INFINITOS usos</span>
+<span style="color: #629755;">// &lt;T&gt; significa "T va a ser el tipo que YO (el programador) decida al usarla"</span>
+public class RespuestaSeguridad&lt;T&gt; {
+    private boolean exito;       <span style="color: #629755;">// ¿La operacion funciono?</span>
+    private String mensaje;      <span style="color: #629755;">// Detalle legible para humanos</span>
+    private T datos;             <span style="color: #629755;">// El contenido real (puede ser cualquier tipo)</span>
+    
+    public RespuestaSeguridad(boolean exito, String mensaje, T datos) {
+        this.exito = exito;
+        this.mensaje = mensaje;
+        this.datos = datos;
+    }
+    
+    public T getDatos() { return datos; }    <span style="color: #629755;">// Retorna el tipo T que definiste al crear la respuesta</span>
+    public boolean esExitoso() { return exito; }
+}
+
+<span style="color: #629755;">// === USO: la misma clase, tres tipos distintos ===</span>
+
+<span style="color: #629755;">// 1 Cuando T = Usuario (respuesta de login)</span>
+RespuestaSeguridad&lt;Usuario&gt; r1 =
+    new RespuestaSeguridad&lt;&gt;(true, "Autenticado", admin);
+Usuario user = r1.getDatos(); <span style="color: #629755;">// El compilador SABE que es Usuario</span>
+
+<span style="color: #629755;">// 2 Cuando T = LogEvento (respuesta de auditoria)</span>
+RespuestaSeguridad&lt;LogEvento&gt; r2 =
+    new RespuestaSeguridad&lt;&gt;(true, "Evento registrado", evento);
+LogEvento log = r2.getDatos(); <span style="color: #629755;">// El compilador SABE que es LogEvento</span>
+
+<span style="color: #629755;">// 3 Cuando T = List&lt;LogEvento&gt; (respuesta de historial)</span>
+RespuestaSeguridad&lt;List&lt;LogEvento&gt;&gt; r3 =
+    new RespuestaSeguridad&lt;&gt;(true, "Historial completo", listaEventos);
+
+<span style="color: #629755;">// Sin Generics  3 clases distintas (RespuestaUsuario, RespuestaLog, RespuestaLista)</span>
+<span style="color: #629755;">// Con Generics   1 sola clase. El compilador verifica cada uso.</span></code></pre>
+                        </div>
+                        <div class="tint-blue rounded-xl p-3 text-sm mt-3 text-center">
+                            <i class="fa-solid fa-lightbulb mr-1"></i>
+                            <strong>En resumen:</strong> <code>&lt;T&gt;</code> es un <strong>comodin</strong>. Usted dice 
+                            <span class="keyword" tabindex="0" data-tooltip="Parametrizar: Elegir un tipo concreto para reemplazar T al momento de declarar una variable. Ejemplo: al escribir RespuestaSeguridad&lt;Usuario&gt;, estas parametrizando T con Usuario. A partir de ese momento, el compilador trata T como Usuario en todo el codigo que usa esa variable.">parametrizar</span>
+                            — "quiero que T sea <code>Usuario</code>" — y el compilador reemplaza mentalmente 
+                            cada <code>T</code> por <code>Usuario</code> y verifica que todo cuadre. 
+                            Esto se llama <span class="keyword" tabindex="0" data-tooltip="Polimorfismo parametrico: Tecnica que permite escribir codigo que funciona con cualquier tipo, sin perder la verificacion del compilador. Es como un molde de galletas: el molde es el mismo, pero puede hacer galletas de estrella, corazon o arbol segun la masa que uses.">polimorfismo parametrico</span>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 10: Herencia, Interfaces y Composicion ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[90%] mx-auto relative z-10">
+                <div class="text-center mb-4">
+                    <h2 class="text-4xl font-bold mb-2">Herencia, Interfaces y Composicion</h2>
+                    <p class="text-lg" style="color: var(--text-muted);">Tres herramientas distintas para reutilizar codigo — Saber cual usar evita dolores de cabeza</p>
+                </div>
+
+                <!-- Aclaracion conceptual: Mapa de los 3 conceptos -->
+                <div class="max-w-6xl mx-auto mb-4">
+                    <div class="glass-panel p-4 tint-blue border-l-4" style="border-left-color: var(--accent-blue);">
+                        <h3 class="font-bold text-base mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-map" style="color: var(--accent-blue);"></i>
+                            Antes de empezar: tres conceptos que NO son lo mismo
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-center text-sm">
+                            <div class="tint-purple rounded-xl p-3">
+                                <p class="font-bold text-base"><code>extends</code></p>
+                                <p class="font-bold mb-1">= Herencia</p>
+                                <p class="text-xs opacity-80">Palabra clave de Java. Relacion <strong>"es-un"</strong>. La subclase recibe automaticamente todos los metodos y atributos (no privados) de la superclase.</p>
+                                <p class="text-xs mt-1"><code>Admin extends Usuario</code><br> Admin <strong>es</strong> un Usuario</p>
+                            </div>
+                            <div class="tint-blue rounded-xl p-3">
+                                <p class="font-bold text-base"><code>implements</code></p>
+                                <p class="font-bold mb-1">= Interfaces</p>
+                                <p class="text-xs opacity-80">Palabra clave de Java. Relacion <strong>"cumple-el-contrato-de"</strong>. La clase se compromete a implementar ciertos metodos, pero no recibe codigo heredado.</p>
+                                <p class="text-xs mt-1"><code>Usuario implements Auditable</code><br> Usuario <strong>cumple</strong> el contrato Auditable</p>
+                            </div>
+                            <div class="tint-green rounded-xl p-3">
+                                <p class="font-bold text-base">Composicion</p>
+                                <p class="font-bold mb-1">≠ Interfaces</p>
+                                <p class="text-xs opacity-80"><strong>Principio de diseño</strong> (no una palabra clave). Relacion <strong>"tiene-un"</strong>. Una clase guarda una referencia a otra como atributo y le delega trabajo.</p>
+                                <p class="text-xs mt-1"><code>Auditor tiene un Usuario</code><br> Auditor <strong>usa</strong> un Usuario, no lo extiende</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-6xl mx-auto mb-4">
+                    <!-- Herencia (extends) -->
+                    <div class="glass-panel p-5 border-l-4" style="border-left-color: var(--accent-purple);">
+                        <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-sitemap" style="color: var(--accent-purple);"></i>
+                            <code>extends</code> = Herencia: "es-un"
+                        </h3>
+                        <p class="text-sm leading-relaxed mb-3">
+                            Cuando una clase "es" otra clase pero <strong>con esteroides</strong>. 
+                            <code>Administrador</code> no es un tipo de usuario cualquiera: <strong>es</strong> un <code>Usuario</code> con superpoderes adicionales.
+                            Al poner <code>extends</code>, recibe <strong>gratis</strong> todos los metodos ya escritos en <code>Usuario</code>.
+                        </p>
+                        <div class="bg-gray-900 text-green-300 rounded-xl p-3 font-mono text-[0.65rem] leading-relaxed mb-3 overflow-x-auto">
+<pre><code><span style="color: #629755;">// Clase PADRE: define lo que TODO usuario tiene</span>
+public class Usuario {
+    protected String nombreUsuario;   <span style="color: #629755;">// 'protected' = visible para subclases</span>
+    protected String contraseñaHash;
+    private int intentosFallidos;     <span style="color: #629755;">// 'private' = NI los hijos lo ven</span>
+    
+    public boolean autenticar(String pass) {
+        <span style="color: #629755;">// 30 lineas de validacion segura...</span>
+    }
+}
+
+<span style="color: #629755;">// Clase HIJA: hereda todo lo de Usuario + agrega lo suyo</span>
+public class Administrador extends Usuario {
+    <span style="color: #629755;">// ⬆ extends = "soy un Usuario PERO ADEMAS..."</span>
+    
+    private String nivelAcceso; <span style="color: #629755;">// "TOTAL", "AUDITORIA"</span>
+    
+    <span style="color: #629755;">//  Hereda autenticar() sin escribir ni una linea</span>
+    <span style="color: #629755;">//  Hereda nombreUsuario y contraseñaHash</span>
+    <span style="color: #629755;">//  NO hereda intentosFallidos (es private)</span>
+    
+    <span style="color: #629755;">// Nuevo metodo EXCLUSIVO del administrador:</span>
+    public void desbloquearUsuario(Usuario u) {
+        <span style="color: #629755;">// Solo un Admin TOTAL puede desbloquear</span>
+        if (!"TOTAL".equals(this.nivelAcceso)) {
+            throw new SecurityException("Acceso denegado");
+        }
+        u.bloqueado = false;
+    }
+}</code></pre>
+                        </div>
+                        <div class="tint-purple rounded-xl p-2 text-xs">
+                            <strong>Regla mental:</strong> Preguntese "¿X <strong>ES</strong> un Y?"  Si la respuesta es un SI rotundo, use <code>extends</code>.
+                            "¿Administrador ES un Usuario?"  SI 
+                        </div>
+                    </div>
+
+                    <!-- Interfaces (implements) -->
+                    <div class="glass-panel p-5 border-l-4" style="border-left-color: var(--accent-blue);">
+                        <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-file-contract" style="color: var(--accent-blue);"></i>
+                            <code>implements</code> = Interfaces: "cumple-el-contrato-de"
+                        </h3>
+                        <p class="text-sm leading-relaxed mb-3">
+                            Una <span class="keyword" tabindex="0" data-tooltip="Interfaz en Java: Es un CONTRATO que dice 'quien me implemente DEBE tener estos metodos'. La interfaz NO da codigo hecho (salvo metodos default). Es como firmar un contrato de trabajo: te comprometes a cumplir ciertas funciones, pero NADIE te regala el trabajo hecho.">interfaz</span>
+                            es un <strong>contrato</strong>: dice <strong>qué métodos deben existir</strong>, pero NO regala código. 
+                            La clase que firma el contrato (<code>implements</code>) debe escribir la implementación <strong>con su propio esfuerzo</strong>.
+                            Esto permite que clases sin parentesco compartan un comportamiento común.
+                        </p>
+                        <div class="bg-gray-900 text-green-300 rounded-xl p-3 font-mono text-[0.62rem] leading-relaxed mb-3 overflow-x-auto">
+<pre><code><span style="color: #629755;">// El CONTRATO: define QUE metodos deben existir</span>
+public interface Auditable {
+    void generarLogAuditoria(String evento);  <span style="color: #629755;">// Firma sin cuerpo</span>
+    List&lt;LogEvento&gt; obtenerHistorial();
+    
+    <span style="color: #629755;">// Metodo default (Java 8+): implementacion de cortesia</span>
+    default void auditarConTimestamp(String evento) {
+        System.out.println("[AUDIT " 
+            + System.currentTimeMillis() + "] " + evento);
+        generarLogAuditoria(evento); <span style="color: #629755;">// Usa el metodo que la clase implemento</span>
+    }
+}
+
+<span style="color: #629755;">// Usuario FIRMA el contrato Auditable</span>
+public class Usuario implements Auditable {
+    <span style="color: #629755;">// ⬆ implements = "me comprometo a tener estos metodos"</span>
+    
+    private List&lt;LogEvento&gt; historial = new ArrayList&lt;&gt;();
+    
+    @Override <span style="color: #629755;">// Obligatorio: YO escribo el codigo</span>
+    public void generarLogAuditoria(String evento) {
+        historial.add(new LogEvento(
+            this.nombreUsuario, evento,
+            System.currentTimeMillis()));
+    }
+    
+    @Override
+    public List&lt;LogEvento&gt; obtenerHistorial() {
+        return List.copyOf(historial); <span style="color: #629755;">// copia defensiva</span>
+    }
+}</code></pre>
+                        </div>
+                        <div class="tint-blue rounded-xl p-2 text-xs">
+                            <strong>Regla mental:</strong> Preguntese "¿X DEBE cumplir con el comportamiento Y?"  Use <code>implements</code>.
+                            "¿Usuario DEBE ser Auditable?"  SI  (todo usuario debe dejar rastro).
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Composicion vs Herencia: ahora SI queda claro -->
+                <div class="max-w-6xl mx-auto">
+                    <div class="glass-panel p-5 border-l-4" style="border-left-color: var(--una-gold);">
+                        <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-scale-balanced" style="color: var(--una-gold);"></i>
+                            Composicion = "tiene-un": La alternativa a <code>extends</code>
+                        </h3>
+                        <p class="text-sm leading-relaxed mb-3">
+                            <strong>Composicion NO es una palabra clave de Java.</strong> Es un <strong>principio de diseño</strong>: 
+                            en lugar de heredar de una clase, <strong>guarda una referencia a esa clase como atributo</strong> 
+                            y le pide que haga el trabajo por usted. Es como un gerente que no sabe programar pero <strong>tiene</strong> 
+                            programadores en su equipo: él delega, no hereda.
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Herencia: como NO hacerlo -->
+                            <div class="tint-red rounded-xl p-3">
+                                <h4 class="font-bold mb-2 text-sm"> Herencia forzada (lo que NO debe hacer)</h4>
+                                <p class="text-xs mb-2 opacity-80">Un <code>Auditor</code> <strong>NO</strong> es un <code>Usuario</code>. Es un empleado que <strong>usa</strong> usuarios. Si igual fuerza <code>extends</code>, arrastra atributos que no necesita.</p>
+                                <div class="bg-gray-900 text-red-300 rounded-xl p-2 font-mono text-[0.6rem] leading-relaxed overflow-x-auto">
+<pre><code><span style="color: #629755;">//  MAL: Auditor NO es un Usuario</span>
+public class Auditor extends Usuario {
+    <span style="color: #629755;">// Hereda cosas SIN SENTIDO:</span>
+    <span style="color: #629755;">// contraseñaHash, intentosFallidos, autenticar()...</span>
+    <span style="color: #629755;">// ¡Un auditor no necesita contraseña!</span>
+    
+    public void revisarLogs() { <span style="color: #629755;">/* ... */</span> }
+}</code></pre>
+                                </div>
+                            </div>
+                            <!-- Composicion: como SI hacerlo -->
+                            <div class="tint-green rounded-xl p-3">
+                                <h4 class="font-bold mb-2 text-sm"> Composicion: "tiene-un" (lo correcto)</h4>
+                                <p class="text-xs mb-2 opacity-80">El <code>Auditor</code> <strong>tiene</strong> una lista de usuarios para revisar. No hereda nada: simplemente guarda referencias y les pide datos.</p>
+                                <div class="bg-gray-900 text-green-300 rounded-xl p-2 font-mono text-[0.6rem] leading-relaxed overflow-x-auto">
+<pre><code><span style="color: #629755;">//  BIEN: Auditor TIENE usuarios (no ES uno)</span>
+public class Auditor {
+    private String nombreEmpleado;
+    private List&lt;Usuario&gt; usuariosAsignados; <span style="color: #629755;">//  composicion</span>
+    
+    public Auditor(String nombre, List&lt;Usuario&gt; users) {
+        this.nombreEmpleado = nombre;
+        this.usuariosAsignados = users; <span style="color: #629755;">// Guarda referencia</span>
+    }
+    
+    public void revisarLogs() {
+        for (Usuario u : usuariosAsignados) {
+            u.obtenerHistorial(); <span style="color: #629755;">// Delega: pide al usuario su data</span>
+        }
+    }
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                            <div class="tint-green rounded-xl p-3">
+                                <h4 class="font-bold text-sm mb-1"><i class="fa-solid fa-check-circle mr-1"></i> ¿Cuando usar <code>extends</code>?</h4>
+                                <ul class="list-disc pl-5 text-xs leading-relaxed space-y-1">
+                                    <li>La relacion <strong>"es-un"</strong> es indiscutible (Administrador ES Usuario).</li>
+                                    <li>Quiere <strong>heredar codigo ya escrito</strong> y agregarle mas.</li>
+                                    <li>La clase padre fue diseñada para ser extendida.</li>
+                                </ul>
+                            </div>
+                            <div class="tint-blue rounded-xl p-3">
+                                <h4 class="font-bold text-sm mb-1"><i class="fa-solid fa-check-circle mr-1"></i> ¿Cuando usar Composicion?</h4>
+                                <ul class="list-disc pl-5 text-xs leading-relaxed space-y-1">
+                                    <li>La relacion es <strong>"tiene-un"</strong> o <strong>"usa-un"</strong> (Auditor tiene Usuarios).</li>
+                                    <li>No quiere heredar <strong>atributos que no necesita</strong>.</li>
+                                    <li>Quiere poder <strong>cambiar el comportamiento en tiempo de ejecucion</strong> (cambiar el objeto guardado).</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="mt-3 p-3 tint-gold rounded-xl text-sm text-center">
+                            <i class="fa-solid fa-lightbulb mr-1"></i>
+                            <strong>En resumen:</strong> 
+                            <code>extends</code> = "ES un" (herencia de codigo). 
+                            <code>implements</code> = "CUMPLE el contrato de" (interfaces). 
+                            <strong>Composicion</strong> = "TIENE un" (atributo que referencia a otro objeto). 
+                            <strong>De estos tres, composicion es el mas seguro y flexible.</strong> Empiece siempre preguntandose "¿puedo resolver esto con composicion?" antes de usar <code>extends</code>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 11: Laboratorio Guiado ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[90%] mx-auto relative z-10 flex items-center justify-center">
+                <i class="fa-solid fa-flask bg-icon text-[400px]" style="color: var(--accent-green); opacity: 0.06;"></i>
+                <div class="text-center relative z-10">
+                    <h2 class="text-7xl md:text-8xl font-extrabold mb-6" style="color: var(--accent-green);">
+                        Laboratorio Guiado
+                    </h2>
+                    <p class="text-2xl md:text-3xl font-semibold" style="color: var(--text-muted);">
+                        <i class="fa-solid fa-laptop-code mr-3"></i> Abran IntelliJ IDEA
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 12: Cierre — Material de Estudio y Proxima Sesion ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[90%] mx-auto relative z-10">
+                <div class="text-center mb-6">
+                    <h2 class="text-4xl font-bold mb-2">Cierre de la Sesion</h2>
+                    <p class="text-lg" style="color: var(--text-muted);">Material para reforzar lo aprendido y adelanto de la proxima clase</p>
+                </div>
+
+                <div class="max-w-5xl mx-auto">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Material de Estudio Autonomo -->
+                        <div class="glass-panel p-6 border-l-4" style="border-left-color: var(--accent-blue);">
+                            <h3 class="font-bold text-xl mb-4 flex items-center gap-3">
+                                <i class="fa-solid fa-book-open text-2xl" style="color: var(--accent-blue);"></i>
+                                Material de Estudio Autonomo
+                            </h3>
+                            <ul class="text-sm leading-relaxed space-y-3">
+                                <li class="flex items-start gap-3">
+                                    <i class="fa-solid fa-scroll mt-0.5" style="color: var(--accent-blue);"></i>
+                                    <div>
+                                        <strong>Java Language Specification</strong><br>
+                                        <span class="text-xs" style="color: var(--text-muted);">Capitulo 4 (Types, Values, Variables) y Capitulo 8 (Classes)</span>
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fa-solid fa-book mt-0.5" style="color: var(--una-gold);"></i>
+                                    <div>
+                                        <strong>Effective Java — Joshua Bloch</strong><br>
+                                        <span class="text-xs" style="color: var(--text-muted);">Items 15-17 (encapsulamiento y minimizar mutabilidad), Item 50 (copias defensivas), Items 18-19 (composicion sobre herencia)</span>
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fa-solid fa-file-code mt-0.5" style="color: var(--accent-green);"></i>
+                                    <div>
+                                        <strong>Documentacion Oficial de Java</strong><br>
+                                        <span class="text-xs" style="color: var(--text-muted);"><code>java.lang.Record</code> (JEP 395), <code>java.util.Objects</code>, <code>java.util.List.copyOf()</code></span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Proxima Sesion -->
+                        <div class="glass-panel p-6 border-l-4" style="border-left-color: var(--una-gold);">
+                            <h3 class="font-bold text-xl mb-4 flex items-center gap-3">
+                                <i class="fa-solid fa-forward-step text-2xl" style="color: var(--una-gold);"></i>
+                                Proxima Sesion: Semana 4
+                            </h3>
+                            <div class="tint-gold rounded-xl p-4 mb-4">
+                                <p class="text-lg font-bold mb-2">Herencia y Polimorfismo</p>
+                                <ul class="text-sm leading-relaxed space-y-2 list-disc pl-5">
+                                    <li>Diseño de jerarquias de roles de seguridad con clases abstractas.</li>
+                                    <li>Sobrescritura de metodos (<code>@Override</code>) y como cambia el comportamiento.</li>
+                                    <li><span class="keyword" tabindex="0" data-tooltip="Dynamic Binding (Vinculacion Dinamica): Mecanismo por el cual la JVM decide en tiempo de ejecucion que implementacion de un metodo invocar, basandose en el tipo real del objeto (no el tipo de la referencia). Es la base del polimorfismo en Java.">Vinculacion dinamica</span>: como Java elige el metodo correcto en tiempo de ejecucion.</li>
+                                </ul>
+                            </div>
+                            <p class="text-sm" style="color: var(--text-muted);">
+                                <i class="fa-solid fa-lightbulb mr-1"></i>
+                                Repase los conceptos de <code>extends</code>, <code>implements</code> y composicion vistos hoy. 
+                                ¡Son la base de lo que construiremos la proxima semana!
+                            </p>
+                        </div>
+                    </div>
+
+                    <p class="text-sm text-center mt-6 animate-pulse" style="color: var(--text-muted);">
+                        <i class="fa-solid fa-keyboard mr-2"></i>Use las flechas del teclado para repasar cualquier diapositiva.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- Fin slides-container -->
+
+    <!-- ==================== MODALES ==================== -->
+
+    <!-- Modal: Stack vs Heap -->
+    <div class="modal-backdrop" id="modal-stack-heap">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('modal-stack-heap')"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="font-bold text-2xl mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-microchip" style="color: var(--accent-blue);"></i>
+                Rendimiento vs. Seguridad: Stack vs. Heap en Profundidad
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div class="tint-blue rounded-xl p-4">
+                    <h4 class="font-bold mb-2">Stack (Pila de Llamadas)</h4>
+                    <p class="text-sm leading-relaxed">
+                        Cada <span class="keyword" tabindex="0" data-tooltip="Hilo (Thread): Unidad mas pequena de ejecucion que el sistema operativo asigna al procesador. Una aplicacion Java puede tener multiples hilos ejecutandose en paralelo, cada uno con su propia pila (Stack). Es como tener varios empleados trabajando simultaneamente en distintas tareas dentro de la misma oficina.">hilo</span> en la JVM posee su propia pila. Cuando un metodo es invocado, se crea un 
+                        <span class="keyword" tabindex="0" data-tooltip="Stack Frame: Estructura que la JVM coloca en la pila por cada invocacion de metodo. Contiene: variables locales, operand stack (pila de operandos para la ejecucion de bytecode) y referencia al runtime constant pool.">stack frame</span> 
+                        que contiene las variables locales y las referencias a objetos. Al finalizar el metodo, el marco se destruye automaticamente.
+                    </p>
+                </div>
+                <div class="tint-green rounded-xl p-4">
+                    <h4 class="font-bold mb-2">Heap (Monton de Objetos)</h4>
+                    <p class="text-sm leading-relaxed">
+                        Region de memoria compartida entre todos los hilos. Aqui residen todas las instancias de clase y arrays. 
+                        El Garbage Collector monitorea que objetos han perdido toda referencia desde el Stack para liberar su memoria.
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-gray-900 text-green-300 rounded-xl p-4 font-mono text-xs leading-relaxed overflow-x-auto">
+<pre><code>public class DemostracionMemoria {
+    public static void main(String[] args) {
+        int x = 42;                    // [STACK] variable local primitiva
+        Usuario u = new Usuario("admin"); // [STACK] referencia 'u'
+                                         // [HEAP]  objeto Usuario{nombre="admin"}
+        
+        modificarDatos(x, u);
+        System.out.println(x);           // 42 (int es primitivo: paso por valor)
+        System.out.println(u.getIntentos()); // 99 (el objeto en Heap fue modificado)
+    }
+    
+    static void modificarDatos(int numero, Usuario ref) {
+        numero = 999;                  // Modifica la COPIA local en el stack frame
+        ref.setIntentosFallidos(99);   // Modifica el OBJETO en el Heap via la copia de la referencia
+        ref = new Usuario("otro");     // Reasigna la COPIA de la referencia (no afecta a main)
+    }
+}
+
+// Resultado: x sigue siendo 42, u.getIntentos() es 99
+// La referencia se paso por valor: main() y modificarDatos() 
+// tienen copias independientes de la direccion, pero ambas 
+// apuntaban (inicialmente) al mismo objeto.</code></pre>
+            </div>
+
+            <div class="tint-gold rounded-xl p-4 mt-4 text-sm">
+                <strong>Conclusion de arquitectura:</strong> En el backend del sistema de seguridad, los primitivos deben usarse para contadores locales 
+                y operaciones de corta duracion donde la velocidad es critica. Los wrappers (<code>Long</code>, <code>Integer</code>) y objetos deben 
+                usarse para datos que cruzan la frontera con la base de datos, donde <code>null</code> tiene significado semantico. 
+                Comprender que vive en el Stack y que en el Heap es fundamental para diagnosticar problemas de memoria y condiciones de carrera en sistemas concurrentes.
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Anatomia del NullPointerException -->
+    <div class="modal-backdrop" id="modal-nullpointer">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('modal-nullpointer')"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="font-bold text-2xl mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-bug" style="color: var(--una-red);"></i>
+                Anatomia del NullPointerException
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <h4 class="font-bold mb-2" style="color: var(--una-red);">Que ocurre realmente?</h4>
+                    <p class="text-sm leading-relaxed mb-3">
+                        Cuando el JVM ejecuta <code>u.autenticar("pass")</code> y <code>u</code> es <code>null</code>, intenta 
+                        <span class="keyword" tabindex="0" data-tooltip="Desreferenciar: Acceder al objeto apuntado por una referencia. Si la referencia es null, la JVM lanza NullPointerException porque no existe un objeto al cual enviar el mensaje. Equivale a marcar un numero de telefono que no esta asignado a ningun abonado.">desreferenciar</span> 
+                        el puntero nulo. Es como intentar abrir un casillero con un gafete que dice "NINGUNO".
+                        El sistema operativo detecta el acceso a la direccion de memoria 0x0 y la JVM traduce esa senal en la excepcion.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-2" style="color: var(--accent-green);">Como prevenirlo estructuralmente</h4>
+                    <ul class="list-disc pl-5 text-sm leading-relaxed space-y-2">
+                        <li><strong>Validacion temprana:</strong> <code>Objects.requireNonNull(param, "mensaje")</code> en constructores y setters.</li>
+                        <li><strong>Optional&lt;T&gt;:</strong> Para valores que legtimamente pueden estar ausentes. No usar <code>Optional</code> como campo de clase (no es <code>Serializable</code>), sino como tipo de retorno de metodos.</li>
+                        <li><strong>Anotaciones:</strong> <code>@Nullable</code> y <code>@NotNull</code> (javax.annotation, JetBrains, o Checker Framework) para documentar la intencion y permitir que IntelliJ IDEA advierta en tiempo de edicion.</li>
+                        <li><strong>Records:</strong> Los records con constructor compacto pueden validar que ningun campo sea <code>null</code> desde la construccion.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-gray-900 text-green-300 rounded-xl p-4 font-mono text-xs leading-relaxed overflow-x-auto">
+<pre><code>// PRACTICA DEFENSIVA RECOMENDADA
+public class UsuarioSeguro {
+    private String nombreUsuario;
+    
+    public UsuarioSeguro(String nombreUsuario) {
+        // Validacion temprana: falla rapido con mensaje claro
+        this.nombreUsuario = Objects.requireNonNull(
+            nombreUsuario, 
+            "nombreUsuario no puede ser null");
+    }
+    
+    // Metodo que puede retornar ausencia de valor
+    public Optional&lt;String&gt; getEmailRecuperacion() {
+        return Optional.ofNullable(emailRecuperacion);
+    }
+}
+
+// El llamante maneja la ausencia explicitamente:
+usuario.getEmailRecuperacion()
+    .ifPresentOrElse(
+        email -> enviarCorreo(email),
+        () -> log.warn("Usuario sin email de recuperacion")
+    );</code></pre>
+            </div>
+
+            <div class="tint-red rounded-xl p-4 mt-4 text-sm">
+                <strong>Regla de ingenieria:</strong> Un <code>NullPointerException</code> en produccion es un <strong>fallo de diseño</strong>, no un problema del usuario. 
+                Si el sistema permite que una referencia sea <code>null</code> sin que el codigo que la consume este preparado, hay una violacion del contrato entre componentes. 
+                La validacion defensiva en los puntos de entrada (constructores, metodos publicos) es la unica estrategia robusta.
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra de progreso -->
+    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+
+    <!-- Botones de navegacion -->
+    <button class="float-btn" id="prevBtn" onclick="changeSlide(-1)" title="Anterior"><i class="fa-solid fa-chevron-left"></i></button>
+    <button class="float-btn" id="nextBtn" onclick="changeSlide(1)" title="Siguiente"><i class="fa-solid fa-chevron-right"></i></button>
+
+    <!-- Logica compartida de navegacion (debe cargarse despues de los slides) -->
+    <script src="../../../assets/js/presentacion.js"></script>
+
+    <script>
+        // ================================================================
+        // Tooltip global con posicionamiento dinamico.
+        // Reemplaza los ::after pseudo-elementos que se cortaban con scroll.
+        // Usa position: fixed y calcula la mejor posicion (arriba/abajo).
+        // ================================================================
+        (function() {
+            var tooltip = document.getElementById('global-tooltip');
+            if (!tooltip) return;
+
+            var currentKeyword = null;
+            var hideTimeout = null;
+
+            function showTooltip(keyword) {
+                if (!tooltip) return;
+                var text = keyword.getAttribute('data-tooltip');
+                if (!text) return;
+
+                currentKeyword = keyword;
+                tooltip.textContent = text;
+                tooltip.classList.add('visible');
+
+                // Posicionar
+                positionTooltip(keyword);
+            }
+
+            function positionTooltip(keyword) {
+                var rect = keyword.getBoundingClientRect();
+                var tipW = tooltip.offsetWidth || 340;
+                var tipH = tooltip.offsetHeight || 100;
+                var vw = window.innerWidth;
+                var vh = window.innerHeight;
+                var gap = 6;
+
+                // Posicion horizontal: centrada sobre el keyword, sin salirse
+                var left = rect.left + rect.width / 2 - tipW / 2;
+                if (left < 8) left = 8;
+                if (left + tipW > vw - 8) left = vw - tipW - 8;
+
+                // Intentar abajo primero
+                var top = rect.bottom + gap;
+                if (top + tipH > vh - 8) {
+                    // No cabe abajo: intentar arriba
+                    top = rect.top - tipH - gap;
+                    if (top < 8) {
+                        // No cabe arriba tampoco: poner centrado en pantalla
+                        top = Math.max(8, (vh - tipH) / 2);
+                    }
+                }
+
+                tooltip.style.left = left + 'px';
+                tooltip.style.top = top + 'px';
+            }
+
+            function hideTooltip() {
+                if (!tooltip) return;
+                tooltip.classList.remove('visible');
+                currentKeyword = null;
+                if (hideTimeout) { clearTimeout(hideTimeout); hideTimeout = null; }
+            }
+
+            // Delegacion de eventos en todo el documento
+            document.addEventListener('mouseover', function(e) {
+                var kw = e.target.closest('.keyword');
+                if (!kw) return;
+                if (hideTimeout) { clearTimeout(hideTimeout); hideTimeout = null; }
+                showTooltip(kw);
+            });
+
+            document.addEventListener('mouseout', function(e) {
+                var kw = e.target.closest('.keyword');
+                if (!kw) return;
+                // Pequeño retraso para permitir que el mouse entre al tooltip
+                hideTimeout = setTimeout(function() {
+                    if (currentKeyword === kw) hideTooltip();
+                }, 150);
+            });
+
+            // Tambien en focus/blur para accesibilidad por teclado (tabindex)
+            document.addEventListener('focusin', function(e) {
+                var kw = e.target.closest('.keyword');
+                if (!kw) return;
+                if (hideTimeout) { clearTimeout(hideTimeout); hideTimeout = null; }
+                showTooltip(kw);
+            });
+
+            document.addEventListener('focusout', function(e) {
+                var kw = e.target.closest('.keyword');
+                if (!kw) return;
+                hideTimeout = setTimeout(function() {
+                    if (currentKeyword === kw) hideTooltip();
+                }, 150);
+            });
+
+            // Ocultar con tecla Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') hideTooltip();
+            });
+
+            // Re-posicionar en scroll y resize
+            window.addEventListener('scroll', function() {
+                if (currentKeyword && tooltip.classList.contains('visible')) {
+                    positionTooltip(currentKeyword);
+                }
+            }, { passive: true });
+
+            window.addEventListener('resize', function() {
+                if (currentKeyword && tooltip.classList.contains('visible')) {
+                    positionTooltip(currentKeyword);
+                }
+            });
+        })();
+
+        // ================================================================
+        // Resaltado de sintaxis Java estilo IntelliJ IDEA (Darcula).
+        // Procesa todos los <pre><code> al cargar la pagina.
+        // ================================================================
+        (function() {
+            // Palabras clave de Java (naranja bold)
+            var KEYWORDS = /\b(public|private|protected|static|final|class|interface|record|extends|implements|void|int|long|double|boolean|char|float|byte|short|new|return|if|else|for|while|do|switch|case|break|continue|throw|throws|try|catch|finally|this|super|true|false|null|var|enum|abstract|synchronized|volatile|transient|native|strictfp|default|instanceof|package|import|sealed|permits|yield|record)\b/g;
+            var TYPES = /\b(String|Integer|Long|Double|Boolean|Float|Byte|Short|Character|List|ArrayList|Map|HashMap|Set|Optional|Objects|System|SecurityException|IllegalArgumentException|NullPointerException|StackOverflowError|LogEvento|Usuario|Administrador|Auditable|PoliticaSeguridad|UsuarioInseguro|UsuarioSeguro|DemostracionMemoria|Auditor|Autenticador|GestorSesion|Rol|ClassLoader|Garbage|Collector)\b/g;
+
+            function highlightJavaCode(block) {
+                var text = block.textContent;
+                var html = '';
+                var i = 0;
+
+                while (i < text.length) {
+                    // Comentario de linea //
+                    if (text.substr(i, 2) === '//') {
+                        var end = text.indexOf('\n', i);
+                        if (end === -1) end = text.length;
+                        html += '<span class="syn-co">' + escapeHTML(text.substring(i, end)) + '</span>';
+                        i = end;
+                        continue;
+                    }
+                    // Comentario de bloque /* */
+                    if (text.substr(i, 2) === '/*') {
+                        var end = text.indexOf('*/', i + 2);
+                        if (end === -1) end = text.length; else end += 2;
+                        html += '<span class="syn-co">' + escapeHTML(text.substring(i, end)) + '</span>';
+                        i = end;
+                        continue;
+                    }
+                    // String con comillas dobles
+                    if (text[i] === '"') {
+                        var end = i + 1;
+                        while (end < text.length && text[end] !== '"' && text[end] !== '\n') {
+                            if (text[end] === '\\') end++;
+                            end++;
+                        }
+                        if (end < text.length && text[end] === '"') end++;
+                        html += '<span class="syn-st">' + escapeHTML(text.substring(i, end)) + '</span>';
+                        i = end;
+                        continue;
+                    }
+                    // String con comillas simples (char)
+                    if (text[i] === '\'') {
+                        var end = i + 1;
+                        while (end < text.length && text[end] !== '\'' && text[end] !== '\n') {
+                            if (text[end] === '\\') end++;
+                            end++;
+                        }
+                        if (end < text.length && text[end] === '\'') end++;
+                        html += '<span class="syn-st">' + escapeHTML(text.substring(i, end)) + '</span>';
+                        i = end;
+                        continue;
+                    }
+                    // Anotaciones @
+                    if (text[i] === '@' && /[a-zA-Z]/.test(text[i+1] || '')) {
+                        var end = i + 1;
+                        while (end < text.length && /[a-zA-Z0-9_]/.test(text[end])) end++;
+                        html += '<span class="syn-an">' + escapeHTML(text.substring(i, end)) + '</span>';
+                        i = end;
+                        continue;
+                    }
+                    // Numeros
+                    if (/[0-9]/.test(text[i]) && (i === 0 || !/[a-zA-Z_]/.test(text[i-1]))) {
+                        var end = i;
+                        while (end < text.length && /[0-9.xXa-fA-F_Ll]/.test(text[end])) end++;
+                        html += '<span class="syn-nu">' + escapeHTML(text.substring(i, end)) + '</span>';
+                        i = end;
+                        continue;
+                    }
+                    // Palabras (identificadores y keywords)
+                    if (/[a-zA-Z_]/.test(text[i])) {
+                        var end = i;
+                        while (end < text.length && /[a-zA-Z0-9_]/.test(text[end])) end++;
+                        var word = text.substring(i, end);
+                        var escaped = escapeHTML(word);
+
+                        // Verificar si es keyword o tipo
+                        // Necesitamos verificar con regex en el contexto
+                        var before = i === 0 ? ' ' : text[i-1];
+                        var after = end >= text.length ? ' ' : text[end];
+                        var isWordBoundary = !/[a-zA-Z0-9_]/.test(before) && !/[a-zA-Z0-9_]/.test(after);
+
+                        // Intentar match de keyword primero
+                        KEYWORDS.lastIndex = 0;
+                        var kwMatch = KEYWORDS.exec(word);
+                        KEYWORDS.lastIndex = 0;
+                        if (kwMatch && kwMatch[0] === word && isWordBoundary) {
+                            html += '<span class="syn-kw">' + escaped + '</span>';
+                        } else {
+                            // Verificar tipo
+                            TYPES.lastIndex = 0;
+                            var tyMatch = TYPES.exec(word);
+                            TYPES.lastIndex = 0;
+                            if (tyMatch && tyMatch[0] === word && isWordBoundary) {
+                                html += '<span class="syn-ty">' + escaped + '</span>';
+                            } else {
+                                html += escaped;
+                            }
+                        }
+                        i = end;
+                        continue;
+                    }
+                    // Otros caracteres
+                    html += escapeHTML(text[i]);
+                    i++;
+                }
+                return html;
+            }
+
+            function escapeHTML(str) {
+                return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            }
+
+            function highlightAll() {
+                var blocks = document.querySelectorAll('pre code');
+                for (var b = 0; b < blocks.length; b++) {
+                    var code = blocks[b];
+                    var text = code.textContent.trim();
+                    // Saltar bloques SQL (empiezan con -- o SELECT)
+                    if (text.indexOf('--') === 0 || text.indexOf('SELECT') === 0) {
+                        code.classList.add('sql-code');
+                        continue;
+                    }
+                    // Saltar bloque de git
+                    if (text.indexOf('git ') === 0) {
+                        continue;
+                    }
+                    // Aplicar resaltado y quitar clase de color del padre
+                    code.classList.remove('text-green-300', 'text-yellow-300', 'text-red-300');
+                    code.style.color = '#A9B7C6';
+                    code.innerHTML = highlightJavaCode(code);
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', highlightAll);
+        })();
+
+        // ================================================================
+        // Sobrescribir downloadPresentation con version que funciona sin
+        // peticiones de red. Extrae el CSS directamente de document.styleSheets
+        // (las reglas ya estan en memoria). No usa fetch() ni XHR para el CSS.
+        // El JS de presentacion.js se intenta embeber, pero si falla se
+        // mantiene como enlace externo. La descarga NUNCA falla: siempre
+        // produce un archivo .html funcional.
+        // ================================================================
+        (function() {
+            window.downloadPresentation = function() {
+                var btn = document.getElementById('downloadBtn');
+                if (!btn) return;
+                var originalHTML = btn.innerHTML;
+
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+                btn.style.pointerEvents = 'none';
+
+                // Ejecutar en el siguiente microtick para que se pinte el spinner
+                setTimeout(function() {
+                    try {
+                        // --- Extraer TODO el CSS accesible desde document.styleSheets ---
+                        // Esto captura presentacion.css + los <style> inline + tailwind (si es same-origin)
+                        var allCss = '';
+                        for (var i = 0; i < document.styleSheets.length; i++) {
+                            var sheet = document.styleSheets[i];
+                            try {
+                                var rules = sheet.cssRules || sheet.rules;
+                                if (rules && rules.length > 0) {
+                                    var label = sheet.href || 'style-inline-' + i;
+                                    // Solo incluir si NO es una CDN (cross-origin tiraria excepcion antes)
+                                    allCss += '/* ' + label + ' */\n';
+                                    for (var r = 0; r < rules.length; r++) {
+                                        allCss += rules[r].cssText + '\n';
+                                    }
+                                    allCss += '\n';
+                                }
+                            } catch(e) {
+                                // stylesheet cross-origin (CDN: tailwind, fontawesome).
+                                // Se conserva como <link> o <script> externo en el HTML.
+                            }
+                        }
+
+                        // --- Clonar el HTML ---
+                        var html = document.documentElement.outerHTML;
+
+                        // --- Incrustar CSS si se obtuvo ---
+                        if (allCss) {
+                            html = html.replace(
+                                /<link[^>]*presentacion\.css[^>]*\s*\/?>/gi,
+                                '<style>\n/* presentacion.css + estilos inline (offline) */\n' + allCss + '\n</style>'
+                            );
+                        }
+
+                        // --- Incrustar JS si es posible (XHR como ultimo recurso) ---
+                        var jsScriptEl = document.querySelector('script[src*="presentacion.js"]');
+                        if (jsScriptEl) {
+                            var jsInlined = false;
+                            try {
+                                var jsXhr = new XMLHttpRequest();
+                                jsXhr.open('GET', jsScriptEl.getAttribute('src'), false);
+                                jsXhr.overrideMimeType('text/plain');
+                                jsXhr.send();
+                                if (jsXhr.status === 200 || jsXhr.status === 0) {
+                                    var jsText = jsXhr.responseText;
+                                    if (jsText && jsText.length > 50) {
+                                        html = html.replace(
+                                            /<script[^>]*presentacion\.js[^>]*>\s*<\/script>/gi,
+                                            '<script>\n/* presentacion.js (offline) */\n' + jsText + '\n<\/script>'
+                                        );
+                                        jsInlined = true;
+                                    }
+                                }
+                            } catch(e) {}
+                            // Si XHR fallo, el <script src="...presentacion.js"> se conserva tal cual.
+                            // El archivo descargado funcionara mientras este en la misma carpeta.
+                        }
+
+                        // --- Asegurar DOCTYPE ---
+                        if (!/^\s*<!DOCTYPE/i.test(html)) {
+                            html = '<!DOCTYPE html>\n' + html;
+                        }
+
+                        // --- Descargar ---
+                        var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+                        var url = URL.createObjectURL(blob);
+                        var a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'Clase-3-Programacion-III.html';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+
+                        // --- Confirmacion ---
+                        btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+                        setTimeout(function() {
+                            btn.innerHTML = originalHTML;
+                            btn.style.pointerEvents = 'auto';
+                        }, 2000);
+
+                    } catch(err) {
+                        console.error('Error al generar descarga:', err);
+                        btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+                        btn.style.pointerEvents = 'auto';
+                        setTimeout(function() {
+                            btn.innerHTML = originalHTML;
+                        }, 2000);
+                    }
+                }, 50); // 50ms de retraso para que el spinner se renderice
+            };
+        })();
+
+        // Funcion auxiliar para que las tarjetas de agenda naveguen directamente.
+        // Usa changeSlide() de presentacion.js en bucle para mantener sincronizado
+        // el indice interno currentSlide de la IIFE.
+        function changeSlideTo(targetIndex) {
+            var slides = document.querySelectorAll('.slide');
+            if (targetIndex < 0 || targetIndex >= slides.length) return;
+
+            // Encontrar cual slide esta activo actualmente
+            var currentIndex = 0;
+            for (var i = 0; i < slides.length; i++) {
+                if (slides[i].classList.contains('active')) {
+                    currentIndex = i;
+                    break;
+                }
+            }
+
+            var delta = targetIndex - currentIndex;
+            if (delta === 0) return;
+
+            var direction = delta > 0 ? 1 : -1;
+            var steps = Math.abs(delta);
+
+            // Invocar changeSlide() la cantidad de pasos necesaria.
+            // Esto mantiene sincronizado el currentSlide interno de presentacion.js
+            // y actualiza la barra de progreso y botones correctamente.
+            for (var s = 0; s < steps; s++) {
+                if (typeof changeSlide === 'function') {
+                    changeSlide(direction);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
