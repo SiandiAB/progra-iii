@@ -11,14 +11,14 @@
    de la pantalla. Así los text-6xl, text-8xl, etc. (en rem) se reducen
    automáticamente en pantallas más pequeñas sin tocar el HTML.
    
-   1080px alto (Full HD)  → 18px base  (óptimo para proyector)
-   900px  alto (laptop)   → 15px base
-   768px  alto (laptop)   → 13px base
-   600px  alto (mínimo)   → 10px base
-   480px  alto (móvil)    → 9px base
+   1080px alto (Full HD)  → 22px base  (texto grande, sin necesidad de zoom)
+   900px  alto (laptop)   → 18px base
+   768px  alto (laptop)   → 15px base
+   600px  alto (mínimo)   → 12px base
+   480px  alto (móvil)    → 10px base
 */
 html {
-    font-size: clamp(9px, 1.65vh, 18px);
+    font-size: clamp(10px, 2vh, 22px);
 }
 
 body {
