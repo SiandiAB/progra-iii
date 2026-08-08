@@ -12,121 +12,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
 
+    <!-- Recursos compartidos del proyecto -->
+    <link rel="icon" type="image/svg+xml" href="../../../assets/img/favicon.svg">
+    <link rel="stylesheet" href="../../../assets/css/presentacion.css">
+
+    <!-- Tooltips interactivos para palabras clave -->
     <style>
-        :root {
-            --bg-main: #f8fafc;
-            --bg-panel: #ffffff;
-            --bg-terminal: #1e1e2e;
-            --text-main: #0f172a;
-            --text-muted: #475569;
-            --text-terminal: #cdd6f4;
-            --border-panel: #e2e8f0;
-            --una-red: #c8102e;
-            --una-gold: #d4ac0d;
-            --accent-blue: #2563eb;
-            --accent-green: #16a34a;
-            --accent-purple: #7c3aed;
-            --accent-peach: #ea580c;
-        }
-        [data-theme="dark"] {
-            --bg-main: #0f172a;
-            --bg-panel: #1e293b;
-            --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
-            --border-panel: #334155;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Nunito', sans-serif;
-            background: var(--bg-main);
-            color: var(--text-main);
-            overflow: hidden;
-            height: 100vh;
-        }
-
-        .slides-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow-y: auto;
-            scroll-behavior: smooth;
-            scroll-snap-type: y mandatory;
-        }
-        .slide {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1.5rem;
-            scroll-snap-align: start;
-            position: relative;
-            background: var(--bg-main);
-        }
-
-        .glass-panel {
-            background: var(--bg-panel);
-            border: 1px solid var(--border-panel);
-            border-radius: 1.25rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-            transition: background 0.2s, border 0.2s;
-        }
-
-        .bg-icon {
-            position: absolute;
-            opacity: 0.04;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .tint-red { background: rgba(200,16,46,0.12); color: var(--una-red); }
-        .tint-gold { background: rgba(212,172,13,0.12); color: var(--una-gold); }
-        .tint-blue { background: rgba(37,99,235,0.12); color: var(--accent-blue); }
-        .tint-green { background: rgba(22,163,74,0.12); color: var(--accent-green); }
-        .tint-purple { background: rgba(124,58,237,0.12); color: var(--accent-purple); }
-        .tint-peach { background: rgba(234,88,12,0.12); color: var(--accent-peach); }
-
-        .float-btn {
-            position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            z-index: 50;
-            background: var(--bg-panel);
-            border: 1px solid var(--border-panel);
-            border-radius: 9999px;
-            padding: 0.75rem 1rem;
-            font-size: 1.1rem;
-            color: var(--text-main);
-            cursor: pointer;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-            transition: transform 0.15s, background 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .float-btn:hover { transform: scale(1.05); background: var(--border-panel); }
-
-        .float-btn#prevBtn { right: 6rem; bottom: 1.5rem; }
-        .float-btn#nextBtn { right: 1.5rem; bottom: 1.5rem; }
-        .float-btn#theme-toggle { right: 1.5rem; bottom: 5rem; }
-        .float-btn#downloadBtn { right: 1.5rem; bottom: 8.5rem; }
-
-        .progress-container {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--border-panel);
-            z-index: 60;
-        }
-        .progress-bar {
-            height: 100%;
-            background: var(--una-red);
-            width: 0%;
-            transition: width 0.25s ease;
-        }
-
         .keyword {
             position: relative;
             cursor: help;
@@ -158,64 +49,19 @@
         .keyword:focus::after {
             opacity: 1;
         }
-
-        .modal-backdrop {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(6px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-        }
-        .modal-backdrop.open { display: flex; }
-        .modal-content {
-            background: var(--bg-panel);
-            border-radius: 2rem;
-            max-width: 900px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 2rem 2.5rem;
-            position: relative;
-            box-shadow: 0 24px 64px rgba(0,0,0,0.3);
-            border: 1px solid var(--border-panel);
-        }
-        .close-modal {
-            position: sticky;
-            top: 0;
-            float: right;
-            background: none;
-            border: none;
-            font-size: 2rem;
-            color: var(--text-muted);
-            cursor: pointer;
-            padding: 0.25rem 0.5rem;
-            line-height: 1;
-        }
-        .close-modal:hover { color: var(--una-red); }
-
-        @media (max-width: 768px) {
-            .slide { padding: 1.5rem 1rem; }
-            .modal-content { padding: 1.5rem; }
-            .float-btn { padding: 0.5rem 0.75rem; font-size: 0.9rem; }
-            .float-btn#prevBtn { right: 4.5rem; bottom: 1rem; }
-            .float-btn#nextBtn { right: 1rem; bottom: 1rem; }
-            .float-btn#theme-toggle { right: 1rem; bottom: 4.5rem; }
-            .float-btn#downloadBtn { right: 1rem; bottom: 7.5rem; }
-        }
     </style>
 </head>
 <body>
 
     <!-- Botones flotantes -->
+    <button class="float-btn" id="downloadBtn" onclick="downloadPresentation()" title="Descargar presentación para ver sin internet">
+        <i class="fa-solid fa-download"></i>
+    </button>
     <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar modo claro/oscuro">
         <i class="fa-solid fa-moon" id="theme-icon"></i>
     </button>
-    <button class="float-btn" id="prevBtn" onclick="changeSlide(-1)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
-    <button class="float-btn" id="nextBtn" onclick="changeSlide(1)">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+    <button class="float-btn" id="prevBtn" onclick="changeSlide(-1)"><i class="fa-solid fa-arrow-left"></i></button>
+    <button class="float-btn" id="nextBtn" onclick="changeSlide(1)"><i class="fa-solid fa-arrow-right"></i></button>
 
     <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
 
@@ -229,7 +75,7 @@
                 <i class="fa-brands fa-java bg-icon text-[250px] -bottom-10 right-10" style="color: var(--accent-blue);"></i>
 
                 <div class="bg-white px-8 py-4 rounded-3xl inline-block mb-6 shadow-md border border-gray-100 relative z-10">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png"
+                    <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png"
                          alt="Logo UNA" class="h-28 object-contain">
                 </div>
 
@@ -240,24 +86,24 @@
                 </h1>
                 <h2 class="text-5xl md:text-7xl font-extrabold mb-2" style="color: var(--text-main);">Semana 3</h2>
                 <h3 class="text-3xl md:text-6xl font-bold mb-6" style="color: var(--una-red);">
-                    Características del Lenguaje Java (Parte II)
+                    Características del Lenguaje Java
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-6 relative z-10">
-                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--una-red);">
-                        <div class="w-14 h-14 shrink-0 rounded-full tint-red flex items-center justify-center text-2xl"><i class="fa-solid fa-chalkboard-user"></i></div>
-                        <div>
-                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Docente — Grupo 41</p>
-                            <p class="text-lg font-bold">Siandi Araya</p>
-                            <p class="text-xs mt-1" style="color: var(--text-muted);">M 13:00 - 16:20</p>
-                        </div>
-                    </div>
                     <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--accent-blue);">
                         <div class="w-14 h-14 shrink-0 rounded-full tint-blue flex items-center justify-center text-2xl"><i class="fa-solid fa-chalkboard-user"></i></div>
                         <div>
                             <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Docente — Grupo 40</p>
-                            <p class="text-lg font-bold">Kristel Duarte</p>
-                            <p class="text-xs mt-1" style="color: var(--text-muted);">K 08:00 - 11:20</p>
+                            <p class="text-lg font-bold" data-curso="40-docente"></p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);" data-curso="40-horario"></p>
+                        </div>
+                    </div>
+                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--una-gold);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-gold flex items-center justify-center text-2xl"><i class="fa-solid fa-clock"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Atención a Estudiantes</p>
+                            <p class="text-lg font-bold" data-curso="40-atencion"></p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);">Consultas y tutorías</p>
                         </div>
                     </div>
                 </div>
@@ -270,12 +116,12 @@
         <div class="slide">
             <div class="w-full max-w-[92%] mx-auto relative z-10">
                 <i class="fa-solid fa-map-location-dot bg-icon text-[350px] top-10 right-0 opacity-5" style="color: var(--una-gold);"></i>
-                <div class="text-center mb-8">
+                <div class="text-center mb-6">
                     <h2 class="text-5xl font-bold mb-2">¿Qué vamos a ver hoy?</h2>
-                    <p class="text-xl" style="color: var(--text-muted);">Aclaramos dudas de la semana pasada y profundizamos en temas nuevos.</p>
+                    <p class="text-xl" style="color: var(--text-muted);">Aclaramos dudas de la semana pasada y profundizamos en los temas del programa.</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-5xl mx-auto">
                     <div class="glass-panel p-5 border-l-4" style="border-left-color: var(--una-gold);">
                         <h3 class="font-bold text-xl mb-3 flex items-center gap-2"><i class="fa-solid fa-circle-question" style="color: var(--una-gold);"></i> Aclarando dudas</h3>
                         <ul class="space-y-2 text-sm" style="color: var(--text-muted);">
@@ -288,21 +134,21 @@
                         </ul>
                     </div>
                     <div class="glass-panel p-5 border-l-4" style="border-left-color: var(--accent-purple);">
-                        <h3 class="font-bold text-xl mb-3 flex items-center gap-2"><i class="fa-solid fa-code" style="color: var(--accent-purple);"></i> Temas nuevos</h3>
+                        <h3 class="font-bold text-xl mb-3 flex items-center gap-2"><i class="fa-solid fa-code" style="color: var(--accent-purple);"></i> Temas de la semana</h3>
                         <ul class="space-y-2 text-sm" style="color: var(--text-muted);">
-                            <li>• <strong>Genéricos (Generics)</strong> — clases y métodos que trabajan con cualquier tipo</li>
-                            <li>• <strong>Expresiones Lambda</strong> — funciones anónimas para escribir menos código</li>
-                            <li>• <strong>Stream API</strong> — procesar colecciones como un flujo de datos</li>
-                            <li>• <strong>Novedades de Java 8 → 21</strong> — lo que cambió y por qué importa</li>
+                            <li>• <strong>Herencia</strong></li>
+                            <li>• <strong>Interfaces</strong></li>
+                            <li>• <strong>Paquetes</strong></li>
+                            <li>• <strong>Programación genérica</strong></li>
+                            <li>• <strong>Cambios sintácticos en nuevas versiones</strong></li>
                         </ul>
                     </div>
                 </div>
-                <p class="text-sm text-center mt-4" style="color: var(--text-muted);"><i class="fa-solid fa-hand-pointer mr-1"></i> Haz clic en cualquier tema de la agenda para ir directo.</p>
             </div>
         </div>
 
         <!-- ============================================================ -->
-        <!-- ========== BLOQUE 1: ACLARANDO DUDAS (Slides 2–7) ========== -->
+        <!-- ========== BLOQUE 1: ACLARANDO DUDAS (Slides 2–8) ========== -->
         <!-- ============================================================ -->
 
         <!-- ==================== SLIDE 2: JAVA vs JAVASCRIPT ==================== -->
@@ -312,7 +158,7 @@
                 <i class="fa-brands fa-js bg-icon text-[300px] -right-10 opacity-5" style="color: var(--una-gold);"></i>
                 <div class="text-center mb-5">
                     <h2 class="text-5xl font-bold mb-2">Java vs JavaScript</h2>
-                    <p class="text-xl" style="color: var(--text-muted);">Son como <strong>carro</strong> y <strong>carroza</strong>: suenan parecido, pero son muy distintos.</p>
+                    <p class="text-xl" style="color: var(--text-muted);">Suenan parecido, pero son muy distintos.</p>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -375,7 +221,7 @@
                     <!-- Array -->
                     <div class="glass-panel overflow-hidden" style="border-top: 4px solid var(--accent-blue);">
                         <div class="flex items-center gap-2 mb-3">
-                            <span class="tint-blue w-10 h-10 rounded-lg flex items-center justify-center font-bold text-lg">Array</span>
+                            <span class="tint-blue w-20 h-10 rounded-lg flex items-center justify-center font-bold text-lg">Array</span>
                             <span class="text-sm font-bold" style="color: var(--accent-blue);">Tamaño fijo</span>
                         </div>
                         <div style="background: var(--bg-terminal); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
@@ -403,7 +249,7 @@ numeros[<span style="color: #fab387;">1</span>] = <span style="color: #fab387;">
                     <!-- ArrayList -->
                     <div class="glass-panel overflow-hidden" style="border-top: 4px solid var(--accent-green);">
                         <div class="flex items-center gap-2 mb-3">
-                            <span class="tint-green w-10 h-10 rounded-lg flex items-center justify-center font-bold text-lg">ArrayList</span>
+                            <span class="tint-green w-40 h-10 rounded-lg flex items-center justify-center font-bold text-lg">ArrayList</span>
                             <span class="text-sm font-bold" style="color: var(--accent-green);">Tamaño dinámico</span>
                         </div>
                         <div style="background: var(--bg-terminal); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
@@ -436,7 +282,7 @@ nums.<span style="color: #89dceb;">remove</span>(<span style="color: #fab387;">1
                     <div class="tint-gold w-9 h-9 flex items-center justify-center rounded-full shrink-0">
                         <i class="fa-solid fa-arrow-right"></i>
                     </div>
-                    <p class="text-sm"><strong>Regla de oro:</strong> Si sabés cuántos elementos vas a tener y no va a cambiar → usá <strong>array</strong>. Si la lista puede crecer o encogerse → usá <strong>ArrayList</strong>.</p>
+                    <p class="text-sm"><strong>Regla de oro:</strong> Si sabe cuántos elementos va a tener y no va a cambiar → use <strong>array</strong>. Si la lista puede crecer o encogerse → use <strong>ArrayList</strong>.</p>
                 </div>
             </div>
         </div>
@@ -451,10 +297,9 @@ nums.<span style="color: #89dceb;">remove</span>(<span style="color: #fab387;">1
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                    <!-- for tradicional -->
                     <div class="glass-panel overflow-hidden" style="border-top: 4px solid var(--accent-blue);">
                         <div class="flex items-center gap-2 mb-3">
-                            <span class="tint-blue w-10 h-10 rounded-lg flex items-center justify-center font-bold text-lg">for</span>
+                            <span class="tint-blue w-20 h-10 rounded-lg flex items-center justify-center font-bold text-lg">for</span>
                             <span class="text-sm font-bold" style="color: var(--accent-blue);">Tradicional</span>
                         </div>
                         <div style="background: var(--bg-terminal); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
@@ -464,17 +309,16 @@ nums.<span style="color: #89dceb;">remove</span>(<span style="color: #fab387;">1
 }</code></pre>
                         </div>
                         <ul class="mt-3 space-y-1 text-sm" style="color: var(--text-muted);">
-                            <li><span class="tint-blue px-2 py-0.5 rounded-full text-xs font-bold mr-1">✓</span> Tenés <strong>control total</strong> del índice.</li>
-                            <li><span class="tint-blue px-2 py-0.5 rounded-full text-xs font-bold mr-1">✓</span> Podés modificar la lista mientras la recorrés (con cuidado).</li>
-                            <li><span class="tint-blue px-2 py-0.5 rounded-full text-xs font-bold mr-1">✓</span> Útil cuando necesitás el índice para algo.</li>
+                            <li><span class="tint-blue px-2 py-0.5 rounded-full text-xs font-bold mr-1">✓</span> Tiene <strong>control total</strong> del índice.</li>
+                            <li><span class="tint-blue px-2 py-0.5 rounded-full text-xs font-bold mr-1">✓</span> Puede modificar la lista mientras la recorre (con cuidado).</li>
+                            <li><span class="tint-blue px-2 py-0.5 rounded-full text-xs font-bold mr-1">✓</span> Útil cuando necesita el índice para algo.</li>
                             <li><span class="tint-red px-2 py-0.5 rounded-full text-xs font-bold mr-1">✗</span> Más verboso (más código).</li>
                         </ul>
                     </div>
 
-                    <!-- foreach -->
                     <div class="glass-panel overflow-hidden" style="border-top: 4px solid var(--accent-green);">
                         <div class="flex items-center gap-2 mb-3">
-                            <span class="tint-green w-10 h-10 rounded-lg flex items-center justify-center font-bold text-lg">foreach</span>
+                            <span class="tint-green w-40 h-10 rounded-lg flex items-center justify-center font-bold text-lg">foreach</span>
                             <span class="text-sm font-bold" style="color: var(--accent-green);">Enhanced for</span>
                         </div>
                         <div style="background: var(--bg-terminal); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
@@ -484,9 +328,9 @@ nums.<span style="color: #89dceb;">remove</span>(<span style="color: #fab387;">1
                         </div>
                         <ul class="mt-3 space-y-1 text-sm" style="color: var(--text-muted);">
                             <li><span class="tint-green px-2 py-0.5 rounded-full text-xs font-bold mr-1">✓</span> <strong>Más legible</strong> y menos propenso a errores.</li>
-                            <li><span class="tint-green px-2 py-0.5 rounded-full text-xs font-bold mr-1">✓</span> No necesitás el índice, solo el elemento.</li>
-                            <li><span class="tint-red px-2 py-0.5 rounded-full text-xs font-bold mr-1">✗</span> <strong>No podés modificar</strong> la lista mientras la recorrés (tiraría <code class="font-mono text-xs">ConcurrentModificationException</code>).</li>
-                            <li><span class="tint-red px-2 py-0.5 rounded-full text-xs font-bold mr-1">✗</span> No tenés acceso al índice.</li>
+                            <li><span class="tint-green px-2 py-0.5 rounded-full text-xs font-bold mr-1">✓</span> No necesita el índice, solo el elemento.</li>
+                            <li><span class="tint-red px-2 py-0.5 rounded-full text-xs font-bold mr-1">✗</span> <strong>No puede modificar</strong> la lista mientras la recorre (tiraría <code class="font-mono text-xs">ConcurrentModificationException</code>).</li>
+                            <li><span class="tint-red px-2 py-0.5 rounded-full text-xs font-bold mr-1">✗</span> No tiene acceso al índice.</li>
                         </ul>
                     </div>
                 </div>
@@ -495,7 +339,7 @@ nums.<span style="color: #89dceb;">remove</span>(<span style="color: #fab387;">1
                     <div class="tint-gold w-9 h-9 flex items-center justify-center rounded-full shrink-0">
                         <i class="fa-solid fa-arrow-right"></i>
                     </div>
-                    <p class="text-sm"><strong>Regla de oro:</strong> Si solo necesitás <strong>leer</strong> los elementos → usá <strong>foreach</strong>. Si necesitás el <strong>índice</strong> o <strong>modificar</strong> la lista → usá el <strong>for tradicional</strong>.</p>
+                    <p class="text-sm"><strong>Regla de oro:</strong> Si solo necesita <strong>leer</strong> los elementos → use <strong>foreach</strong>. Si necesita el <strong>índice</strong> o <strong>modificar</strong> la lista → use el <strong>for tradicional</strong>.</p>
                 </div>
             </div>
         </div>
@@ -523,10 +367,14 @@ nums.<span style="color: #89dceb;">remove</span>(<span style="color: #fab387;">1
                             <code style="color: #a6e3a1; font-size: 0.85rem;">
                                 <span style="color: #cba6f7;">@Override</span><br>
                                 <span style="color: #cba6f7;">@Deprecated</span><br>
-                                <span style="color: #cba6f7;">@SuppressWarnings</span>
+                                <span style="color: #cba6f7;">@SuppressWarnings</span><br>
+                                <span style="color: #cba6f7;">@FunctionalInterface</span><br>
+                                <span style="color: #cba6f7;">@SafeVarargs</span><br>
+                                <span style="color: #cba6f7;">@Retention</span><br>
+                                <span style="color: #cba6f7;">@Target</span>
                             </code>
                         </div>
-                        <p class="text-xs mt-2" style="color: var(--text-muted);">Java tiene anotaciones predefinidas, y también podés crear las tuyas.</p>
+                        <p class="text-xs mt-2" style="color: var(--text-muted);">Java tiene anotaciones predefinidas, y también se pueden crear las propias.</p>
                     </div>
 
                     <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-blue);">
@@ -535,11 +383,11 @@ nums.<span style="color: #89dceb;">remove</span>(<span style="color: #fab387;">1
                             @Override en detalle
                         </h3>
                         <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
-                            <code class="font-mono tint-blue px-1 rounded text-xs">@Override</code> le dice al compilador: <strong>"Este método está sobrescribiendo (override) un método de la clase padre o de una interfaz"</strong>[reference:0].
+                            <code class="font-mono tint-blue px-1 rounded text-xs">@Override</code> le dice al compilador: <strong>"Este método está sobrescribiendo (override) un método de la clase padre o de una interfaz"</strong>.
                             Es <strong>opcional</strong> pero <strong>muy recomendado</strong> porque:
                         </p>
                         <ul class="mt-2 space-y-1 text-sm" style="color: var(--text-muted);">
-                            <li>• <strong>Previene errores</strong>: si escribís mal el nombre, el compilador te avisa[reference:1].</li>
+                            <li>• <strong>Previene errores</strong>: si se escribe mal el nombre, el compilador le avisa.</li>
                             <li>• <strong>Mejora la legibilidad</strong>: otros programadores saben que es un override.</li>
                         </ul>
                         <div class="mt-3 glass-panel p-3" style="background: var(--bg-terminal);">
@@ -560,12 +408,111 @@ nums.<span style="color: #89dceb;">remove</span>(<span style="color: #fab387;">1
                     <div class="tint-gold w-9 h-9 flex items-center justify-center rounded-full shrink-0">
                         <i class="fa-solid fa-triangle-exclamation"></i>
                     </div>
-                    <p class="text-sm"><strong>¿Qué pasa si no usás @Override?</strong> El código funciona igual. Pero si te equivocás en el nombre (ej. <code class="font-mono text-xs">hacerSonido2</code>), el compilador no se queja y crea un método nuevo en vez de sobrescribir. <strong>@Override te salva de ese error</strong>.</p>
+                    <p class="text-sm"><strong>¿Qué pasa si no se usa @Override?</strong> El código funciona igual. Pero si se equivoca en el nombre (ej. <code class="font-mono text-xs">hacerSonido2</code>), el compilador no se queja y crea un método nuevo en vez de sobrescribir. <strong>@Override te salva de ese error</strong>.</p>
                 </div>
             </div>
         </div>
 
-        <!-- ==================== SLIDE 6: Carpeta src y Source Root ==================== -->
+               <!-- ==================== SLIDE 6: ANOTACIONES ÚTILES ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-tags bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Anotaciones útiles en Java</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Más allá de <code class="font-mono tint-purple px-2 py-0.5 rounded text-xl">@Override</code>, hay muchas anotaciones integradas que te ayudan.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-blue);">
+                        <h4 class="font-bold text-lg mb-2"><code class="font-mono tint-blue px-1 rounded text-sm">@Deprecated</code></h4>
+                        <p class="text-sm" style="color: var(--text-muted);">
+                            Marca un elemento (clase, método, campo) como <strong>obsoleto</strong>. El compilador muestra una advertencia si se usa. Se recomienda explicar por qué y qué usar en su lugar (con <code class="font-mono text-xs">@deprecated</code> en la documentación).
+                        </p>
+                        <div class="mt-2 glass-panel p-2" style="background: var(--bg-terminal);">
+                            <code style="color: #a6e3a1; font-size: 0.75rem;">
+                                <span style="color: #cba6f7;">@Deprecated</span><br>
+                                <span style="color: #cba6f7;">public void</span> <span style="color: #89dceb;">metodoViejo</span>() { ... }
+                            </code>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-green);">
+                        <h4 class="font-bold text-lg mb-2"><code class="font-mono tint-green px-1 rounded text-sm">@SuppressWarnings</code></h4>
+                        <p class="text-sm" style="color: var(--text-muted);">
+                            Le dice al compilador que <strong>suprima</strong> advertencias específicas. Útil cuando se sabe que una advertencia es segura de ignorar (ej. <code class="font-mono text-xs">"unchecked"</code> en código legacy).
+                        </p>
+                        <div class="mt-2 glass-panel p-2" style="background: var(--bg-terminal);">
+                            <code style="color: #a6e3a1; font-size: 0.75rem;">
+                                <span style="color: #cba6f7;">@SuppressWarnings</span>(<span style="color: #a6e3a1;">"unchecked"</span>)<br>
+                                <span style="color: #cba6f7;">public void</span> <span style="color: #89dceb;">metodoLegacy</span>() { ... }
+                            </code>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-purple);">
+                        <h4 class="font-bold text-lg mb-2"><code class="font-mono tint-purple px-1 rounded text-sm">@FunctionalInterface</code></h4>
+                        <p class="text-sm" style="color: var(--text-muted);">
+                            Indica que la interfaz tiene <strong>un solo método abstracto</strong> (SAM). Permite que se use con lambdas. El compilador verifica que solo tenga un método abstracto.
+                        </p>
+                        <div class="mt-2 glass-panel p-2" style="background: var(--bg-terminal);">
+                            <code style="color: #a6e3a1; font-size: 0.75rem;">
+                                <span style="color: #cba6f7;">@FunctionalInterface</span><br>
+                                <span style="color: #cba6f7;">interface</span> <span style="color: #89b4fa;">Calculadora</span> {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #f9e2af;">int</span> <span style="color: #89dceb;">sumar</span>(<span style="color: #f9e2af;">int</span> a, <span style="color: #f9e2af;">int</span> b);<br>
+                                }
+                            </code>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-peach);">
+                        <h4 class="font-bold text-lg mb-2"><code class="font-mono tint-peach px-1 rounded text-sm">@SafeVarargs</code></h4>
+                        <p class="text-sm" style="color: var(--text-muted);">
+                            Suprime advertencias sobre operaciones inseguras con <strong>varargs</strong> (argumentos variables) de tipo genérico. Se usa en métodos <code class="font-mono text-xs">static</code> o <code class="font-mono text-xs">final</code>.
+                        </p>
+                        <div class="mt-2 glass-panel p-2" style="background: var(--bg-terminal);">
+                            <code style="color: #a6e3a1; font-size: 0.75rem;">
+                                <span style="color: #cba6f7;">@SafeVarargs</span><br>
+                                <span style="color: #cba6f7;">public static</span> &lt;<span style="color: #f9e2af;">T</span>&gt; <span style="color: #f9e2af;">T</span>[] <span style="color: #89dceb;">toArray</span>(<span style="color: #f9e2af;">T</span>... items) { ... }
+                            </code>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-blue);">
+                        <h4 class="font-bold text-lg mb-2"><code class="font-mono tint-blue px-1 rounded text-sm">@Override</code></h4>
+                        <p class="text-sm" style="color: var(--text-muted);">
+                            Verifica que el método esté sobrescribiendo correctamente un método de la superclase o interfaz. Previene errores de escritura en el nombre del método.
+                        </p>
+                        <div class="mt-2 glass-panel p-2" style="background: var(--bg-terminal);">
+                            <code style="color: #a6e3a1; font-size: 0.75rem;">
+                                <span style="color: #cba6f7;">class</span> <span style="color: #89b4fa;">Circulo</span> <span style="color: #cba6f7;">extends</span> <span style="color: #89b4fa;">Figura</span> {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #cba6f7;">@Override</span><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #cba6f7;">public double</span> <span style="color: #89dceb;">calcularArea</span>() { ... } <br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                            </code>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-green);">
+                        <h4 class="font-bold text-lg mb-2"><code class="font-mono tint-green px-1 rounded text-sm">@Retention</code> y <code class="font-mono tint-green px-1 rounded text-sm">@Target</code></h4>
+                        <p class="text-sm" style="color: var(--text-muted);">
+                            Son <strong>meta-anotaciones</strong> que especifican <strong>cuándo</strong> y <strong>dónde</strong> se puede usar una anotación personalizada. Ej. <code class="font-mono text-xs">@Retention(RetentionPolicy.RUNTIME)</code> para que esté disponible en tiempo de ejecución.
+                        </p>
+                        <div class="mt-2 glass-panel p-2" style="background: var(--bg-terminal);">
+                            <code style="color: #a6e3a1; font-size: 0.75rem;">
+                                <span style="color: #cba6f7;">@Retention</span>(<span style="color: #89b4fa;">RetentionPolicy</span>.<span style="color: #89dceb;">RUNTIME</span>)<br>
+                                <span style="color: #cba6f7;">@Target</span>(<span style="color: #89b4fa;">ElementType</span>.<span style="color: #89dceb;">METHOD</span>)<br>
+                                <span style="color: #cba6f7;">public @interface</span> <span style="color: #89b4fa;">MiAnotacion</span> { ... }
+                            </code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel py-3 px-5 flex items-center gap-4 mt-3" style="border-left: 4px solid var(--una-gold);">
+                    <div class="tint-gold w-9 h-9 flex items-center justify-center rounded-full shrink-0">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <p class="text-sm"><strong>Consejo:</strong> Siempre que veas una anotación, investigue qué hace. Son una herramienta poderosa para mejorar la calidad y legibilidad del código.</p>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ==================== SLIDE 7: Carpeta src y Source Root ==================== -->
         <div class="slide">
             <div class="w-full max-w-[92%] mx-auto relative z-10">
                 <i class="fa-solid fa-folder-tree bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-green);"></i>
@@ -594,7 +541,7 @@ nums.<span style="color: #89dceb;">remove</span>(<span style="color: #fab387;">1
 └── <span style="color: #a6e3a1;">lib/</span>          <span style="color: #6c7086;">← Bibliotecas externas (.jar)</span></code></pre>
                         </div>
                         <p class="text-sm mt-2" style="color: var(--text-muted);">
-                            La carpeta <code class="font-mono tint-blue px-1 rounded text-xs">src</code> (source) es donde va <strong>todo tu código Java</strong>. Los archivos <code class="font-mono text-xs">.class</code> (bytecode) se generan en otra carpeta (como <code class="font-mono text-xs">out</code> o <code class="font-mono text-xs">target</code>).
+                            La carpeta <code class="font-mono tint-blue px-1 rounded text-xs">src</code> (source) es donde va <strong>todo tu código Java</strong>. Los archivos <code class="font-mono text-xs">.class</code> (bytecode) se generan en otra carpeta (como <code class="font-mono text-xs">out</code>).
                         </p>
                     </div>
 
@@ -608,8 +555,8 @@ nums.<span style="color: #89dceb;">remove</span>(<span style="color: #fab387;">1
                         </p>
                         <ul class="mt-2 space-y-1 text-sm" style="color: var(--text-muted);">
                             <li>• <strong>“Aquí está mi código fuente”</strong> → el compilador va a buscar archivos <code class="font-mono text-xs">.java</code> ahí.</li>
-                            <li>• <strong>“Resolvé los imports desde aquí”</strong> → los paquetes se resuelven desde esta raíz.</li>
-                            <li>• <strong>“No compilez nada que esté fuera de aquí”</strong> → separa código de otros archivos.</li>
+                            <li>• <strong>“Resuelva los imports desde aquí”</strong> → los paquetes se resuelven desde esta raíz.</li>
+                            <li>• <strong>“No compile nada que esté fuera de aquí”</strong> → separa código de otros archivos.</li>
                         </ul>
                         <div class="mt-3 glass-panel p-3" style="background: var(--bg-terminal);">
                             <code style="color: #a6e3a1; font-size: 0.85rem;">
@@ -618,14 +565,14 @@ nums.<span style="color: #89dceb;">remove</span>(<span style="color: #fab387;">1
                             </code>
                         </div>
                         <p class="text-sm mt-2" style="color: var(--text-muted);">
-                            <strong>¿Por qué no hay que importar las clases al main?</strong> Porque si están en el mismo paquete o en un paquete que está en el Source Root, el compilador las encuentra automáticamente. Solo necesitás <code class="font-mono text-xs">import</code> si la clase está en otro paquete.
+                            <strong>¿Por qué no hay que importar las clases al main?</strong> Porque si están en el mismo paquete o en un paquete que está en el Source Root, el compilador las encuentra automáticamente. Solo se necesita <code class="font-mono text-xs">import</code> si la clase está en otro paquete.
                         </p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- ==================== SLIDE 7: ¿Por qué solo corre la clase con main? ==================== -->
+        <!-- ==================== SLIDE 8: ¿Por qué solo corre la clase con main? ==================== -->
         <div class="slide">
             <div class="w-full max-w-[92%] mx-auto relative z-10">
                 <i class="fa-solid fa-play bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-blue);"></i>
@@ -695,16 +642,432 @@ nums.<span style="color: #89dceb;">remove</span>(<span style="color: #fab387;">1
         </div>
 
         <!-- ============================================================ -->
-        <!-- ========== BLOQUE 2: TEMAS NUEVOS (Slides 8–15) ============ -->
+        <!-- ========== BLOQUE 2: TEMAS OFICIALES (Slides 9–22) ========= -->
         <!-- ============================================================ -->
 
-        <!-- ==================== SLIDE 8: GENÉRICOS — INTRO ==================== -->
+        <!-- ==================== SLIDE 9: HERENCIA — INTRODUCCIÓN ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-sitemap bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Herencia</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Reutilización y jerarquía con <code class="font-mono tint-blue px-2 py-0.5 rounded text-xl">extends</code>.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-blue);">
+                        <h3 class="text-2xl font-bold mb-3 flex items-center gap-2">
+                            <span class="tint-blue w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-arrow-up"></i></span>
+                            ¿Qué es la herencia?
+                        </h3>
+                        <p class="text-sm leading-relaxed mb-4" style="color: var(--text-muted);">
+                            La herencia es un mecanismo que permite que una clase (subclase) <strong>herede</strong> atributos y métodos de otra clase (superclase). <br><br> En Java solo se permite <strong>herencia simple</strong>: una clase solo puede extenderse de una única superclase.
+                        </p><br>
+                     
+                            <div class="rounded-xl p-3" style="background: rgba(137,180,250,0.1); border: 1px solid rgba(137,180,250,0.2);">
+                                <h4 class="font-bold text-sm mb-1 flex items-center gap-1.5" style="color: #89b4fa;">
+                                    <i class="fa-solid fa-circle-check text-xs"></i> ¿Para qué sirve?
+                                </h4>
+                                <p class="text-xs" style="color: var(--text-muted);">
+                                    Para <strong>reutilizar código</strong>, establecer relaciones jerárquicas ("es-un") y aplicar polimorfismo.
+                                </p>
+                            </div>
+                                <br><br>
+                            <div class="rounded-xl p-3" style="background: rgba(137,180,250,0.1); border: 1px solid rgba(137,180,250,0.2);">
+                                <h4 class="font-bold text-sm mb-1 flex items-center gap-1.5" style="color: #89b4fa;">
+                                    <i class="fa-solid fa-clock text-xs"></i> ¿Cuándo usarla?
+                                </h4>
+                                <p class="text-xs" style="color: var(--text-muted);">
+                                    Cuando varias clases comparten atributos y comportamiento común, conviene extraerlos a una clase padre.
+                                </p>
+                            </div>
+                      
+                    </div>
+
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-green);">
+                        <h3 class="text-2xl font-bold mb-3 flex items-center gap-2">
+                            <span class="tint-green w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-code"></i></span>
+                            Ejemplo básico
+                        </h3>
+                        <div style="background: var(--bg-terminal); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
+                            <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #cba6f7;">class</span> <span style="color: #89b4fa;">Animal</span> {
+    <span style="color: #cba6f7;">protected</span> <span style="color: #f9e2af;">String</span> <span style="color: #a6e3a1;">nombre</span>;
+    <span style="color: #cba6f7;">public void</span> <span style="color: #89dceb;">comer</span>() {
+        System.out.<span style="color: #89dceb;">println</span>(nombre + <span style="color: #a6e3a1;">" está comiendo"</span>);
+    }
+}
+
+<span style="color: #cba6f7;">class</span> <span style="color: #89b4fa;">Perro</span> <span style="color: #cba6f7;">extends</span> <span style="color: #89b4fa;">Animal</span> {
+    <span style="color: #6c7086;">// Hereda nombre y comer()</span>
+    <span style="color: #cba6f7;">public void</span> <span style="color: #89dceb;">ladrar</span>() {
+        System.out.<span style="color: #89dceb;">println</span>(<span style="color: #a6e3a1;">"¡Guau!"</span>);
+    }
+}</code></pre>
+                        </div>
+                        <p class="text-xs mt-2" style="color: var(--text-muted);"><code class="font-mono text-xs">protected</code> permite que las subclases accedan a los miembros de la superclase.</p>
+                    </div>
+                </div>
+
+                <div class="glass-panel py-3 px-5 flex items-center gap-4 mt-3" style="border-left: 4px solid var(--una-gold);">
+                    <div class="tint-gold w-9 h-9 flex items-center justify-center rounded-full shrink-0">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <p class="text-sm"><strong>Analogía:</strong> La herencia es como una <strong>familia</strong>: los hijos heredan características de sus padres (apellido, rasgos físicos), pero también pueden tener los suyos propios. En programación, la clase hija hereda atributos y métodos de la clase padre.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 10: HERENCIA EN PROFUNDIDAD ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-arrow-up-wide-short bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Herencia</h2>
+                    <p class="text-xl" style="color: var(--text-muted);"><code class="font-mono tint-blue px-2 py-0.5 rounded text-xl">super</code>, constructores y <code class="font-mono tint-blue px-2 py-0.5 rounded text-xl">@Override</code>.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-blue);">
+                        <h4 class="font-bold text-lg mb-2">Uso de <code class="font-mono tint-blue px-1 rounded text-md">super</code></h4>
+                        <p class="text-md" style="color: var(--text-muted);">
+                            <code class="font-mono text-sm">super</code> se usa para:
+                        </p> <br>
+                        <ul class="list-disc list-inside text-sm space-y-1" style="color: var(--text-muted);">
+                            <li>Llamar al constructor de la clase padre (<code class="font-mono text-sm">super(parámetros)</code>).</li>
+                            <li>Acceder a métodos o atributos de la clase padre que han sido sobrescritos.</li>
+                        </ul> <br>
+
+                        <div class="glass-panel py-3 px-5 flex items-center gap-4 mt-3" style="border-left: 4px solid var(--una-gold);">
+                            <div class="tint-gold w-9 h-9 flex items-center justify-center rounded-full shrink-0">
+                                <i class="fa-solid fa-information"></i>
+                            </div>
+                            <p class="text-sm"><strong>Regla:</strong> la llamada a <code class="font-mono text-sm">super()</code> debe ser la primera instrucción en el constructor de la subclase.</p>
+                        </div>
+
+                    </div>
+
+                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-green);">
+                        <h4 class="font-bold text-lg mb-2">Jerarquía de constructores</h4>
+                        <p class="text-sm" style="color: var(--text-muted);">
+                            Cuando se crea un objeto de una subclase, se ejecuta primero el constructor de la superclase (implícitamente o con <code class="font-mono text-xs">super()</code>), y luego el de la subclase.
+                        </p>
+                        <div class="mt-2 glass-panel p-2" style="background: var(--bg-terminal);">
+                            <pre class="text-xs" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #6c7086;">// Constructor sin parámetros</span>
+<span style="color: #cba6f7;">class</span> <span style="color: #89b4fa;">Animal</span> {
+    <span style="color: #cba6f7;">public</span> <span style="color: #89dceb;">Animal</span>() {
+        System.out.<span style="color: #89dceb;">println</span>(<span style="color: #a6e3a1;">"Constructor Animal"</span>);
+    }
+}
+<span style="color: #cba6f7;">class</span> <span style="color: #89b4fa;">Perro</span> <span style="color: #cba6f7;">extends</span> <span style="color: #89b4fa;">Animal</span> {
+    <span style="color: #cba6f7;">public</span> <span style="color: #89dceb;">Perro</span>() {
+        <span style="color: #cba6f7;">super</span>(); <span style="color: #6c7086;">// se llama implícitamente</span>
+        System.out.<span style="color: #89dceb;">println</span>(<span style="color: #a6e3a1;">"Constructor Perro"</span>);
+    }
+}</code></pre>
+                        </div>
+
+                        <details class="mt-3 cursor-pointer group">
+                            <summary class="text-xs font-bold flex items-center gap-1.5 select-none" style="color: #89b4fa;">
+                                <i class="fa-solid fa-caret-right text-xs transition-transform group-open:rotate-90"></i>
+                                Ver ejemplo con <code class="font-mono text-xs" style="color: #89b4fa;">super(parámetros)</code>
+                            </summary>
+                            <div class="mt-2 glass-panel p-2" style="background: var(--bg-terminal);">
+                                <pre class="text-xs" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #6c7086;">// Constructor con parámetros</span>
+<span style="color: #cba6f7;">class</span> <span style="color: #89b4fa;">Animal</span> {
+    <span style="color: #cba6f7;">protected</span> <span style="color: #f9e2af;">String</span> <span style="color: #a6e3a1;">nombre</span>;
+    <span style="color: #cba6f7;">public</span> <span style="color: #89dceb;">Animal</span>(<span style="color: #f9e2af;">String</span> nombre) {
+        <span style="color: #cba6f7;">this</span>.nombre = nombre;
+        System.out.<span style="color: #89dceb;">println</span>(<span style="color: #a6e3a1;">"Animal: "</span> + nombre);
+    }
+}
+<span style="color: #cba6f7;">class</span> <span style="color: #89b4fa;">Perro</span> <span style="color: #cba6f7;">extends</span> <span style="color: #89b4fa;">Animal</span> {
+    <span style="color: #cba6f7;">public</span> <span style="color: #89dceb;">Perro</span>(<span style="color: #f9e2af;">String</span> nombre) {
+        <span style="color: #cba6f7;">super</span>(nombre); <span style="color: #6c7086;">// ← obligatorio: pasa el parámetro</span>
+        System.out.<span style="color: #89dceb;">println</span>(<span style="color: #a6e3a1;">"Perro: "</span> + nombre);
+    }
+}
+<span style="color: #6c7086;">// new Perro("Firulais") → Animal: Firulais → Perro: Firulais</span></code></pre>
+                            </div>
+                        </details>
+
+                        <p class="text-xs mt-2" style="color: var(--text-muted);">Si la clase padre no tiene constructor sin parámetros, debe llamar explícitamente a <code class="font-mono text-xs">super(parámetros)</code>.</p>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 mt-3 border-t-4" style="border-color: var(--accent-purple);">
+                    <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-pen mr-2"></i> Sobrescritura de métodos con <code class="font-mono tint-purple px-1 rounded text-sm">@Override</code></h4>
+                    <p class="text-sm" style="color: var(--text-muted);">
+                        Las subclases pueden <strong>sobrescribir</strong> métodos de la superclase para proporcionar su propia implementación. La anotación <code class="font-mono text-xs">@Override</code> es opcional pero muy recomendada para detectar errores de escritura.
+                    </p>
+                    <div class="mt-2 glass-panel p-2" style="background: var(--bg-terminal);">
+                        <pre class="text-xs" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #cba6f7;">class</span> <span style="color: #89b4fa;">Perro</span> <span style="color: #cba6f7;">extends</span> <span style="color: #89b4fa;">Animal</span> {
+    <span style="color: #cba6f7;">@Override</span>
+    <span style="color: #cba6f7;">public void</span> <span style="color: #89dceb;">comer</span>() {
+        System.out.<span style="color: #89dceb;">println</span>(<span style="color: #a6e3a1;">"El perro come croquetas"</span>);
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 11: INTERFACES — INTRODUCCIÓN ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-handshake-simple bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Interfaces</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Contratos que definen <strong>qué</strong> hacer, no <strong>cómo</strong> hacerlo.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-purple);">
+                        <h3 class="text-2xl font-bold mb-3 flex items-center gap-2">
+                            <span class="tint-purple w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-circle-question"></i></span>
+                            ¿Qué es una interfaz?
+                        </h3>
+                        <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
+                            Una interfaz es un <strong>contrato</strong> que especifica un conjunto de métodos que una clase debe implementar. <br> Todos los métodos de una interfaz son <strong>abstractos</strong> (sin cuerpo) hasta Java 8, que introdujo métodos <code class="font-mono text-xs">default</code> y <code class="font-mono text-xs">static</code>.
+                        </p><br>
+                         <div class="rounded-xl p-3" style="background: rgba(201, 137, 250, 0.1); border: 1px solid rgba(192, 137, 250, 0.2);">
+                                <h4 class="font-bold text-sm mb-1 flex items-center gap-1.5" style="color: #c989fa;">
+                                    <i class="fa-solid fa-circle-check text-xs"></i> ¿Para qué sirve?
+                                </h4>
+                                <p class="text-sm" style="color: var(--text-muted);">
+                                    Para definir comportamientos comunes que pueden ser implementados por clases no relacionadas (herencia múltiple de comportamiento).
+                                </p>
+                            </div>
+                                <br><br>
+                            <div class="rounded-xl p-3" style="background: rgba(201, 137, 250, 0.1); border: 1px solid rgba(192, 137, 250, 0.2);">
+                                <h4 class="font-bold text-sm mb-1 flex items-center gap-1.5" style="color: #c989fa;">
+                                    <i class="fa-solid fa-clock text-xs"></i> ¿Cuándo usarla?
+                                </h4>
+                                <p class="text-sm" style="color: var(--text-muted);">
+                                   Cuando se quiere que clases de diferentes jerarquías compartan un comportamiento (ej. <code class="font-mono text-sm">Comparable</code> para ordenar).
+                                </p>
+                            </div> <br>
+
+                            <div class="mt-2 rounded-lg p-3" style="background: rgba(116,199,236,0.08); border: 1px solid rgba(116,199,236,0.15);">
+                            <p class="text-xs flex items-start gap-2" style="color: #74c7ec;">
+                                <i class="fa-solid fa-file-code mt-0.5"></i>
+                                <span>Cada <code class="font-mono text-xs" style="color: #89dceb;">interface</code> va en su <strong>propio archivo</strong> (<code class="font-mono text-xs" style="color: #a6e3a1;">.java</code>), igual que una clase. <strong>No</strong> se declaran dentro de <code class="font-mono text-xs" style="color: #89b4fa;">Animal</code> ni de <code class="font-mono text-xs" style="color: #89b4fa;">Pato</code>.</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-blue);">
+                        <h3 class="text-2xl font-bold mb-3 flex items-center gap-2">
+                            <span class="tint-blue w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-code"></i></span>
+                            Sintaxis básica
+                        </h3>
+                        <div style="background: var(--bg-terminal); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
+                            <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #6c7086;">// Volador.java — archivo independiente</span>
+<span style="color: #cba6f7;">interface</span> <span style="color: #89b4fa;">Volador</span> {
+    <span style="color: #f9e2af;">void</span> <span style="color: #89dceb;">volar</span>();  <span style="color: #6c7086;">// método abstracto</span>
+}
+
+<span style="color: #6c7086;">// Nadador.java — archivo independiente</span>
+<span style="color: #cba6f7;">interface</span> <span style="color: #89b4fa;">Nadador</span> {
+    <span style="color: #f9e2af;">void</span> <span style="color: #89dceb;">nadar</span>();
+}
+
+<span style="color: #6c7086;">// Pato.java — hereda de Animal e implementa las interfaces</span>
+<span style="color: #cba6f7;">class</span> <span style="color: #89b4fa;">Pato</span> <span style="color: #cba6f7;">extends</span> <span style="color: #89b4fa;">Animal</span> <span style="color: #cba6f7;">implements</span> <span style="color: #89b4fa;">Volador</span>, <span style="color: #89b4fa;">Nadador</span> {
+    <span style="color: #cba6f7;">public void</span> <span style="color: #89dceb;">volar</span>() { System.out.<span style="color: #89dceb;">println</span>(<span style="color: #a6e3a1;">"Pato volando"</span>); }
+    <span style="color: #cba6f7;">public void</span> <span style="color: #89dceb;">nadar</span>() { System.out.<span style="color: #89dceb;">println</span>(<span style="color: #a6e3a1;">"Pato nadando"</span>); }
+}</code></pre>
+                        </div>
+                        <p class="text-xs mt-2" style="color: var(--text-muted);">Una clase puede implementar múltiples interfaces, logrando una forma de herencia múltiple.</p>
+                    </div>
+                </div>
+
+                <div class="glass-panel py-3 px-5 flex items-center gap-4 mt-3" style="border-left: 4px solid var(--una-gold);">
+                    <div class="tint-gold w-9 h-9 flex items-center justify-center rounded-full shrink-0">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <p class="text-sm"><strong>Analogía:</strong> Las interfaces son como <strong>roles</strong> o <strong>profesiones</strong>. Una persona puede ser médico, músico y deportista al mismo tiempo. Cada rol define un conjunto de acciones que debe realizar, pero la forma de hacerlas depende de cada persona.</p>
+                </div>
+
+                <div class="glass-panel py-3 px-5 flex items-center gap-4 mt-3" style="border-left: 4px solid var(--accent-blue);">
+                    <div class="tint-blue w-9 h-9 flex items-center justify-center rounded-full shrink-0">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                    </div>
+                    <p class="text-sm"><strong>¡No confundir!</strong> Una <strong>interfaz</strong> en programación (<code class="font-mono text-xs">interface</code>) es un <strong>contrato de código</strong> que define métodos que una clase debe implementar. Una <strong>interfaz gráfica</strong> (GUI) es la parte <strong>visual</strong> de un programa (ventanas, botones, menús). <br> <strong>Son conceptos totalmente distintos.</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 12: INTERFACES Y POLIMORFISMO ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-shield-halved bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Polimorfismo con interfaces</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Tratar objetos de diferentes clases de manera uniforme.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-purple);">
+                        <h3 class="text-2xl font-bold mb-3 flex items-center gap-2">
+                            <span class="tint-purple w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-arrows-spin"></i></span>
+                            ¿Qué es el polimorfismo?
+                        </h3>
+                        <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
+                            El polimorfismo (<em>poli</em> = muchas, <em>morfos</em> = formas) permite que una <strong>misma variable</strong> pueda referirse a objetos de <strong>diferentes clases</strong>, siempre que compartan una interfaz o superclase común.
+                        </p> <br>
+
+                        <div class="mt-3 rounded-xl p-3" style="background: rgba(201,137,250,0.08); border: 1px solid rgba(201,137,250,0.15);">
+                            <h4 class="font-bold text-sm mb-2 flex items-center gap-1.5" style="color: #c989fa;">
+                                <i class="fa-solid fa-lightbulb text-xs"></i> ¿Cómo se aplica?
+                            </h4>
+                            <ol class="text-xs space-y-1.5" style="color: var(--text-muted);">
+                                <li><strong>1.</strong> Se define una interfaz (ej. <code class="font-mono text-xs">Mascota</code>) con los métodos que deben cumplir.</li>
+                                <li><strong>2.</strong> Varias clases implementan esa interfaz, cada una a su manera.</li>
+                                <li><strong>3.</strong> Se escribe un método que recibe el <strong>tipo de la interfaz</strong>, no una clase concreta.</li>
+                                <li><strong>4.</strong> Al llamar al método, <strong>Java decide en tiempo de ejecución</strong> qué versión del método se ejecuta, según el objeto real que se pasó.</li>
+                            </ol>
+                        </div><br>
+
+                        <p class="text-sm mt-3" style="color: var(--text-muted);">
+                            <strong>Ejemplo:</strong> el método <code class="font-mono text-xs">divertir(Mascota m)</code> acepta un <code class="font-mono text-xs">Perro</code>, un <code class="font-mono text-xs">Gato</code> o cualquier clase que implemente <code class="font-mono text-xs">Mascota</code>. Cuando llama a <code class="font-mono text-xs">m.jugar()</code>, Java ejecuta el <code class="font-mono text-xs">jugar()</code> correspondiente al objeto que realmente recibió.
+                        </p>
+                    </div>
+
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-blue);">
+                        <h3 class="text-2xl font-bold mb-3 flex items-center gap-2">
+                            <span class="tint-blue w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-code"></i></span>
+                            Ejemplo en acción
+                        </h3>
+                        <div style="background: var(--bg-terminal); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
+                            <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #cba6f7;">interface</span> <span style="color: #89b4fa;">Mascota</span> {
+    <span style="color: #f9e2af;">void</span> <span style="color: #89dceb;">jugar</span>();
+}
+
+<span style="color: #cba6f7;">class</span> <span style="color: #89b4fa;">Perro</span> <span style="color: #cba6f7;">implements</span> <span style="color: #89b4fa;">Mascota</span> {
+    <span style="color: #cba6f7;">public void</span> <span style="color: #89dceb;">jugar</span>() { System.out.<span style="color: #89dceb;">println</span>(<span style="color: #a6e3a1;">"Perro juega a la pelota"</span>); }
+}
+
+<span style="color: #cba6f7;">class</span> <span style="color: #89b4fa;">Gato</span> <span style="color: #cba6f7;">implements</span> <span style="color: #89b4fa;">Mascota</span> {
+    <span style="color: #cba6f7;">public void</span> <span style="color: #89dceb;">jugar</span>() { System.out.<span style="color: #89dceb;">println</span>(<span style="color: #a6e3a1;">"Gato juega con un ovillo"</span>); }
+}
+
+<span style="color: #cba6f7;">public static void</span> <span style="color: #89dceb;">divertir</span>(<span style="color: #89b4fa;">Mascota</span> m) {
+    m.<span style="color: #89dceb;">jugar</span>();  <span style="color: #6c7086;">// ← ¡mismo código, distinto resultado!</span>
+}</code></pre>
+                        </div>
+
+                        <div class="mt-3 rounded-xl p-3" style="background: rgba(116,199,236,0.08); border: 1px solid rgba(116,199,236,0.15);">
+                            <h4 class="font-bold text-xs mb-2 flex items-center gap-1.5" style="color: #74c7ec;">
+                                <i class="fa-solid fa-play text-xs"></i> ¿Qué pasa al ejecutar?
+                            </h4>
+                            <div class="text-xs space-y-1 font-mono" style="color: var(--text-muted);">
+                                <div><code style="color: #89dceb;">divertir</code>(<span style="color: #cba6f7;">new</span> <span style="color: #89b4fa;">Perro</span>()) → <span style="color: #a6e3a1;">"Perro juega a la pelota"</span></div>
+                                <div><code style="color: #89dceb;">divertir</code>(<span style="color: #cba6f7;">new</span> <span style="color: #89b4fa;">Gato</span>())  → <span style="color: #a6e3a1;">"Gato juega con un ovillo"</span></div>
+                            </div>
+                            <p class="text-xs mt-2" style="color: #74c7ec;">
+                                <strong>La magia:</strong> el parámetro <code class="font-mono text-xs" style="color: #89b4fa;">Mascota m</code> puede recibir <strong>cualquier</strong> objeto que implemente <code class="font-mono text-xs" style="color: #89b4fa;">Mascota</code>. Java <strong>automáticamente</strong> ejecuta el <code class="font-mono text-xs" style="color: #89dceb;">jugar()</code> correcto según el tipo real del objeto.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel py-3 px-5 flex items-center gap-4 mt-3" style="border-left: 4px solid var(--una-gold);">
+                    <div class="tint-gold w-9 h-9 flex items-center justify-center rounded-full shrink-0">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                    <p class="text-sm"><strong>Ventaja:</strong> se puede escribir código genérico que funcione con cualquier objeto que cumpla el contrato de la interfaz, sin importar su clase concreta. Si mañana se agrega <code class="font-mono text-xs">Hamster</code>, ¡<code class="font-mono text-xs">divertir()</code> funciona sin cambios!</p>
+                </div>
+            </div>
+        </div>
+
+      <!-- ==================== SLIDE 13: PAQUETES ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-box-archive bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Paquetes</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Organización arquitectónica: Espacios de nombres y dependencias.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    <!-- Tarjeta PACKAGE -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-green);">
+                        <h3 class="text-2xl font-bold mb-3 flex items-center gap-2">
+                            <span class="tint-green w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-tags"></i></span>
+                            <code class="font-mono tint-green px-1 rounded text-sm">package</code>
+                        </h3>
+                        <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
+                            <strong>Técnicamente:</strong> Define el <em>espacio de nombres (namespace)</em> de la clase para evitar colisiones de identificadores y agrupar componentes lógicamente. Debe coincidir obligatoriamente con la estructura de directorios del sistema.
+                        </p>
+                        
+                        <div class="mt-2 p-2 rounded border-l-2" style="background: rgba(255,255,255,0.05); border-color: var(--accent-green);">
+                            <p class="text-sm italic" style="color: #3e3d3d;">
+                                <i class="fa-regular fa-lightbulb text-yellow-400 mr-1"></i> 
+                                <strong>En simple:</strong> Un paquete es una carpeta dentro del disco duro para organizar los archivos .java. Sin esta organizacion, un proyecto de 300 clases seria imposible de mantener.
+                            </p>
+                        </div>
+
+                        <div class="mt-3 glass-panel p-2" style="background: var(--bg-terminal);">
+                            <code style="color: #a6e3a1; font-size: 0.85rem;">
+                                <span style="color: #cba6f7;">package</span> com.una.progra3.modelo;
+                            </code>
+                        </div>
+                        <p class="text-xs mt-2" style="color: var(--text-muted);">El archivo físico debe estar en la ruta: <code class="font-mono text-xs">src/com/una/progra3/modelo/</code>.</p>
+                    </div>
+
+                    <!-- Tarjeta IMPORT -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-blue);">
+                        <h3 class="text-2xl font-bold mb-3 flex items-center gap-2">
+                            <span class="tint-blue w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-arrow-right-to-bracket"></i></span>
+                            <code class="font-mono tint-blue px-1 rounded text-sm">import</code>
+                        </h3>
+                        <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
+                            <strong>Técnicamente:</strong> Resuelve las dependencias externas. Permite instanciar clases de otros espacios de nombres sin tener que escribir su ruta absoluta <em>(Fully Qualified Name)</em> cada vez.
+                        </p>
+
+                        <div class="mt-2 p-2 rounded border-l-2" style="background: rgba(255,255,255,0.05); border-color: var(--accent-blue);">
+                            <p class="text-sm italic" style="color: #3e3d3d;">
+                                <i class="fa-regular fa-lightbulb text-yellow-400 mr-1"></i> 
+                                <strong>En simple:</strong> Es pedir prestada una herramienta de otra caja. Le avisa a Java: <em>"Oye, en este archivo voy a usar código que guardamos en otra carpeta"</em>.
+                            </p>
+                        </div>
+
+                        <div class="mt-3 glass-panel p-2" style="background: var(--bg-terminal);">
+                            <code style="color: #a6e3a1; font-size: 0.85rem;">
+                                <span style="color: #cba6f7;">import</span> com.una.progra3.utilidades.Calculadora;
+                            </code>
+                        </div>
+                        <p class="text-xs mt-2" style="color: var(--text-muted);">Sin esto, tendrías que escribir <code class="font-mono text-xs">com.una.progra3.utilidades.Calculadora calc = new...</code></p>
+                    </div>
+                </div>
+
+                <!-- Estructura de Proyecto -->
+                <div class="glass-panel p-4 mt-3 border-t-4" style="border-color: var(--una-gold);">
+                    <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-folder-tree mr-2"></i> Un paquete = Una carpeta en tu disco duro</h4>
+                    <div style="background: var(--bg-terminal); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
+                        <pre class="p-3 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code>src/
+└── com/
+    └── una/
+        └── progra3/
+            ├── modelo/ 
+            │   ├── Estudiante.java   <span style="color: #6e738d;">// package com.una.progra3.modelo;</span>
+            │   └── Curso.java        <span style="color: #6e738d;">// package com.una.progra3.modelo;</span>
+            ├── utilidades/
+            │   └── Calculadora.java  <span style="color: #6e738d;">// package com.una.progra3.utilidades;</span>
+            └── Main.java             <span style="color: #6e738d;">// Necesita importar modelo.* y utilidades.Calculadora</span></code></pre>
+                    </div>
+                    <p class="text-xs mt-2" style="color: var(--text-muted);">Esta separación nos permitirá implementar arquitecturas profesionales como el patrón <strong>MVC (Modelo-Vista-Controlador)</strong> más adelante.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 14: GENÉRICOS — INTRODUCCIÓN ==================== -->
         <div class="slide">
             <div class="w-full max-w-[92%] mx-auto relative z-10">
                 <i class="fa-solid fa-shapes bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-purple);"></i>
                 <div class="text-center mb-4">
-                    <h2 class="text-5xl font-bold mb-2">Genéricos (Generics)</h2>
-                    <p class="text-xl" style="color: var(--text-muted);">Escribí código que funcione con <strong>cualquier tipo</strong> de dato.</p>
+                    <h2 class="text-5xl font-bold mb-2">Genéricos </h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Escribir código que funcione con <strong>cualquier tipo</strong> de dato.</p>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -714,7 +1077,7 @@ nums.<span style="color: #89dceb;">remove</span>(<span style="color: #fab387;">1
                             ¿Por qué existen?
                         </h3>
                         <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
-                            Antes de Java 5 (2004), no había genéricos. Si querías una lista que guardara <code class="font-mono text-xs">Integer</code>, tenías que hacer <strong>casting</strong> explícito cada vez que sacabas un elemento[reference:2].
+                            Antes de Java 5 (2004), no había genéricos. Si querías una lista que guardara <code class="font-mono text-xs">Integer</code>, tenías que hacer <span class="keyword" tabindex="0" data-tooltip="Casting = conversión forzada de un tipo a otro. Ej: (Integer) objeto fuerza que el objeto se trate como Integer.">casting</span> explícito cada vez que sacabas un elemento. Esto era propenso a errores y menos legible.
                         </p>
                         <div class="mt-3 glass-panel p-3" style="background: var(--bg-terminal);">
                             <pre class="text-xs" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #6c7086;">// Sin genéricos (Java 4 y anteriores)</span>
@@ -723,7 +1086,7 @@ lista.<span style="color: #89dceb;">add</span>(<span style="color: #fab387;">5</
 <span style="color: #f9e2af;">Integer</span> num = (<span style="color: #f9e2af;">Integer</span>) lista.<span style="color: #89dceb;">get</span>(<span style="color: #fab387;">0</span>); <span style="color: #6c7086;">// ← casting obligatorio</span></code></pre>
                         </div>
                         <p class="text-sm mt-2" style="color: var(--text-muted);">
-                            <strong>Problemas:</strong> el casting es <strong>propenso a errores</strong> y el compilador no podía verificar que el tipo fuera correcto[reference:3].
+                            <strong>Problemas:</strong> el <span class="keyword" tabindex="0" data-tooltip="Casting = conversión forzada de un tipo a otro. Ej: (Integer) objeto fuerza que el objeto se trate como Integer.">casting</span> es <strong>propenso a errores</strong> (ClassCastException en tiempo de ejecución) y el compilador no podía verificar que el tipo fuera correcto.
                         </p>
                     </div>
 
@@ -733,7 +1096,7 @@ lista.<span style="color: #89dceb;">add</span>(<span style="color: #fab387;">5</
                             La solución: Genéricos
                         </h3>
                         <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
-                            Los genéricos te permiten <strong>parametrizar</strong> clases, interfaces y métodos con un tipo <strong>que se define al usarlos</strong>[reference:4].
+                            Los genéricos te permiten <strong>parametrizar</strong> clases, interfaces y métodos con un tipo <strong>que se define al usarlos</strong>.
                         </p>
                         <div class="mt-3 glass-panel p-3" style="background: var(--bg-terminal);">
                             <pre class="text-xs" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #6c7086;">// Con genéricos (Java 5+ )</span>
@@ -742,7 +1105,7 @@ lista.<span style="color: #89dceb;">add</span>(<span style="color: #fab387;">5</
 <span style="color: #f9e2af;">Integer</span> num = lista.<span style="color: #89dceb;">get</span>(<span style="color: #fab387;">0</span>); <span style="color: #6c7086;">// ← sin casting, el compilador sabe que es Integer</span></code></pre>
                         </div>
                         <ul class="mt-2 space-y-1 text-sm" style="color: var(--text-muted);">
-                            <li>• <strong>Seguridad en tiempo de compilación</strong> → menos errores en runtime[reference:5].</li>
+                            <li>• <strong>Seguridad en tiempo de compilación</strong> → menos errores en runtime.</li>
                             <li>• <strong>Código más legible</strong> → el tipo queda explícito.</li>
                             <li>• <strong>Reutilización</strong> → una misma clase sirve para varios tipos.</li>
                         </ul>
@@ -751,23 +1114,64 @@ lista.<span style="color: #89dceb;">add</span>(<span style="color: #fab387;">5</
             </div>
         </div>
 
-        <!-- ==================== SLIDE 9: GENÉRICOS — CLASES Y MÉTODOS ==================== -->
+        <!-- ==================== SLIDE 15: CLASES GENÉRICAS ==================== -->
         <div class="slide">
             <div class="w-full max-w-[92%] mx-auto relative z-10">
                 <i class="fa-solid fa-cubes bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
                 <div class="text-center mb-4">
-                    <h2 class="text-5xl font-bold mb-2">Clases y métodos genéricos</h2>
-                    <p class="text-xl" style="color: var(--text-muted);">Creá tus propias <strong>plantillas</strong> reutilizables.</p>
+                    <h2 class="text-5xl font-bold mb-2">Clases genéricas</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Cree sus propias <strong>plantillas</strong> reutilizables.</p>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                    <div class="glass-panel overflow-hidden" style="border-top: 4px solid var(--accent-purple);">
-                        <div class="flex items-center gap-2 mb-3">
-                            <span class="tint-purple w-10 h-10 rounded-lg flex items-center justify-center font-bold text-lg">Clase</span>
-                            <span class="text-sm font-bold" style="color: var(--accent-purple);">Genérica</span>
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-purple);">
+                        <h3 class="text-2xl font-bold mb-3 flex items-center gap-2">
+                            <span class="tint-purple w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-puzzle-piece"></i></span>
+                            Sintaxis y propósito
+                        </h3>
+                        <p class="text-sm leading-relaxed mb-3" style="color: var(--text-muted);">
+                            Una clase genérica se declara con uno o más parámetros de tipo entre <code class="font-mono text-xs">&lt;&gt;</code> (ej. <code class="font-mono text-xs">T</code>, <code class="font-mono text-xs">E</code>, <code class="font-mono text-xs">K</code>, <code class="font-mono text-xs">V</code>). <br> Estos parámetros actúan como <strong>placeholders</strong> para el tipo real que se usará al instanciar la clase.
+                        </p> <br>
+
+                        <div class="space-y-2.5">
+                            <div class="rounded-xl p-3" style="background: rgba(137,180,250,0.08); border: 1px solid rgba(137,180,250,0.15);">
+                                <h4 class="font-bold text-xs mb-1 flex items-center gap-1.5" style="color: #89b4fa;">
+                                    <i class="fa-solid fa-tag text-xs"></i> Convención
+                                </h4>
+                                <p class="text-xs" style="color: var(--text-muted);">
+                                    <code class="font-mono text-xs">T</code> = Tipo genérico &nbsp;|&nbsp; <code class="font-mono text-xs">E</code> = Elemento &nbsp;|&nbsp; <code class="font-mono text-xs">K</code>/<code class="font-mono text-xs">V</code> = Clave/Valor
+                                </p>
+                            </div>  <br>
+
+                            <div class="rounded-xl p-3" style="background: rgba(166,227,161,0.08); border: 1px solid rgba(166,227,161,0.15);">
+                                <h4 class="font-bold text-xs mb-1 flex items-center gap-1.5" style="color: #a6e3a1;">
+                                    <i class="fa-solid fa-check-circle text-xs"></i> Ventaja
+                                </h4>
+                                <p class="text-xs" style="color: var(--text-muted);">
+                                    La clase puede manejar <strong>cualquier tipo</strong> sin duplicar código. Una sola implementación sirve para <code class="font-mono text-xs">String</code>, <code class="font-mono text-xs">Integer</code>, etc.
+                                </p>
+                            </div> <br>
+
+                            <div class="rounded-xl p-3" style="background: rgba(250,179,135,0.08); border: 1px solid rgba(250,179,135,0.15);">
+                                <h4 class="font-bold text-xs mb-1 flex items-center gap-1.5" style="color: #fab387;">
+                                    <i class="fa-solid fa-cubes text-xs"></i> Usos típicos
+                                </h4>
+                                <p class="text-xs" style="color: var(--text-muted);">
+                                    <span class="keyword" tabindex="0" data-tooltip="ArrayList: lista redimensionable que crece automáticamente. Ej: ArrayList&lt;String&gt; nombres = new ArrayList&lt;&gt;(); nombres.add(&quot;Ana&quot;);">ArrayList</span> ·
+                                    <span class="keyword" tabindex="0" data-tooltip="HashMap: diccionario clave → valor. Ej: HashMap&lt;String, Integer&gt; edades = new HashMap&lt;&gt;(); edades.put(&quot;Ana&quot;, 25); int edad = edades.get(&quot;Ana&quot;);">HashMap</span> ·
+                                    <span class="keyword" tabindex="0" data-tooltip="Contenedores genéricos: clases que envuelven un valor de cualquier tipo, como Caja&lt;T&gt;, Par&lt;K,V&gt;, etc. Permiten crear estructuras de datos reutilizables sin depender de un tipo concreto.">contenedores</span>
+                                </p>
+                            </div> <br>
                         </div>
+                    </div>
+
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-blue);">
+                        <h3 class="text-2xl font-bold mb-3 flex items-center gap-2">
+                            <span class="tint-blue w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-code"></i></span>
+                            Ejemplo: <code class="font-mono tint-blue px-1 rounded text-sm">Caja&lt;T&gt;</code>
+                        </h3>
                         <div style="background: var(--bg-terminal); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
-                            <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #cba6f7;">public class</span> <span style="color: #89b4fa;">Caja</span>&lt;<span style="color: #f9e2af;">T</span>&gt; {  <span style="color: #6c7086;">// T = tipo parametrizado</span>
+                            <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #cba6f7;">public class</span> <span style="color: #89b4fa;">Caja</span>&lt;<span style="color: #f9e2af;">T</span>&gt; {
     <span style="color: #cba6f7;">private</span> <span style="color: #f9e2af;">T</span> <span style="color: #a6e3a1;">contenido</span>;
 
     <span style="color: #cba6f7;">public void</span> <span style="color: #89dceb;">poner</span>(<span style="color: #f9e2af;">T</span> algo) {
@@ -779,40 +1183,16 @@ lista.<span style="color: #89dceb;">add</span>(<span style="color: #fab387;">5</
     }
 }
 
-<span style="color: #6c7086;">// Uso:</span>
+<span style="color: #6c7086;">// Uso con String</span>
 <span style="color: #89b4fa;">Caja</span>&lt;<span style="color: #f9e2af;">String</span>&gt; cajaTexto = <span style="color: #cba6f7;">new</span> <span style="color: #89b4fa;">Caja</span>&lt;&gt;();
 cajaTexto.<span style="color: #89dceb;">poner</span>(<span style="color: #a6e3a1;">"Hola"</span>);
-<span style="color: #f9e2af;">String</span> s = cajaTexto.<span style="color: #89dceb;">sacar</span>(); <span style="color: #6c7086;">// ← sin casting</span>
+<span style="color: #f9e2af;">String</span> s = cajaTexto.<span style="color: #89dceb;">sacar</span>(); <span style="color: #6c7086;">// sin casting</span>
 
+<span style="color: #6c7086;">// Uso con Integer</span>
 <span style="color: #89b4fa;">Caja</span>&lt;<span style="color: #f9e2af;">Integer</span>&gt; cajaNum = <span style="color: #cba6f7;">new</span> <span style="color: #89b4fa;">Caja</span>&lt;&gt;();
 cajaNum.<span style="color: #89dceb;">poner</span>(<span style="color: #fab387;">42</span>);
 <span style="color: #f9e2af;">Integer</span> n = cajaNum.<span style="color: #89dceb;">sacar</span>();</code></pre>
                         </div>
-                        <p class="text-xs mt-2" style="color: var(--text-muted);"><code class="font-mono text-xs">T</code> es un <strong>placeholder</strong>. Podés usar cualquier nombre: <code class="font-mono text-xs">T</code>, <code class="font-mono text-xs">E</code>, <code class="font-mono text-xs">K</code>, <code class="font-mono text-xs">V</code>, etc.</p>
-                    </div>
-
-                    <div class="glass-panel overflow-hidden" style="border-top: 4px solid var(--accent-blue);">
-                        <div class="flex items-center gap-2 mb-3">
-                            <span class="tint-blue w-10 h-10 rounded-lg flex items-center justify-center font-bold text-lg">Método</span>
-                            <span class="text-sm font-bold" style="color: var(--accent-blue);">Genérico</span>
-                        </div>
-                        <div style="background: var(--bg-terminal); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
-                            <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #cba6f7;">public class</span> <span style="color: #89b4fa;">Utilidades</span> {
-    <span style="color: #6c7086;">// Método genérico: el tipo T se define en la llamada</span>
-    <span style="color: #cba6f7;">public static</span> &lt;<span style="color: #f9e2af;">T</span>&gt; <span style="color: #f9e2af;">T</span> <span style="color: #89dceb;">obtenerPrimero</span>(<span style="color: #89b4fa;">List</span>&lt;<span style="color: #f9e2af;">T</span>&gt; lista) {
-        <span style="color: #cba6f7;">if</span> (lista.<span style="color: #89dceb;">isEmpty</span>()) <span style="color: #cba6f7;">return null</span>;
-        <span style="color: #cba6f7;">return</span> lista.<span style="color: #89dceb;">get</span>(<span style="color: #fab387;">0</span>);
-    }
-}
-
-<span style="color: #6c7086;">// Uso:</span>
-<span style="color: #89b4fa;">List</span>&lt;<span style="color: #f9e2af;">String</span>&gt; nombres = <span style="color: #89b4fa;">List</span>.<span style="color: #89dceb;">of</span>(<span style="color: #a6e3a1;">"Ana"</span>, <span style="color: #a6e3a1;">"Carlos"</span>);
-<span style="color: #f9e2af;">String</span> primero = <span style="color: #89b4fa;">Utilidades</span>.<span style="color: #89dceb;">obtenerPrimero</span>(nombres);
-
-<span style="color: #89b4fa;">List</span>&lt;<span style="color: #f9e2af;">Integer</span>&gt; nums = <span style="color: #89b4fa;">List</span>.<span style="color: #89dceb;">of</span>(<span style="color: #fab387;">1</span>, <span style="color: #fab387;">2</span>, <span style="color: #fab387;">3</span>);
-<span style="color: #f9e2af;">Integer</span> primeroNum = <span style="color: #89b4fa;">Utilidades</span>.<span style="color: #89dceb;">obtenerPrimero</span>(nums);</code></pre>
-                        </div>
-                        <p class="text-xs mt-2" style="color: var(--text-muted);">El <code class="font-mono text-xs">&lt;T&gt;</code> antes del tipo de retorno indica que es un método genérico[reference:6].</p>
                     </div>
                 </div>
 
@@ -825,291 +1205,266 @@ cajaNum.<span style="color: #89dceb;">poner</span>(<span style="color: #fab387;"
             </div>
         </div>
 
-        <!-- ==================== SLIDE 10: LAMBDAS — INTRO ==================== -->
+        <!-- ==================== SLIDE 16: MÉTODOS GENÉRICOS ==================== -->
         <div class="slide">
             <div class="w-full max-w-[92%] mx-auto relative z-10">
-                <i class="fa-solid fa-arrow-right-arrow-left bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-peach);"></i>
+                <i class="fa-solid fa-arrows-rotate bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
                 <div class="text-center mb-4">
-                    <h2 class="text-5xl font-bold mb-2">Expresiones Lambda</h2>
-                    <p class="text-xl" style="color: var(--text-muted);">Funciones <strong>anónimas</strong> que podés pasar como si fueran datos.</p>
+                    <h2 class="text-5xl font-bold mb-2">Métodos genéricos</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Parametrizá métodos individuales, no solo clases.</p>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-peach);">
+                <div class="glass-panel p-5 border-t-4 mb-4 text-center max-w-4xl mx-auto" style="border-color: var(--accent-blue);">
+                    <h3 class="text-2xl font-bold mb-3 flex items-center justify-center gap-2">
+                        <span class="tint-blue w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-circle-question"></i></span>
+                        ¿Cuándo usar un método genérico?
+                    </h3>
+                    <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
+                        Cuando el método debe operar con diferentes tipos y el tipo <strong>no está definido en la clase</strong>. Es útil para métodos de utilería estáticos que trabajan con colecciones o algoritmos genéricos.
+                    </p>
+                    <p class="text-sm mt-2" style="color: var(--text-muted);">
+                        <strong>Sintaxis:</strong> el tipo genérico se declara <strong>antes del tipo de retorno</strong>: <code class="font-mono text-xs">&lt;T&gt; T metodo(T param)</code>.
+                    </p>
+                </div>
+
+                <div class="glass-panel p-5 border-t-4 max-w-4xl mx-auto" style="border-color: var(--accent-green);">
+                    <h3 class="text-2xl font-bold mb-3 flex items-center justify-center gap-2">
+                        <span class="tint-green w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-code"></i></span>
+                        Ejemplo práctico
+                    </h3>
+                    <div style="background: var(--bg-terminal); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
+                        <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #cba6f7;">public class</span> <span style="color: #89b4fa;">Utilidades</span> {
+    <span style="color: #6c7086;">// Método genérico para obtener el primer elemento de una lista</span>
+    <span style="color: #cba6f7;">public static</span> &lt;<span style="color: #f9e2af;">T</span>&gt; <span style="color: #f9e2af;">T</span> <span style="color: #89dceb;">obtenerPrimero</span>(<span style="color: #89b4fa;">List</span>&lt;<span style="color: #f9e2af;">T</span>&gt; lista) {
+        <span style="color: #cba6f7;">if</span> (lista.<span style="color: #89dceb;">isEmpty</span>()) <span style="color: #cba6f7;">return null</span>;
+        <span style="color: #cba6f7;">return</span> lista.<span style="color: #89dceb;">get</span>(<span style="color: #fab387;">0</span>);
+    }
+
+    <span style="color: #6c7086;">// Método genérico para imprimir un array de cualquier tipo</span>
+    <span style="color: #cba6f7;">public static</span> &lt;<span style="color: #f9e2af;">T</span>&gt; <span style="color: #f9e2af;">void</span> <span style="color: #89dceb;">imprimirArray</span>(<span style="color: #f9e2af;">T</span>[] arr) {
+        <span style="color: #cba6f7;">for</span> (T elem : arr) {
+            System.out.<span style="color: #89dceb;">println</span>(elem);
+        }
+    }
+}
+
+<span style="color: #6c7086;">// Uso:</span>
+<span style="color: #89b4fa;">List</span>&lt;<span style="color: #f9e2af;">String</span>&gt; nombres = <span style="color: #89b4fa;">List</span>.<span style="color: #89dceb;">of</span>(<span style="color: #a6e3a1;">"Ana"</span>, <span style="color: #a6e3a1;">"Carlos"</span>);
+<span style="color: #f9e2af;">String</span> primero = <span style="color: #89b4fa;">Utilidades</span>.<span style="color: #89dceb;">obtenerPrimero</span>(nombres);  <span style="color: #6c7086;">// "Ana"</span>
+
+<span style="color: #f9e2af;">Integer</span>[] nums = {<span style="color: #fab387;">1</span>, <span style="color: #fab387;">2</span>, <span style="color: #fab387;">3</span>};
+<span style="color: #89b4fa;">Utilidades</span>.<span style="color: #89dceb;">imprimirArray</span>(nums);</code></pre>
+                    </div>
+                    <p class="text-xs mt-2 text-center" style="color: var(--text-muted);">El tipo <code class="font-mono text-xs">T</code> se infiere automáticamente según los argumentos.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 17: WILDCARDS Y PECS (Parte 1) ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-asterisk bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Wildcards en Genéricos</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">El símbolo <code class="font-mono tint-blue px-2 py-0.5 rounded text-xl">?</code> da flexibilidad a los tipos genéricos.</p>
+                </div>
+
+                <!-- Fila 1: ¿Qué es? | Código -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-4">
+                    <!-- ¿Qué es? -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-purple);">
                         <h3 class="text-2xl font-bold mb-3 flex items-center gap-2">
-                            <span class="tint-peach w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-circle-question"></i></span>
-                            ¿Qué es una lambda?
+                            <span class="tint-purple w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-circle-question"></i></span>
+                            ¿Qué es un wildcard?
                         </h3>
                         <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
-                            Una expresión lambda es un <strong>bloque de código</strong> que se puede pasar como parámetro a un método[reference:7]. Es como una <strong>función sin nombre</strong> que podés escribir en el lugar donde la necesitás[reference:8].
+                            Un <strong>wildcard</strong> (<code class="font-mono text-xs">?</code>) es un <strong>comodín</strong> — como un <em>joker</em> en un juego de cartas 🃏. Representa un <strong>tipo desconocido</strong> y se usa cuando no necesitás saber exactamente qué tipo es, solo que <strong>es algo</strong>.
                         </p>
-                        <div class="mt-3 glass-panel p-3 text-center" style="background: var(--bg-terminal);">
-                            <code style="color: #a6e3a1; font-size: 0.85rem;">
-                                (parámetros) -> expresión<br>
-                                (parámetros) -> { código }
-                            </code>
+                        <div class="grid grid-cols-3 gap-3 mt-3">
+                            <div class="rounded-xl p-3" style="background: rgba(201,137,250,0.08); border: 1px solid rgba(201,137,250,0.15);">
+                                <h4 class="font-bold text-xs mb-1 flex items-center gap-1.5" style="color: #c989fa;">
+                                    <i class="fa-solid fa-circle text-xs"></i> <code class="font-mono text-xs">?</code> — Sin límite
+                                </h4>
+                                <p class="text-xs" style="color: var(--text-muted);">Acepta <strong>cualquier tipo</strong>. Solo podés leer como <code class="font-mono text-xs">Object</code>.</p>
+                            </div>
+                            <div class="rounded-xl p-3" style="background: rgba(137,180,250,0.08); border: 1px solid rgba(137,180,250,0.15);">
+                                <h4 class="font-bold text-xs mb-1 flex items-center gap-1.5" style="color: #89b4fa;">
+                                    <i class="fa-solid fa-arrow-up text-xs"></i> <code class="font-mono text-xs">? extends T</code>
+                                </h4>
+                                <p class="text-xs" style="color: var(--text-muted);">Acepta <strong>T o subtipos</strong>. Límite superior. Usado para <strong>leer</strong>.</p>
+                            </div>
+                            <div class="rounded-xl p-3" style="background: rgba(166,227,161,0.08); border: 1px solid rgba(166,227,161,0.15);">
+                                <h4 class="font-bold text-xs mb-1 flex items-center gap-1.5" style="color: #a6e3a1;">
+                                    <i class="fa-solid fa-arrow-down text-xs"></i> <code class="font-mono text-xs">? super T</code>
+                                </h4>
+                                <p class="text-xs" style="color: var(--text-muted);">Acepta <strong>T o supertipos</strong>. Límite inferior. Usado para <strong>escribir</strong>.</p>
+                            </div>
                         </div>
-                        <p class="text-sm mt-2" style="color: var(--text-muted);">
-                            <strong>Ejemplo clásico:</strong> <code class="font-mono text-xs">(x, y) -> x + y</code> → toma dos números y devuelve la suma.
-                        </p>
+
+                        <!-- Analogía del cajero -->
+                        <div class="rounded-xl p-4 mt-4" style="background: rgba(249,226,175,0.08); border: 1px solid rgba(249,226,175,0.15);">
+                            <h4 class="font-bold text-sm mb-2 flex items-center gap-1.5" style="color: #f9e2af;">
+                                <i class="fa-solid fa-gamepad text-xs"></i> Analogía: El cajero automático
+                            </h4>
+                            <p class="text-xs leading-relaxed" style="color: var(--text-muted);">
+                                Un cajero automático acepta <strong>cualquier tarjeta bancaria</strong> sin importar el banco. No necesita saber si es del BAC, del Nacional o del BCR. Solo le importa que <strong>implemente la interfaz de "tarjeta"</strong>.
+                            </p>
+                            <p class="text-xs mt-2" style="color: var(--text-muted);">
+                                Así funciona <code class="font-mono text-xs">List&lt;? extends Tarjeta&gt;</code>: recibe <strong>cualquier lista de algo que sea Tarjeta</strong>. El método <code class="font-mono text-xs">procesarPago()</code> funciona igual sin importar la marca concreta.
+                            </p>
+                            <p class="text-xs mt-2 font-bold" style="color: #f9e2af;">
+                                💡 Usá wildcards cuando el método solo necesita saber "es algo de esta familia", no exactamente qué miembro.
+                            </p>
+                        </div>
                     </div>
 
+                    <!-- Código -->
                     <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-blue);">
                         <h3 class="text-2xl font-bold mb-3 flex items-center gap-2">
                             <span class="tint-blue w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-code"></i></span>
-                            Ejemplo: forEach con lambda
+                            Ejemplo: wildcard sin límite
                         </h3>
                         <div style="background: var(--bg-terminal); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
-                            <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #89b4fa;">ArrayList</span>&lt;<span style="color: #f9e2af;">Integer</span>&gt; nums = <span style="color: #cba6f7;">new</span> <span style="color: #89b4fa;">ArrayList</span>&lt;&gt;();
-nums.<span style="color: #89dceb;">add</span>(<span style="color: #fab387;">1</span>); nums.<span style="color: #89dceb;">add</span>(<span style="color: #fab387;">2</span>); nums.<span style="color: #89dceb;">add</span>(<span style="color: #fab387;">3</span>);
-
-<span style="color: #6c7086;">// Con foreach tradicional</span>
-<span style="color: #cba6f7;">for</span> (<span style="color: #f9e2af;">Integer</span> n : nums) {
-    System.out.<span style="color: #89dceb;">println</span>(n);
+                            <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #6c7086;">// Imprime cualquier lista, sin importar el tipo</span>
+<span style="color: #cba6f7;">public static void</span> <span style="color: #89dceb;">imprimirLista</span>(<span style="color: #89b4fa;">List</span>&lt;?&gt; lista) {
+    <span style="color: #cba6f7;">for</span> (Object o : lista) {
+        System.out.<span style="color: #89dceb;">println</span>(o);
+    }
 }
 
-<span style="color: #6c7086;">// Con lambda (Java 8+)</span>
-nums.<span style="color: #89dceb;">forEach</span>(n -> System.out.<span style="color: #89dceb;">println</span>(n));
-
-<span style="color: #6c7086;">// Con lambda y bloque de código</span>
-nums.<span style="color: #89dceb;">forEach</span>(n -> {
-    <span style="color: #f9e2af;">int</span> cuadrado = n * n;
-    System.out.<span style="color: #89dceb;">println</span>(n + <span style="color: #a6e3a1;">"² = "</span> + cuadrado);
-});</code></pre>
+<span style="color: #6c7086;">// Uso: funciona con List&lt;String&gt;, List&lt;Integer&gt;, etc.</span>
+<span style="color: #89b4fa;">List</span>&lt;<span style="color: #f9e2af;">String</span>&gt; nombres = <span style="color: #89b4fa;">List</span>.<span style="color: #89dceb;">of</span>(<span style="color: #a6e3a1;">"Ana"</span>, <span style="color: #a6e3a1;">"Carlos"</span>);
+<span style="color: #89b4fa;">List</span>&lt;<span style="color: #f9e2af;">Integer</span>&gt; numeros = <span style="color: #89b4fa;">List</span>.<span style="color: #89dceb;">of</span>(<span style="color: #fab387;">1</span>, <span style="color: #fab387;">2</span>, <span style="color: #fab387;">3</span>);
+<span style="color: #89dceb;">imprimirLista</span>(nombres);  <span style="color: #6c7086;">// compila</span>
+<span style="color: #89dceb;">imprimirLista</span>(numeros);  <span style="color: #6c7086;">// compila</span></code></pre>
                         </div>
-                        <p class="text-xs mt-2" style="color: var(--text-muted);">El método <code class="font-mono text-xs">forEach()</code> recibe una lambda y la ejecuta para cada elemento[reference:9].</p>
+                        <p class="text-xs mt-2" style="color: var(--text-muted);">
+                            El wildcard sin límite es útil cuando solo se necesita <strong>leer</strong> elementos. No se puede agregar elementos (excepto <code class="font-mono text-xs">null</code>), porque el compilador no puede garantizar que el tipo sea compatible.
+                        </p>
                     </div>
                 </div>
 
-                <div class="glass-panel py-3 px-5 flex items-center gap-4 mt-3" style="border-left: 4px solid var(--una-gold);">
-                    <div class="tint-gold w-9 h-9 flex items-center justify-center rounded-full shrink-0">
-                        <i class="fa-solid fa-lightbulb"></i>
+                <!-- Fila 2: ¿Cuándo? (ancho completo) -->
+                <div class="glass-panel p-5 border-t-4" style="border-color: var(--una-gold);">
+                    <h3 class="text-2xl font-bold mb-3 flex items-center gap-2">
+                        <span class="tint-gold w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-lightbulb"></i></span>
+                        ¿Cuándo y por qué usar wildcards?
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
+                                Los wildcards se usan cuando <strong>no necesitás saber el tipo exacto</strong>, solo te interesa que el objeto cumpla cierta relación con un tipo conocido.
+                            </p>
+                        </div>
+                        <div class="rounded-lg p-3" style="background: rgba(250,179,135,0.08); border: 1px solid rgba(250,179,135,0.12);">
+                            <p class="text-xs" style="color: #fab387;"><strong>Ejemplo:</strong> Un método que imprime una lista no necesita saber si es <code class="font-mono text-xs">List&lt;String&gt;</code> o <code class="font-mono text-xs">List&lt;Integer&gt;</code>, solo necesita recorrerla. Usa <code class="font-mono text-xs">List&lt;?&gt;</code>.</p>
+                        </div>
+                        <div class="rounded-lg p-3" style="background: rgba(137,180,250,0.08); border: 1px solid rgba(137,180,250,0.12);">
+                            <p class="text-xs" style="color: #89b4fa;"><strong>Ejemplo:</strong> Un método que calcula el máximo de una lista de números puede aceptar <code class="font-mono text-xs">List&lt;Integer&gt;</code>, <code class="font-mono text-xs">List&lt;Double&gt;</code>, etc. Usa <code class="font-mono text-xs">List&lt;? extends Number&gt;</code>.</p>
+                        </div>
                     </div>
-                    <p class="text-sm"><strong>Analogía:</strong> Una lambda es como <strong>una receta que le das al chef</strong>. No le decís "hacé esto, después esto, después esto" (código tradicional). Le decís "tomá esta receta (lambda) y aplicala a cada ingrediente".</p>
                 </div>
             </div>
         </div>
 
-        <!-- ==================== SLIDE 11: LAMBDAS — SINTAXIS ==================== -->
+        <!-- ==================== SLIDE 18: WILDCARDS CON LÍMITES ==================== -->
         <div class="slide">
             <div class="w-full max-w-[92%] mx-auto relative z-10">
-                <i class="fa-solid fa-pen-fancy bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-peach);"></i>
+                <i class="fa-solid fa-arrow-up-wide-short bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
                 <div class="text-center mb-4">
-                    <h2 class="text-5xl font-bold mb-2">Sintaxis de Lambdas</h2>
-                    <p class="text-xl" style="color: var(--text-muted);">Variaciones según la cantidad de parámetros y complejidad.</p>
+                    <h2 class="text-5xl font-bold mb-2">Wildcards con límites</h2>
+                    <p class="text-xl" style="color: var(--text-muted);"><code class="font-mono tint-blue px-2 py-0.5 rounded text-xl">extends</code> y <code class="font-mono tint-blue px-2 py-0.5 rounded text-xl">super</code> para mayor control.</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-green);">
-                        <h4 class="font-bold text-lg mb-2">1 parámetro, 1 expresión</h4>
-                        <div class="glass-panel p-2 text-center" style="background: var(--bg-terminal);">
-                            <code style="color: #a6e3a1; font-size: 0.8rem;">n -> n * 2</code>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-purple);">
+                        <h3 class="text-2xl font-bold mb-3 flex items-center gap-2">
+                            <span class="tint-purple w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-arrow-up"></i></span>
+                            <code class="font-mono tint-purple px-1 rounded text-sm">? extends T</code> (límite superior)
+                        </h3>
+                        <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
+                            Acepta cualquier tipo que sea <strong>subclase</strong> de <code class="font-mono text-xs">T</code> (o el mismo <code class="font-mono text-xs">T</code>). Solo se puede <strong>leer</strong> (no agregar), porque no sabemos exactamente qué tipo concreto se puede agregar de forma segura.
+                        </p>
+                        <div class="mt-3 glass-panel p-3" style="background: var(--bg-terminal);">
+                            <pre class="text-xs" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #cba6f7;">public static</span> &lt;<span style="color: #f9e2af;">T</span>&gt; <span style="color: #f9e2af;">T</span> <span style="color: #89dceb;">max</span>(<span style="color: #89b4fa;">List</span>&lt;? <span style="color: #cba6f7;">extends</span> <span style="color: #f9e2af;">T</span>&gt; lista) {
+    <span style="color: #cba6f7;">if</span> (lista.<span style="color: #89dceb;">isEmpty</span>()) <span style="color: #cba6f7;">return null</span>;
+    T max = lista.<span style="color: #89dceb;">get</span>(<span style="color: #fab387;">0</span>);
+    <span style="color: #cba6f7;">for</span> (T elem : lista) {
+        <span style="color: #cba6f7;">if</span> (elem.<span style="color: #89dceb;">compareTo</span>(max) > <span style="color: #fab387;">0</span>) max = elem;
+    }
+    <span style="color: #cba6f7;">return</span> max;
+}</code></pre>
                         </div>
-                        <p class="text-xs mt-1" style="color: var(--text-muted);">El resultado se devuelve automáticamente.</p>
+                        <p class="text-xs mt-2" style="color: var(--text-muted);">Útil cuando la lista es un <strong>productor</strong> (provee elementos).</p>
                     </div>
-                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-blue);">
-                        <h4 class="font-bold text-lg mb-2">Varios parámetros</h4>
-                        <div class="glass-panel p-2 text-center" style="background: var(--bg-terminal);">
-                            <code style="color: #a6e3a1; font-size: 0.8rem;">(a, b) -> a + b</code>
+
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-green);">
+                        <h3 class="text-2xl font-bold mb-3 flex items-center gap-2">
+                            <span class="tint-green w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-arrow-down"></i></span>
+                            <code class="font-mono tint-green px-1 rounded text-sm">? super T</code> (límite inferior)
+                        </h3>
+                        <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
+                            Acepta cualquier tipo que sea <strong>superclase</strong> de <code class="font-mono text-xs">T</code> (o el mismo <code class="font-mono text-xs">T</code>). Se puede <strong>agregar</strong> elementos de tipo <code class="font-mono text-xs">T</code> (o subtipos), pero al leer solo obtenemos <code class="font-mono text-xs">Object</code>.
+                        </p>
+                        <div class="mt-3 glass-panel p-3" style="background: var(--bg-terminal);">
+                            <pre class="text-xs" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #cba6f7;">public static</span> &lt;<span style="color: #f9e2af;">T</span>&gt; <span style="color: #f9e2af;">void</span> <span style="color: #89dceb;">copiar</span>(<span style="color: #89b4fa;">List</span>&lt;? <span style="color: #cba6f7;">super</span> <span style="color: #f9e2af;">T</span>&gt; destino, <span style="color: #89b4fa;">List</span>&lt;<span style="color: #f9e2af;">T</span>&gt; origen) {
+    <span style="color: #cba6f7;">for</span> (T elem : origen) {
+        destino.<span style="color: #89dceb;">add</span>(elem);  <span style="color: #6c7086;">// seguro: destino acepta T o supertipos</span>
+    }
+}</code></pre>
                         </div>
-                        <p class="text-xs mt-1" style="color: var(--text-muted);">Paréntesis obligatorios con más de 1 parámetro.</p>
+                        <p class="text-xs mt-2" style="color: var(--text-muted);">Ideal cuando la lista es un <strong>consumidor</strong> (recibe elementos).</p>
                     </div>
-                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-purple);">
-                        <h4 class="font-bold text-lg mb-2">Bloque de código</h4>
-                        <div class="glass-panel p-2 text-center" style="background: var(--bg-terminal);">
-                            <code style="color: #a6e3a1; font-size: 0.75rem;">(x, y) -> { <br>&nbsp;&nbsp;int z = x + y;<br>&nbsp;&nbsp;return z;<br>}</code>
-                        </div>
-                        <p class="text-xs mt-1" style="color: var(--text-muted);">Usá <code class="font-mono text-xs">return</code> si hay varias líneas[reference:10].</p>
-                    </div>
-                </div>
-
-                <div class="glass-panel p-4 mt-4 border-t-4" style="border-color: var(--una-gold);">
-                    <h4 class="font-bold text-lg mb-2 text-center"><i class="fa-solid fa-arrow-right mr-2"></i> Ejemplo: ordenar una lista con lambda</h4>
-                    <div style="background: var(--bg-terminal); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
-                        <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #89b4fa;">List</span>&lt;<span style="color: #f9e2af;">String</span>&gt; nombres = <span style="color: #89b4fa;">List</span>.<span style="color: #89dceb;">of</span>(<span style="color: #a6e3a1;">"Carlos"</span>, <span style="color: #a6e3a1;">"Ana"</span>, <span style="color: #a6e3a1;">"Luis"</span>);
-
-<span style="color: #6c7086;">// Ordenar por longitud (lambda)</span>
-<span style="color: #89b4fa;">Collections</span>.<span style="color: #89dceb;">sort</span>(nombres, (a, b) -> a.<span style="color: #89dceb;">length</span>() - b.<span style="color: #89dceb;">length</span>());
-
-<span style="color: #6c7086;">// Imprimir con lambda</span>
-nombres.<span style="color: #89dceb;">forEach</span>(n -> System.out.<span style="color: #89dceb;">println</span>(n));</code></pre>
-                    </div>
-                    <p class="text-xs mt-2" style="color: var(--text-muted);">El método <code class="font-mono text-xs">sort()</code> recibe un <code class="font-mono text-xs">Comparator</code> que definimos con una lambda.</p>
                 </div>
             </div>
         </div>
 
-        <!-- ==================== SLIDE 12: STREAMS — INTRO ==================== -->
+        <!-- ==================== SLIDE 19: PECS — Producer Extends, Consumer Super ==================== -->
         <div class="slide">
             <div class="w-full max-w-[92%] mx-auto relative z-10">
-                <i class="fa-solid fa-water bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <i class="fa-solid fa-arrows-spin bg-icon text-[350px] -right-10 opacity-5" style="color: var(--una-gold);"></i>
                 <div class="text-center mb-4">
-                    <h2 class="text-5xl font-bold mb-2">Stream API</h2>
-                    <p class="text-xl" style="color: var(--text-muted);">Procesá colecciones como si fueran un <strong>flujo de datos</strong>.</p>
+                    <h2 class="text-5xl font-bold mb-2">Principio PECS</h2>
+                    <p class="text-xl" style="color: var(--text-muted);"><strong>P</strong>roducer <strong>E</strong>xtends, <strong>C</strong>onsumer <strong>S</strong>uper — una guía para usar wildcards.</p>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
                     <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-blue);">
                         <h3 class="text-2xl font-bold mb-3 flex items-center gap-2">
                             <span class="tint-blue w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-circle-question"></i></span>
-                            ¿Qué es un Stream?
+                            ¿Por qué se llama PECS?
                         </h3>
                         <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
-                            Un <strong>Stream</strong> es una <strong>secuencia de elementos</strong> que soporta operaciones funcionales (como <code class="font-mono text-xs">filter</code>, <code class="font-mono text-xs">map</code>, <code class="font-mono text-xs">reduce</code>)[reference:11]. No almacena datos, solo los <strong>procesa</strong>.
+                            PECS es un acrónimo acuñado por Joshua Bloch (autor de <em>Effective Java</em>) para recordar cuándo usar <code class="font-mono text-xs">extends</code> y cuándo <code class="font-mono text-xs">super</code>.
                         </p>
-                        <ul class="mt-2 space-y-1 text-sm" style="color: var(--text-muted);">
-                            <li>• <strong>Declarativo</strong>: decís <strong>qué</strong> querés hacer, no <strong>cómo</strong> hacerlo[reference:12].</li>
-                            <li>• <strong>Lazy</strong>: las operaciones intermedias no se ejecutan hasta que hay una operación terminal.</li>
-                            <li>• <strong>Encadenable</strong>: podés encadenar operaciones como <code class="font-mono text-xs">filter().map().collect()</code>.</li>
+                        <ul class="list-disc list-inside text-sm space-y-1 mt-2" style="color: var(--text-muted);">
+                            <li><strong>P</strong>roducer → usa <strong>E</strong>xtends (solo lees).</li>
+                            <li><strong>C</strong>onsumer → usa <strong>S</strong>uper (solo escribes).</li>
                         </ul>
+                        <p class="text-sm mt-2" style="color: var(--text-muted);">
+                            Si una estructura de datos <strong>produce</strong> elementos (los da), usa <code class="font-mono text-xs">? extends T</code>. Si <strong>consume</strong> elementos (los recibe), usa <code class="font-mono text-xs">? super T</code>.
+                        </p>
                     </div>
 
                     <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-green);">
                         <h3 class="text-2xl font-bold mb-3 flex items-center gap-2">
                             <span class="tint-green w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-code"></i></span>
-                            Ejemplo: filtrar y transformar
+                            Ejemplo completo: copia
                         </h3>
                         <div style="background: var(--bg-terminal); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
-                            <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #89b4fa;">List</span>&lt;<span style="color: #f9e2af;">Integer</span>&gt; nums = <span style="color: #89b4fa;">List</span>.<span style="color: #89dceb;">of</span>(<span style="color: #fab387;">1</span>, <span style="color: #fab387;">2</span>, <span style="color: #fab387;">3</span>, <span style="color: #fab387;">4</span>, <span style="color: #fab387;">5</span>, <span style="color: #fab387;">6</span>);
-
-<span style="color: #6c7086;">// Imperativo (for + if)</span>
-<span style="color: #89b4fa;">List</span>&lt;<span style="color: #f9e2af;">Integer</span>&gt; pares = <span style="color: #cba6f7;">new</span> <span style="color: #89b4fa;">ArrayList</span>&lt;&gt;();
-<span style="color: #cba6f7;">for</span> (<span style="color: #f9e2af;">Integer</span> n : nums) {
-    <span style="color: #cba6f7;">if</span> (n % <span style="color: #fab387;">2</span> == <span style="color: #fab387;">0</span>) {
-        pares.<span style="color: #89dceb;">add</span>(n * n);
+                            <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #6c7086;">// Copia elementos de una lista (productor) a otra (consumidor)</span>
+<span style="color: #cba6f7;">public static</span> &lt;<span style="color: #f9e2af;">T</span>&gt; <span style="color: #f9e2af;">void</span> <span style="color: #89dceb;">copy</span>(<span style="color: #89b4fa;">List</span>&lt;? <span style="color: #cba6f7;">extends</span> <span style="color: #f9e2af;">T</span>&gt; src, <span style="color: #89b4fa;">List</span>&lt;? <span style="color: #cba6f7;">super</span> <span style="color: #f9e2af;">T</span>&gt; dest) {
+    <span style="color: #cba6f7;">for</span> (T item : src) {
+        dest.<span style="color: #89dceb;">add</span>(item);
     }
 }
 
-<span style="color: #6c7086;">// Con Stream (declarativo)</span>
-<span style="color: #89b4fa;">List</span>&lt;<span style="color: #f9e2af;">Integer</span>&gt; paresCuadrado = nums.<span style="color: #89dceb;">stream</span>()
-    .<span style="color: #89dceb;">filter</span>(n -> n % <span style="color: #fab387;">2</span> == <span style="color: #fab387;">0</span>)    <span style="color: #6c7086;">// solo pares</span>
-    .<span style="color: #89dceb;">map</span>(n -> n * n)            <span style="color: #6c7086;">// elevar al cuadrado</span>
-    .<span style="color: #89dceb;">collect</span>(<span style="color: #89b4fa;">Collectors</span>.<span style="color: #89dceb;">toList</span>()); <span style="color: #6c7086;">// recolectar en lista</span></code></pre>
+<span style="color: #6c7086;">// Uso:</span>
+<span style="color: #89b4fa;">List</span>&lt;<span style="color: #f9e2af;">Integer</span>&gt; origen = <span style="color: #89b4fa;">List</span>.<span style="color: #89dceb;">of</span>(<span style="color: #fab387;">1</span>, <span style="color: #fab387;">2</span>, <span style="color: #fab387;">3</span>);
+<span style="color: #89b4fa;">List</span>&lt;<span style="color: #f9e2af;">Number</span>&gt; destino = <span style="color: #cba6f7;">new</span> <span style="color: #89b4fa;">ArrayList</span>&lt;&gt;();
+<span style="color: #89dceb;">copy</span>(origen, destino);  <span style="color: #6c7086;">// src: ? extends Number, dest: ? super Number</span></code></pre>
                         </div>
-                        <p class="text-xs mt-2" style="color: var(--text-muted);">El código con Stream es <strong>más legible</strong> y expresa <strong>intención</strong>, no implementación.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== SLIDE 13: STREAMS — OPERACIONES COMUNES ==================== -->
-        <div class="slide">
-            <div class="w-full max-w-[92%] mx-auto relative z-10">
-                <i class="fa-solid fa-screwdriver-wrench bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-blue);"></i>
-                <div class="text-center mb-4">
-                    <h2 class="text-5xl font-bold mb-2">Operaciones comunes con Streams</h2>
-                    <p class="text-xl" style="color: var(--text-muted);">Las herramientas que más vas a usar.</p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-purple);">
-                        <h4 class="font-bold text-lg mb-2"><code class="font-mono tint-purple px-2 py-0.5 rounded text-sm">filter</code></h4>
-                        <p class="text-xs" style="color: var(--text-muted);">Selecciona elementos que cumplen una condición.</p>
-                        <div class="mt-2 glass-panel p-2" style="background: var(--bg-terminal);">
-                            <code style="color: #a6e3a1; font-size: 0.75rem;">.filter(n -> n > 5)</code>
-                        </div>
-                    </div>
-                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-blue);">
-                        <h4 class="font-bold text-lg mb-2"><code class="font-mono tint-blue px-2 py-0.5 rounded text-sm">map</code></h4>
-                        <p class="text-xs" style="color: var(--text-muted);">Transforma cada elemento en otro valor.</p>
-                        <div class="mt-2 glass-panel p-2" style="background: var(--bg-terminal);">
-                            <code style="color: #a6e3a1; font-size: 0.75rem;">.map(n -> n * 2)</code>
-                        </div>
-                    </div>
-                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-green);">
-                        <h4 class="font-bold text-lg mb-2"><code class="font-mono tint-green px-2 py-0.5 rounded text-sm">collect</code></h4>
-                        <p class="text-xs" style="color: var(--text-muted);">Recolecta el resultado en una lista, set, etc.</p>
-                        <div class="mt-2 glass-panel p-2" style="background: var(--bg-terminal);">
-                            <code style="color: #a6e3a1; font-size: 0.75rem;">.collect(Collectors.toList())</code>
-                        </div>
-                    </div>
-                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-peach);">
-                        <h4 class="font-bold text-lg mb-2"><code class="font-mono tint-peach px-2 py-0.5 rounded text-sm">forEach</code></h4>
-                        <p class="text-xs" style="color: var(--text-muted);">Ejecuta una acción para cada elemento (terminal).</p>
-                        <div class="mt-2 glass-panel p-2" style="background: var(--bg-terminal);">
-                            <code style="color: #a6e3a1; font-size: 0.75rem;">.forEach(n -> System.out.println(n))</code>
-                        </div>
-                    </div>
-                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--una-gold);">
-                        <h4 class="font-bold text-lg mb-2"><code class="font-mono tint-gold px-2 py-0.5 rounded text-sm">sorted</code></h4>
-                        <p class="text-xs" style="color: var(--text-muted);">Ordena los elementos.</p>
-                        <div class="mt-2 glass-panel p-2" style="background: var(--bg-terminal);">
-                            <code style="color: #a6e3a1; font-size: 0.75rem;">.sorted()</code>
-                        </div>
-                    </div>
-                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-blue);">
-                        <h4 class="font-bold text-lg mb-2"><code class="font-mono tint-blue px-2 py-0.5 rounded text-sm">reduce</code></h4>
-                        <p class="text-xs" style="color: var(--text-muted);">Reduce a un solo valor (suma, producto, etc.).</p>
-                        <div class="mt-2 glass-panel p-2" style="background: var(--bg-terminal);">
-                            <code style="color: #a6e3a1; font-size: 0.75rem;">.reduce(0, (a, b) -> a + b)</code>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass-panel p-4 mt-4 border-t-4" style="border-color: var(--una-gold);">
-                    <h4 class="font-bold text-lg mb-2 text-center"><i class="fa-solid fa-arrow-right mr-2"></i> Ejemplo completo: filtrar, ordenar, transformar y recolectar</h4>
-                    <div style="background: var(--bg-terminal); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
-                        <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #89b4fa;">List</span>&lt;<span style="color: #f9e2af;">String</span>&gt; nombres = <span style="color: #89b4fa;">List</span>.<span style="color: #89dceb;">of</span>(<span style="color: #a6e3a1;">"Ana"</span>, <span style="color: #a6e3a1;">"Carlos"</span>, <span style="color: #a6e3a1;">"Luis"</span>, <span style="color: #a6e3a1;">"María"</span>);
-
-<span style="color: #89b4fa;">List</span>&lt;<span style="color: #f9e2af;">String</span>&gt; resultado = nombres.<span style="color: #89dceb;">stream</span>()
-    .<span style="color: #89dceb;">filter</span>(n -> n.<span style="color: #89dceb;">length</span>() > <span style="color: #fab387;">3</span>)          <span style="color: #6c7086;">// solo nombres largos</span>
-    .<span style="color: #89dceb;">map</span>(String::<span style="color: #89dceb;">toUpperCase</span>)           <span style="color: #6c7086;">// a mayúsculas</span>
-    .<span style="color: #89dceb;">sorted</span>()                          <span style="color: #6c7086;">// orden alfabético</span>
-    .<span style="color: #89dceb;">collect</span>(<span style="color: #89b4fa;">Collectors</span>.<span style="color: #89dceb;">toList</span>());
-
-System.out.<span style="color: #89dceb;">println</span>(resultado); <span style="color: #6c7086;">// [CARLOS, MARÍA]</span></code></pre>
-                    </div>
-                    <p class="text-xs mt-2" style="color: var(--text-muted);">Nota: <code class="font-mono text-xs">String::toUpperCase</code> es una <strong>referencia a método</strong>, una forma abreviada de lambda.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== SLIDE 14: NOVEDADES DE JAVA 8 → 21 ==================== -->
-        <div class="slide">
-            <div class="w-full max-w-[92%] mx-auto relative z-10">
-                <i class="fa-solid fa-clock bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-purple);"></i>
-                <div class="text-center mb-4">
-                    <h2 class="text-5xl font-bold mb-2">Novedades de Java 8 → 21</h2>
-                    <p class="text-xl" style="color: var(--text-muted);">El lenguaje ha evolucionado mucho. Estas son las versiones LTS (soporte a largo plazo).</p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-peach);">
-                        <h4 class="font-bold text-lg flex items-center gap-2"><i class="fa-brands fa-java" style="color: var(--accent-peach);"></i> Java 8 (2014)</h4>
-                        <ul class="mt-2 space-y-1 text-sm" style="color: var(--text-muted);">
-                            <li>• <strong>Lambdas</strong> y <strong>Stream API</strong> [reference:13]</li>
-                            <li>• <strong>Optional</strong> para evitar <code class="font-mono text-xs">NullPointerException</code></li>
-                            <li>• Nueva API de fechas: <code class="font-mono text-xs">LocalDate</code>, <code class="font-mono text-xs">LocalTime</code></li>
-                            <li>• Métodos default en interfaces</li>
-                        </ul>
-                    </div>
-                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-blue);">
-                        <h4 class="font-bold text-lg flex items-center gap-2"><i class="fa-brands fa-java" style="color: var(--accent-blue);"></i> Java 11 (2018) — LTS</h4>
-                        <ul class="mt-2 space-y-1 text-sm" style="color: var(--text-muted);">
-                            <li>• <strong>var</strong> para inferencia de tipos locales[reference:14]</li>
-                            <li>• Nuevo <strong>HTTP Client</strong> (más moderno)</li>
-                            <li>• Métodos útiles en <code class="font-mono text-xs">String</code>: <code class="font-mono text-xs">isBlank()</code>, <code class="font-mono text-xs">lines()</code></li>
-                            <li>• <code class="font-mono text-xs">Optional</code> mejorado</li>
-                        </ul>
-                    </div>
-                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-purple);">
-                        <h4 class="font-bold text-lg flex items-center gap-2"><i class="fa-brands fa-java" style="color: var(--accent-purple);"></i> Java 17 (2021) — LTS</h4>
-                        <ul class="mt-2 space-y-1 text-sm" style="color: var(--text-muted);">
-                            <li>• <strong>Records</strong> → clases de datos inmutables (menos boilerplate)[reference:15]</li>
-                            <li>• <strong>Sealed classes</strong> → control de herencia</li>
-                            <li>• <strong>Pattern Matching</strong> para <code class="font-mono text-xs">instanceof</code></li>
-                            <li>• <code class="font-mono text-xs">Switch</code> expresiones mejoradas</li>
-                        </ul>
-                    </div>
-                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-green);">
-                        <h4 class="font-bold text-lg flex items-center gap-2"><i class="fa-brands fa-java" style="color: var(--accent-green);"></i> Java 21 (2023) — LTS</h4>
-                        <ul class="mt-2 space-y-1 text-sm" style="color: var(--text-muted);">
-                            <li>• <strong>Virtual Threads</strong> → concurrencia más ligera[reference:16]</li>
-                            <li>• <strong>Pattern Matching</strong> para switch</li>
-                            <li>• <strong>Sequenced Collections</strong> → colecciones con orden</li>
-                            <li>• <strong>String templates</strong> (preview)</li>
-                            <li>• <code class="font-mono text-xs">main</code> puede ser <code class="font-mono text-xs">void main()</code> sin <code class="font-mono text-xs">static</code> (clases implícitas)</li>
-                        </ul>
+                        <p class="text-xs mt-2" style="color: var(--text-muted);">Aquí <code class="font-mono text-xs">src</code> produce elementos (se leen), <code class="font-mono text-xs">dest</code> los consume (se agregan).</p>
                     </div>
                 </div>
 
@@ -1117,12 +1472,242 @@ System.out.<span style="color: #89dceb;">println</span>(resultado); <span style=
                     <div class="tint-gold w-9 h-9 flex items-center justify-center rounded-full shrink-0">
                         <i class="fa-solid fa-lightbulb"></i>
                     </div>
-                    <p class="text-sm"><strong>¿Cuál usar?</strong> En producción, lo más común es <strong>Java 11 o 17</strong> (LTS). Java 21 es el futuro. En este curso usamos <strong>Java 17+</strong> para aprovechar las mejoras.</p>
+                    <p class="text-sm"><strong>Resumen:</strong> Si solo leés → <code class="font-mono text-xs">extends</code>. Si solo escribís → <code class="font-mono text-xs">super</code>. Esto hace tu API más flexible y segura.</p>
                 </div>
             </div>
         </div>
 
-        <!-- ==================== SLIDE 15: CIERRE ==================== -->
+        <!-- ==================== SLIDE 20: CASTING EN GENÉRICOS ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-arrow-right-arrow-left bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-peach);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Casting en Genéricos</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Conversión de tipos: <strong>cast</strong> explícito e implícito.</p>
+                </div>
+
+                <div class="glass-panel p-5 border-t-4 mb-4 text-center max-w-4xl mx-auto" style="border-color: var(--accent-peach);">
+                    <h3 class="text-2xl font-bold mb-3 flex items-center justify-center gap-2">
+                        <span class="tint-peach w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-circle-question"></i></span>
+                        ¿Qué es el casting?
+                    </h3>
+                    <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
+                        El casting es la conversión de un tipo de dato a otro. En Java, puede ser <strong>implícito</strong> (automático, sin pérdida de información, ej. <code class="font-mono text-xs">int</code> a <code class="font-mono text-xs">long</code>) o <strong>explícito</strong> (cuando hay riesgo de pérdida o se necesita forzar la conversión).
+                    </p>
+                    <p class="text-sm mt-2" style="color: var(--text-muted);">
+                        En el contexto de genéricos, antes de Java 5, el casting era obligatorio al sacar elementos de colecciones sin tipo. Con genéricos, el compilador <strong>elimina la necesidad de casting</strong> en la mayoría de los casos.
+                    </p>
+                </div>
+
+                <div class="glass-panel p-5 border-t-4 mb-4 max-w-4xl mx-auto" style="border-color: var(--accent-blue);">
+                    <h3 class="text-2xl font-bold mb-3 flex items-center justify-center gap-2">
+                        <span class="tint-blue w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-code"></i></span>
+                        Ejemplo: antes y después
+                    </h3>
+                    <div style="background: var(--bg-terminal); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
+                        <pre class="p-4 text-xs md:text-sm leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #6c7086;">// Sin genéricos (Java 4)</span>
+<span style="color: #89b4fa;">List</span> lista = <span style="color: #cba6f7;">new</span> <span style="color: #89b4fa;">ArrayList</span>();
+lista.<span style="color: #89dceb;">add</span>(<span style="color: #a6e3a1;">"Hola"</span>);
+<span style="color: #f9e2af;">String</span> s = (<span style="color: #f9e2af;">String</span>) lista.<span style="color: #89dceb;">get</span>(<span style="color: #fab387;">0</span>);  <span style="color: #6c7086;">// ← casting explícito</span>
+
+<span style="color: #6c7086;">// Con genéricos (Java 5+)</span>
+<span style="color: #89b4fa;">List</span>&lt;<span style="color: #f9e2af;">String</span>&gt; lista2 = <span style="color: #cba6f7;">new</span> <span style="color: #89b4fa;">ArrayList</span>&lt;&gt;();
+lista2.<span style="color: #89dceb;">add</span>(<span style="color: #a6e3a1;">"Hola"</span>);
+<span style="color: #f9e2af;">String</span> s2 = lista2.<span style="color: #89dceb;">get</span>(<span style="color: #fab387;">0</span>);  <span style="color: #6c7086;">// ← sin casting</span></code></pre>
+                    </div>
+                    <p class="text-xs mt-2 text-center" style="color: var(--text-muted);">Los genéricos hacen que el casting sea <strong>innecesario</strong> y más seguro, ya que el compilador garantiza el tipo.</p>
+                </div>
+
+                <div class="glass-panel py-3 px-5 flex items-center gap-4 max-w-4xl mx-auto" style="border-left: 4px solid var(--una-gold);">
+                    <div class="tint-gold w-9 h-9 flex items-center justify-center rounded-full shrink-0">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <p class="text-sm"><strong>Advertencia:</strong> Aún se puede hacer casting explícito (ej. <code class="font-mono text-xs">(String) objeto</code>), pero puede lanzar <code class="font-mono text-xs">ClassCastException</code> en runtime si el tipo no coincide. Los genéricos minimizan esta necesidad.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 21: CARACTERÍSTICAS MODERNAS (PARTE 1) ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-rocket bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-peach);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Características modernas de Java (Parte 1)</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Lambdas, Streams, Optional y más.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    <!-- Lambda -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-peach);">
+                        <h3 class="text-2xl font-bold mb-3 flex items-center gap-2">
+                            <span class="tint-peach w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-lambda"></i></span>
+                            Expresiones Lambda
+                        </h3>
+                        <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
+                            Una <strong>lambda</strong> es una <strong>función sin nombre</strong> que se escribe directamente donde se necesita. Antes de Java 8, para pasar una "acción" como parámetro tenías que crear una clase entera. Las lambdas eliminan ese código repetitivo.
+                        </p>
+                        <div class="rounded-lg p-3 mt-2" style="background: rgba(249,226,175,0.08); border: 1px solid rgba(249,226,175,0.15);">
+                            <h4 class="font-bold text-xs mb-1 flex items-center gap-1.5" style="color: #f9e2af;">
+                                <i class="fa-solid fa-lightbulb text-xs"></i> Analogía: El control remoto
+                            </h4>
+                            <p class="text-xs leading-relaxed" style="color: var(--text-muted);">
+                                Una lambda es como un <strong>control remoto</strong>: no necesitás saber cómo funciona por dentro, solo presionás el botón y "hace algo". <code class="font-mono text-xs">(a, b) -> a.compareTo(b)</code> es como decir "tomá estos dos y ordenalos alfabéticamente".
+                            </p>
+                        </div>
+                        <p class="text-xs font-bold mt-3 mb-1" style="color: #fab387;"><strong>Sintaxis:</strong> <code class="font-mono text-xs">(parámetros) -> expresión</code></p>
+                        <div style="background: var(--bg-terminal); border-radius: 0.6rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
+                            <pre class="p-3 text-xs leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #6c7086;">// 1. Ordenar una lista alfabéticamente</span>
+<span style="color: #89b4fa;">List</span>&lt;<span style="color: #f9e2af;">String</span>&gt; nombres = <span style="color: #89b4fa;">List</span>.<span style="color: #89dceb;">of</span>(<span style="color: #a6e3a1;">"Carlos"</span>, <span style="color: #a6e3a1;">"Ana"</span>);
+nombres.<span style="color: #89dceb;">sort</span>((a, b) -> a.<span style="color: #89dceb;">compareTo</span>(b));
+<span style="color: #6c7086;">// (a, b) son dos elementos de la lista
+// -> "hacé esto con ellos"
+// a.compareTo(b) compara a con b</span>
+
+<span style="color: #6c7086;">// 2. Recorrer e imprimir cada elemento</span>
+nombres.<span style="color: #89dceb;">forEach</span>(n -> System.out.<span style="color: #89dceb;">println</span>(n));
+<span style="color: #6c7086;">// n es cada elemento, -> lo imprime
+// Resultado: Ana  /  Carlos</span></code></pre>
+                        </div>
+                        <p class="text-xs mt-1.5" style="color: var(--text-muted);">
+                            <i class="fa-solid fa-circle-info text-xs mr-1" style="color: #89b4fa;"></i> Solo funcionan con <strong>interfaces funcionales</strong> (un solo método abstracto, como <code class="font-mono text-xs">Comparator</code> o <code class="font-mono text-xs">Consumer</code>).
+                        </p>
+                    </div>
+
+                    <!-- Stream API -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-blue);">
+                        <h3 class="text-2xl font-bold mb-3 flex items-center gap-2">
+                            <span class="tint-blue w-10 h-10 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-water"></i></span>
+                            Stream API
+                        </h3>
+                        <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
+                            Un <strong>Stream</strong> es como una <strong>línea de producción</strong> <i class="fa-solid fa-industry text-xs" style="color: #fab387;"></i>: los datos pasan por una serie de estaciones donde se filtran, transforman y ordenan, sin modificar la colección original. Son <strong>lazy</strong>: nada se ejecuta hasta que pedís el resultado final.
+                        </p>
+                        <div class="space-y-1.5 mt-2">
+                            <div class="rounded-lg p-2" style="background: rgba(250,179,135,0.08); border: 1px solid rgba(250,179,135,0.12);">
+                                <p class="text-xs" style="color: #fab387;"><code class="font-mono text-xs">.filter(n -> n % 2 == 0)</code> <i class="fa-solid fa-arrow-right text-xs"></i> <strong>Filtra:</strong> solo deja pasar los números pares.</p>
+                            </div>
+                            <div class="rounded-lg p-2" style="background: rgba(137,180,250,0.08); border: 1px solid rgba(137,180,250,0.12);">
+                                <p class="text-xs" style="color: #89b4fa;"><code class="font-mono text-xs">.map(n -> n * n)</code> <i class="fa-solid fa-arrow-right text-xs"></i> <strong>Transforma:</strong> cada elemento se eleva al cuadrado.</p>
+                            </div>
+                            <div class="rounded-lg p-2" style="background: rgba(166,227,161,0.08); border: 1px solid rgba(166,227,161,0.12);">
+                                <p class="text-xs" style="color: #a6e3a1;"><code class="font-mono text-xs">.sorted()</code> <i class="fa-solid fa-arrow-right text-xs"></i> <strong>Ordena:</strong> organiza los resultados.</p>
+                            </div>
+                            <div class="rounded-lg p-2" style="background: rgba(201,137,250,0.08); border: 1px solid rgba(201,137,250,0.12);">
+                                <p class="text-xs" style="color: #c989fa;"><code class="font-mono text-xs">.collect(toList())</code> <i class="fa-solid fa-arrow-right text-xs"></i> <strong>Recolecta:</strong> junta todo en una lista final.</p>
+                            </div>
+                        </div>
+                        <p class="text-xs font-bold mt-3 mb-1" style="color: #74c7ec;"><i class="fa-solid fa-box text-xs mr-1"></i> Lista original: <code class="font-mono text-xs">[1, 2, 3, 4, 5]</code></p>
+                        <div style="background: var(--bg-terminal); border-radius: 0.6rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
+                            <pre class="p-3 text-xs leading-relaxed overflow-x-auto" style="color: var(--text-terminal); font-family: 'JetBrains Mono', monospace; margin: 0;"><code><span style="color: #89b4fa;">List</span>&lt;<span style="color: #f9e2af;">Integer</span>&gt; resultado = nums.<span style="color: #89dceb;">stream</span>()   <span style="color: #6c7086;">// abre el flujo</span>
+    .<span style="color: #89dceb;">filter</span>(n -> n % <span style="color: #fab387;">2</span> == <span style="color: #fab387;">0</span>)  <span style="color: #6c7086;">// [2, 4]    — solo pares</span>
+    .<span style="color: #89dceb;">map</span>(n -> n * n)        <span style="color: #6c7086;">// [4, 16]   — al cuadrado</span>
+    .<span style="color: #89dceb;">sorted</span>()              <span style="color: #6c7086;">// [4, 16]   — ya está ordenado</span>
+    .<span style="color: #89dceb;">collect</span>(<span style="color: #89b4fa;">Collectors</span>.<span style="color: #89dceb;">toList</span>());
+<span style="color: #6c7086;">// resultado = [4, 16]</span></code></pre>
+                        </div>
+                        <p class="text-xs mt-1.5" style="color: var(--text-muted);">
+                            <i class="fa-solid fa-magnifying-glass text-xs mr-1" style="color: #74c7ec;"></i> <strong>Cada paso transforma el flujo:</strong> <code class="font-mono text-xs">[1,2,3,4,5]</code> <i class="fa-solid fa-arrow-right text-xs"></i> <code class="font-mono text-xs">[2,4]</code> <i class="fa-solid fa-arrow-right text-xs"></i> <code class="font-mono text-xs">[4,16]</code> <i class="fa-solid fa-arrow-right text-xs"></i> <code class="font-mono text-xs">[4,16]</code>. La lista original <strong>no se modifica</strong>.
+                        </p>
+                        <div class="rounded-lg p-2 mt-2" style="background: rgba(249,226,175,0.08); border: 1px solid rgba(249,226,175,0.15);">
+                            <p class="text-xs" style="color: #f9e2af;">
+                                <i class="fa-solid fa-circle-info text-xs mr-1"></i> <strong>¿Por qué usarlos?</strong> Evitan bucles manuales, son más legibles y permiten procesar datos en paralelo con <code class="font-mono text-xs">.parallelStream()</code>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 22: CARACTERÍSTICAS MODERNAS (PARTE 2) ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-cogs bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Características modernas de Java (Parte 2)</h2>
+                    <p class="text-xl" style="color: var(--text-muted);"><code class="font-mono tint-purple px-2 py-0.5 rounded text-xl">Optional</code>, <code class="font-mono tint-purple px-2 py-0.5 rounded text-xl">var</code>, <code class="font-mono tint-purple px-2 py-0.5 rounded text-xl">Records</code> y más.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-purple);">
+                        <h4 class="font-bold text-lg mb-2"><code class="font-mono tint-purple px-1 rounded text-sm">Optional</code></h4>
+                        <p class="text-sm" style="color: var(--text-muted);">
+                            <code class="font-mono text-xs">Optional&lt;T&gt;</code> es un contenedor que puede o no tener un valor. Ayuda a evitar <code class="font-mono text-xs">NullPointerException</code> al forzar a manejar la ausencia de valor.
+                        </p>
+                        <div class="mt-2 glass-panel p-2" style="background: var(--bg-terminal);">
+                            <code style="color: #a6e3a1; font-size: 0.75rem;">
+                                <span style="color: #89b4fa;">Optional</span>&lt;<span style="color: #f9e2af;">String</span>&gt; opt = <span style="color: #89b4fa;">Optional</span>.<span style="color: #89dceb;">ofNullable</span>(<span style="color: #a6e3a1;">"Hola"</span>);<br>
+                                opt.<span style="color: #89dceb;">ifPresent</span>(s -> System.out.<span style="color: #89dceb;">println</span>(s));
+                            </code>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-blue);">
+                        <h4 class="font-bold text-lg mb-2"><code class="font-mono tint-blue px-1 rounded text-sm">var</code> (inferencia de tipos)</h4>
+                        <p class="text-sm" style="color: var(--text-muted);">
+                            Desde Java 10, <code class="font-mono text-xs">var</code> permite declarar variables sin escribir el tipo explícito. El compilador infiere el tipo en tiempo de compilación. Útil para reducir código repetitivo.
+                        </p>
+                        <div class="mt-2 glass-panel p-2" style="background: var(--bg-terminal);">
+                            <code style="color: #a6e3a1; font-size: 0.75rem;">
+                                <span style="color: #cba6f7;">var</span> lista = <span style="color: #cba6f7;">new</span> <span style="color: #89b4fa;">ArrayList</span>&lt;<span style="color: #f9e2af;">String</span>&gt;(); <span style="color: #6c7086;">// tipo: ArrayList&lt;String&gt;</span><br>
+                                <span style="color: #cba6f7;">var</span> num = <span style="color: #fab387;">42</span>; <span style="color: #6c7086;">// tipo: int</span>
+                            </code>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-green);">
+                        <h4 class="font-bold text-lg mb-2"><code class="font-mono tint-green px-1 rounded text-sm">Records</code></h4>
+                        <p class="text-sm" style="color: var(--text-muted);">
+                            Desde Java 14 (estable en 16), los <code class="font-mono text-xs">record</code> son clases <strong>inmutables</strong> y transparentes para datos. Generan constructor, getters, <code class="font-mono text-xs">equals</code>, <code class="font-mono text-xs">hashCode</code> y <code class="font-mono text-xs">toString</code> automáticamente.
+                        </p>
+                        <div class="mt-2 glass-panel p-2" style="background: var(--bg-terminal);">
+                            <code style="color: #a6e3a1; font-size: 0.75rem;">
+                                <span style="color: #cba6f7;">record</span> <span style="color: #89b4fa;">Persona</span>(<span style="color: #f9e2af;">String</span> nombre, <span style="color: #f9e2af;">int</span> edad) { }<br>
+                                <span style="color: #89b4fa;">Persona</span> p = <span style="color: #cba6f7;">new</span> <span style="color: #89dceb;">Persona</span>(<span style="color: #a6e3a1;">"Ana"</span>, <span style="color: #fab387;">25</span>);<br>
+                                System.out.<span style="color: #89dceb;">println</span>(p.<span style="color: #89dceb;">nombre</span>()); <span style="color: #6c7086;">// getter automático</span>
+                            </code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-peach);">
+                        <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-code"></i> Switch expressions (Java 14+)</h4>
+                        <p class="text-sm" style="color: var(--text-muted);">
+                            El <code class="font-mono text-xs">switch</code> ahora puede devolver un valor (con <code class="font-mono text-xs">-></code>) y no necesita <code class="font-mono text-xs">break</code>. También soporta múltiples casos y <code class="font-mono text-xs">yield</code> para bloques.
+                        </p>
+                        <div class="mt-2 glass-panel p-2" style="background: var(--bg-terminal);">
+                            <code style="color: #a6e3a1; font-size: 0.75rem;">
+                                <span style="color: #f9e2af;">String</span> resultado = <span style="color: #cba6f7;">switch</span> (dia) {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #cba6f7;">case</span> <span style="color: #fab387;">1</span>, <span style="color: #fab387;">7</span> -> <span style="color: #a6e3a1;">"Fin de semana"</span>;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #cba6f7;">case</span> <span style="color: #fab387;">2</span>, <span style="color: #fab387;">3</span>, <span style="color: #fab387;">4</span>, <span style="color: #fab387;">5</span>, <span style="color: #fab387;">6</span> -> <span style="color: #a6e3a1;">"Laborable"</span>;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #cba6f7;">default</span> -> <span style="color: #a6e3a1;">"Inválido"</span>;<br>
+                                };
+                            </code>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-blue);">
+                        <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-calendar"></i> Nueva API de fechas (java.time)</h4>
+                        <p class="text-sm" style="color: var(--text-muted);">
+                            Introducida en Java 8, reemplaza a <code class="font-mono text-xs">Date</code> y <code class="font-mono text-xs">Calendar</code> con clases inmutables como <code class="font-mono text-xs">LocalDate</code>, <code class="font-mono text-xs">LocalTime</code>, <code class="font-mono text-xs">LocalDateTime</code>, <code class="font-mono text-xs">Period</code> y <code class="font-mono text-xs">Duration</code>.
+                        </p>
+                        <div class="mt-2 glass-panel p-2" style="background: var(--bg-terminal);">
+                            <code style="color: #a6e3a1; font-size: 0.75rem;">
+                                <span style="color: #89b4fa;">LocalDate</span> hoy = <span style="color: #89b4fa;">LocalDate</span>.<span style="color: #89dceb;">now</span>();<br>
+                                <span style="color: #89b4fa;">LocalDate</span> futuro = hoy.<span style="color: #89dceb;">plusDays</span>(<span style="color: #fab387;">5</span>);<br>
+                                <span style="color: #f9e2af;">int</span> mes = hoy.<span style="color: #89dceb;">getMonthValue</span>();
+                            </code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel py-3 px-5 flex items-center gap-4 mt-3" style="border-left: 4px solid var(--una-gold);">
+                    <div class="tint-gold w-9 h-9 flex items-center justify-center rounded-full shrink-0">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <p class="text-sm"><strong>¿Por qué usar estas características?</strong> Hacen tu código más <strong>conciso</strong>, <strong>seguro</strong> y <strong>expresivo</strong>. Java ha evolucionado para competir con lenguajes modernos, y estas herramientas son la prueba.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 23: CIERRE ==================== -->
         <div class="slide">
             <div class="text-center w-full max-w-5xl relative z-10">
                 <i class="fa-solid fa-check-double bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-green);"></i>
@@ -1136,21 +1721,22 @@ System.out.<span style="color: #89dceb;">println</span>(resultado); <span style=
                     <div class="glass-panel p-5 text-left border-l-4" style="border-left-color: var(--una-gold);">
                         <h3 class="font-bold text-xl mb-3 flex items-center gap-2"><i class="fa-solid fa-circle-check" style="color: var(--una-gold);"></i> Dudas aclaradas</h3>
                         <ul class="space-y-2 text-sm" style="color: var(--text-muted);">
-                            <li>• Java ≠ JavaScript (son lenguajes distintos)</li>
-                            <li>• Array (tamaño fijo) vs ArrayList (dinámico)</li>
-                            <li>• for (con índice) vs foreach (solo lectura)</li>
-                            <li>• @Override es una anotación que previene errores</li>
-                            <li>• La carpeta <code class="font-mono text-xs">src</code> es el Source Root</li>
-                            <li>• Solo la clase con <code class="font-mono text-xs">main</code> es ejecutable</li>
+                            <li>• Java ≠ JavaScript</li>
+                            <li>• Array (fijo) vs ArrayList (dinámico)</li>
+                            <li>• for (índice) vs foreach (lectura)</li>
+                            <li>• @Override y otras anotaciones útiles</li>
+                            <li>• Carpeta src y Source Root</li>
+                            <li>• Solo la clase con main es ejecutable</li>
                         </ul>
                     </div>
                     <div class="glass-panel p-5 text-left border-l-4" style="border-left-color: var(--accent-purple);">
-                        <h3 class="font-bold text-xl mb-3 flex items-center gap-2"><i class="fa-solid fa-code" style="color: var(--accent-purple);"></i> Temos nuevos</h3>
+                        <h3 class="font-bold text-xl mb-3 flex items-center gap-2"><i class="fa-solid fa-code" style="color: var(--accent-purple);"></i> Temos oficiales</h3>
                         <ul class="space-y-2 text-sm" style="color: var(--text-muted);">
-                            <li>• <strong>Genéricos</strong>: clases y métodos que funcionan con cualquier tipo</li>
-                            <li>• <strong>Lambdas</strong>: funciones anónimas para código más limpio</li>
-                            <li>• <strong>Streams</strong>: procesar colecciones de forma declarativa</li>
-                            <li>• <strong>Java 8 → 21</strong>: lambdas, streams, var, records, virtual threads</li>
+                            <li>• <strong>Herencia</strong> (<code class="font-mono text-xs">extends</code>) y <strong>Interfaces</strong> (<code class="font-mono text-xs">implements</code>)</li>
+                            <li>• <strong>Paquetes</strong>: <code class="font-mono text-xs">package</code> y <code class="font-mono text-xs">import</code></li>
+                            <li>• <strong>Genéricos</strong>: clases, métodos, wildcards y PECS</li>
+                            <li>• <strong>Casting</strong> y su relación con genéricos</li>
+                            <li>• <strong>Características modernas</strong>: lambdas, streams, Optional, var, records, switch expressions, nueva API de fechas</li>
                         </ul>
                     </div>
                 </div>
@@ -1160,7 +1746,7 @@ System.out.<span style="color: #89dceb;">println</span>(resultado); <span style=
                         <i class="fa-solid fa-flask mr-2"></i> Laboratorio de hoy
                     </p>
                     <p class="text-sm" style="color: var(--text-muted);">
-                        Van a practicar con <strong>genéricos</strong>, <strong>lambdas</strong> y <strong>streams</strong> en ejercicios prácticos. ¡Manos a la obra!
+                        Van a practicar con <strong>herencia</strong>, <strong>interfaces</strong>, <strong>paquetes</strong>, <strong>genéricos</strong> y <strong>características modernas</strong> en ejercicios prácticos. ¡Manos a la obra!
                     </p>
                 </div>
             </div>
@@ -1168,85 +1754,9 @@ System.out.<span style="color: #89dceb;">println</span>(resultado); <span style=
 
     </div><!-- fin slides-container -->
 
-    <!-- ========== MODALES ========== -->
-    <!-- (No se agregaron modales nuevos en esta versión, pero se pueden añadir si se desea) -->
-
-    <script>
-        // ============================================================
-        // NAVEGACIÓN Y PROGRESO
-        // ============================================================
-        const slides = document.querySelectorAll('.slide');
-        let current = 0;
-        const total = slides.length;
-
-        function updateSlide() {
-            slides.forEach((s, i) => {
-                s.style.display = (i === current) ? 'flex' : 'none';
-            });
-            document.getElementById('progressBar').style.width = ((current + 1) / total * 100) + '%';
-            // Scroll al top
-            document.querySelector('.slides-container').scrollTop = 0;
-        }
-
-        function changeSlide(delta) {
-            const next = current + delta;
-            if (next >= 0 && next < total) {
-                current = next;
-                updateSlide();
-            }
-        }
-
-        // Teclado
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-                e.preventDefault();
-                changeSlide(1);
-            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-                e.preventDefault();
-                changeSlide(-1);
-            }
-        });
-
-        // Ir a slide específico (para enlaces)
-        function goToSlide(index) {
-            if (index >= 0 && index < total) {
-                current = index;
-                updateSlide();
-            }
-        }
-
-        // ============================================================
-        // TEMA CLARO/OSCURO
-        // ============================================================
-        function toggleTheme() {
-            const html = document.documentElement;
-            const current = html.getAttribute('data-theme');
-            const next = current === 'light' ? 'dark' : 'light';
-            html.setAttribute('data-theme', next);
-            document.getElementById('theme-icon').className = next === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-        }
-
-        // ============================================================
-        // MODALES
-        // ============================================================
-        function openModal(id) {
-            document.getElementById(id).classList.add('open');
-        }
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('open');
-        }
-        // Cerrar modal con clic fuera
-        document.querySelectorAll('.modal-backdrop').forEach(el => {
-            el.addEventListener('click', (e) => {
-                if (e.target === el) el.classList.remove('open');
-            });
-        });
-
-        // ============================================================
-        // INICIO
-        // ============================================================
-        updateSlide();
-    </script>
+    <!-- Scripts compartidos del proyecto — NO borrar ni agregar scripts abajo -->
+    <script src="../../../assets/js/curso-info.js"></script>
+    <script src="../../../assets/js/presentacion.js"></script>
 
 </body>
 </html>
