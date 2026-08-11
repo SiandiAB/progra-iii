@@ -1,4 +1,4 @@
-Es<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" data-theme="light">
 <head>
     <meta charset="UTF-8">
@@ -106,19 +106,19 @@ Es<!DOCTYPE html>
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-6 relative z-10">
-                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--accent-blue);">
-                        <div class="w-14 h-14 shrink-0 rounded-full tint-blue flex items-center justify-center text-2xl"><i class="fa-solid fa-chalkboard-user"></i></div>
+                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--una-red);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-red flex items-center justify-center text-2xl"><i class="fa-solid fa-chalkboard-user"></i></div>
                         <div>
-                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Docente — Grupo 40</p>
-                            <p class="text-lg font-bold" data-curso="40-docente">Kristel Duarte Pérez</p>
-                            <p class="text-xs mt-1" style="color: var(--text-muted);" data-curso="40-horario"></p>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Docente — Grupo 41</p>
+                            <p class="text-lg font-bold" data-curso="41-docente">Siandi Araya Bello</p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);" data-curso="41-horario"></p>
                         </div>
                     </div>
                     <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--una-gold);">
                         <div class="w-14 h-14 shrink-0 rounded-full tint-gold flex items-center justify-center text-2xl"><i class="fa-solid fa-clock"></i></div>
                         <div>
                             <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Atención a Estudiantes</p>
-                            <p class="text-lg font-bold" data-curso="40-atencion"></p>
+                            <p class="text-lg font-bold" data-curso="41-atencion"></p>
                             <p class="text-xs mt-1" style="color: var(--text-muted);">Consultas y tutorías</p>
                         </div>
                     </div>
@@ -245,7 +245,7 @@ Es<!DOCTYPE html>
                 <div class="glass-panel p-8 border-t-4 max-w-4xl mx-auto" style="border-color: var(--text-muted);">
                     <h3 class="text-3xl font-bold mb-4 text-gray-700">El control absoluto del código</h3>
                     <p class="text-lg leading-relaxed mb-4" style="color: var(--text-muted);">
-                        Hasta el momento, hemos desarrollado aplicaciones basadas en texto mediante una <strong>Interfaz de Línea de Comandos (CLI)</strong>. En este paradigma, el código fuente posee el control absoluto y unidireccional sobre el flujo de ejecución del programa.
+                        Hasta el momento, hemos desarrollado aplicaciones basadas en texto mediante una <strong>Interfaz de Línea de Comandos (CLI)</strong>. En este <span class="keyword" tabindex="0" data-tooltip="Es la manera en que se decide escribir un programa.Hay muchas formas distintas de hacerlo, ej: POO">paradigma</span>, el código fuente posee el control absoluto y unidireccional sobre el flujo de ejecución del programa.
                     </p>
                     
                     <ul class="space-y-4 text-md mt-6" style="color: var(--text-muted);">
@@ -265,7 +265,7 @@ Es<!DOCTYPE html>
 
                     <div class="mt-6 darcula-bg p-4 rounded-xl font-mono text-sm shadow-inner border border-gray-600 w-full">
                         <span class="darcula-str">Bienvenido al sistema de registro.</span><br>
-                        <span class="darcula-str">> Ingrese su nombre:</span> <span class="darcula-num">Kristel Duarte</span><br>
+                        <span class="darcula-str">> Ingrese su nombre:</span> <span class="darcula-num">Siandi Araya</span><br>
                         <span class="darcula-str">> Ingrese su edad:</span> <span class="darcula-com">_ (El programa se detiene y espera aquí obligatoriamente)</span>
                     </div>
                 </div>
@@ -568,7 +568,7 @@ ventana.<span class="darcula-func">setContentPane</span>(panelPrincipal);</code>
                                 <span class="darcula-class">JTextField</span> campo = <span class="darcula-kw">new</span> <span class="darcula-class">JTextField</span>(<span class="darcula-num">15</span>);
                             </div>
                             <div class="flex justify-center border border-gray-300 rounded p-2 bg-white">
-                                <input type="text" class="border border-gray-400 outline-none w-32 px-1 text-xs" value="Kristel">
+                                <input type="text" class="border border-gray-400 outline-none w-32 px-1 text-xs" value="Siandi">
                             </div>
                         </div>
                     </div>
@@ -752,52 +752,64 @@ btnFacturar.<span class="darcula-func">addActionListener</span>(e -> {
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start max-w-6xl mx-auto">
                     <!-- Incorrecto -->
                     <div class="darcula-bg p-6 rounded-2xl shadow-xl overflow-x-auto text-xs border border-gray-600 relative">
-                        <div class="absolute top-0 right-0 bg-red-600 text-white px-3 py-1 rounded-bl-lg rounded-tr-lg font-bold">Incorrecto</div>
+                        <div class="absolute top-0 right-0 bg-red-600 text-white px-3 py-1 rounded-bl-lg rounded-tr-lg font-bold"><i class="fa-solid fa-xmark"></i> Incorrecto</div>
                         <div class="flex items-center gap-2 mb-4 border-b border-gray-600 pb-2">
-                            <span class="font-mono text-gray-400">VentanaGUI.java</span>
+                            <span class="font-mono text-gray-400">Todo en VentanaGUI.java (mezclado)</span>
                         </div>
-                        <pre class="font-mono leading-relaxed" style="margin: 0; opacity: 0.7;"><code>btnFacturar.<span class="darcula-func">addActionListener</span>(e -> {
+                        <pre class="font-mono leading-relaxed" style="margin: 0;"><code>btnFacturar.<span class="darcula-func">addActionListener</span>(e -> {
     <span class="darcula-kw">try</span> {
+        <span class="darcula-com">// Lee los datos desde las cajas de texto</span>
         <span class="darcula-kw">double</span> precio = <span class="darcula-class">Double</span>.<span class="darcula-func">parseDouble</span>(txtPrecio.<span class="darcula-func">getText</span>());
         <span class="darcula-kw">int</span> cant = <span class="darcula-class">Integer</span>.<span class="darcula-func">parseInt</span>(txtCant.<span class="darcula-func">getText</span>());
         
+        <span class="darcula-com">// Calcula el total (esto debería estar en otra clase)</span>
         <span class="darcula-kw">double</span> subtotal = precio * cant;
         <span class="darcula-kw">double</span> iv = subtotal * <span class="darcula-num">0.13</span>;
         <span class="darcula-kw">double</span> total = subtotal + iv;
         
+        <span class="darcula-com">// Guarda directo a la base de datos desde la ventana</span>
         <span class="darcula-class">Factura</span> f = <span class="darcula-kw">new</span> <span class="darcula-class">Factura</span>(total);
         BaseDatos.<span class="darcula-func">guardar</span>(f);
         
+        <span class="darcula-com">// Muestra el resultado en una etiqueta</span>
         lblTotal.<span class="darcula-func">setText</span>(<span class="darcula-str">"Total: "</span> + total);
     } <span class="darcula-kw">catch</span> (<span class="darcula-class">Exception</span> ex) {
         lblError.<span class="darcula-func">setText</span>(<span class="darcula-str">"Datos inválidos"</span>);
     }
 });</code></pre>
+                        <p class="text-red-400 text-[10px] mt-2 leading-relaxed"><i class="fa-solid fa-triangle-exclamation"></i> Calcula, guarda y muestra todo en un solo lugar. Si el impuesto cambia, hay que modificar la ventana.</p>
                     </div>
 
                     <!-- Correcto -->
                     <div class="darcula-bg p-6 rounded-2xl shadow-xl overflow-x-auto text-xs border-2 border-green-500 relative">
-                        <div class="absolute top-0 right-0 bg-green-600 text-white px-3 py-1 rounded-bl-lg rounded-tr-lg font-bold">Arquitectura Correcta</div>
+                        <div class="absolute top-0 right-0 bg-green-600 text-white px-3 py-1 rounded-bl-lg rounded-tr-lg font-bold"><i class="fa-solid fa-check"></i> Arquitectura Correcta</div>
                         <div class="flex flex-col gap-4">
                             <div>
                                 <div class="flex items-center gap-2 mb-2 border-b border-gray-600 pb-1">
-                                    <span class="font-mono text-gray-400">ServicioFacturacion.java (Controlador)</span>
+                                    <span class="font-mono text-gray-400">ServicioFacturacion.java (lógica aparte)</span>
                                 </div>
-                                <pre class="font-mono leading-relaxed" style="margin: 0;"><code><span class="darcula-kw">public double</span> <span class="darcula-func">procesarVenta</span>(<span class="darcula-class">String</span> p, <span class="darcula-class">String</span> c) <span class="darcula-kw">throws</span> <span class="darcula-class">Exception</span> {
-    <span class="darcula-kw">double</span> total = <span class="darcula-com">/* cálculos delegados aquí */</span>;
+                                <pre class="font-mono leading-relaxed" style="margin: 0;"><code><span class="darcula-com">// Esta clase solo hace cálculos, no toca ventanas</span>
+<span class="darcula-kw">public double</span> <span class="darcula-func">procesarVenta</span>(<span class="darcula-class">String</span> p, <span class="darcula-class">String</span> c) <span class="darcula-kw">throws</span> <span class="darcula-class">Exception</span> {
+    <span class="darcula-kw">double</span> precio = <span class="darcula-class">Double</span>.<span class="darcula-func">parseDouble</span>(p);
+    <span class="darcula-kw">int</span> cant = <span class="darcula-class">Integer</span>.<span class="darcula-func">parseInt</span>(c);
+    <span class="darcula-kw">double</span> total = precio * cant * <span class="darcula-num">1.13</span>;
     BaseDatos.<span class="darcula-func">guardar</span>(<span class="darcula-kw">new</span> <span class="darcula-class">Factura</span>(total));
-    <span class="darcula-kw">return</span> total;
+    <span class="darcula-kw">return</span> total;  <span class="darcula-com">// devuelve el resultado, no lo muestra</span>
 }</code></pre>
                             </div>
                             <div>
                                 <div class="flex items-center gap-2 mb-2 border-b border-gray-600 pb-1">
-                                    <span class="font-mono text-gray-400">VentanaGUI.java (Vista)</span>
+                                    <span class="font-mono text-gray-400">VentanaGUI.java (solo muestra)</span>
                                 </div>
-                                <pre class="font-mono leading-relaxed" style="margin: 0;"><code><span class="darcula-com">// La vista únicamente extrae el texto y delega la acción</span>
+                                <pre class="font-mono leading-relaxed" style="margin: 0;"><code><span class="darcula-com">// La ventana solo pide los datos y muestra el resultado</span>
 btnFacturar.<span class="darcula-func">addActionListener</span>(e -> {
     <span class="darcula-kw">try</span> {
-        <span class="darcula-kw">double</span> total = servicio.<span class="darcula-func">procesarVenta</span>(txtPrecio.<span class="darcula-func">getText</span>(), 
-                                              txtCant.<span class="darcula-func">getText</span>());
+        <span class="darcula-com">// Delega TODO el trabajo al servicio</span>
+        <span class="darcula-kw">double</span> total = servicio.<span class="darcula-func">procesarVenta</span>(
+            txtPrecio.<span class="darcula-func">getText</span>(), 
+            txtCant.<span class="darcula-func">getText</span>()
+        );
+        <span class="darcula-com">// Solo muestra, no calcula ni guarda</span>
         lblTotal.<span class="darcula-func">setText</span>(<span class="darcula-str">"Total: "</span> + total);
     } <span class="darcula-kw">catch</span> (<span class="darcula-class">Exception</span> ex) {
         lblError.<span class="darcula-func">setText</span>(<span class="darcula-str">"Error en ingreso"</span>);
@@ -805,6 +817,7 @@ btnFacturar.<span class="darcula-func">addActionListener</span>(e -> {
 });</code></pre>
                             </div>
                         </div>
+                        <p class="text-green-400 text-[10px] mt-2 leading-relaxed"><i class="fa-solid fa-check"></i> Si el impuesto cambia, solo modificás ServicioFacturacion. La ventana ni se entera.</p>
                     </div>
                 </div>
             </div>
@@ -831,8 +844,16 @@ btnFacturar.<span class="darcula-func">addActionListener</span>(e -> {
                             <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xl mb-4"><i class="fa-regular fa-window-maximize"></i></div>
                             <h4 class="font-bold text-lg text-gray-800 mb-2">Capa de Presentación</h4>
                             <p class="text-sm text-gray-600 grow">
-                                Compuesta por las clases de Swing. Gestiona la geometría, el formato visual de los componentes, lee las cadenas de texto ingresadas y expone notificaciones visuales ante excepciones.
+                                Solo muestra datos y captura eventos. <strong>Nunca</strong> hace cálculos ni guarda nada.
                             </p>
+                            <div class="mt-3 darcula-bg p-3 rounded-lg text-[10px] leading-relaxed border border-gray-600">
+                                <span class="darcula-com">// Mal: cálculo en la vista</span><br>
+                                <span class="darcula-kw">double</span> t = precio * cant * <span class="darcula-num">1.13</span>;<br>
+                                lblTotal.<span class="darcula-func">setText</span>(<span class="darcula-str">""</span>+t);<br><br>
+                                <span class="darcula-com">// Bien: solo delegar</span><br>
+                                <span class="darcula-kw">double</span> t = servicio.<span class="darcula-func">calcular</span>(precio,cant);<br>
+                                lblTotal.<span class="darcula-func">setText</span>(<span class="darcula-str">""</span>+t);
+                            </div>
                         </div>
                         
                         <!-- Controlador -->
@@ -840,8 +861,14 @@ btnFacturar.<span class="darcula-func">addActionListener</span>(e -> {
                             <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 text-xl mb-4"><i class="fa-solid fa-gears"></i></div>
                             <h4 class="font-bold text-lg text-gray-800 mb-2">Capa de Lógica</h4>
                             <p class="text-sm text-gray-600 grow">
-                                Clases que actúan como intermediarias. Reciben los datos extraídos por la GUI, ejecutan los algoritmos matemáticos y formulan las conversiones de tipo requeridas.
+                                Recibe datos crudos de la vista, aplica reglas de negocio y retorna resultados. No toca componentes Swing.
                             </p>
+                            <div class="mt-3 darcula-bg p-3 rounded-lg text-[10px] leading-relaxed border border-gray-600">
+                                <span class="darcula-com">// Mal: lógica tocando GUI</span><br>
+                                lblError.<span class="darcula-func">setText</span>(<span class="darcula-str">"Error"</span>); <span class="darcula-com">// ← no</span><br><br>
+                                <span class="darcula-com">// Bien: solo devolver valor</span><br>
+                                <span class="darcula-kw">return</span> subtotal * <span class="darcula-num">1.13</span>;
+                            </div>
                         </div>
 
                         <!-- Modelo -->
@@ -849,8 +876,14 @@ btnFacturar.<span class="darcula-func">addActionListener</span>(e -> {
                             <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-xl mb-4"><i class="fa-solid fa-database"></i></div>
                             <h4 class="font-bold text-lg text-gray-800 mb-2">Capa de Datos</h4>
                             <p class="text-sm text-gray-600 grow">
-                                Define la persistencia y estructura (<code class="font-mono text-xs">ArrayList</code>, <code class="font-mono text-xs">HashMap</code>, Entidades). Almacena el estado final de las transacciones verificadas.
+                                Define qué se guarda (<code class="font-mono text-xs">Factura</code>, <code class="font-mono text-xs">Producto</code>) y cómo. Solo recibe objetos ya validados.
                             </p>
+                            <div class="mt-3 darcula-bg p-3 rounded-lg text-[10px] leading-relaxed border border-gray-600">
+                                <span class="darcula-com">// Mal: validar en datos</span><br>
+                                <span class="darcula-kw">if</span>(precio &lt; <span class="darcula-num">0</span>) <span class="darcula-kw">return</span>; <span class="darcula-com">// ← no aquí</span><br><br>
+                                <span class="darcula-com">// Bien: solo guardar</span><br>
+                                lista.<span class="darcula-func">add</span>(<span class="darcula-kw">new</span> <span class="darcula-class">Factura</span>(total));
+                            </div>
                         </div>
                     </div>
 
