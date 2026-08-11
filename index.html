@@ -358,6 +358,10 @@
             labButtons.forEach(function (btn) {
                 var key = 'lab-' + btn.getAttribute('data-lab');
                 var url = btn.getAttribute('data-lab-url');
+                // Si el botón ya viene desbloqueado desde el HTML, guardarlo en localStorage
+                if (btn.classList.contains('unlocked') && localStorage.getItem(key) !== 'unlocked') {
+                    localStorage.setItem(key, 'unlocked');
+                }
                 if (localStorage.getItem(key) === 'unlocked') {
                     btn.classList.remove('locked');
                     btn.classList.add('unlocked');
