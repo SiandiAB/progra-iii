@@ -245,7 +245,20 @@
                             </div>
                             <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
                         </a>
-                        <a href="labs/siandi/clase-03/" class="lab-btn locked" data-lab="siandi-03" data-lab-url="labs/siandi/clase-03/">
+                        <div class="lab-spacer"></div>
+                    </div>
+                    <div class="clase-row">
+                        <a href="clases/siandi/clase-04/" class="clase-card">
+                            <div class="clase-icon" style="background: rgba(230,106,106,0.12); color: var(--una-red);">
+                                <i class="fa-solid fa-4"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold">Clase 4 — Desarrollo de Interfaces de Usuario</h4>
+                                <p class="text-xs text-gray-500">GUI, AWT vs Swing, JFrame, JPanel, Layout Managers, Eventos.</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                        </a>
+                        <a href="labs/siandi/clase-04/" class="lab-btn unlocked" data-lab="siandi-04" data-lab-url="labs/siandi/clase-04/">
                             <i class="fa-solid fa-flask lab-icon"></i>
                             <span class="lab-label">LAB</span>
                         </a>
@@ -308,6 +321,19 @@
                             <span class="lab-label">LAB</span>
                         </a>
                     </div>
+                    <div class="clase-row">
+                        <div class="clase-card pendiente">
+                            <div class="clase-icon" style="background: rgba(148,163,184,0.12); color: #94a3b8;">
+                                <i class="fa-solid fa-4"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold">Clase 4 — Próximamente</h4>
+                                <p class="text-xs text-gray-500">Disponible pronto.</p>
+                            </div>
+                            <i class="fa-solid fa-lock text-gray-300 text-xs"></i>
+                        </div>
+                        <div class="lab-spacer"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -329,6 +355,10 @@
             labButtons.forEach(function (btn) {
                 var key = 'lab-' + btn.getAttribute('data-lab');
                 var url = btn.getAttribute('data-lab-url');
+                // Si el botón ya viene desbloqueado desde el HTML, guardarlo en localStorage
+                if (btn.classList.contains('unlocked') && localStorage.getItem(key) !== 'unlocked') {
+                    localStorage.setItem(key, 'unlocked');
+                }
                 if (localStorage.getItem(key) === 'unlocked') {
                     btn.classList.remove('locked');
                     btn.classList.add('unlocked');

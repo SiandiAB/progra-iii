@@ -16,8 +16,10 @@ Este repositorio contiene las presentaciones interactivas de cada lección, publ
 
 | Clase | Tema | Enlace |
 |-------|------|--------|
-| 1 | Bienvenida, Pilares del Software, Git Colaborativo | [Ver presentación](https://siandiab.github.io/progra-iii/clases/clase-01/) |
-| 2 | Próximamente... | — |
+| 1 | Bienvenida, Pilares del Software, Git Colaborativo | [Ver presentación](https://siandiab.github.io/progra-iii/clases/siandi/clase-01/) |
+| 2 | Características del Lenguaje Java | [Ver presentación](https://siandiab.github.io/progra-iii/clases/siandi/clase-02/) |
+| 3 | Clases, Objetos, Referencias y Modularidad | [Ver presentación](https://siandiab.github.io/progra-iii/clases/siandi/clase-03/) |
+| 4 | Desarrollo de Interfaces de Usuario | [Ver presentación](https://siandiab.github.io/progra-iii/clases/siandi/clase-04/) |
 
 ---
 

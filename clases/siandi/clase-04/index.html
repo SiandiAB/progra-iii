@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 4 — Programación III</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+
+    <!-- Recursos compartidos del proyecto -->
+    <link rel="icon" type="image/svg+xml" href="../../../assets/img/favicon.svg">
+    <link rel="stylesheet" href="../../../assets/css/presentacion.css">
+
+    <!-- Tooltips interactivos para palabras clave -->
+    <style>
+        .keyword {
+            position: relative;
+            cursor: help;
+            border-bottom: 2px dotted var(--una-red);
+            font-weight: 700;
+            color: var(--una-red);
+        }
+        .keyword::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2b2b2b;
+            color: #a9b7c6;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid #555555;
+            font-size: 0.85rem;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 400;
+            white-space: normal;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 999;
+            width: max-content;
+            max-width: 320px;
+            text-align: left;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            line-height: 1.5;
+        }
+        .keyword:hover::after,
+        .keyword:focus::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-4px);
+        }
+        
+        /* Tema Darcula (IntelliJ Default Dark) para bloques de código */
+        .darcula-bg { background-color: #2b2b2b; color: #a9b7c6; }
+        .darcula-kw { color: #cc7832; font-weight: bold; }
+        .darcula-str { color: #6a8759; }
+        .darcula-num { color: #6897bb; }
+        .darcula-com { color: #808080; font-style: italic; }
+        .darcula-func { color: #ffc66d; }
+        .darcula-class { color: #a9b7c6; }
+        .darcula-anno { color: #bbb529; }
+    </style>
+</head>
+<body>
+
+    <!-- Botones flotantes -->
+    <button class="float-btn" id="downloadBtn" onclick="downloadPresentation()" title="Descargar presentación para ver sin internet">
+        <i class="fa-solid fa-download"></i>
+    </button>
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar modo claro/oscuro">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+    <button class="float-btn" id="prevBtn" onclick="changeSlide(-1)"><i class="fa-solid fa-arrow-left"></i></button>
+    <button class="float-btn" id="nextBtn" onclick="changeSlide(1)"><i class="fa-solid fa-arrow-right"></i></button>
+
+    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+
+    <!-- ========== CONTENEDOR DE SLIDES ========== -->
+    <div class="slides-container" id="slides-container">
+
+        <!-- ==================== SLIDE 0: PORTADA ==================== -->
+        <div class="slide active">
+            <div class="text-center w-full max-w-6xl z-10 relative">
+                <i class="fa-solid fa-window-restore bg-icon text-[350px] -top-20 -left-20" style="color: var(--una-red);"></i>
+                <i class="fa-brands fa-java bg-icon text-[250px] -bottom-10 right-10" style="color: var(--accent-blue);"></i>
+
+                <div class="bg-white px-8 py-4 rounded-3xl inline-block mb-6 shadow-md border border-gray-100 relative z-10">
+                    <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png"
+                         alt="Logo UNA" class="h-28 object-contain">
+                </div>
+
+                <h2 class="text-lg md:text-xl font-bold tracking-[0.2em] mb-4 uppercase" style="color: var(--text-muted);">Sección Regional Central Occidente, UNA</h2>
+
+                <h1 class="text-3xl md:text-4xl font-extrabold mb-4 tracking-tight">
+                    Programación <span style="color: var(--una-red);">III</span>
+                </h1>
+                <h2 class="text-5xl md:text-7xl font-extrabold mb-2" style="color: var(--text-main);">Semana 4</h2>
+                <h3 class="text-3xl md:text-6xl font-bold mb-6" style="color: var(--una-red);">
+                    Desarrollo de Interfaces de Usuario
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-6 relative z-10">
+                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--una-red);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-red flex items-center justify-center text-2xl"><i class="fa-solid fa-chalkboard-user"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Docente — Grupo 41</p>
+                            <p class="text-lg font-bold" data-curso="41-docente">Siandi Araya Bello</p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);" data-curso="41-horario"></p>
+                        </div>
+                    </div>
+                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--una-gold);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-gold flex items-center justify-center text-2xl"><i class="fa-solid fa-clock"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Atención a Estudiantes</p>
+                            <p class="text-lg font-bold" data-curso="41-atencion"></p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);">Consultas y tutorías</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-sm animate-pulse mt-6" style="color: var(--text-muted);"><i class="fa-solid fa-keyboard mr-2"></i>Usa las flechas del teclado para navegar</p>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 1: Agenda del Día ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-map-location-dot bg-icon text-[350px] top-10 right-0 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-8">
+                    <h2 class="text-5xl font-bold mb-2">¿Qué vamos a ver hoy?</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Teoría para sentar bases sólidas antes del Laboratorio #1.</p>
+                    <p class="text-sm mt-2" style="color: var(--text-muted);"><i class="fa-solid fa-hand-pointer mr-1"></i> Hacé clic en cada tema para ir directamente a esa diapositiva.</p>
+                </div>
+
+                <div class="relative max-w-2xl mx-auto">
+                    <!-- Línea central -->
+                    <div class="absolute border-l-2 border-dashed border-gray-300 h-full" style="left: 50%; transform: translateX(-50%);"></div>
+
+                    <!-- 1. Conceptos de Ambientes Gráficos (derecha) -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-gold font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">1</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(2)">
+                            <div class="glass-panel py-2.5 px-5 border-r-4" style="border-right-color: var(--una-gold);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Ambientes Gráficos</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Flujo por Eventos (izquierda) -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(4)">
+                            <div class="glass-panel py-2.5 px-5 border-l-4" style="border-left-color: var(--accent-green);">
+                                <h3 class="font-bold text-base md:text-lg text-left">Flujo por Eventos</h3>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-green font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">2</div>
+                        <div class="w-1/2"></div>
+                    </div>
+
+                    <!-- 3. Bibliotecas GUI (derecha) -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-blue font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">3</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(5)">
+                            <div class="glass-panel py-2.5 px-5 border-r-4" style="border-right-color: var(--accent-blue);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Bibliotecas GUI</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Estructura de Ventana (izquierda) -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(7)">
+                            <div class="glass-panel py-2.5 px-5 border-l-4" style="border-left-color: var(--una-red);">
+                                <h3 class="font-bold text-base md:text-lg text-left">Anatomía Visual</h3>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-red font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">4</div>
+                        <div class="w-1/2"></div>
+                    </div>
+
+                    <!-- 5. Patrones y Código (derecha) -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-purple font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">5</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(11)">
+                            <div class="glass-panel py-2.5 px-5 border-r-4" style="border-right-color: var(--accent-purple);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Patrones de Diseño</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. GUI Designer IntelliJ (izquierda) -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(14)">
+                            <div class="glass-panel py-2.5 px-5 border-l-4" style="border-left-color: var(--accent-peach);">
+                                <h3 class="font-bold text-base md:text-lg text-left">GUI Designer</h3>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-peach font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">6</div>
+                        <div class="w-1/2"></div>
+                    </div>
+
+                    <!-- 7. Proyecto #1 (derecha) -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-gold font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">7</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(23)">
+                            <div class="glass-panel py-2.5 px-5 border-r-4 border-dashed" style="border-right-color: var(--una-gold);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Proyecto #1</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 8. Laboratorio #1 (izquierda) -->
+                    <div class="flex items-center relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(24)">
+                            <div class="glass-panel py-2.5 px-5 border-l-4" style="border-left-color: var(--accent-green);">
+                                <h3 class="font-bold text-base md:text-lg text-left">Laboratorio #1</h3>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-green font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">8</div>
+                        <div class="w-1/2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 2: CONCEPTOS (CLI) ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-terminal bg-icon text-[350px] -right-10 opacity-5" style="color: var(--text-muted);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">El paradigma secuencial</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">La Interfaz de Línea de Comandos (CLI).</p>
+                </div>
+
+                <div class="glass-panel p-8 border-t-4 max-w-4xl mx-auto" style="border-color: var(--text-muted);">
+                    <h3 class="text-3xl font-bold mb-4 text-gray-700">El control absoluto del código</h3>
+                    <p class="text-lg leading-relaxed mb-4" style="color: var(--text-muted);">
+                        Hasta el momento, hemos desarrollado aplicaciones basadas en texto mediante una <strong>Interfaz de Línea de Comandos (CLI)</strong>. En este <span class="keyword" tabindex="0" data-tooltip="Es la manera en que se decide escribir un programa.Hay muchas formas distintas de hacerlo, ej: POO">paradigma</span>, el código fuente posee el control absoluto y unidireccional sobre el flujo de ejecución del programa.
+                    </p>
+                    
+                    <ul class="space-y-4 text-md mt-6" style="color: var(--text-muted);">
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-arrow-down-1-9 text-gray-500 mt-1 text-xl"></i>
+                            <span><strong>Ejecución Sincrónica:</strong> El programa ejecuta las instrucciones línea por línea de manera predecible.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-hand text-gray-500 mt-1 text-xl"></i>
+                            <span><strong>Bloqueo del Hilo:</strong> Cuando se solicita información mediante la clase <code class="font-mono text-sm bg-gray-100 px-1 rounded">Scanner</code>, el hilo de ejecución principal se suspende indefinidamente hasta que el usuario ingresa un valor y presiona la tecla <kbd class="bg-gray-200 border border-gray-400 rounded px-1 text-xs">Enter</kbd>.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-road-barrier text-gray-500 mt-1 text-xl"></i>
+                            <span><strong>Rigidez:</strong> El usuario no puede alterar el orden de los pasos establecidos por el programador. Debe proporcionar los datos requeridos exactamente en la secuencia solicitada.</span>
+                        </li>
+                    </ul>
+
+                    <div class="mt-6 darcula-bg p-4 rounded-xl font-mono text-sm shadow-inner border border-gray-600 w-full">
+                        <span class="darcula-str">Bienvenido al sistema de registro.</span><br>
+                        <span class="darcula-str">> Ingrese su nombre:</span> <span class="darcula-num">Siandi Araya</span><br>
+                        <span class="darcula-str">> Ingrese su edad:</span> <span class="darcula-com">_ (El programa se detiene y espera aquí obligatoriamente)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 3: CONCEPTOS (GUI) ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-computer-mouse bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">El paradigma visual</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">La Interfaz Gráfica de Usuario (GUI).</p>
+                </div>
+
+                <div class="glass-panel p-8 border-t-4 max-w-4xl mx-auto" style="border-color: var(--accent-blue);">
+                    <h3 class="text-3xl font-bold mb-4 text-blue-700">El usuario toma el control</h3>
+                    <p class="text-lg leading-relaxed mb-4" style="color: var(--text-muted);">
+                        La <strong>Interfaz Gráfica de Usuario (GUI)</strong> transforma la manera en que el software se diseña y se utiliza. Se fundamenta en el estándar de diseño de interacción conocido como <span class="keyword" tabindex="0" data-tooltip="Windows (Ventanas), Icons (Íconos), Menus (Menús), Pointer (Puntero). Es el modelo estándar de los sistemas operativos modernos.">WIMP</span>. En este entorno, el control del flujo de ejecución se transfiere del código fuente hacia el usuario final.
+                    </p>
+                    
+                    <ul class="space-y-4 text-md mt-6" style="color: var(--text-muted);">
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-layer-group text-blue-500 mt-1 text-xl"></i>
+                            <span><strong>Representación Visual:</strong> Los datos y las acciones disponibles se representan mediante componentes gráficos interactivos en lugar de simples cadenas de texto.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-shuffle text-blue-500 mt-1 text-xl"></i>
+                            <span><strong>No Linealidad:</strong> El usuario posee la libertad de navegar por la interfaz, interactuar con múltiples campos, abrir menús o cerrar la ventana en el orden que considere oportuno, sin restricciones secuenciales.</span>
+                        </li>
+                    </ul>
+
+                    <div class="mt-6 bg-gray-100 p-6 rounded-xl flex flex-col md:flex-row items-center justify-center gap-6 border border-gray-300 shadow-inner">
+                        <div class="flex flex-col gap-2 w-full max-w-xs">
+                            <label class="text-sm font-bold text-gray-700">Nombre de Usuario</label>
+                            <input type="text" placeholder="Escribir..." class="px-3 py-2 rounded border border-gray-400 outline-none w-full shadow-sm">
+                        </div>
+                        <div class="flex flex-col gap-2 w-full max-w-xs">
+                            <label class="text-sm font-bold text-gray-700">Acciones</label>
+                            <div class="flex gap-2">
+                                <button class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition w-full">Guardar</button>
+                                <button class="bg-gray-300 text-gray-800 px-4 py-2 rounded shadow hover:bg-gray-400 transition w-full">Cancelar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 4: FLUJO POR EVENTOS ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-bolt bg-icon text-[350px] -right-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Comprendiendo el Flujo por Eventos</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Asincronía y el patrón de delegación.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center max-w-6xl mx-auto mt-8">
+                    <div>
+                        <h3 class="text-3xl font-bold mb-4 text-yellow-600 flex items-center gap-3">
+                            <i class="fa-solid fa-satellite-dish"></i> Programación Orientada a Eventos
+                        </h3>
+                        <p class="text-lg leading-relaxed mb-4" style="color: var(--text-muted);">
+                            Al perder el control lineal del código, la aplicación requiere una arquitectura basada en <strong>eventos</strong>. Un evento representa una transición de estado originada por una acción externa, tal como presionar una tecla, mover el puntero o efectuar un clic izquierdo.
+                        </p>
+                        <p class="text-lg leading-relaxed mb-4" style="color: var(--text-muted);">
+                            El programa principal inicializa la interfaz y entra en un ciclo infinito de inactividad controlado por el Sistema Operativo, denominado <em>Event Dispatch Thread</em> (Hilo Despachador de Eventos).
+                        </p>
+                    </div>
+
+                    <div class="glass-panel p-6 border-l-8" style="border-color: var(--una-gold); background: #ffffff;">
+                        <h4 class="text-2xl font-bold mb-4 flex items-center gap-3 text-gray-800">
+                            El Mecanismo de Listeners
+                        </h4>
+                        <ul class="space-y-4 text-md" style="color: var(--text-muted);">
+                            <li class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600 shrink-0 font-bold">1</div>
+                                <span><strong>Suscripción:</strong> El desarrollador instancia objetos especializados llamados <span class="keyword" tabindex="0" data-tooltip="Interfaces de Java (ej. ActionListener, KeyListener) que obligan a implementar métodos para responder a eventos específicos.">Listeners</span> (Escuchadores) y los asocia a componentes específicos (como un botón).</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600 shrink-0 font-bold">2</div>
+                                <span><strong>Espera pasiva:</strong> El sistema permanece en estado de reposo, sin consumir ciclos de CPU procesando lógica, hasta que ocurre una interacción.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600 shrink-0 font-bold">3</div>
+                                <span><strong>Interrupción:</strong> Al detectarse una acción del usuario, el sistema notifica inmediatamente al Listener suscrito, ejecutando el bloque de código asociado a dicho evento.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 5: AWT ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-clock-rotate-left bg-icon text-[350px] -left-10 opacity-5" style="color: var(--text-muted);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Bibliotecas GUI: Historia e Implementación (AWT)</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Los cimientos gráficos del lenguaje Java.</p>
+                </div>
+
+                <div class="glass-panel p-8 border-t-4 max-w-4xl mx-auto" style="border-color: var(--text-muted);">
+                    <h3 class="text-3xl font-bold mb-4 flex items-center gap-3">
+                        <i class="fa-solid fa-building-columns text-gray-500"></i>
+                        AWT (Abstract Window Toolkit)
+                    </h3>
+                    <p class="text-lg leading-relaxed mb-4" style="color: var(--text-muted);">
+                        AWT fue la primera biblioteca gráfica nativa proporcionada en la versión 1.0 de Java (ubicada en el paquete <code class="font-mono text-sm bg-gray-100 px-2 py-1 rounded">java.awt</code>). Su arquitectura se fundamentaba en una delegación directa al sistema operativo anfitrión.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        <div>
+                            <h4 class="font-bold text-lg mb-2 text-gray-700"><i class="fa-solid fa-gears mr-2"></i>Arquitectura Heavyweight</h4>
+                            <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
+                                AWT utiliza componentes catalogados como <span class="keyword" tabindex="0" data-tooltip="Componentes pesados. Requieren que el sistema operativo reserve memoria y administre su visualización y eventos a bajo nivel.">Heavyweight</span>. Cuando el desarrollador instancia un botón en Java, la Máquina Virtual realiza una llamada al sistema operativo subyacente (Windows, Linux o macOS) solicitando la creación de un control visual nativo equivalente.
+                            </p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-2 text-red-600"><i class="fa-solid fa-triangle-exclamation mr-2"></i>Limitaciones Estructurales</h4>
+                            <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
+                                Dado que la renderización dependía del sistema operativo, el diseño y las dimensiones de la interfaz variaban drásticamente entre plataformas. Un botón diseñado en Windows podía superponerse o recortarse al ejecutarse en macOS, comprometiendo gravemente el principio fundamental de portabilidad de Java.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 6: SWING ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-brands fa-java bg-icon text-[350px] -right-10 opacity-5" style="color: var(--una-red);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Bibliotecas GUI: La evolución a Java Swing</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">El estándar maduro que otorga portabilidad real.</p>
+                </div>
+
+                <div class="glass-panel p-8 border-t-4 max-w-4xl mx-auto" style="border-color: var(--una-red);">
+                    <h3 class="text-3xl font-bold mb-4 flex items-center gap-3">
+                        <i class="fa-brands fa-java" style="color: var(--una-red);"></i>
+                        Java Swing
+                    </h3>
+                    <p class="text-lg leading-relaxed mb-4" style="color: var(--text-muted);">
+                        Introducida en Java 1.2, Swing (<code class="font-mono text-sm bg-gray-100 px-2 py-1 rounded">javax.swing</code>) se diseñó como una solución directa a las inconsistencias de AWT. Emplea la API Java 2D para renderizar gráficamente sus elementos sin solicitar controles nativos al sistema operativo.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        <div>
+                            <h4 class="font-bold text-lg mb-2 text-gray-700"><i class="fa-solid fa-paintbrush mr-2"></i>Arquitectura Lightweight</h4>
+                            <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
+                                Utiliza componentes <span class="keyword" tabindex="0" data-tooltip="Componentes ligeros. Java dibuja los píxeles independientemente, consumiendo menos recursos nativos del sistema operativo.">Lightweight</span>. Los elementos se escriben completamente en Java. Por convención, todas las clases de esta biblioteca se identifican con el prefijo <strong>J</strong> (<code class="font-mono text-xs bg-gray-100 px-1 rounded">JButton</code>, <code class="font-mono text-xs bg-gray-100 px-1 rounded">JLabel</code>, <code class="font-mono text-xs bg-gray-100 px-1 rounded">JTextField</code>).
+                            </p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-2 text-green-600"><i class="fa-solid fa-check-circle mr-2"></i>Portabilidad y Consistencia</h4>
+                            <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
+                                Swing garantiza la consistencia visual y dimensional en cualquier entorno (<em>Pluggable Look and Feel</em>). Una interfaz gráfica de usuario construida con Swing se mostrará con idéntica precisión geométrica en diversas arquitecturas, preservando la integridad del diseño original.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 7: ESTRUCTURA JFRAME ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-regular fa-window-maximize bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Estructura de la Interfaz: Contenedor Principal</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">La jerarquía obligatoria de los elementos visuales.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-6xl mx-auto">
+                    <div class="lg:col-span-5 glass-panel p-6 border-l-8 flex flex-col justify-center" style="border-color: var(--accent-blue);">
+                        <h3 class="text-3xl font-bold mb-2">Contenedor de Alto Nivel</h3>
+                        <div class="text-2xl font-mono font-bold mb-4 text-blue-600">JFrame</div>
+                        <p class="text-md leading-relaxed mb-4" style="color: var(--text-muted);">
+                            La clase <code class="font-mono text-sm">JFrame</code> es la unidad raíz de cualquier aplicación de escritorio en Java Swing <span class="opacity-50">[cite: 6]</span>. Encapsula las funcionalidades necesarias para establecer una ventana física interactuando con el gestor de ventanas del sistema operativo.
+                        </p>
+                        <ul class="space-y-3 text-sm" style="color: var(--text-muted);">
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Proporciona la decoración de la ventana (barra de título y controles de estado).</li>
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Gestiona las dimensiones globales en píxeles.</li>
+                            <li><i class="fa-solid fa-triangle-exclamation text-red-500 mr-2"></i> Un <code class="font-mono text-sm">JFrame</code> constituye el nodo superior de la jerarquía; no puede ser encapsulado dentro de otros contenedores Swing.</li>
+                        </ul>
+                    </div>
+
+                    <div class="lg:col-span-7 darcula-bg p-6 rounded-2xl shadow-xl overflow-x-auto text-sm border border-gray-700">
+                        <div class="flex items-center gap-2 mb-4 border-b border-gray-600 pb-2">
+                            <i class="fa-brands fa-java" style="color: #cc7832;"></i>
+                            <span class="font-mono text-gray-400">Main.java <span class="opacity-50">[cite: 6]</span></span>
+                        </div>
+                        <pre class="font-mono leading-loose" style="margin: 0;"><code><span class="darcula-kw">import</span> javax.swing.JFrame;
+
+<span class="darcula-kw">public class</span> <span class="darcula-class">Main</span> {
+    <span class="darcula-kw">public static void</span> <span class="darcula-func">main</span>(<span class="darcula-class">String</span>[] args) {
+        <span class="darcula-com">// 1. Instanciación del contenedor principal</span>
+        <span class="darcula-class">JFrame</span> ventana = <span class="darcula-kw">new</span> <span class="darcula-class">JFrame</span>(<span class="darcula-str">"Sistema Administrativo"</span>);
+        
+        <span class="darcula-com">// 2. Configuración de dimensiones (Ancho x Alto)</span>
+        ventana.<span class="darcula-func">setSize</span>(<span class="darcula-num">800</span>, <span class="darcula-num">600</span>);
+        
+        <span class="darcula-com">// 3. Definición del comportamiento de finalización</span>
+        <span class="darcula-com">// Asegura que el hilo principal se destruya al cerrar</span>
+        ventana.<span class="darcula-func">setDefaultCloseOperation</span>(<span class="darcula-class">JFrame</span>.EXIT_ON_CLOSE);
+        
+        <span class="darcula-com">// 4. Renderización del componente en pantalla</span>
+        ventana.<span class="darcula-func">setVisible</span>(<span class="darcula-kw">true</span>);
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 8: ESTRUCTURA JPANEL ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-vector-square bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Estructura de la Interfaz: Contenedores Intermedios</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Organización espacial y modularidad de componentes.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-6xl mx-auto">
+                    <div class="lg:col-span-5 glass-panel p-6 border-l-8 flex flex-col justify-center" style="border-color: var(--accent-green);">
+                        <h3 class="text-3xl font-bold mb-2">Agrupación Lógica</h3>
+                        <div class="text-2xl font-mono font-bold mb-4 text-green-600">JPanel</div>
+                        <p class="text-md leading-relaxed mb-4" style="color: var(--text-muted);">
+                            La inserción directa de componentes en un <code class="font-mono text-sm">JFrame</code> carece de estructura. Para implementar diseños complejos, se requiere la instanciación de <strong>Contenedores Intermedios</strong> <span class="opacity-50">[cite: 6]</span>.
+                        </p>
+                        <ul class="space-y-3 text-sm" style="color: var(--text-muted);">
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Constituyen áreas rectangulares transparentes diseñadas para agrupar lógicamente otros componentes <span class="opacity-50">[cite: 6]</span>.</li>
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Admiten el anidamiento: un <code class="font-mono text-sm">JPanel</code> puede contener múltiples <code class="font-mono text-sm">JPanel</code> adicionales, estructurando regiones como barras de navegación y áreas de contenido.</li>
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Administran el posicionamiento de sus hijos mediante algoritmos de distribución geométrica denominados <span class="keyword" tabindex="0" data-tooltip="Clases de Java como BorderLayout o GridLayout que calculan automáticamente dónde colocar y cómo dimensionar los componentes hijos.">Layout Managers</span> <span class="opacity-50">[cite: 6]</span>.</li>
+                        </ul>
+                    </div>
+
+                    <div class="lg:col-span-7 darcula-bg p-6 rounded-2xl shadow-xl overflow-x-auto text-sm border border-gray-700">
+                        <div class="flex items-center gap-2 mb-4 border-b border-gray-600 pb-2">
+                            <i class="fa-brands fa-java" style="color: #cc7832;"></i>
+                            <span class="font-mono text-gray-400">Main.java (continuación)</span>
+                        </div>
+                        <pre class="font-mono leading-loose" style="margin: 0;"><code><span class="darcula-com">// 5. Instanciación del contenedor intermedio</span>
+<span class="darcula-class">JPanel</span> panelPrincipal = <span class="darcula-kw">new</span> <span class="darcula-class">JPanel</span>();
+
+<span class="darcula-com">// Configuración opcional para propósitos de depuración visual</span>
+panelPrincipal.<span class="darcula-func">setBackground</span>(<span class="darcula-class">Color</span>.LIGHT_GRAY);
+
+<span class="darcula-com">// 6. Asignación del panel como contenido maestro de la ventana</span>
+<span class="darcula-com">// Este método establece que el panel cubrirá toda el área visible</span>
+ventana.<span class="darcula-func">setContentPane</span>(panelPrincipal);</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 9: COMPONENTES ATÓMICOS 1 ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-font bg-icon text-[350px] -left-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Componentes Atómicos: Textos y Etiquetas</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Elementos de entrada de datos e información estática.</p>
+                </div>
+
+                <div class="glass-panel p-8 border-t-4 max-w-5xl mx-auto" style="border-color: var(--una-gold);">
+                    <p class="text-lg leading-relaxed mb-6" style="color: var(--text-muted);">
+                        Los <strong>Componentes Atómicos</strong> representan el nivel inferior de la jerarquía visual. Carecen de la capacidad de albergar otros componentes en su interior. Su función radica en facilitar la interacción directa con el usuario final y procesar la entrada de datos.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- JLabel -->
+                        <div class="bg-gray-50 p-5 rounded-xl border border-gray-200">
+                            <h4 class="font-bold text-xl mb-3 flex items-center gap-2 text-yellow-700 font-mono">
+                                JLabel
+                            </h4>
+                            <p class="text-sm leading-relaxed mb-4" style="color: var(--text-muted);">
+                                Proporciona un área para la visualización de texto de formato corto, o íconos, que el usuario no puede editar <span class="opacity-50">[cite: 6]</span>. Se emplea principalmente para etiquetar campos de entrada o comunicar el estado de una operación.
+                            </p>
+                            <div class="darcula-bg p-3 rounded text-xs font-mono mb-3">
+                                <span class="darcula-class">JLabel</span> etiqueta = <span class="darcula-kw">new</span> <span class="darcula-class">JLabel</span>(<span class="darcula-str">"Nombre:"</span>);
+                            </div>
+                            <div class="flex justify-center border border-gray-300 rounded p-2 bg-white">
+                                <span class="text-sm text-gray-800 font-sans">Nombre:</span>
+                            </div>
+                        </div>
+                        
+                        <!-- JTextField -->
+                        <div class="bg-gray-50 p-5 rounded-xl border border-gray-200">
+                            <h4 class="font-bold text-xl mb-3 flex items-center gap-2 text-yellow-700 font-mono">
+                                JTextField / JTextArea
+                            </h4>
+                            <p class="text-sm leading-relaxed mb-4" style="color: var(--text-muted);">
+                                Componentes de manipulación de texto <span class="opacity-50">[cite: 6]</span>. <code class="font-mono text-xs">JTextField</code> permite la inserción de una sola línea de caracteres, mientras que <code class="font-mono text-xs">JTextArea</code> habilita la entrada multilínea para bloques de texto extensos.
+                            </p>
+                            <div class="darcula-bg p-3 rounded text-xs font-mono mb-3">
+                                <span class="darcula-class">JTextField</span> campo = <span class="darcula-kw">new</span> <span class="darcula-class">JTextField</span>(<span class="darcula-num">15</span>);
+                            </div>
+                            <div class="flex justify-center border border-gray-300 rounded p-2 bg-white">
+                                <input type="text" class="border border-gray-400 outline-none w-32 px-1 text-xs" value="Siandi">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 10: COMPONENTES ATÓMICOS 2 ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-hand-pointer bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-peach);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Componentes Atómicos: Botones y Selección</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Elementos para desencadenar acciones y evaluar restricciones.</p>
+                </div>
+
+                <div class="glass-panel p-8 border-t-4 max-w-5xl mx-auto" style="border-color: var(--accent-peach);">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        
+                        <!-- JButton -->
+                        <div class="bg-gray-50 p-5 rounded-xl border border-gray-200">
+                            <h4 class="font-bold text-lg mb-3 text-orange-600 font-mono">JButton</h4>
+                            <p class="text-xs leading-relaxed mb-4" style="color: var(--text-muted);">
+                                Representa un botón de comando tradicional <span class="opacity-50">[cite: 6]</span>. Diseñado fundamentalmente para capturar interacciones de clic y desencadenar un <code class="font-mono text-[10px]">ActionEvent</code> en la arquitectura orientada a eventos.
+                            </p>
+                            <div class="darcula-bg p-2 rounded text-[10px] font-mono mb-3 overflow-hidden">
+                                <span class="darcula-class">JButton</span> b = <span class="darcula-kw">new</span> <span class="darcula-class">JButton</span>(<span class="darcula-str">"OK"</span>);
+                            </div>
+                            <div class="flex justify-center mt-2">
+                                <button class="bg-gray-200 border border-gray-400 rounded px-4 py-1 text-sm shadow-sm">OK</button>
+                            </div>
+                        </div>
+
+                        <!-- JCheckBox / JRadioButton -->
+                        <div class="bg-gray-50 p-5 rounded-xl border border-gray-200">
+                            <h4 class="font-bold text-lg mb-3 text-orange-600 font-mono">JCheckBox / JRadioButton</h4>
+                            <p class="text-xs leading-relaxed mb-4" style="color: var(--text-muted);">
+                                Gestionan selecciones booleanas. <code class="font-mono text-[10px]">JCheckBox</code> permite estados independientes (múltiples selecciones). <code class="font-mono text-[10px]">JRadioButton</code> se emplea en conjuntos mutuamente excluyentes (solo una opción activa).
+                            </p>
+                            <div class="darcula-bg p-2 rounded text-[10px] font-mono mb-3 overflow-hidden">
+                                <span class="darcula-class">JCheckBox</span> c = <span class="darcula-kw">new</span> <span class="darcula-class">JCheckBox</span>();
+                            </div>
+                            <div class="flex justify-center gap-4 mt-2">
+                                <div class="flex items-center gap-1"><input type="checkbox" checked><span class="text-xs">Activo</span></div>
+                                <div class="flex items-center gap-1"><input type="radio" checked><span class="text-xs">Único</span></div>
+                            </div>
+                        </div>
+
+                        <!-- JComboBox -->
+                        <div class="bg-gray-50 p-5 rounded-xl border border-gray-200">
+                            <h4 class="font-bold text-lg mb-3 text-orange-600 font-mono">JComboBox</h4>
+                            <p class="text-xs leading-relaxed mb-4" style="color: var(--text-muted);">
+                                Implementa un menú desplegable. Proporciona una lista de valores predefinidos, optimizando el espacio visual al ocultar las opciones hasta que el componente reciba el foco de interacción.
+                            </p>
+                            <div class="darcula-bg p-2 rounded text-[10px] font-mono mb-3 overflow-hidden">
+                                <span class="darcula-class">JComboBox</span> cb = <span class="darcula-kw">new</span> <span class="darcula-class">JComboBox</span>();
+                            </div>
+                            <div class="flex justify-center mt-2">
+                                <select class="border border-gray-400 rounded px-2 py-1 text-xs w-24 bg-white outline-none">
+                                    <option>Opción 1</option>
+                                    <option>Opción 2</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 11: EL CÓDIGO COMPLETO ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 flex flex-col items-center">
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Implementación en Código: Contenedores y Componentes</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">La síntesis de la estructura jerárquica en código puro de Java.</p>
+                </div>
+
+                <div class="w-full max-w-4xl darcula-bg p-8 rounded-2xl shadow-2xl border border-gray-600 text-sm md:text-[15px]">
+                    <div class="flex items-center justify-between mb-4 border-b border-gray-600 pb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="flex gap-2">
+                                <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                                <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                                <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                            </div>
+                            <span class="font-mono text-gray-400">Main.java</span>
+                        </div>
+                    </div>
+                    <pre class="font-mono leading-relaxed" style="margin: 0;"><code><span class="darcula-kw">import</span> javax.swing.*;
+
+<span class="darcula-kw">public class</span> <span class="darcula-class">Main</span> {
+    <span class="darcula-kw">public static void</span> <span class="darcula-func">main</span>(<span class="darcula-class">String</span>[] args) {
+        <span class="darcula-com">// 1. Nivel Superior (Contenedor de Alto Nivel)</span>
+        <span class="darcula-class">JFrame</span> ventana = <span class="darcula-kw">new</span> <span class="darcula-class">JFrame</span>(<span class="darcula-str">"Estructura Swing Pura"</span>);
+        ventana.<span class="darcula-func">setSize</span>(<span class="darcula-num">400</span>, <span class="darcula-num">300</span>);
+        ventana.<span class="darcula-func">setDefaultCloseOperation</span>(<span class="darcula-class">JFrame</span>.EXIT_ON_CLOSE);
+
+        <span class="darcula-com">// 2. Nivel Intermedio (Contenedor de Agrupación)</span>
+        <span class="darcula-class">JPanel</span> panel = <span class="darcula-kw">new</span> <span class="darcula-class">JPanel</span>();
+
+        <span class="darcula-com">// 3. Nivel Inferior (Componentes Atómicos)</span>
+        <span class="darcula-class">JLabel</span> etiqueta = <span class="darcula-kw">new</span> <span class="darcula-class">JLabel</span>(<span class="darcula-str">"Ejecución Exitosa."</span>);
+        <span class="darcula-class">JButton</span> boton = <span class="darcula-kw">new</span> <span class="darcula-class">JButton</span>(<span class="darcula-str">"Procesar"</span>);
+
+        <span class="darcula-com">// 4. Consolidación de la Jerarquía (Niveles inferiores hacia arriba)</span>
+        panel.<span class="darcula-func">add</span>(etiqueta);        
+        panel.<span class="darcula-func">add</span>(boton);           
+        ventana.<span class="darcula-func">setContentPane</span>(panel); 
+
+        <span class="darcula-com">// 5. Transición al estado visible</span>
+        ventana.<span class="darcula-func">setVisible</span>(<span class="darcula-kw">true</span>);
+    }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 12: PATRONES - EL PROBLEMA ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-triangle-exclamation bg-icon text-[350px] -left-10 opacity-5" style="color: var(--una-red);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Estructuras y Patrones: El Peligro <span class="text-[20px] opacity-50 align-top">[cite: 1]</span></h2>
+                    <p class="text-xl" style="color: var(--text-muted);">El antipatrón del Código Espagueti y las Clases Monolíticas.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center max-w-6xl mx-auto">
+                    <div>
+                        <h3 class="text-3xl font-bold mb-4 text-red-600 flex items-center gap-3">
+                            <i class="fa-solid fa-xmark"></i> Riesgos Arquitectónicos
+                        </h3>
+                        <p class="text-lg leading-relaxed mb-4" style="color: var(--text-muted);">
+                            La simplicidad de los entornos de diseño visual frecuentemente conduce a deficiencias arquitectónicas. Resulta común integrar la totalidad de la <span class="keyword" tabindex="0" data-tooltip="Operaciones matemáticas, consultas de datos y aplicación de reglas del sistema real.">lógica de negocio</span> dentro de los métodos de gestión de eventos proporcionados por la interfaz gráfica.
+                        </p>
+                        <ul class="space-y-4 text-md" style="color: var(--text-muted);">
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-bomb text-red-500 mt-1 text-xl"></i>
+                                <span><strong>El Antipatrón "Smart UI":</strong> Ocurre cuando un bloque de interfaz gráfica asume responsabilidades de cálculo financiero, procesamiento de cadenas de texto y manipulación directa de estructuras de datos (ej. <code class="font-mono text-sm">ArrayList</code>).</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-bomb text-red-500 mt-1 text-xl"></i>
+                                <span><strong>Consecuencia Técnica:</strong> La generación de clases <span class="keyword" tabindex="0" data-tooltip="Un único archivo masivo que concentra múltiples responsabilidades, resultando imposible de mantener o someter a pruebas unitarias.">monolíticas</span> que imposibilitan el mantenimiento del software y violan los principios de diseño modular solicitados para los entregables de su proyecto <span class="opacity-50">[cite: 5]</span>.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="darcula-bg p-6 rounded-2xl shadow-xl overflow-x-auto text-sm border-2 border-red-500">
+                        <div class="flex items-center gap-2 mb-4 border-b border-gray-600 pb-2 text-red-400">
+                            <i class="fa-solid fa-skull-crossbones"></i>
+                            <span class="font-bold">Ejemplo de Práctica Deficiente (Monolítica)</span>
+                        </div>
+                        <pre class="font-mono leading-relaxed" style="margin: 0; opacity: 0.9;"><code><span class="darcula-com">// Listener anidado en la clase visual</span>
+btnFacturar.<span class="darcula-func">addActionListener</span>(e -> {
+    <span class="darcula-com">// ✗ DEFICIENCIA: Lógica matemática en la Vista</span>
+    <span class="darcula-kw">double</span> subtotal = <span class="darcula-class">Double</span>.<span class="darcula-func">parseDouble</span>(txtPrecio.<span class="darcula-func">getText</span>());
+    <span class="darcula-kw">double</span> impuesto = subtotal * <span class="darcula-num">0.13</span>;
+    <span class="darcula-kw">double</span> total = subtotal + impuesto;
+    
+    <span class="darcula-com">// ✗ DEFICIENCIA: Persistencia de memoria en la Vista</span>
+    <span class="darcula-class">Producto</span> p = <span class="darcula-kw">new</span> <span class="darcula-class">Producto</span>(<span class="darcula-str">"Monitor"</span>, total);
+    inventarioGlobal.<span class="darcula-func">add</span>(p);
+    
+    <span class="darcula-com">// Renderización en el componente</span>
+    lblTotal.<span class="darcula-func">setText</span>(<span class="darcula-class">String</span>.<span class="darcula-func">valueOf</span>(total));
+});</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 13: COMPARACIÓN ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-code-compare bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Refactorización: Código Monolítico vs. Modular</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Delegando el procesamiento a capas especializadas.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start max-w-6xl mx-auto">
+                    <!-- Incorrecto -->
+                    <div class="darcula-bg p-6 rounded-2xl shadow-xl overflow-x-auto text-xs border border-gray-600 relative">
+                        <div class="absolute top-0 right-0 bg-red-600 text-white px-3 py-1 rounded-bl-lg rounded-tr-lg font-bold"><i class="fa-solid fa-xmark"></i> Incorrecto</div>
+                        <div class="flex items-center gap-2 mb-4 border-b border-gray-600 pb-2">
+                            <span class="font-mono text-gray-400">Todo en VentanaGUI.java (mezclado)</span>
+                        </div>
+                        <pre class="font-mono leading-relaxed" style="margin: 0;"><code>btnFacturar.<span class="darcula-func">addActionListener</span>(e -> {
+    <span class="darcula-kw">try</span> {
+        <span class="darcula-com">// Lee los datos desde las cajas de texto</span>
+        <span class="darcula-kw">double</span> precio = <span class="darcula-class">Double</span>.<span class="darcula-func">parseDouble</span>(txtPrecio.<span class="darcula-func">getText</span>());
+        <span class="darcula-kw">int</span> cant = <span class="darcula-class">Integer</span>.<span class="darcula-func">parseInt</span>(txtCant.<span class="darcula-func">getText</span>());
+        
+        <span class="darcula-com">// Calcula el total (esto debería estar en otra clase)</span>
+        <span class="darcula-kw">double</span> subtotal = precio * cant;
+        <span class="darcula-kw">double</span> iv = subtotal * <span class="darcula-num">0.13</span>;
+        <span class="darcula-kw">double</span> total = subtotal + iv;
+        
+        <span class="darcula-com">// Guarda directo a la base de datos desde la ventana</span>
+        <span class="darcula-class">Factura</span> f = <span class="darcula-kw">new</span> <span class="darcula-class">Factura</span>(total);
+        BaseDatos.<span class="darcula-func">guardar</span>(f);
+        
+        <span class="darcula-com">// Muestra el resultado en una etiqueta</span>
+        lblTotal.<span class="darcula-func">setText</span>(<span class="darcula-str">"Total: "</span> + total);
+    } <span class="darcula-kw">catch</span> (<span class="darcula-class">Exception</span> ex) {
+        lblError.<span class="darcula-func">setText</span>(<span class="darcula-str">"Datos inválidos"</span>);
+    }
+});</code></pre>
+                        <p class="text-red-400 text-[10px] mt-2 leading-relaxed"><i class="fa-solid fa-triangle-exclamation"></i> Calcula, guarda y muestra todo en un solo lugar. Si el impuesto cambia, hay que modificar la ventana.</p>
+                    </div>
+
+                    <!-- Correcto -->
+                    <div class="darcula-bg p-6 rounded-2xl shadow-xl overflow-x-auto text-xs border-2 border-green-500 relative">
+                        <div class="absolute top-0 right-0 bg-green-600 text-white px-3 py-1 rounded-bl-lg rounded-tr-lg font-bold"><i class="fa-solid fa-check"></i> Arquitectura Correcta</div>
+                        <div class="flex flex-col gap-4">
+                            <div>
+                                <div class="flex items-center gap-2 mb-2 border-b border-gray-600 pb-1">
+                                    <span class="font-mono text-gray-400">ServicioFacturacion.java (lógica aparte)</span>
+                                </div>
+                                <pre class="font-mono leading-relaxed" style="margin: 0;"><code><span class="darcula-com">// Esta clase solo hace cálculos, no toca ventanas</span>
+<span class="darcula-kw">public double</span> <span class="darcula-func">procesarVenta</span>(<span class="darcula-class">String</span> p, <span class="darcula-class">String</span> c) <span class="darcula-kw">throws</span> <span class="darcula-class">Exception</span> {
+    <span class="darcula-kw">double</span> precio = <span class="darcula-class">Double</span>.<span class="darcula-func">parseDouble</span>(p);
+    <span class="darcula-kw">int</span> cant = <span class="darcula-class">Integer</span>.<span class="darcula-func">parseInt</span>(c);
+    <span class="darcula-kw">double</span> total = precio * cant * <span class="darcula-num">1.13</span>;
+    BaseDatos.<span class="darcula-func">guardar</span>(<span class="darcula-kw">new</span> <span class="darcula-class">Factura</span>(total));
+    <span class="darcula-kw">return</span> total;  <span class="darcula-com">// devuelve el resultado, no lo muestra</span>
+}</code></pre>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-2 border-b border-gray-600 pb-1">
+                                    <span class="font-mono text-gray-400">VentanaGUI.java (solo muestra)</span>
+                                </div>
+                                <pre class="font-mono leading-relaxed" style="margin: 0;"><code><span class="darcula-com">// La ventana solo pide los datos y muestra el resultado</span>
+btnFacturar.<span class="darcula-func">addActionListener</span>(e -> {
+    <span class="darcula-kw">try</span> {
+        <span class="darcula-com">// Delega TODO el trabajo al servicio</span>
+        <span class="darcula-kw">double</span> total = servicio.<span class="darcula-func">procesarVenta</span>(
+            txtPrecio.<span class="darcula-func">getText</span>(), 
+            txtCant.<span class="darcula-func">getText</span>()
+        );
+        <span class="darcula-com">// Solo muestra, no calcula ni guarda</span>
+        lblTotal.<span class="darcula-func">setText</span>(<span class="darcula-str">"Total: "</span> + total);
+    } <span class="darcula-kw">catch</span> (<span class="darcula-class">Exception</span> ex) {
+        lblError.<span class="darcula-func">setText</span>(<span class="darcula-str">"Error en ingreso"</span>);
+    }
+});</code></pre>
+                            </div>
+                        </div>
+                        <p class="text-green-400 text-[10px] mt-2 leading-relaxed"><i class="fa-solid fa-check"></i> Si el impuesto cambia, solo modificás ServicioFacturacion. La ventana ni se entera.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 14: SEPARACIÓN ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-layer-group bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Separación Estricta de Responsabilidades</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Los cimientos metodológicos para el patrón arquitectónico.</p>
+                </div>
+
+                <div class="glass-panel p-8 border-t-4 max-w-5xl mx-auto" style="border-color: var(--accent-green);">
+                    <h3 class="text-3xl font-bold mb-4 text-green-700">Aislamiento de la Interfaz Visual</h3>
+                    <p class="text-lg leading-relaxed mb-6" style="color: var(--text-muted);">
+                        Para asegurar la escabilidad del software, se debe imponer una restricción conceptual sobre la Interfaz Gráfica de Usuario (GUI): esta capa estructural debe limitarse estrictamente a <strong>renderizar el estado del sistema en la pantalla</strong> y <strong>capturar las señales emitidas por el hardware de entrada</strong>.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Vista -->
+                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-300 shadow-sm flex flex-col h-full">
+                            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xl mb-4"><i class="fa-regular fa-window-maximize"></i></div>
+                            <h4 class="font-bold text-lg text-gray-800 mb-2">Capa de Presentación</h4>
+                            <p class="text-sm text-gray-600 grow">
+                                Solo muestra datos y captura eventos. <strong>Nunca</strong> hace cálculos ni guarda nada.
+                            </p>
+                            <div class="mt-3 darcula-bg p-3 rounded-lg text-[10px] leading-relaxed border border-gray-600">
+                                <span class="darcula-com">// Mal: cálculo en la vista</span><br>
+                                <span class="darcula-kw">double</span> t = precio * cant * <span class="darcula-num">1.13</span>;<br>
+                                lblTotal.<span class="darcula-func">setText</span>(<span class="darcula-str">""</span>+t);<br><br>
+                                <span class="darcula-com">// Bien: solo delegar</span><br>
+                                <span class="darcula-kw">double</span> t = servicio.<span class="darcula-func">calcular</span>(precio,cant);<br>
+                                lblTotal.<span class="darcula-func">setText</span>(<span class="darcula-str">""</span>+t);
+                            </div>
+                        </div>
+                        
+                        <!-- Controlador -->
+                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-300 shadow-sm flex flex-col h-full">
+                            <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 text-xl mb-4"><i class="fa-solid fa-gears"></i></div>
+                            <h4 class="font-bold text-lg text-gray-800 mb-2">Capa de Lógica</h4>
+                            <p class="text-sm text-gray-600 grow">
+                                Recibe datos crudos de la vista, aplica reglas de negocio y retorna resultados. No toca componentes Swing.
+                            </p>
+                            <div class="mt-3 darcula-bg p-3 rounded-lg text-[10px] leading-relaxed border border-gray-600">
+                                <span class="darcula-com">// Mal: lógica tocando GUI</span><br>
+                                lblError.<span class="darcula-func">setText</span>(<span class="darcula-str">"Error"</span>); <span class="darcula-com">// ← no</span><br><br>
+                                <span class="darcula-com">// Bien: solo devolver valor</span><br>
+                                <span class="darcula-kw">return</span> subtotal * <span class="darcula-num">1.13</span>;
+                            </div>
+                        </div>
+
+                        <!-- Modelo -->
+                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-300 shadow-sm flex flex-col h-full">
+                            <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-xl mb-4"><i class="fa-solid fa-database"></i></div>
+                            <h4 class="font-bold text-lg text-gray-800 mb-2">Capa de Datos</h4>
+                            <p class="text-sm text-gray-600 grow">
+                                Define qué se guarda (<code class="font-mono text-xs">Factura</code>, <code class="font-mono text-xs">Producto</code>) y cómo. Solo recibe objetos ya validados.
+                            </p>
+                            <div class="mt-3 darcula-bg p-3 rounded-lg text-[10px] leading-relaxed border border-gray-600">
+                                <span class="darcula-com">// Mal: validar en datos</span><br>
+                                <span class="darcula-kw">if</span>(precio &lt; <span class="darcula-num">0</span>) <span class="darcula-kw">return</span>; <span class="darcula-com">// ← no aquí</span><br><br>
+                                <span class="darcula-com">// Bien: solo guardar</span><br>
+                                lista.<span class="darcula-func">add</span>(<span class="darcula-kw">new</span> <span class="darcula-class">Factura</span>(total));
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 text-center text-sm font-bold text-gray-500 bg-white p-3 rounded border border-gray-200">
+                        Esta división estructural es el requisito arquitectónico base exigido para la rúbrica del Proyecto 1 <span class="opacity-50">[cite: 5]</span>, preparando al código para transicionar orgánicamente hacia el modelo Modelo-Vista-Controlador.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 15: GUI DESIGNER 1 ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-wand-magic-sparkles bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">El GUI Designer de IntelliJ <span class="text-[20px] opacity-50 align-top">[cite: 1]</span></h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Automatizando el diseño de posicionamiento absoluto.</p>
+                </div>
+
+                <div class="glass-panel p-8 border-t-4 max-w-5xl mx-auto" style="border-color: var(--accent-blue);">
+                    <div class="flex items-center gap-6 mb-6">
+                        <div class="w-16 h-16 shrink-0 rounded-full tint-blue flex items-center justify-center text-3xl shadow-md">
+                            <i class="fa-solid fa-object-group"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-3xl font-bold mb-2">Diseño Visual Asistido</h3>
+                            <p class="text-lg leading-relaxed" style="color: var(--text-muted);">
+                                Programar explícitamente mediante coordenadas Cartesianas (X, Y) y longitudes en píxeles demanda un esfuerzo considerable y resulta ineficiente. El entorno IntelliJ proporciona un generador visual de interfaces capaz de estructurar el código subyacente automáticamente.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 mt-4">
+                        <h4 class="font-bold text-xl mb-4 flex items-center gap-2 text-blue-700">
+                            <i class="fa-solid fa-file-code"></i> La Estructura de Archivos Vinculados
+                        </h4>
+                        <p class="text-md leading-relaxed mb-4" style="color: var(--text-muted);">
+                            La creación de un <code class="font-mono text-sm bg-gray-200 px-1 rounded text-black shadow-sm">GUI Form</code> desencadena la instanciación simultánea de dos archivos estructuralmente acoplados:
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="p-4 bg-white rounded border border-gray-300">
+                                <p class="text-red-700 font-bold mb-2 font-mono"><i class="fa-solid fa-code"></i> Archivo .form</p>
+                                <p class="text-sm text-gray-600">Un documento configurado bajo notación XML reservado para el IDE. En este repositorio de metadata se registran las matrices posicionales, las jerarquías de los paneles y las asignaciones de color.</p>
+                            </div>
+                            <div class="p-4 bg-white rounded border border-gray-300">
+                                <p class="text-blue-700 font-bold mb-2 font-mono"><i class="fa-brands fa-java"></i> Archivo .java</p>
+                                <p class="text-sm text-gray-600">La declaración formal de la clase en Java. Es responsable de exponer los identificadores y proveer un entorno seguro para vincular los <em>Listeners</em> sin alterar el diseño visual.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 16: GUI DESIGNER 2 ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-table-columns bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-peach);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Herramientas del Entorno Gráfico</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Interacción con el panel de diseño en IntelliJ.</p>
+                </div>
+
+                <div class="glass-panel p-8 border-t-4 max-w-6xl mx-auto" style="border-color: var(--accent-peach);">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        
+                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 flex flex-col h-full shadow-sm">
+                            <h4 class="font-bold text-lg mb-3 flex items-center gap-2 text-orange-700">
+                                <i class="fa-solid fa-palette"></i> Palette (Paleta)
+                            </h4>
+                            <p class="text-sm leading-relaxed text-gray-600 grow">
+                                El repositorio visual lateral que cataloga los elementos atómicos y contenedores disponibles en el <code class="font-mono text-xs">javax.swing</code>. Desde aquí, los elementos se transfieren hacia el lienzo central mediante la técnica de arrastrar y soltar (<em>drag-and-drop</em>).
+                            </p>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 flex flex-col h-full shadow-sm">
+                            <h4 class="font-bold text-lg mb-3 flex items-center gap-2 text-orange-700">
+                                <i class="fa-solid fa-network-wired"></i> Component Tree
+                            </h4>
+                            <p class="text-sm leading-relaxed text-gray-600 grow">
+                                Representación del modelo de objetos en formato de árbol jerárquico. Refleja las relaciones de subordinación de los contenedores (qué componente reside en el interior de cada panel) y expone la alineación estructural del layout en tiempo real.
+                            </p>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 flex flex-col h-full shadow-sm">
+                            <h4 class="font-bold text-lg mb-3 flex items-center gap-2 text-orange-700">
+                                <i class="fa-solid fa-sliders"></i> Inspector
+                            </h4>
+                            <p class="text-sm leading-relaxed text-gray-600 grow">
+                                Tabla matricial inferior dedicada a modificar los atributos específicos del nodo seleccionado. Permite la edición precisa de propiedades como <code class="font-mono text-xs">font</code> (tipografía), <code class="font-mono text-xs">background</code> (color de fondo) y alineación geométrica sin requerir código manual.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 17: GUI DESIGNER 3 ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-tag bg-icon text-[350px] -left-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Identificadores: Nomenclatura Estándar</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">El enlace referencial entre el entorno visual y el código Java.</p>
+                </div>
+
+                <div class="glass-panel p-8 border-t-4 max-w-5xl mx-auto" style="border-color: var(--una-gold);">
+                    <div class="flex items-center gap-6 mb-4">
+                        <div class="w-16 h-16 shrink-0 rounded-full tint-gold flex items-center justify-center text-3xl shadow-md">
+                            <i class="fa-solid fa-signature"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-3xl font-bold mb-2">Field Names</h3>
+                            <p class="text-lg leading-relaxed" style="color: var(--text-muted);">
+                                Para que la capa de control procese la captura de datos de un cuadro de texto, la instancia gráfica requiere una referencia unívoca y descriptiva. Cada componente instanciado en el lienzo exige un <span class="keyword" tabindex="0" data-tooltip="Nombre de la variable que IntelliJ registrará en el archivo .java de forma automática.">Field Name</span> ingresado a través del Inspector.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 mt-4">
+                        <p class="text-md font-bold mb-4 text-gray-800">Convención de Nomenclatura Industrial (Notación Húngara adaptada)</p>
+                        <ul class="space-y-4 text-sm text-gray-700">
+                            <li class="flex items-center gap-4 border-b border-gray-200 pb-2">
+                                <span class="font-mono bg-white border border-gray-300 px-3 py-1 rounded shadow-sm w-32 font-bold text-center">btnGuardar</span>
+                                <span>Prefijo <code class="text-blue-600 font-bold">btn</code> para referenciar objetos <code class="font-mono text-xs">JButton</code>.</span>
+                            </li>
+                            <li class="flex items-center gap-4 border-b border-gray-200 pb-2">
+                                <span class="font-mono bg-white border border-gray-300 px-3 py-1 rounded shadow-sm w-32 font-bold text-center">txtNombre</span>
+                                <span>Prefijo <code class="text-blue-600 font-bold">txt</code> para referenciar objetos <code class="font-mono text-xs">JTextField</code> o <code class="font-mono text-xs">JTextArea</code>.</span>
+                            </li>
+                            <li class="flex items-center gap-4 border-b border-gray-200 pb-2">
+                                <span class="font-mono bg-white border border-gray-300 px-3 py-1 rounded shadow-sm w-32 font-bold text-center">lblError</span>
+                                <span>Prefijo <code class="text-blue-600 font-bold">lbl</code> para referenciar etiquetas <code class="font-mono text-xs">JLabel</code>.</span>
+                            </li>
+                            <li class="flex items-center gap-4 pb-2">
+                                <span class="font-mono bg-white border border-gray-300 px-3 py-1 rounded shadow-sm w-32 font-bold text-center">cbxCategoria</span>
+                                <span>Prefijo <code class="text-blue-600 font-bold">cbx</code> o <code class="text-blue-600 font-bold">cmb</code> para opciones <code class="font-mono text-xs">JComboBox</code>.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 19 (NEW): GUI DESIGNER FLUJO ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-file-circle-plus bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Creación del GUI Form Paso a Paso</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Inicializando el diseñador gráfico en el entorno de desarrollo.</p>
+                </div>
+
+                <div class="glass-panel p-8 border-t-4 max-w-5xl mx-auto" style="border-color: var(--accent-blue);">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-4 text-blue-700">1. Generación de Archivos</h3>
+                            <p class="text-md leading-relaxed mb-4 text-gray-700">
+                                Para invocar el entorno visual en IntelliJ IDEA, el desarrollador debe instanciar un tipo de archivo específico. No se crea un simple <code class="font-mono text-xs">Java Class</code>.
+                            </p>
+                            <ol class="space-y-4 text-md text-gray-700 list-decimal list-inside">
+                                <li><strong>Clic Derecho</strong> sobre el paquete deseado en la carpeta <code class="font-mono text-sm text-blue-600 font-bold">src</code>.</li>
+                                <li>Navegar hacia <strong>New</strong> &rarr; <strong>GUI Form</strong>.</li>
+                                <li>Definir el nombre de la clase (Ej. <code class="font-mono text-sm">VentanaPrincipal</code>).</li>
+                                <li>El IDE construirá automáticamente la vista de diseño y la clase base de soporte.</li>
+                            </ol>
+                        </div>
+                        <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-600">
+                            <div class="flex flex-col gap-3">
+                                <div class="bg-gray-700 p-3 rounded flex items-center gap-3 text-gray-200">
+                                    <i class="fa-solid fa-folder text-blue-400"></i> src
+                                </div>
+                                <div class="ml-6 bg-gray-700 p-3 rounded flex items-center gap-3 text-gray-200 border border-blue-500 relative">
+                                    <i class="fa-solid fa-plus text-green-400"></i> <span class="font-bold text-white">GUI Form</span>
+                                    <span class="absolute -right-3 -top-3 flex h-6 w-6">
+                                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                      <span class="relative inline-flex rounded-full h-6 w-6 bg-blue-500 text-white items-center justify-center text-xs"><i class="fa-solid fa-check"></i></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 20 (NEW): DRAG & DROP ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-hand-holding-hand bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Construyendo con Drag & Drop</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Transferencia de componentes atómicos hacia el lienzo.</p>
+                </div>
+
+                <div class="glass-panel p-8 border-t-4 max-w-5xl mx-auto" style="border-color: var(--accent-green);">
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold mb-4 text-green-700">El Proceso de Inserción</h3>
+                            <p class="text-md leading-relaxed mb-4 text-gray-700">
+                                El diseño visual asiste en la disposición topológica. IntelliJ utiliza por defecto el <strong>GridLayoutManager</strong>, el cual seccionará dinámicamente tu panel en filas y columnas al arrastrar los objetos.
+                            </p>
+                            <ul class="space-y-4 text-md text-gray-700">
+                                <li class="flex items-center gap-3">
+                                    <i class="fa-solid fa-arrow-pointer text-green-600"></i>
+                                    <span>Ubicar <code class="font-mono text-sm font-bold text-green-700">JButton</code> en el panel <strong>Palette</strong> (lado derecho).</span>
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <i class="fa-solid fa-hand-holding text-green-600"></i>
+                                    <span>Hacer clic, mantener presionado y arrastrar el componente.</span>
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <i class="fa-solid fa-compress text-green-600"></i>
+                                    <span>Soltar sobre el <code class="font-mono text-sm font-bold text-green-700">JPanel</code> central en la celda virtual deseada.</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="flex-1 bg-gray-100 p-6 rounded-xl border border-gray-300 shadow-inner flex items-center justify-center relative overflow-hidden">
+                            <div class="absolute inset-0 bg-white" style="background-image: linear-gradient(#e5e7eb 1px, transparent 1px), linear-gradient(90deg, #e5e7eb 1px, transparent 1px); background-size: 40px 40px;"></div>
+                            
+                            <div class="relative z-10 w-full max-w-sm border-2 border-dashed border-green-500 bg-green-50 bg-opacity-50 p-6 rounded-lg text-center animate-pulse">
+                                <div class="bg-gray-300 shadow px-4 py-2 rounded inline-block text-gray-700 font-bold border border-gray-400">
+                                    Soltar aquí
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 21 (NEW): PROPIEDADES VISUALES ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-sliders bg-icon text-[350px] -right-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Personalización sin Código (Inspector)</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Ajuste de atributos visuales desde el panel de propiedades.</p>
+                </div>
+
+                <div class="glass-panel p-8 border-t-4 max-w-5xl mx-auto" style="border-color: var(--una-gold);">
+                    <h3 class="text-2xl font-bold mb-4 text-yellow-700">Modificación Gráfica Directa</h3>
+                    <p class="text-md leading-relaxed mb-6 text-gray-700">
+                        Una de las mayores ventajas del GUI Designer es evitar la escritura de múltiples líneas repetitivas como <code class="font-mono text-sm bg-gray-100 px-1 rounded">componente.setFont(...)</code> o <code class="font-mono text-sm bg-gray-100 px-1 rounded">componente.setBackground(...)</code>. Al seleccionar cualquier objeto en el lienzo, el <strong>Inspector</strong> inferior revelará todas sus propiedades editables.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white border border-gray-300 p-4 rounded-lg shadow-sm">
+                            <h4 class="font-bold text-gray-800 border-b pb-2 mb-3"><i class="fa-solid fa-tag text-yellow-600 mr-2"></i>field name</h4>
+                            <p class="text-sm text-gray-600">Establece la variable Java (<code class="font-mono text-xs">btnAceptar</code>). Crítico para la comunicación con la clase.</p>
+                        </div>
+                        <div class="bg-white border border-gray-300 p-4 rounded-lg shadow-sm">
+                            <h4 class="font-bold text-gray-800 border-b pb-2 mb-3"><i class="fa-solid fa-font text-yellow-600 mr-2"></i>text</h4>
+                            <p class="text-sm text-gray-600">Altera la cadena visible al usuario final (Ej. cambiar "Button" por "Guardar Cambios").</p>
+                        </div>
+                        <div class="bg-white border border-gray-300 p-4 rounded-lg shadow-sm">
+                            <h4 class="font-bold text-gray-800 border-b pb-2 mb-3"><i class="fa-solid fa-palette text-yellow-600 mr-2"></i>background / font</h4>
+                            <p class="text-sm text-gray-600">Abre paletas de colores interactivas y selectores de tipografías del sistema operativo.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 22 (NEW): EVENTOS AUTO ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-bolt-lightning bg-icon text-[350px] -left-10 opacity-5" style="color: var(--una-red);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Generación Automática de Eventos</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Conectando la acción gráfica con la lógica de negocio.</p>
+                </div>
+
+                <div class="glass-panel p-8 border-t-4 max-w-5xl mx-auto" style="border-color: var(--una-red);">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-4 text-red-700">Listeners Asistidos</h3>
+                            <p class="text-md leading-relaxed mb-4 text-gray-700">
+                                Para que un botón reaccione al clic, requiere un <code class="font-mono text-sm bg-gray-100 px-1 rounded">ActionListener</code>. IntelliJ puede generar la estructura del código base de manera inmediata:
+                            </p>
+                            <ol class="space-y-4 text-sm text-gray-700 list-decimal list-inside">
+                                <li>Haz <strong>Clic Derecho</strong> sobre el botón en el diseñador visual.</li>
+                                <li>Selecciona <strong>Create Listener</strong> &rarr; <strong>ActionListener</strong>.</li>
+                                <li>El IDE abrirá el archivo <code class="font-mono text-sm font-bold">.java</code> asociado.</li>
+                                <li>El bloque de código asíncrono será escrito automáticamente dentro del constructor, listo para recibir tus instrucciones lógicas.</li>
+                            </ol>
+                        </div>
+
+                        <div class="darcula-bg p-6 rounded-2xl shadow-xl overflow-x-auto text-sm border border-gray-700">
+                            <div class="flex items-center gap-2 mb-4 border-b border-gray-600 pb-2 text-gray-300">
+                                <i class="fa-solid fa-magic-wand-sparkles text-yellow-500"></i>
+                                <span class="font-bold">Código autogenerado por IntelliJ</span>
+                            </div>
+                            <pre class="font-mono leading-loose" style="margin: 0;"><code><span class="darcula-field">btnGuardar</span>.<span class="darcula-func">addActionListener</span>(<span class="darcula-kw">new</span> <span class="darcula-class">ActionListener</span>() {
+    <span class="darcula-anno">@Override</span>
+    <span class="darcula-kw">public void</span> <span class="darcula-func">actionPerformed</span>(<span class="darcula-class">ActionEvent</span> e) {
+        <span class="darcula-com">// TU CÓDIGO AQUÍ</span>
+        <span class="darcula-com">// Se ejecutará solo cuando hagan clic</span>
+    }
+});</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 23: INTEGRACION ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-bridge bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Conectando el Puente Visual <span class="text-[20px] opacity-50 align-top">[cite: 1]</span></h2>
+                    <p class="text-xl" style="color: var(--text-muted);">La estructura fundamental para inicializar el contenedor gráfico de IntelliJ.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center max-w-6xl mx-auto">
+                    <div class="lg:col-span-5">
+                        <h3 class="text-3xl font-bold mb-4 text-purple-700 flex items-center gap-3">
+                            <i class="fa-solid fa-power-off"></i> Encendiendo el Entorno
+                        </h3>
+                        <p class="text-lg leading-relaxed mb-4" style="color: var(--text-muted);">
+                            Un archivo <code class="font-mono text-md bg-gray-100 px-1 rounded text-red-600">.form</code> parametrizado visualmente es inherentemente inactivo. La Máquina Virtual de Java precisa un punto de entrada ejecutable.
+                        </p>
+                        <p class="text-lg leading-relaxed mb-4" style="color: var(--text-muted);">
+                            La integración se logra instanciando el marco base de nivel superior (<code class="font-mono text-md">JFrame</code>) y suministrando al mismo el contenedor intermedio central (<code class="font-mono text-md">JPanel</code>) generado en el paso anterior.
+                        </p>
+                    </div>
+
+                    <div class="lg:col-span-7 darcula-bg p-6 rounded-2xl shadow-xl overflow-x-auto text-sm border border-gray-700">
+                        <div class="flex items-center gap-2 mb-4 border-b border-gray-600 pb-2">
+                            <i class="fa-brands fa-java" style="color: #cc7832;"></i>
+                            <span class="font-mono text-gray-400">PantallaLogin.java</span>
+                        </div>
+                        <pre class="font-mono leading-loose" style="margin: 0;"><code><span class="darcula-kw">public class</span> <span class="darcula-class">PantallaLogin</span> {
+    <span class="darcula-com">// Referencias mapeadas automáticamente desde el .form</span>
+    <span class="darcula-kw">private</span> <span class="darcula-class">JPanel</span> mainPanel;
+    <span class="darcula-kw">private</span> <span class="darcula-class">JTextField</span> txtUsuario;
+    <span class="darcula-kw">private</span> <span class="darcula-class">JButton</span> btnEntrar;
+
+    <span class="darcula-kw">public static void</span> <span class="darcula-func">main</span>(<span class="darcula-class">String</span>[] args) {
+        <span class="darcula-com">// 1. Construcción del Marco Estructural vacío</span>
+        <span class="darcula-class">JFrame</span> frame = <span class="darcula-kw">new</span> <span class="darcula-class">JFrame</span>(<span class="darcula-str">"Acceso Institucional"</span>);
+        
+        <span class="darcula-com">// 2. Instanciación de la clase actual</span>
+        <span class="darcula-class">PantallaLogin</span> pantalla = <span class="darcula-kw">new</span> <span class="darcula-class">PantallaLogin</span>();
+        
+        <span class="darcula-com">// 3. Vinculación: Se inyecta el panel parametrizado</span>
+        frame.<span class="darcula-func">setContentPane</span>(pantalla.mainPanel);
+        
+        <span class="darcula-com">// 4. Parámetros de ciclo de vida y renderización</span>
+        frame.<span class="darcula-func">setDefaultCloseOperation</span>(<span class="darcula-class">JFrame</span>.EXIT_ON_CLOSE);
+        frame.<span class="darcula-func">pack</span>(); <span class="darcula-com">// Algoritmo de adaptación geométrica</span>
+        frame.<span class="darcula-func">setVisible</span>(<span class="darcula-kw">true</span>);
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 24: REPASO DEL PROYECTO ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-list-check bg-icon text-[350px] -left-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Preparación para el Proyecto #1</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Sintetizando las directrices para la resolución del entregable.</p>
+                </div>
+
+                <div class="glass-panel p-8 border-t-4 max-w-5xl mx-auto" style="border-color: var(--una-gold);">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-4 text-yellow-700 border-b border-gray-300 pb-2">El Requisito Arquitectónico <span class="text-sm opacity-50">[cite: 5]</span></h3>
+                            <p class="text-md leading-relaxed text-gray-700">
+                                Como hemos establecido en esta sesión, las interfaces gráficas que desarrollen (formularios <code class="font-mono text-sm">.form</code>) deben permanecer aisladas de la lógica de procesamiento. Se evaluará explícitamente su capacidad de segregar las responsabilidades en paquetes modulares, asegurando un diseño estructurado y evitando un código monolítico. <strong>Podrán utilizar el GUI Designer para agilizar esta tarea.</strong>
+                            </p>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold mb-4 text-yellow-700 border-b border-gray-300 pb-2">Persistencia Dinámica <span class="text-sm opacity-50">[cite: 5]</span></h3>
+                            <p class="text-md leading-relaxed text-gray-700">
+                                Las especificaciones del sistema (Barbería, Cotizadores o Puntos de Venta) exigen almacenar la información en tiempo de ejecución. Ante la ausencia de un motor de bases de datos formal en este punto del curso, utilizarán de forma intensiva la programación genérica y las colecciones dinámicas (<code class="font-mono text-sm">ArrayList</code>) cargadas en la memoria residente.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 25: LABORATORIO ==================== -->
+        <div class="slide">
+            <div class="text-center w-full max-w-5xl relative z-10">
+                <i class="fa-solid fa-flask-vial bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-green);"></i>
+
+                <div class="glass-panel inline-block px-8 py-4 rounded-full mb-10 border-2" style="border-color: var(--accent-green);">
+                    <h2 class="text-5xl font-bold text-green-700">¡Hora del Laboratorio #1!</h2>
+                </div>
+
+                <div class="glass-panel p-8 max-w-4xl mx-auto border-t-8 text-left shadow-2xl" style="border-color: var(--accent-green);">
+                    <h3 class="text-3xl font-bold mb-4 flex items-center gap-3 text-green-800">
+                        <i class="fa-solid fa-code"></i>
+                        Ejecución Práctica de la Teoría
+                    </h3>
+                    <p class="text-lg leading-relaxed mb-6" style="color: var(--text-muted);">
+                        El bloque teórico concluye aquí. Aunque a futuro podrán utilizar la poderosa herramienta del GUI Designer para sus proyectos, <strong>en el laboratorio oficial de hoy programarán todo línea por línea y de manera explícita</strong>. Esto garantizará que entiendan la jerarquía real subyacente (<code class="font-mono text-sm text-green-700">JFrame</code> y <code class="font-mono text-sm text-green-700">JPanel</code>) <span class="opacity-50">[cite: 6]</span>.
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4 bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm">
+                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold shrink-0">1</div>
+                            <p class="text-md text-gray-700 pt-2">Inicializar un repositorio en GitHub Desktop y configurar la carpeta <code class="font-mono text-sm bg-gray-800 px-2 py-1 rounded text-white shadow">src</code> en IntelliJ <span class="opacity-50">[cite: 6]</span>.</p>
+                        </div>
+                        
+                        <div class="flex items-start gap-4 bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm">
+                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold shrink-0">2</div>
+                            <p class="text-md text-gray-700 pt-1">Crear los paquetes <code class="font-mono text-sm text-blue-700 font-bold">modelo</code> y <code class="font-mono text-sm text-blue-700 font-bold">vista</code>, implementando las clases requeridas para instanciar controles atómicos (<code class="font-mono text-sm text-blue-700 font-bold">JTextField</code>, <code class="font-mono text-sm text-blue-700 font-bold">JButton</code>, etc.) manualmente en código puro <span class="opacity-50">[cite: 6]</span>.</p>
+                        </div>
+                        
+                        <div class="flex items-start gap-4 bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm">
+                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold shrink-0">3</div>
+                            <p class="text-md text-gray-700 pt-1">Aplicar notificaciones emergentes mediante <code class="font-mono text-sm text-red-600 font-bold">JOptionPane</code> y despachar el hilo visual de manera segura para culminar la práctica <span class="opacity-50">[cite: 6]</span>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- fin slides-container -->
+
+    <!-- Scripts compartidos del proyecto — NO borrar ni agregar scripts abajo -->
+    <script src="../../../assets/js/curso-info.js"></script>
+    <script src="../../../assets/js/presentacion.js"></script>
+
+</body>
+</html>
