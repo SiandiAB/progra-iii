@@ -45,6 +45,26 @@
 
         next.style.opacity = currentSlide === totalSlides - 1 ? '0.3' : '1';
         next.style.pointerEvents = currentSlide === totalSlides - 1 ? 'none' : 'auto';
+
+        // Desbloquear LAB al llegar a la última diapositiva
+        if (currentSlide === totalSlides - 1) {
+            unlockLab();
+        }
+    }
+
+    /* --- Desbloquear LAB asociado a esta presentación --- */
+    function unlockLab() {
+        var path = window.location.pathname;
+        // Deriva la clave del lab desde la URL: /clases/siandi/clase-01/ → siandi-01
+        var match = path.match(/\/clases\/(siandi|kristel)\/clase-0*(\d+)/i);
+        if (match) {
+            var profesor = match[1].toLowerCase();
+            var numClase = match[2];
+            var labKey = 'lab-' + profesor + '-' + numClase;
+            if (localStorage.getItem(labKey) !== 'unlocked') {
+                localStorage.setItem(labKey, 'unlocked');
+            }
+        }
     }
 
     /* --- Eventos de teclado --- */

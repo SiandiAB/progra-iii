@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio 2 — Programación III (Semana 3)</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --bg-panel: #ffffff;
+            --bg-terminal: #1e1e2e;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --text-terminal: #cdd6f4;
+            --border-panel: #e2e8f0;
+            --una-red: #c8102e;
+            --una-gold: #d4ac0d;
+            --accent-blue: #2563eb;
+            --accent-green: #16a34a;
+            --accent-purple: #7c3aed;
+            --accent-peach: #ea580c;
+        }
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --bg-panel: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-panel: #334155;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .glass-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .glass-panel h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.75rem; }
+        .glass-panel h3 { font-size: 1.3rem; font-weight: 700; margin: 1.2rem 0 0.6rem 0; }
+        .glass-panel h4 { font-size: 1.1rem; font-weight: 700; margin: 1rem 0 0.4rem 0; }
+        .glass-panel p { color: var(--text-muted); margin-bottom: 0.75rem; }
+        .glass-panel ul, .glass-panel ol { color: var(--text-muted); padding-left: 1.5rem; margin-bottom: 0.75rem; }
+        .glass-panel li { margin-bottom: 0.3rem; }
+
+        .tint-red { background: rgba(200,16,46,0.12); color: var(--una-red); }
+        .tint-gold { background: rgba(212,172,13,0.12); color: var(--una-gold); }
+        .tint-blue { background: rgba(37,99,235,0.12); color: var(--accent-blue); }
+        .tint-green { background: rgba(22,163,74,0.12); color: var(--accent-green); }
+        .tint-purple { background: rgba(124,58,237,0.12); color: var(--accent-purple); }
+        .tint-peach { background: rgba(234,88,12,0.12); color: var(--accent-peach); }
+
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .badge-red { background: rgba(200,16,46,0.12); color: var(--una-red); }
+        .badge-blue { background: rgba(37,99,235,0.12); color: var(--accent-blue); }
+        .badge-green { background: rgba(22,163,74,0.12); color: var(--accent-green); }
+        .badge-purple { background: rgba(124,58,237,0.12); color: var(--accent-purple); }
+        .badge-gold { background: rgba(212,172,13,0.12); color: var(--una-gold); }
+
+        .code-fragment {
+            background: var(--bg-terminal);
+            border-radius: 0.6rem;
+            padding: 0.5rem 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-terminal);
+            margin: 0.5rem 0;
+            border: 1px solid rgba(255,255,255,0.08);
+            display: inline-block;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .step-sub {
+            border-left: 3px solid var(--accent-blue);
+            padding-left: 1rem;
+            margin: 1.2rem 0;
+        }
+        .step-sub h5 {
+            font-weight: 800;
+            font-size: 1rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.2rem;
+        }
+        .step-sub p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+        }
+        .step-sub .code-fragment {
+            margin-top: 0.2rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .highlight-box {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--una-gold);
+            background: rgba(212,172,13,0.06);
+            margin: 0.75rem 0;
+        }
+        .highlight-box strong { color: var(--una-gold); }
+
+        .float-btn {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 9999px;
+            padding: 0.65rem 1rem;
+            font-size: 1rem;
+            color: var(--text-main);
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transition: transform 0.15s, background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .float-btn:hover { transform: scale(1.05); background: var(--border-panel); }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .glass-panel { padding: 1rem; }
+            .glass-panel h2 { font-size: 1.4rem; }
+            .code-fragment { font-size: 0.7rem; padding: 0.4rem 0.8rem; }
+        }
+
+        details {
+            margin-top: 1.2rem;
+        }
+        details summary {
+            cursor: pointer;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+        details summary:hover { color: #333333; }
+
+        .glossary {
+            text-decoration: underline;
+            text-decoration-style: dotted;
+            text-underline-offset: 0.2em;
+            cursor: help;
+            position: relative;
+        }
+        .glossary:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-terminal);
+            color: var(--text-terminal);
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.4rem;
+            font-size: 0.8rem;
+            font-weight: 400;
+            white-space: nowrap;
+            z-index: 100;
+            pointer-events: none;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Botón de tema claro/oscuro -->
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar modo claro/oscuro">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+
+    <div class="container">
+
+        <!-- ============================================================ -->
+        <!-- PORTADA DEL LABORATORIO                                       -->
+        <!-- ============================================================ -->
+        <div class="glass-panel text-center" style="border-top: 6px solid var(--una-red);">
+            <div class="flex justify-center mb-4">
+                <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png"
+                     alt="Logo UNA" class="h-20 object-contain"
+                     onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png';">
+            </div>
+            <h2 class="text-3xl font-extrabold">Laboratorio 2</h2>
+            <p class="text-xl" style="color: var(--una-red); font-weight: 700;">Sistema de Gestión Universitaria</p>
+            <p class="text-sm" style="color: var(--text-muted);">Programación III — Características del Lenguaje Java</p>
+            <div class="flex flex-wrap justify-center gap-3 mt-3">
+                <span class="badge badge-red">Herencia</span>
+                <span class="badge badge-purple">Interfaces</span>
+                <span class="badge badge-blue">Paquetes</span>
+                <span class="badge badge-green">Genéricos</span>
+                <span class="badge badge-gold">Lambdas &amp; Streams</span>
+            </div>
+            <div class="mt-4 text-sm" style="color: var(--text-muted);">
+                <i class="fa-regular fa-clock mr-1"></i> Duración estimada: 1 hora 30 minutos &nbsp;·&nbsp;
+                <i class="fa-regular fa-user mr-1"></i> Individual
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- INTRODUCCIÓN Y OBJETIVOS                                     -->
+        <!-- ============================================================ -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-gold);">
+            <h2><i class="fa-regular fa-compass mr-2" style="color: var(--una-gold);"></i> Introducción</h2>
+            <p>
+                En este laboratorio vamos a construir un <strong>sistema de gestión universitaria</strong> que pondrá en práctica
+                todos los conceptos vistos en la semana 3: herencia, interfaces, paquetes, genéricos y características
+                modernas de Java como lambdas, streams, Optional y records.
+            </p>
+            <p>
+                El sistema permitirá gestionar personas (estudiantes y profesores), calcular promedios, filtrar listas,
+                ordenar y realizar consultas avanzadas usando programación funcional.
+            </p>
+
+            <div class="highlight-box">
+                <strong><i class="fa-regular fa-lightbulb mr-1"></i> Objetivo:</strong>
+                Al finalizar este laboratorio, serás capaz de:
+            </div>
+            <ul>
+                <li>Diseñar una jerarquía de herencia con <code class="font-mono text-sm">extends</code> y <code class="font-mono text-sm">super</code>.</li>
+                <li>Implementar interfaces (<code class="font-mono text-sm">implements</code>) y usar polimorfismo.</li>
+                <li>Organizar el código en paquetes (<code class="font-mono text-sm">package</code> e <code class="font-mono text-sm">import</code>).</li>
+                <li>Crear clases y métodos genéricos con <code class="font-mono text-sm">&lt;T&gt;</code>.</li>
+                <li>Aplicar lambdas y streams para procesar colecciones de forma declarativa.</li>
+                <li>Usar <code class="font-mono text-sm">Optional</code> para manejar valores ausentes de forma segura.</li>
+            </ul>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PASO 1: ESTRUCTURA DEL PROYECTO                             -->
+        <!-- ============================================================ -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+            <h2><i class="fa-regular fa-folder-open mr-2" style="color: var(--accent-blue);"></i> Paso 1: Estructura del proyecto</h2>
+
+            <div class="step-sub">
+                <h5>1.1 Abrir el repositorio en IntelliJ</h5>
+                <p>Abre IntelliJ IDEA y abre la carpeta del repositorio que eligió para este laboratorio.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>1.2 Crear la carpeta <code>src</code></h5>
+                <p>En la raíz del proyecto, crea una carpeta llamada <code class="font-mono text-sm">src</code>.</p>
+                <p>Marca la carpeta como <strong>Source Root</strong>: clic derecho → <em>Mark Directory as → Sources Root</em>.</p>
+                <div class="highlight-box">
+                    <i class="fa-regular fa-circle-info mr-1"></i> Esto le dice a IntelliJ que ahí va tu código fuente.
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>1.3 Crear los paquetes</h5>
+                <p>Dentro de <code class="font-mono text-sm">src</code>, crea la siguiente estructura de carpetas (paquetes):</p>
+                <p>Clic derecho en src → <em>New → Package</em>.</p>
+                <div class="code-fragment">
+src/
+  └── Lab02/
+      ├── modelo/      <span style="color: #6c7086;">// Clases de dominio</span>
+      ├── servicio/    <span style="color: #6c7086;">// Lógica de negocio</span>
+      └── Main.java    <span style="color: #6c7086;">// Punto de entrada</span>
+                </div>
+                <p class="text-xs" style="color: var(--text-muted);">La convención de paquetes en Java usa el dominio invertido: <code class="font-mono text-xs">Lab02</code>.</p>
+                <div class="highlight-box">
+                    <strong><i class="fa-regular fa-clock mr-1"></i> ¿Por qué usamos paquetes?</strong>
+                    Los paquetes organizan el código en módulos lógicos. <code class="font-mono text-sm">modelo</code> contiene las clases que representan datos; <code class="font-mono text-sm">servicio</code> contiene la lógica que opera sobre esos datos. Esta separación es la base de la <strong>arquitectura por capas</strong> que se verá en próximas clases.
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PASO 2: CLASE ABSTRACTA PERSONA                               -->
+        <!-- ============================================================ -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-purple);">
+            <h2><i class="fa-regular fa-user mr-2" style="color: var(--accent-purple);"></i> Paso 2: Clase abstracta <code>Persona</code></h2>
+
+            <p>
+                Vamos a crear una clase base <strong>abstracta</strong> que servirá como superclase para
+                <code class="font-mono text-sm">Estudiante</code> y <code class="font-mono text-sm">Profesor</code>.
+                Una clase abstracta no puede instanciarse directamente; solo sirve como plantilla.
+            </p>
+
+            <div class="step-sub">
+                <h5>2.1 Crear el archivo <code>Persona.java</code></h5>
+                <p>Dentro del paquete <code class="font-mono text-sm">Lab02.modelo</code>, crea una nueva clase llamada <strong>Persona</strong>.</p>
+                 <p>Clic derecho en modelo → <em>New → Java Class</em>.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.2 Agregar la declaración del paquete</h5>
+                <p>Al inicio del archivo, asegúrese que se encuentre la línea que indica a qué paquete pertenece la clase:</p>
+                <div class="code-fragment">package modelo;</div>
+                <p>Esto organiza la clase dentro del espacio de nombres (namespace) del paquete.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.3 Importar <code>Objects</code></h5>
+                <p>Necesitamos la clase <code class="font-mono text-sm">Objects</code> para implementar <code class="font-mono text-sm">equals()</code> y <code class="font-mono text-sm">hashCode()</code> de forma segura. Agrega la importación:</p>
+                <div class="code-fragment">import java.util.Objects;</div>
+                <details>
+                    <summary><strong>¿Por qué <code class="font-mono text-sm">Objects.equals()</code>?</strong></summary>
+                    <p>A diferencia de <code class="font-mono text-sm">nombre.equals(otro.nombre)</code>, el método <code class="font-mono text-sm">Objects.equals(a, b)</code> maneja correctamente los valores <code class="font-mono text-sm">null</code>: si ambos son <code class="font-mono text-sm">null</code> retorna <code class="font-mono text-sm">true</code>, si solo uno es <code class="font-mono text-sm">null</code> retorna <code class="font-mono text-sm">false</code>. Esto evita el temido <code class="font-mono text-sm">NullPointerException</code>.</p>
+                </details>
+                <details>
+                    <summary><strong>¿Por qué <code class="font-mono text-sm">Objects.hash()</code>?</strong></summary>
+                    <p>Genera un código hash combinando varios atributos de forma segura (también tolera <code class="font-mono text-sm">null</code>). Es más legible y menos propenso a errores que calcular el hash manualmente.</p>
+                </details>
+                <details>
+                    <summary><strong>¿Por qué necesitamos <code class="font-mono text-sm">hashCode()</code>?</strong></summary>
+                    <p>Cuando sobrescribes <code class="font-mono text-sm">equals()</code>, <strong>siempre</strong> debes sobrescribir <code class="font-mono text-sm">hashCode()</code>. El contrato de Java exige que: si <code class="font-mono text-sm">a.equals(b)</code> es <code class="font-mono text-sm">true</code>, entonces <code class="font-mono text-sm">a.hashCode() == b.hashCode()</code>. Si no lo cumples, las colecciones basadas en hash (como <code class="font-mono text-sm">HashSet</code> o <code class="font-mono text-sm">HashMap</code>) tendrán comportamientos impredecibles: podrías agregar dos objetos "iguales" sin que se detecte la duplicidad.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.4 Declarar la clase como <code>abstract</code></h5>
+                <p>Escribe la declaración de la clase. Recuerda que debe ser <strong>abstracta</strong> porque no tendrá sentido instanciar una "persona genérica".</p>
+                <div class="code-fragment">public abstract class Persona {</div>
+                <p>El modificador <code class="font-mono text-sm">abstract</code> impide crear objetos de esta clase con <code class="font-mono text-sm">new Persona(...)</code>.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.5 Declarar los atributos (privados)</h5>
+                <p>Dentro de la clase, declara los atributos comunes a todas las personas. Deben ser <code class="font-mono text-sm">private</code> para garantizar el <span class="glossary" data-tooltip="Principio de POO que oculta los detalles internos de una clase y solo expone lo necesario mediante métodos públicos (getters/setters). Protege los datos de accesos indebidos.">encapsulamiento</span>:</p>
+                <div class="code-fragment">
+private String nombre;
+private int edad;
+                </div>
+                <p><strong>Recuerda:</strong> <code class="font-mono text-sm">String</code> con mayúscula, y usa <code class="font-mono text-sm">private</code> para que solo la clase pueda acceder directamente.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.6 Escribir el constructor</h5>
+                <p>El constructor recibe nombre y edad, y los asigna a los atributos:</p>
+                <div class="code-fragment">
+public Persona(String nombre, int edad) {
+    this.nombre = nombre;
+    this.edad = edad;
+}
+                </div>
+                <p><strong>Nota:</strong> <code class="font-mono text-sm">this.nombre = nombre;</code> significa: "<strong>al atributo</strong> de la clase (<code class="font-mono text-sm">this.nombre</code>, declarado como <code class="font-mono text-sm">private String nombre</code>) asígnale el valor del <strong>parámetro</strong> del constructor (<code class="font-mono text-sm">nombre</code>, recibido en <code class="font-mono text-sm">Persona(String nombre, int edad)</code>)". Sin <code class="font-mono text-sm">this</code>, Java no sabría a cuál de los dos te refieres, porque tienen el mismo nombre.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.7 Agregar getters y setters</h5>
+                <p>Para acceder a los atributos desde otras clases, debemos proporcionar getters (y setters si se necesita modificar). Escribe los métodos:</p>
+                <div class="code-fragment">
+public String getNombre() { return nombre; }
+public void setNombre(String nombre) { this.nombre = nombre; }
+public int getEdad() { return edad; }
+public void setEdad(int edad) { this.edad = edad; }
+                </div>
+                <p>Estos métodos permiten leer y modificar los atributos de forma controlada.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.8 Declarar el método abstracto <code>getDescripcion()</code></h5>
+                <p>Este método será implementado por cada subclase para devolver una descripción específica. No tiene cuerpo (solo firma):</p>
+                <div class="code-fragment">public abstract String getDescripcion();</div>
+                <p><strong>¿Por qué abstracto?</strong> Porque cada tipo de persona (estudiante, profesor) tiene una forma distinta de presentarse. Al ser abstracto, <strong>obligamos</strong> a las subclases a implementarlo.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.9 Sobrescribir <code>toString()</code></h5>
+                <p>Para mostrar información básica de la persona, sobrescribimos el método <code class="font-mono text-sm">toString()</code>:</p>
+                <div class="code-fragment">
+@Override
+public String toString() {
+    return "Persona{nombre='" + nombre + "', edad=" + edad + "}";
+}
+                </div>
+                <p>La anotación <code class="font-mono text-sm">@Override</code> es opcional pero recomendada; le dice al compilador que estamos sobrescribiendo un método de la superclase.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.10 Sobrescribir <code>equals()</code> y <code>hashCode()</code></h5>
+                <p>Para comparar personas por su contenido (nombre y edad), necesitamos estos métodos. Usamos <code class="font-mono text-sm">Objects.equals()</code> y <code class="font-mono text-sm">Objects.hash()</code>:</p>
+                <div class="code-fragment">
+<span style="color: #6c7086;">// Indica que estamos sobrescribiendo un método de Object</span>
+@Override
+public boolean equals(Object obj) {
+    <span style="color: #6c7086;">// 1. ¿Es el MISMO objeto en memoria? Si es la misma referencia, son iguales</span>
+    if (this == obj) return true;
+
+    <span style="color: #6c7086;">// 2. ¿Es null o es de otra clase? Si no es Persona, no pueden ser iguales</span>
+    if (obj == null || getClass() != obj.getClass()) return false;
+
+    <span style="color: #6c7086;">// 3. Convertimos (casteamos) el Object a Persona para comparar atributos</span>
+    Persona persona = (Persona) obj;
+
+    <span style="color: #6c7086;">// 4. Comparamos atributo por atributo:</span>
+    <span style="color: #6c7086;">//    edad == persona.edad → compara el int directamente (primitivo)</span>
+    <span style="color: #6c7086;">//    Objects.equals(nombre, persona.nombre) → compara Strings de forma segura (soporta null)</span>
+    return edad == persona.edad && Objects.equals(nombre, persona.nombre);
+}
+
+<span style="color: #6c7086;">// Genera un código hash basado en los mismos atributos que usa equals()</span>
+<span style="color: #6c7086;">// Si dos objetos son iguales (equals=true), DEBEN tener el mismo hashCode</span>
+@Override
+public int hashCode() {
+    return Objects.hash(nombre, edad);
+}
+                </div>
+                <p>Esto permite comparar personas por su <strong>estado</strong> (nombre y edad), no por su dirección en memoria. Sin estos métodos, <code class="font-mono text-sm">persona1.equals(persona2)</code> solo retornaría <code class="font-mono text-sm">true</code> si ambas variables apuntan al mismo objeto en memoria, aunque tengan los mismos datos.</p>
+            </div>
+
+            <div class="highlight-box">
+                <strong><i class="fa-regular fa-circle-question mr-1"></i> ¿Por qué es abstracta?</strong>
+                <code class="font-mono text-sm">Persona</code> es abstracta porque no tiene sentido crear una "persona genérica" sin saber si es estudiante o profesor. Las subclases concretas (<code class="font-mono text-sm">Estudiante</code>, <code class="font-mono text-sm">Profesor</code>) implementarán el método <code class="font-mono text-sm">getDescripcion()</code>.
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PASO 3: CLASE ESTUDIANTE                                     -->
+        <!-- ============================================================ -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
+            <h2><i class="fa-regular fa-graduation-cap mr-2" style="color: var(--accent-green);"></i> Paso 3: Clase <code>Estudiante</code></h2>
+
+            <p>
+                <code class="font-mono text-sm">Estudiante</code> <strong>hereda</strong> de <code class="font-mono text-sm">Persona</code>
+                usando <code class="font-mono text-sm">extends</code>. Añade atributos específicos: carnet, carrera y lista de notas.
+                También implementa la interfaz <code class="font-mono text-sm">Comparable</code> para poder ordenar estudiantes
+                por promedio.
+            </p>
+
+            <div class="step-sub">
+                <h5>3.1 Crear <code>Estudiante.java</code> en <code>modelo</code></h5>
+                <p>Crea un nuevo archivo en el paquete <code class="font-mono text-sm">Lab02.modelo</code> con el nombre <strong>Estudiante</strong>.</p>
+                 <p>Clic derecho en modelo → <em>New → Java Class</em>.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.2 Agregar el paquete y las importaciones</h5>
+                <p>El paquete es el mismo que el de <code class="font-mono text-sm">Persona</code>. Además, necesitamos importar <code class="font-mono text-sm">ArrayList</code>, <code class="font-mono text-sm">List</code> y <code class="font-mono text-sm">Objects</code>:</p>
+                <div class="code-fragment">
+package modelo;
+
+<span style="color: #6c7086;">// Para crear la lista dinámica de notas (new ArrayList&lt;&gt;())</span>
+import java.util.ArrayList;
+
+<span style="color: #6c7086;">// Para declarar el tipo de la variable (List&lt;Double&gt; notas)</span>
+import java.util.List;
+
+<span style="color: #6c7086;">// Para equals() y hashCode() seguros (soporta null)</span>
+import java.util.Objects;
+                </div>
+                <details>
+                    <summary><strong>¿Para qué sirve <code class="font-mono text-sm">ArrayList</code>?</strong></summary>
+                    <p>Es la implementación concreta de lista que usamos (<code class="font-mono text-sm">new ArrayList&lt;&gt;()</code>). Es como un arreglo que puede crecer dinámicamente.</p>
+                </details>
+                <details>
+                    <summary><strong>¿Para qué sirve <code class="font-mono text-sm">List</code>?</strong></summary>
+                    <p>Es la <strong>interfaz</strong> que define qué operaciones tiene una lista. Declaramos <code class="font-mono text-sm">List&lt;Double&gt; notas</code> (la interfaz) en vez de <code class="font-mono text-sm">ArrayList&lt;Double&gt; notas</code> (la implementación) por buena práctica: así podemos cambiar a otra implementación después sin romper el código.</p>
+                </details>
+                <details>
+                    <summary><strong>¿Para qué sirve <code class="font-mono text-sm">Objects</code>?</strong></summary>
+                    <p>Ya la conocemos: provee <code class="font-mono text-sm">Objects.equals()</code> y <code class="font-mono text-sm">Objects.hash()</code> para comparar objetos de forma segura ante <code class="font-mono text-sm">null</code>.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.3 Declarar la clase y la herencia</h5>
+                <p><code class="font-mono text-sm">Estudiante</code> <strong>extiende</strong> <code class="font-mono text-sm">Persona</code> e <strong>implementa</strong> la interfaz <code class="font-mono text-sm">Comparable</code> para poder ordenar:</p>
+                <div class="code-fragment">public class Estudiante extends Persona implements Comparable&lt;Estudiante&gt; {</div>
+                <p><code class="font-mono text-sm">Comparable&lt;Estudiante&gt;</code> define que los estudiantes pueden compararse entre sí (para ordenar).</p>
+                <details>
+                    <summary><strong>¿Por qué implementamos <code class="font-mono text-sm">Comparable</code>?</strong></summary>
+                    <p>Porque más adelante vamos a ordenar la lista de estudiantes por promedio (de mayor a menor). <code class="font-mono text-sm">Comparable</code> es una interfaz de Java que obliga a escribir el método <code class="font-mono text-sm">compareTo()</code>, donde tú defines la regla de orden. Una vez implementado, puedes usar <code class="font-mono text-sm">Collections.sort(lista)</code> o <code class="font-mono text-sm">lista.sort(Comparator.naturalOrder())</code> y Java sabrá automáticamente cómo ordenar.</p>
+                </details>
+                <details>
+                    <summary><strong>¿Cómo funciona <code class="font-mono text-sm">compareTo()</code>?</strong></summary>
+                    <p><code class="font-mono text-sm">compareTo(Estudiante otro)</code> debe retornar:</p>
+                    <ul>
+                        <li><strong>Negativo</strong> → si <code class="font-mono text-sm">this</code> va <strong>antes</strong> que <code class="font-mono text-sm">otro</code>.</li>
+                        <li><strong>Cero</strong> → si son iguales según tu criterio.</li>
+                        <li><strong>Positivo</strong> → si <code class="font-mono text-sm">this</code> va <strong>después</strong> que <code class="font-mono text-sm">otro</code>.</li>
+                    </ul>
+                    <p>En nuestro caso (paso 3.11), escribiremos <code class="font-mono text-sm">Double.compare(otro.getPromedio(), this.getPromedio())</code>, que invierte el orden natural para que el promedio más alto aparezca primero (orden <strong>descendente</strong>).</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.4 Declarar los atributos específicos</h5>
+                <p>Un estudiante tiene carnet (identificador único), carrera y una lista de notas:</p>
+                <div class="code-fragment">
+private String carnet;
+private String carrera;
+private List&lt;Double&gt; notas;
+                </div>
+                <p><strong>Nota:</strong> Usamos <code class="font-mono text-sm">List&lt;Double&gt;</code> en lugar de un arreglo para que la lista sea dinámica.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.5 Escribir el constructor principal</h5>
+                <p>El constructor recibe nombre, edad, carnet y carrera. Llama al constructor de <code class="font-mono text-sm">Persona</code> con <code class="font-mono text-sm">super(nombre, edad)</code> e inicializa la lista de notas vacía:</p>
+                <div class="code-fragment">
+public Estudiante(String nombre, int edad, String carnet, String carrera) {
+    super(nombre, edad);
+    this.carnet = carnet;
+    this.carrera = carrera;
+    this.notas = new ArrayList&lt;&gt;();
+}
+                </div>
+                <p>La llamada a <code class="font-mono text-sm">super()</code> <strong>siempre</strong> debe ser la primera instrucción en el constructor.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.6 Constructor adicional con lista de notas</h5>
+                <p>Para facilitar la creación, podemos tener un constructor que también reciba una lista inicial de notas:</p>
+                <div class="code-fragment">
+public Estudiante(String nombre, int edad, String carnet, String carrera, List&lt;Double&gt; notas) {
+    this(nombre, edad, carnet, carrera);
+    this.notas = new ArrayList&lt;&gt;(notas);
+}
+                </div>
+                <p>Aquí usamos <code class="font-mono text-sm">this()</code> para llamar al otro constructor y luego inicializamos la lista con una copia de la recibida.</p>
+                <details>
+                    <summary><strong>¿Por qué dos constructores?</strong></summary>
+                    <p>Es una cuestión de <strong>flexibilidad</strong>. No siempre tendrás las notas al momento de crear un estudiante:</p>
+                    <ul>
+                        <li><strong>Constructor sin notas:</strong> creas al estudiante y luego le vas agregando notas una por una con <code class="font-mono text-sm">agregarNota()</code>. Es útil cuando las notas se ingresan después o de forma gradual.</li>
+                        <li><strong>Constructor con notas:</strong> cuando YA tienes la lista completa de notas (por ejemplo, al cargar datos desde un archivo), puedes crear al estudiante con todo de una sola vez.</li>
+                    </ul>
+                    <p>Esto se llama <strong>sobrecarga de constructores</strong> y es una práctica común en Java para darle al programador distintas formas de crear objetos, según la situación.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.7 Getters y setters</h5>
+                <p>Agrega los métodos de acceso para los atributos. Recuerda que para la lista de notas, el setter debe hacer una copia para evitar modificar la lista original desde fuera:</p>
+                <div class="code-fragment">
+public String getCarnet() { return carnet; }
+public void setCarnet(String carnet) { this.carnet = carnet; }
+public String getCarrera() { return carrera; }
+public void setCarrera(String carrera) { this.carrera = carrera; }
+public List&lt;Double&gt; getNotas() { return notas; }
+public void setNotas(List&lt;Double&gt; notas) { this.notas = new ArrayList&lt;&gt;(notas); }
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.8 Método <code>agregarNota()</code></h5>
+                <p>Este método añade una nota a la lista después de validar que esté entre 0 y 100. Si no, lanza una excepción:</p>
+                <div class="code-fragment">
+public void agregarNota(double nota) {
+    if (nota &lt; 0 || nota &gt; 100) {
+        throw new IllegalArgumentException("La nota debe estar entre 0 y 100");
+    }
+    this.notas.add(nota);
+}
+                </div>
+                <p><strong>¿Por qué lanzar una excepción?</strong> Para evitar que el programa continúe con datos inválidos.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.9 Método <code>getPromedio()</code> con Stream API</h5>
+                <p>Este método calcula el promedio de las notas usando <strong>Streams</strong> (programación funcional):</p>
+                <div class="code-fragment">
+public double getPromedio() {
+    if (notas.isEmpty()) return 0.0;
+    return notas.stream()
+                .mapToDouble(Double::doubleValue)
+                .average()
+                .orElse(0.0);
+}
+                </div>
+                <p><strong>Explicación:</strong> <code class="font-mono text-sm">stream()</code> convierte la lista en un flujo de datos; <code class="font-mono text-sm">mapToDouble()</code> transforma cada <code class="font-mono text-sm">Double</code> en <code class="font-mono text-sm">double</code> primitivo; <code class="font-mono text-sm">average()</code> calcula el promedio; <code class="font-mono text-sm">orElse(0.0)</code> devuelve 0 si no hay elementos.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.10 Implementar <code>getDescripcion()</code> (abstracto de Persona)</h5>
+                <p>Este método devuelve una descripción completa del estudiante:</p>
+                <div class="code-fragment">
+@Override
+public String getDescripcion() {
+    return "Estudiante: " + getNombre() +
+           " | Carnet: " + carnet +
+           " | Carrera: " + carrera +
+           " | Promedio: " + getPromedio();
+}
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.11 Implementar <code>compareTo()</code> de <code>Comparable</code></h5>
+                <p>Para ordenar estudiantes por promedio de mayor a menor (descendente), escribimos:</p>
+                <div class="code-fragment">
+@Override
+public int compareTo(Estudiante otro) {
+    return Double.compare(otro.getPromedio(), this.getPromedio());
+}
+                </div>
+                <p><strong>¿Por qué así?</strong> <code class="font-mono text-sm">Double.compare(a, b)</code> compara dos valores <code class="font-mono text-sm">double</code>. Si <code class="font-mono text-sm">otro.getPromedio()</code> es mayor que <code class="font-mono text-sm">this.getPromedio()</code>, retorna positivo, lo que coloca al otro antes (orden descendente).</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.12 Sobrescribir <code>toString()</code></h5>
+                <p>Para que al imprimir un estudiante se vea su descripción, llamamos a <code class="font-mono text-sm">getDescripcion()</code>:</p>
+                <div class="code-fragment">
+@Override
+public String toString() {
+    return getDescripcion();
+}
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.13 Sobrescribir <code>equals()</code> y <code>hashCode()</code></h5>
+                <p>Dos estudiantes son iguales si tienen el mismo carnet (además de los atributos de Persona). Usamos <code class="font-mono text-sm">super.equals()</code> para verificar la igualdad de la parte de Persona:</p>
+                <div class="code-fragment">
+@Override
+public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null || getClass() != obj.getClass()) return false;
+    if (!super.equals(obj)) return false;
+    Estudiante that = (Estudiante) obj;
+    return Objects.equals(carnet, that.carnet);
+}
+
+@Override
+public int hashCode() {
+    return Objects.hash(super.hashCode(), carnet);
+}
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <strong><i class="fa-regular fa-code mr-1"></i> ¿Qué hace <code>Comparable</code>?</strong>
+                <code class="font-mono text-sm">Comparable</code> es una interfaz que define el método <code class="font-mono text-sm">compareTo()</code>. Permite que los objetos se comparen entre sí para ser ordenados (por ejemplo, con <code class="font-mono text-sm">Collections.sort()</code>). Aquí ordenamos estudiantes por promedio, de mayor a menor.
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PASO 4: CLASE PROFESOR                                      -->
+        <!-- ============================================================ -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+            <h2><i class="fa-regular fa-chalkboard-user mr-2" style="color: var(--accent-blue);"></i> Paso 4: Clase <code>Profesor</code></h2>
+
+            <p>
+                <code class="font-mono text-sm">Profesor</code> también hereda de <code class="font-mono text-sm">Persona</code>.
+                Añade atributos como identificación de empleado y departamento.
+            </p>
+
+            <div class="step-sub">
+                <h5>4.1 Crear <code>Profesor.java</code> en <code>modelo</code></h5>
+                <p>Crea un nuevo archivo en el paquete <code class="font-mono text-sm">Lab02.modelo</code>.</p>
+                 <p>Clic derecho en modelo → <em>New → Java Class</em>.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>4.2 Paquete e importaciones</h5>
+                <div class="code-fragment">
+package modelo;
+
+import java.util.Objects;
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>4.3 Declarar la clase y la herencia</h5>
+                <div class="code-fragment">public class Profesor extends Persona {</div>
+            </div>
+
+            <div class="step-sub">
+                <h5>4.4 Atributos específicos</h5>
+                <div class="code-fragment">
+private String idEmpleado;
+private String departamento;
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>4.5 Constructor</h5>
+                <div class="code-fragment">
+public Profesor(String nombre, int edad, String idEmpleado, String departamento) {
+    super(nombre, edad);
+    this.idEmpleado = idEmpleado;
+    this.departamento = departamento;
+}
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>4.6 Getters y setters</h5>
+                <div class="code-fragment">
+public String getIdEmpleado() { return idEmpleado; }
+public void setIdEmpleado(String idEmpleado) { this.idEmpleado = idEmpleado; }
+public String getDepartamento() { return departamento; }
+public void setDepartamento(String departamento) { this.departamento = departamento; }
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>4.7 Implementar <code>getDescripcion()</code></h5>
+                <div class="code-fragment">
+@Override
+public String getDescripcion() {
+    return "Profesor: " + getNombre() +
+           " | ID: " + idEmpleado +
+           " | Departamento: " + departamento;
+}
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>4.8 Sobrescribir <code>toString()</code></h5>
+                <div class="code-fragment">
+@Override
+public String toString() {
+    return getDescripcion();
+}
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>4.9 <code>equals()</code> y <code>hashCode()</code></h5>
+                <p>Dos profesores son iguales si tienen el mismo <code class="font-mono text-sm">idEmpleado</code>:</p>
+                <div class="code-fragment">
+@Override
+public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null || getClass() != obj.getClass()) return false;
+    if (!super.equals(obj)) return false;
+    Profesor profesor = (Profesor) obj;
+    return Objects.equals(idEmpleado, profesor.idEmpleado);
+}
+
+@Override
+public int hashCode() {
+    return Objects.hash(super.hashCode(), idEmpleado);
+}
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PASO 5: CLASE GENÉRICA GESTOR<T>                            -->
+        <!-- ============================================================ -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-purple);">
+            <h2><i class="fa-regular fa-cubes mr-2" style="color: var(--accent-purple);"></i> Paso 5: Clase genérica <code>Gestor&lt;T&gt;</code></h2>
+
+            <p>
+                Ahora vamos a crear una clase <strong>genérica</strong> que pueda gestionar cualquier tipo de objeto.
+                Esta clase usará <code class="font-mono text-sm">&lt;T&gt;</code> como parámetro de tipo, permitiendo
+                reutilizar el mismo código para estudiantes, profesores o cualquier otra entidad.
+            </p>
+
+            <div class="step-sub">
+                <h5>5.1 Crear <code>Gestor.java</code> en <code>servicio</code></h5>
+                <p>Dentro del paquete <code class="font-mono text-sm">Lab02.servicio</code>, crea la clase <strong>Gestor</strong>.</p>
+                 <p>Clic derecho en servicio → <em>New → Java Class</em>.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.2 Paquete e importaciones</h5>
+                <div class="code-fragment">
+package servicio;
+
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+                </div>
+                <p><strong>Predicate</strong> es una interfaz funcional que usaremos para filtrar elementos.</p>
+                <details>
+                    <summary><strong>¿Qué es <code class="font-mono text-sm">java.util.*</code>?</strong></summary>
+                    <p>El asterisco (<code class="font-mono text-sm">*</code>) importa <strong>todas</strong> las clases del paquete <code class="font-mono text-sm">java.util</code> de una sola vez: <code class="font-mono text-sm">ArrayList</code>, <code class="font-mono text-sm">List</code>, <code class="font-mono text-sm">Arrays</code>, <code class="font-mono text-sm">Optional</code>, <code class="font-mono text-sm">Comparator</code>, etc. Es un atajo para no escribir 5 o 6 imports por separado.</p>
+                </details>
+                <details>
+                    <summary><strong>¿Qué es <code class="font-mono text-sm">Predicate</code>?</strong></summary>
+                    <p>Es una <strong>interfaz funcional</strong> que representa una condición (un filtro). Tiene un único método: <code class="font-mono text-sm">boolean test(T t)</code> — recibe un objeto y retorna <code class="font-mono text-sm">true</code> o <code class="font-mono text-sm">false</code>. La usamos en métodos como <code class="font-mono text-sm">filtrar()</code> y <code class="font-mono text-sm">buscarPrimero()</code> pasando una lambda, por ejemplo: <code class="font-mono text-sm">e -> e.getPromedio() > 85</code>.</p>
+                </details>
+                <details>
+                    <summary><strong>¿Qué es <code class="font-mono text-sm">Collectors</code>?</strong></summary>
+                    <p>Es una clase con métodos estáticos que nos ayudan a <strong>recolectar</strong> los resultados de un Stream en una estructura de datos. Por ejemplo:</p>
+                    <ul>
+                        <li><code class="font-mono text-sm">Collectors.toList()</code> — convierte el Stream en una <code class="font-mono text-sm">List</code>.</li>
+                        <li><code class="font-mono text-sm">Collectors.groupingBy()</code> — agrupa elementos por categoría (como contar estudiantes por carrera).</li>
+                        <li><code class="font-mono text-sm">Collectors.counting()</code> — cuenta cuántos elementos hay en cada grupo.</li>
+                    </ul>
+                    <p>Sin <code class="font-mono text-sm">Collectors</code>, tendrías que llenar manualmente una lista con un bucle <code class="font-mono text-sm">for</code> para obtener el resultado.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.3 Declarar la clase genérica</h5>
+                <div class="code-fragment">public class Gestor&lt;T&gt; {</div>
+                <p>La <code class="font-mono text-sm">T</code> es un parámetro de tipo; se sustituirá por el tipo real al crear un <code class="font-mono text-sm">Gestor</code> (ej. <code class="font-mono text-sm">Gestor&lt;Estudiante&gt;</code>).</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.4 Atributo: lista de elementos</h5>
+                <div class="code-fragment">private List&lt;T&gt; elementos;</div>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.5 Constructores</h5>
+                <p>Uno vacío (inicializa <code class="font-mono text-sm">ArrayList</code>) y otro que recibe una lista inicial:</p>
+                <div class="code-fragment">
+public Gestor() {
+    this.elementos = new ArrayList&lt;&gt;();
+}
+
+public Gestor(List&lt;T&gt; elementos) {
+    this.elementos = new ArrayList&lt;&gt;(elementos);
+}
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.6 Método <code>agregar()</code></h5>
+                <div class="code-fragment">public void agregar(T elemento) { elementos.add(elemento); }</div>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.7 Método <code>agregarTodos()</code> con varargs</h5>
+                <div class="code-fragment">
+@SafeVarargs
+public final void agregarTodos(T... elementos) {
+    this.elementos.addAll(Arrays.asList(elementos));
+}
+                </div>
+                <details>
+                    <summary><strong>¿Qué significa <code class="font-mono text-sm">T... elementos</code> y cómo funciona?</strong></summary>
+                    <p><strong><code class="font-mono text-sm">T...</code> (varargs):</strong> Los tres puntitos significan "argumentos variables". Permiten pasar <strong>cualquier cantidad</strong> de elementos del tipo <code class="font-mono text-sm">T</code> separados por coma, como si fuera una lista suelta. Ejemplo con estudiantes:</p>
+                    <div class="code-fragment">
+gestor.agregarTodos(ana, carlos, maria, luis, laura);  // 5 estudiantes
+gestor.agregarTodos(ana);                               // 1 estudiante
+gestor.agregarTodos();                                  // ninguno</div>
+                    <p>Java internamente trata <code class="font-mono text-sm">T... elementos</code> como un arreglo (<code class="font-mono text-sm">T[]</code>), por eso usamos <code class="font-mono text-sm">Arrays.asList(elementos)</code> para convertirlo en una <code class="font-mono text-sm">List</code> que se pueda agregar con <code class="font-mono text-sm">addAll()</code>.</p>
+                    <p><strong><code class="font-mono text-sm">@SafeVarargs</code>:</strong> Es una anotación que le dice al compilador: "ya sé que mezclar genéricos con varargs puede ser inseguro, pero yo me aseguro de usarlo correctamente". Solo suprime una advertencia amarilla, no afecta el funcionamiento.</p>
+                    <p><strong>¿Para qué sirve este método?</strong> Evita tener que llamar <code class="font-mono text-sm">agregar()</code> una y otra vez por cada elemento:</p>
+                    <div class="code-fragment">
+// Sin agregarTodos() — tedioso:
+gestor.agregar(ana);
+gestor.agregar(carlos);
+gestor.agregar(maria);
+
+// Con agregarTodos() — mucho más limpio:
+gestor.agregarTodos(ana, carlos, maria);</div>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.8 Método <code>eliminar()</code></h5>
+                <div class="code-fragment">public boolean eliminar(T elemento) { return elementos.remove(elemento); }</div>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.9 Método <code>getTodos()</code></h5>
+                <p>Devuelve una <strong>copia</strong> de la lista para no romper el encapsulamiento:</p>
+                <div class="code-fragment">public List&lt;T&gt; getTodos() { return new ArrayList&lt;&gt;(elementos); }</div>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.10 Método <code>buscarPrimero()</code> con <code>Optional</code></h5>
+                <p>Busca el primer elemento que cumpla la condición (<code class="font-mono text-sm">Predicate</code>) y devuelve un <code class="font-mono text-sm">Optional</code>:</p>
+                <div class="code-fragment">
+public Optional&lt;T&gt; buscarPrimero(Predicate&lt;T&gt; condicion) {
+    return elementos.stream().filter(condicion).findFirst();
+}
+                </div>
+                <p><code class="font-mono text-sm">Optional</code> permite manejar de forma segura el caso en que no se encuentre el elemento.</p>
+                <details>
+                    <summary><strong>¿Qué hace este código y por qué usamos <code class="font-mono text-sm">Optional</code>?</strong></summary>
+                    <p>Imagina que buscas un estudiante llamado "Luis" en la lista. Pueden pasar dos cosas:</p>
+                    <ul>
+                        <li><strong>Luis existe:</strong> quieres obtenerlo y mostrar sus datos.</li>
+                        <li><strong>Luis NO existe:</strong> si intentas usar el resultado como si existiera, tu programa lanza <code class="font-mono text-sm">NullPointerException</code> y se cae.</li>
+                    </ul>
+                    <p><strong>El problema con devolver <code class="font-mono text-sm">null</code>:</strong> Si este método retornara <code class="font-mono text-sm">null</code> cuando no encuentra nada, el programador que lo usa tiene que <strong>acordarse</strong> de verificar manualmente con un <code class="font-mono text-sm">if (resultado != null)</code>. Si se le olvida, el programa truena.</p>
+                    <p><strong>La solución con <code class="font-mono text-sm">Optional</code>:</strong> Es una "cajita" que puede contener un valor o estar vacía. Java te <strong>obliga</strong> a verificar si hay algo antes de usarlo:</p>
+                    <div class="code-fragment">
+// Así se usa en Main.java (paso 6.10):
+Optional&lt;Estudiante&gt; encontrado = gestor.buscarPrimero(e -> e.getNombre().contains("Luis"));
+
+encontrado.ifPresentOrElse(
+    e -> System.out.println("Sí existe: " + e),    // qué hacer si SÍ está
+    () -> System.out.println("No existe")            // qué hacer si NO está
+);</div>
+                    <p><strong>Línea por línea del código:</strong></p>
+                    <ul>
+                        <li><code class="font-mono text-sm">elementos.stream()</code> → convierte la lista en un flujo (Stream) de elementos.</li>
+                        <li><code class="font-mono text-sm">.filter(condicion)</code> → deja pasar solo los elementos que cumplen la condición (por ejemplo, que el nombre contenga "Luis").</li>
+                        <li><code class="font-mono text-sm">.findFirst()</code> → toma el primer elemento que pasó el filtro y lo envuelve en un <code class="font-mono text-sm">Optional</code>. Si no pasó ninguno, el Optional queda vacío (no es <code class="font-mono text-sm">null</code>, es un Optional sin nada dentro).</li>
+                    </ul>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.11 Método <code>filtrar()</code></h5>
+                <p>Devuelve una lista con todos los elementos que cumplen la condición:</p>
+                <div class="code-fragment">
+public List&lt;T&gt; filtrar(Predicate&lt;T&gt; condicion) {
+    return elementos.stream().filter(condicion).collect(Collectors.toList());
+}
+                </div>
+                <details>
+                    <summary><strong>¿Qué hace <code class="font-mono text-sm">filtrar()</code>?</strong></summary>
+                    <p>A diferencia de <code class="font-mono text-sm">buscarPrimero()</code> que solo devuelve el primero, este método devuelve <strong>todos</strong> los elementos que cumplen la condición en una lista nueva. Ejemplo de uso:</p>
+                    <div class="code-fragment">
+// Obtener estudiantes con promedio mayor a 85:
+List&lt;Estudiante&gt; destacados = gestor.filtrar(e -> e.getPromedio() > 85);
+// destacados contiene: Ana, Carlos, Luis (todos los que pasan el filtro)</div>
+                    <p><strong>Línea por línea:</strong> <code class="font-mono text-sm">stream()</code> → flujo de elementos, <code class="font-mono text-sm">filter(condicion)</code> → solo deja pasar los que cumplan, <code class="font-mono text-sm">collect(Collectors.toList())</code> → junta todos los que pasaron en una nueva lista.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.12 Método <code>contarSi()</code></h5>
+                <div class="code-fragment">
+public long contarSi(Predicate&lt;T&gt; condicion) {
+    return elementos.stream().filter(condicion).count();
+}
+                </div>
+                <details>
+                    <summary><strong>¿Qué hace <code class="font-mono text-sm">contarSi()</code>?</strong></summary>
+                    <p>Similar a <code class="font-mono text-sm">filtrar()</code>, pero en vez de devolver la lista, solo cuenta <strong>cuántos</strong> elementos cumplen la condición. Ejemplo:</p>
+                    <div class="code-fragment">
+// ¿Cuántos estudiantes tienen promedio mayor a 85?
+long cantidad = gestor.contarSi(e -> e.getPromedio() > 85);
+// Retorna: 3</div>
+                    <p>Es como hacer <code class="font-mono text-sm">filtrar().size()</code> pero más eficiente, porque no crea una lista intermedia.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.13 Método <code>ordenar()</code></h5>
+                <div class="code-fragment">public void ordenar(Comparator&lt;T&gt; comparador) { elementos.sort(comparador); }</div>
+                <details>
+                    <summary><strong>¿Qué hace <code class="font-mono text-sm">ordenar()</code>?</strong></summary>
+                    <p>Ordena los elementos dentro del Gestor usando un <code class="font-mono text-sm">Comparator</code>, que es otra interfaz funcional (similar a <code class="font-mono text-sm">Predicate</code> pero para ordenar en vez de filtrar). Ejemplos:</p>
+                    <div class="code-fragment">
+// Ordenar estudiantes por promedio (usa el compareTo que definimos):
+gestor.ordenar(Comparator.naturalOrder());
+
+// Ordenar por nombre alfabéticamente:
+gestor.ordenar(Comparator.comparing(Estudiante::getNombre));</div>
+                    <p><strong>¿Por qué no usa Predicate?</strong> Porque ordenar no es "sí o no", sino "va antes o después". <code class="font-mono text-sm">Comparator.compare(a, b)</code> retorna negativo, cero o positivo indicando el orden entre dos elementos.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.14 Métodos auxiliares: <code>estaVacio()</code>, <code>tamaño()</code>, <code>limpiar()</code></h5>
+                <div class="code-fragment">
+public boolean estaVacio() { return elementos.isEmpty(); }
+public int tamaño() { return elementos.size(); }
+public void limpiar() { elementos.clear(); }
+                </div>
+                <details>
+                    <summary><strong>¿Para qué sirven estos métodos?</strong></summary>
+                    <ul>
+                        <li><code class="font-mono text-sm">estaVacio()</code> → retorna <code class="font-mono text-sm">true</code> si no hay elementos. Útil para verificar antes de operar: <code class="font-mono text-sm">if (!gestor.estaVacio()) { ... }</code>.</li>
+                        <li><code class="font-mono text-sm">tamaño()</code> → retorna cuántos elementos hay guardados. Equivale a <code class="font-mono text-sm">getTodos().size()</code> pero sin crear una copia.</li>
+                        <li><code class="font-mono text-sm">limpiar()</code> → vacía completamente el Gestor, eliminando todos los elementos.</li>
+                    </ul>
+                    <p>Son métodos de conveniencia que hacen el código más legible que manipular la lista interna directamente.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.15 Método <code>imprimirTodos()</code> con lambda</h5>
+                <p>Usa <code class="font-mono text-sm">forEach</code> con una referencia a método para imprimir cada elemento:</p>
+                <div class="code-fragment">
+public void imprimirTodos() {
+    if (elementos.isEmpty()) {
+        System.out.println("No hay elementos para mostrar.");
+        return;
+    }
+    elementos.forEach(System.out::println);
+}
+                </div>
+                <details>
+                    <summary><strong>¿Qué hace <code class="font-mono text-sm">imprimirTodos()</code> y qué es <code class="font-mono text-sm">System.out::println</code>?</strong></summary>
+                    <p>Recorre todos los elementos y los imprime en consola, uno por línea.</p>
+                    <p><strong><code class="font-mono text-sm">System.out::println</code>:</strong> El símbolo <code class="font-mono text-sm">::</code> se llama "referencia a método". Es una forma abreviada de escribir una lambda. Estas dos líneas hacen exactamente lo mismo:</p>
+                    <div class="code-fragment">
+elementos.forEach(e -> System.out.println(e));    // lambda
+elementos.forEach(System.out::println);            // referencia a método (más corto)</div>
+                    <p>El <code class="font-mono text-sm">if</code> al inicio es para no imprimir una lista vacía sin avisar: si no hay nada, muestra un mensaje amigable en vez de simplemente no imprimir nada.</p>
+                </details>
+            </div>
+
+            <div class="highlight-box">
+                <strong><i class="fa-regular fa-code mr-1"></i> ¿Qué hace <code>Predicate</code>?</strong>
+                <code class="font-mono text-sm">Predicate&lt;T&gt;</code> es una interfaz funcional que representa una condición: <code class="font-mono text-sm">boolean test(T t)</code>. Se usa con lambdas para filtrar elementos. Por ejemplo, <code class="font-mono text-sm">e -> e.getPromedio() > 80</code> es un predicado que selecciona estudiantes con promedio mayor a 80.
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PASO 6: MAIN — PUNTO DE ENTRADA                            -->
+        <!-- ============================================================ -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-red);">
+            <h2><i class="fa-regular fa-play mr-2" style="color: var(--una-red);"></i> Paso 6: Clase <code>Main</code></h2>
+
+            <p>
+                La clase <code class="font-mono text-sm">Main</code> contiene el método <code class="font-mono text-sm">main</code>,
+                que es el punto de entrada del programa. Aquí vamos a:
+            </p>
+            <ul>
+                <li>Crear estudiantes y profesores.</li>
+                <li>Agregarlos al <code class="font-mono text-sm">Gestor</code>.</li>
+                <li>Usar streams y lambdas para filtrar, ordenar y procesar datos.</li>
+                <li>Demostrar el uso de <code class="font-mono text-sm">Optional</code>.</li>
+            </ul>
+
+            <div class="step-sub">
+                <h5>6.1 Crear <code>Main.java</code> en la raíz de <code>src</code></h5>
+                <p>El archivo debe estar directamente en <code class="font-mono text-sm">src</code> (fuera de los paquetes).</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>6.2 Importar las clases necesarias</h5>
+                <div class="code-fragment">
+import modelo.Estudiante;
+import modelo.Profesor;
+import servicio.Gestor;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>6.3 Declarar la clase <code>Main</code> y el método <code>main</code></h5>
+                <div class="code-fragment">
+public class Main {
+    public static void main(String[] args) {
+        // Aquí irá todo el código
+    }
+}
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>6.4 Crear estudiantes</h5>
+                <p>Instancia al menos 5 estudiantes con diferentes nombres, edades, carnets y carreras. Agrega varias notas a cada uno usando <code class="font-mono text-sm">agregarNota()</code>.</p>
+                <div class="code-fragment">
+Estudiante ana = new Estudiante("Ana Rodríguez", 20, "B20250001", "Ingeniería en Sistemas");
+ana.agregarNota(85.5);
+ana.agregarNota(92.0);
+ana.agregarNota(78.0);
+// ... crea más estudiantes
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>6.5 Crear profesores</h5>
+                <div class="code-fragment">
+Profesor prof1 = new Profesor("Dra. Elena Rojas", 45, "P-001", "Ingeniería en Sistemas");
+Profesor prof2 = new Profesor("Dr. Mario Castro", 52, "P-002", "Administración");
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>6.6 Instanciar un <code>Gestor&lt;Estudiante&gt;</code> y agregar los estudiantes</h5>
+                <div class="code-fragment">
+Gestor&lt;Estudiante&gt; gestorEstudiantes = new Gestor&lt;&gt;();
+gestorEstudiantes.agregarTodos(ana, carlos, maria, luis, laura);
+                </div>
+                <p>Observa cómo la misma clase <code class="font-mono text-sm">Gestor</code> funciona con estudiantes.</p>
+                <details>
+                    <summary><strong>¿Por qué agrego los estudiantes a un Gestor si ya los creé?</strong></summary>
+                    <p>Crear los estudiantes es solo el primer paso. Imagina que tienes 5 variables sueltas: <code class="font-mono text-sm">ana</code>, <code class="font-mono text-sm">carlos</code>, <code class="font-mono text-sm">maria</code>, etc. Con variables sueltas <strong>no puedes</strong> hacer nada de esto:</p>
+                    <ul>
+                        <li>Buscar un estudiante por nombre en todas las variables a la vez.</li>
+                        <li>Filtrar los que tienen promedio mayor a 85.</li>
+                        <li>Ordenarlos por promedio de mayor a menor.</li>
+                        <li>Imprimir todos de una sola vez.</li>
+                        <li>Contar cuántos hay por carrera.</li>
+                    </ul>
+                    <p>El <strong>Gestor</strong> es la herramienta que te permite hacer todo eso. Piensa en él como una "caja organizadora":</p>
+                    <div class="code-fragment">
+// Sin Gestor — imposible operar sobre todos a la vez:
+ana.getPromedio();   // solo puedes trabajar con UNO a la vez
+carlos.getNombre();  // otro individual
+
+// Con Gestor — operas sobre TODOS de una vez:
+gestor.filtrar(e -> e.getPromedio() > 85);       // filtra todos
+gestor.buscarPrimero(e -> e.getNombre().contains("Luis")); // busca en todos
+gestor.imprimirTodos();                           // imprime todos</div>
+                    <p><strong>En resumen:</strong> crear los objetos te da los datos, pero el Gestor te da <strong>el poder de trabajar con todos esos datos juntos</strong> de forma eficiente.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>6.7 Imprimir la lista completa de estudiantes</h5>
+                <p>Usa el método <code class="font-mono text-sm">imprimirTodos()</code>:</p>
+                <div class="code-fragment">
+gestorEstudiantes.imprimirTodos();
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>6.8 Filtrar estudiantes con promedio mayor a 85</h5>
+                <p>Usa <code class="font-mono text-sm">filtrar()</code> con una lambda:</p>
+                <div class="code-fragment">
+List&lt;Estudiante&gt; destacados = gestorEstudiantes.filtrar(e -> e.getPromedio() > 85);
+destacados.forEach(System.out::println);
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>6.9 Ordenar estudiantes por promedio (descendente)</h5>
+                <p>Usa <code class="font-mono text-sm">Comparator.naturalOrder()</code> porque <code class="font-mono text-sm">Estudiante</code> implementa <code class="font-mono text-sm">Comparable</code>:</p>
+                <div class="code-fragment">
+List&lt;Estudiante&gt; ordenados = gestorEstudiantes.getTodos();
+ordenados.sort(Comparator.naturalOrder());
+ordenados.forEach(e -> System.out.println(e.getNombre() + " → " + e.getPromedio()));
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>6.10 Buscar un estudiante por nombre usando <code>Optional</code></h5>
+                <p>Busca "Luis" y maneja el resultado con <code class="font-mono text-sm">ifPresentOrElse()</code>:</p>
+                <div class="code-fragment">
+Optional&lt;Estudiante&gt; encontrado = gestorEstudiantes.buscarPrimero(e -> e.getNombre().contains("Luis"));
+encontrado.ifPresentOrElse(
+    e -> System.out.println("Estudiante encontrado: " + e.getDescripcion()),
+    () -> System.out.println("No se encontró ningún estudiante con ese nombre.")
+);
+                </div>
+                <p>Repite la búsqueda con un nombre que no exista (ej. "Pedro") para ver cómo maneja <code class="font-mono text-sm">Optional</code> el valor ausente.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>6.11 Contar estudiantes por carrera usando <code>Collectors.groupingBy</code></h5>
+                <div class="code-fragment">
+var conteoPorCarrera = gestorEstudiantes.getTodos().stream()
+    .collect(Collectors.groupingBy(Estudiante::getCarrera, Collectors.counting()));
+conteoPorCarrera.forEach((carrera, cantidad) ->
+    System.out.println(carrera + " → " + cantidad + " estudiante(s)")
+);
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>6.12 Calcular el promedio general de todos los estudiantes</h5>
+                <div class="code-fragment">
+double promedioGeneral = gestorEstudiantes.getTodos().stream()
+    .mapToDouble(Estudiante::getPromedio)
+    .average()
+    .orElse(0.0);
+System.out.println("El promedio general de todos los estudiantes es: " + promedioGeneral);
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>6.13 Demostrar que <code>Gestor</code> también funciona con profesores</h5>
+                <p>Crea un <code class="font-mono text-sm">Gestor&lt;Profesor&gt;</code>, agrega los profesores y los imprime:</p>
+                <div class="code-fragment">
+Gestor&lt;Profesor&gt; gestorProfesores = new Gestor&lt;&gt;();
+gestorProfesores.agregarTodos(prof1, prof2);
+gestorProfesores.imprimirTodos();
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <strong><i class="fa-regular fa-check-circle mr-1"></i> ¡Listo!</strong>
+                Al ejecutar el programa, deberías ver la salida esperada con todos los estudiantes, filtros, ordenamientos y estadísticas.
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SALIDA ESPERADA                                             -->
+        <!-- ============================================================ -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
+            <h2><i class="fa-regular fa-terminal mr-2" style="color: var(--accent-green);"></i> Salida esperada</h2>
+            <p>
+                Al ejecutar el programa, la salida en consola debe ser similar a esto:
+            </p>
+            <pre style="font-size: 0.75rem; white-space: pre-wrap; word-break: break-word;">
+═══════════════════════════════════════════════
+        LISTA COMPLETA DE ESTUDIANTES
+═══════════════════════════════════════════════
+Estudiante: Ana Rodríguez | Carnet: B20250001 | Carrera: Ingeniería en Sistemas | Promedio: 85.16666666666667
+Estudiante: Carlos Méndez | Carnet: B20250002 | Carrera: Ingeniería en Sistemas | Promedio: 91.16666666666667
+Estudiante: María Fernández | Carnet: B20250003 | Carrera: Administración de Empresas | Promedio: 71.66666666666667
+Estudiante: Luis Chaves | Carnet: B20250004 | Carrera: Ingeniería en Sistemas | Promedio: 96.5
+Estudiante: Laura Jiménez | Carnet: B20250005 | Carrera: Diseño Gráfico | Promedio: 83.0
+
+───────────────────────────────────────────────
+ESTUDIANTES CON PROMEDIO MAYOR A 85
+───────────────────────────────────────────────
+Estudiante: Ana Rodríguez | Carnet: B20250001 | Carrera: Ingeniería en Sistemas | Promedio: 85.16666666666667
+Estudiante: Carlos Méndez | Carnet: B20250002 | Carrera: Ingeniería en Sistemas | Promedio: 91.16666666666667
+Estudiante: Luis Chaves | Carnet: B20250004 | Carrera: Ingeniería en Sistemas | Promedio: 96.5
+
+───────────────────────────────────────────────
+ESTUDIANTES ORDENADOS POR PROMEDIO (↓)
+───────────────────────────────────────────────
+Luis Chaves → 96.5
+Carlos Méndez → 91.16666666666667
+Ana Rodríguez → 85.16666666666667
+Laura Jiménez → 83.0
+María Fernández → 71.66666666666667
+
+───────────────────────────────────────────────
+BÚSQUEDA DE ESTUDIANTE 
+───────────────────────────────────────────────
+Estudiante encontrado: Estudiante: Luis Chaves | Carnet: B20250004 | Carrera: Ingeniería en Sistemas | Promedio: 96.5
+'Pedro' no existe en la lista.
+
+───────────────────────────────────────────────
+ESTADÍSTICAS POR CARRERA
+───────────────────────────────────────────────
+Diseño Gráfico → 1 estudiante(s)
+Administración de Empresas → 1 estudiante(s)
+Ingeniería en Sistemas → 3 estudiante(s)
+
+───────────────────────────────────────────────
+PROMEDIO GENERAL
+───────────────────────────────────────────────
+El promedio general de todos los estudiantes es: 85.5
+
+───────────────────────────────────────────────
+PROFESORES
+───────────────────────────────────────────────
+Profesor: Dra. Elena Rojas | ID: P-001 | Departamento: Ingeniería en Sistemas
+Profesor: Dr. Mario Castro | ID: P-002 | Departamento: Administración
+
+═══════════════════════════════════════════════
+         FIN DEL PROGRAMA
+═══════════════════════════════════════════════</pre>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PREGUNTAS DE REFLEXIÓN                                      -->
+        <!-- ============================================================ -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-gold);">
+            <h2><i class="fa-regular fa-brain mr-2" style="color: var(--una-gold);"></i> Preguntas de reflexión</h2>
+            <p>
+                Responde estas preguntas con sus propias palabras para afianzar los conceptos. Puede discutirlas con sus compañeros o
+                responderlas individualmente.
+            </p>
+
+            <ol style="list-style-type: decimal; padding-left: 1.5rem; color: var(--text-muted);">
+                <li>
+                    <strong>Herencia:</strong> ¿Por qué <code class="font-mono text-sm">Persona</code> es abstracta?
+                    ¿Qué pasaría si no lo fuera? ¿Por qué <code class="font-mono text-sm">Estudiante</code> y
+                    <code class="font-mono text-sm">Profesor</code> usan <code class="font-mono text-sm">super()</code>?
+                </li>
+                <li>
+                    <strong>Interfaces:</strong> ¿Qué ventaja tiene que <code class="font-mono text-sm">Estudiante</code>
+                    implemente <code class="font-mono text-sm">Comparable</code>? ¿Cómo se relaciona con el polimorfismo?
+                </li>
+                <li>
+                    <strong>Paquetes:</strong> ¿Por qué separamos el código en <code class="font-mono text-sm">modelo</code> y
+                    <code class="font-mono text-sm">servicio</code>?
+                    ¿Qué beneficio tiene esta organización?
+                </li>
+                <li>
+                    <strong>Genéricos:</strong> ¿Qué significa <code class="font-mono text-sm">&lt;T&gt;</code> en
+                    <code class="font-mono text-sm">Gestor&lt;T&gt;</code>? ¿Por qué es útil tener una clase genérica?
+                    ¿Qué ventaja tiene sobre escribir un <code class="font-mono text-sm">GestorEstudiantes</code> y
+                    un <code class="font-mono text-sm">GestorProfesores</code> separados?
+                </li>
+                <li>
+                    <strong>Lambdas y Streams:</strong> En el código usamos <code class="font-mono text-sm">.filter(e -> e.getPromedio() > 85)</code>.
+                    ¿Qué está pasando ahí? ¿Cómo se compara con un bucle <code class="font-mono text-sm">for</code> tradicional?
+                </li>
+                <li>
+                    <strong>Optional:</strong> ¿Por qué usamos <code class="font-mono text-sm">Optional</code> en
+                    <code class="font-mono text-sm">buscarPrimero()</code>? ¿Qué problema resuelve?
+                </li>
+            </ol>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ENTREGA                                                    -->
+        <!-- ============================================================ -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-red); background: rgba(200,16,46,0.04);">
+            <h2><i class="fa-regular fa-circle-check mr-2" style="color: var(--una-red);"></i> Entrega</h2>
+            <p>
+                Para entregar el laboratorio, debes:
+            </p>
+            <ol style="list-style-type: decimal; padding-left: 1.5rem; color: var(--text-muted);">
+                <li>
+                    <strong>Subir el código a GitHub:</strong> Realiza un commit con el mensaje
+                    <code class="font-mono text-sm">feat: laboratorio semana 3 — sistema universitario</code>
+                    y haz <code class="font-mono text-sm">push</code> a tu repositorio.
+                </li>
+                <li>
+                    <strong>Adjuntar en el aula virtual:</strong>
+                    <ul>
+                        <li>El enlace al repositorio de GitHub.</li>
+                        <li>Captura de pantalla de la consola con la salida del programa.</li>
+                        <li>Respuestas a las preguntas de reflexión (en un archivo <code class="font-mono text-sm">.txt</code>, <code class="font-mono text-sm">.pdf</code>  o <code class="font-mono text-sm">.doc</code>).</li>
+                    </ul>
+                </li>
+            </ol>
+            <div class="highlight-box">
+                <strong><i class="fa-regular fa-clock mr-1"></i> Fecha de entrega:</strong>
+                Al finalizar la clase.
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PIE DE PÁGINA                                              -->
+        <!-- ============================================================ -->
+        <div class="text-center text-xs" style="color: var(--text-muted); padding: 2rem 0 1rem 0; border-top: 1px solid var(--border-panel);">
+            <p>Laboratorio 2 — Programación III &bull; Universidad Nacional &bull; 2026</p>
+            <p class="mt-1">Elaborado por: Kristel Duarte Pérez</p>
+        </div>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCRIPT PARA TEMA CLARO/OSCURO                                -->
+    <!-- ============================================================ -->
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', next);
+            const icon = document.getElementById('theme-icon');
+            icon.className = next === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+        }
+    </script>
+
+</body>
+</html>

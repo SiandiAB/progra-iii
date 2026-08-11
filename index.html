@@ -112,6 +112,64 @@
             color: #94a3b8;
             font-size: 0.85rem;
         }
+
+        /* --- LAB Button --- */
+        .clase-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: stretch;
+        }
+        .clase-row .clase-card {
+            flex: 1;
+        }
+        .lab-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+            min-width: 56px;
+            border-radius: 0.85rem;
+            padding: 0.5rem 0.65rem;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 2px dashed transparent;
+            user-select: none;
+        }
+        .lab-btn.locked {
+            background: #f1f5f9;
+            color: #94a3b8;
+            border-color: #cbd5e1;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .lab-btn.unlocked {
+            background: rgba(72, 201, 176, 0.1);
+            color: var(--accent-green);
+            border-color: rgba(72, 201, 176, 0.35);
+        }
+        .lab-btn.unlocked:hover {
+            background: rgba(72, 201, 176, 0.2);
+            border-color: var(--accent-green);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(72, 201, 176, 0.2);
+        }
+        .lab-icon {
+            font-size: 0.85rem;
+        }
+        .lab-label {
+            font-size: 0.6rem;
+            font-weight: 700;
+        }
+        .lab-spacer {
+            min-width: 56px;
+            flex-shrink: 0;
+        }
     </style>
 </head>
 <body class="flex items-center justify-center p-6">
@@ -150,36 +208,48 @@
                 </div>
 
                 <div class="flex flex-col gap-2">
-                    <a href="clases/siandi/clase-01/" class="clase-card">
-                        <div class="clase-icon" style="background: rgba(230,106,106,0.12); color: var(--una-red);">
-                            <i class="fa-solid fa-1"></i>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="text-sm font-bold">Clase 1 — Bienvenida y Fundamentos</h4>
-                            <p class="text-xs text-gray-500">Rompehielo, reglas del curso, pilares del software, Git colaborativo.</p>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
-                    </a>
-                    <a href="clases/siandi/clase-02/" class="clase-card">
-                        <div class="clase-icon" style="background: rgba(230,106,106,0.12); color: var(--una-red);">
-                            <i class="fa-solid fa-2"></i>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="text-sm font-bold">Clase 2 — Características del Lenguaje Java</h4>
-                            <p class="text-xs text-gray-500">JVM, Bytecode, GC, tipos elementales, wrappers, static y comparativa C++/C#/Java.</p>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
-                    </a>
-                    <a href="clases/siandi/clase-03/" class="clase-card">
-                        <div class="clase-icon" style="background: rgba(230,106,106,0.12); color: var(--una-red);">
-                            <i class="fa-solid fa-3"></i>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="text-sm font-bold">Clase 3 — Clases, Objetos, Referencias y Modularidad</h4>
-                            <p class="text-xs text-gray-500">Stack vs. Heap, wrappers, aliasing, paquetes, herencia, interfaces y records.</p>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
-                    </a>
+                    <div class="clase-row">
+                        <a href="clases/siandi/clase-01/" class="clase-card">
+                            <div class="clase-icon" style="background: rgba(230,106,106,0.12); color: var(--una-red);">
+                                <i class="fa-solid fa-1"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold">Clase 1 — Bienvenida y Fundamentos</h4>
+                                <p class="text-xs text-gray-500">Rompehielo, reglas del curso, pilares del software, Git colaborativo.</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                        </a>
+                        <div class="lab-spacer"></div>
+                    </div>
+                    <div class="clase-row">
+                        <a href="clases/siandi/clase-02/" class="clase-card">
+                            <div class="clase-icon" style="background: rgba(230,106,106,0.12); color: var(--una-red);">
+                                <i class="fa-solid fa-2"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold">Clase 2 — Características del Lenguaje Java</h4>
+                                <p class="text-xs text-gray-500">JVM, Bytecode, GC, tipos elementales, wrappers, static y comparativa C++/C#/Java.</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                        </a>
+                        <div class="lab-spacer"></div>
+                    </div>
+                    <div class="clase-row">
+                        <a href="clases/siandi/clase-03/" class="clase-card">
+                            <div class="clase-icon" style="background: rgba(230,106,106,0.12); color: var(--una-red);">
+                                <i class="fa-solid fa-3"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold">Clase 3 — Clases, Objetos, Referencias y Modularidad</h4>
+                                <p class="text-xs text-gray-500">Stack vs. Heap, wrappers, aliasing, paquetes, herencia, interfaces y records.</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                        </a>
+                        <a href="labs/siandi/clase-03/" class="lab-btn locked" data-lab="siandi-03" data-lab-url="labs/siandi/clase-03/">
+                            <i class="fa-solid fa-flask lab-icon"></i>
+                            <span class="lab-label">LAB</span>
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -196,36 +266,48 @@
                 </div>
 
                 <div class="flex flex-col gap-2">
-                    <a href="clases/kristel/clase-01/" class="clase-card">
-                        <div class="clase-icon" style="background: rgba(93,173,226,0.12); color: var(--accent-blue);">
-                            <i class="fa-solid fa-1"></i>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="text-sm font-bold">Clase 1 — Bienvenida y Fundamentos</h4>
-                            <p class="text-xs text-gray-500">Rompehielo, reglas del curso, pilares del software, Git colaborativo.</p>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
-                    </a>
-                    <a href="clases/kristel/clase-02/" class="clase-card">
-                        <div class="clase-icon" style="background: rgba(93,173,226,0.12); color: var(--accent-blue);">
-                            <i class="fa-solid fa-2"></i>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="text-sm font-bold">Clase 2 — Características de Java</h4>
-                            <p class="text-xs text-gray-500">Garbage Collector, Static, Comparativas.</p>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
-                    </a>
-                    <a href="clases/kristel/clase-03/" class="clase-card">
-                        <div class="clase-icon" style="background: rgba(93,173,226,0.12); color: var(--accent-blue);">
-                            <i class="fa-solid fa-3"></i>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="text-sm font-bold">Clase 3 — Clases, Objetos, Referencias y Modularidad</h4>
-                            <p class="text-xs text-gray-500">Herencias, Interfaces, Paquetes y Colecciones.</p>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
-                    </a>
+                    <div class="clase-row">
+                        <a href="clases/kristel/clase-01/" class="clase-card">
+                            <div class="clase-icon" style="background: rgba(93,173,226,0.12); color: var(--accent-blue);">
+                                <i class="fa-solid fa-1"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold">Clase 1 — Bienvenida y Fundamentos</h4>
+                                <p class="text-xs text-gray-500">Rompehielo, reglas del curso, pilares del software, Git colaborativo.</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                        </a>
+                        <div class="lab-spacer"></div>
+                    </div>
+                    <div class="clase-row">
+                        <a href="clases/kristel/clase-02/" class="clase-card">
+                            <div class="clase-icon" style="background: rgba(93,173,226,0.12); color: var(--accent-blue);">
+                                <i class="fa-solid fa-2"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold">Clase 2 — Características de Java</h4>
+                                <p class="text-xs text-gray-500">Garbage Collector, Static, Comparativas.</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                        </a>
+                        <div class="lab-spacer"></div>
+                    </div>
+                    <div class="clase-row">
+                        <a href="clases/kristel/clase-03/" class="clase-card">
+                            <div class="clase-icon" style="background: rgba(93,173,226,0.12); color: var(--accent-blue);">
+                                <i class="fa-solid fa-3"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold">Clase 3 — Clases, Objetos, Referencias y Modularidad</h4>
+                                <p class="text-xs text-gray-500">Herencias, Interfaces, Paquetes y Colecciones.</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                        </a>
+                        <a href="labs/kristel/clase-03/" class="lab-btn locked" data-lab="kristel-03" data-lab-url="labs/kristel/clase-03/">
+                            <i class="fa-solid fa-flask lab-icon"></i>
+                            <span class="lab-label">LAB</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -238,6 +320,33 @@
         </p>
 
     </div>
+
+    <!-- ===== LAB State Management ===== -->
+    <script>
+        (function () {
+            'use strict';
+            var labButtons = document.querySelectorAll('.lab-btn[data-lab]');
+            labButtons.forEach(function (btn) {
+                var key = 'lab-' + btn.getAttribute('data-lab');
+                var url = btn.getAttribute('data-lab-url');
+                if (localStorage.getItem(key) === 'unlocked') {
+                    btn.classList.remove('locked');
+                    btn.classList.add('unlocked');
+                    btn.style.pointerEvents = 'auto';
+                    btn.style.cursor = 'pointer';
+                    btn.title = 'Abrir laboratorio';
+                    // replace lock icon if present
+                    var icon = btn.querySelector('.fa-lock');
+                    if (icon) {
+                        icon.classList.remove('fa-lock');
+                        icon.classList.add('fa-flask');
+                    }
+                } else {
+                    btn.title = 'Completa la presentación para desbloquear el LAB';
+                }
+            });
+        })();
+    </script>
 
 </body>
 </html>
