@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio 3 — Programación III (Semana 4)</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --bg-panel: #ffffff;
+            --bg-terminal: #2b2b2b; /* Fondo Darcula IntelliJ */
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-panel: #e2e8f0;
+            --una-red: #c8102e;
+            --una-gold: #d4ac0d;
+            --accent-blue: #2563eb;
+            --accent-green: #16a34a;
+            --accent-purple: #7c3aed;
+            --accent-peach: #ea580c;
+        }
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --bg-panel: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-panel: #334155;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .glass-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .glass-panel h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.75rem; }
+        .glass-panel h3 { font-size: 1.3rem; font-weight: 700; margin: 1.2rem 0 0.6rem 0; }
+        .glass-panel h4 { font-size: 1.1rem; font-weight: 700; margin: 1rem 0 0.4rem 0; }
+        .glass-panel p { color: var(--text-muted); margin-bottom: 0.75rem; }
+        .glass-panel ul, .glass-panel ol { color: var(--text-muted); padding-left: 1.5rem; margin-bottom: 0.75rem; }
+        .glass-panel li { margin-bottom: 0.3rem; }
+
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .badge-red { background: rgba(200,16,46,0.12); color: var(--una-red); }
+        .badge-blue { background: rgba(37,99,235,0.12); color: var(--accent-blue); }
+        .badge-green { background: rgba(22,163,74,0.12); color: var(--accent-green); }
+        .badge-purple { background: rgba(124,58,237,0.12); color: var(--accent-purple); }
+        .badge-gold { background: rgba(212,172,13,0.12); color: var(--una-gold); }
+
+        /* Estilo de Bloque de Código */
+        .code-fragment {
+            background: #2b2b2b; /* Fondo Darcula */
+            border-radius: 0.6rem;
+            padding: 1rem 1.2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            color: #a9b7c6; /* Texto base Darcula */
+            margin: 0.5rem 0;
+            border: 1px solid #323232;
+            display: block;
+            white-space: pre;
+            overflow-x: auto;
+            width: 100%;
+            line-height: 1.5;
+        }
+
+        /* Colores del Tema Darcula IntelliJ IDEA */
+        .d-comment { color: #808080; font-style: italic; } /* Comentarios en gris */
+        .d-keyword { color: #cc7832; font-weight: bold; }  /* Palabras clave (public, class, new) en naranja/ámbar */
+        .d-string { color: #6a8759; }                      /* Cadenas de texto ("...") en verde */
+        .d-number { color: #6897bb; }                      /* Números (450, 300) en azul */
+        .d-annotation { color: #bbb529; }                  /* Anotaciones (@Override) en amarillo */
+        .d-method { color: #ffc66d; }                      /* Nombres de métodos (getText(), add()) en amarillo claro */
+        .d-field { color: #9876aa; }                       /* Variables y atributos (txtCarnet) en morado */
+        .d-type { color: #a9b7c6; font-weight: bold; }     /* Nombres de Clases y Tipos en gris claro destacado */
+
+        .step-sub {
+            border-left: 3px solid var(--accent-blue);
+            padding-left: 1rem;
+            margin: 1.2rem 0;
+        }
+        .step-sub h5 {
+            font-weight: 800;
+            font-size: 1rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.2rem;
+        }
+        .step-sub p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+        }
+
+        .highlight-box {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--una-gold);
+            background: rgba(212,172,13,0.06);
+            margin: 0.75rem 0;
+        }
+        .highlight-box strong { color: var(--una-gold); }
+
+        .float-btn {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 9999px;
+            padding: 0.65rem 1rem;
+            font-size: 1rem;
+            color: var(--text-main);
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transition: transform 0.15s, background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .float-btn:hover { transform: scale(1.05); background: var(--border-panel); }
+
+        details {
+            margin-top: 1.2rem;
+        }
+        details summary {
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        details summary:hover { color: var(--accent-blue); }
+
+        /* Tooltip de glosario para palabras clave */
+        .glossary {
+            text-decoration: underline;
+            text-decoration-style: dotted;
+            text-underline-offset: 0.2em;
+            cursor: help;
+            position: relative;
+        }
+        .glossary:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2b2b2b;
+            color: #a9b7c6;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.4rem;
+            font-size: 0.8rem;
+            font-weight: 400;
+            white-space: nowrap;
+            z-index: 100;
+            pointer-events: none;
+            border: 1px solid #555555;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .glass-panel { padding: 1rem; }
+            .glass-panel h2 { font-size: 1.4rem; }
+            .code-fragment { font-size: 0.7rem; padding: 0.4rem 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar modo claro/oscuro">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+
+    <div class="container">
+
+        <!-- PORTADA -->
+        <div class="glass-panel text-center" style="border-top: 6px solid var(--una-red);">
+            <div class="flex justify-center mb-4">
+                <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png" alt="Logo UNA" class="h-20 object-contain"
+                     onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png';">
+            </div>
+            <h2 class="text-3xl font-extrabold">Laboratorio 3</h2>
+            <p class="text-xl" style="color: var(--una-red); font-weight: 700;">Diseño e Implementación de Interfaces Gráficas con Java Swing</p>
+            <p class="text-sm" style="color: var(--text-muted);">Programación III — Semana 4: Desarrollo de Interfaces de Usuario (GUI)</p>
+            <div class="flex flex-wrap justify-center gap-3 mt-3">
+                <span class="badge badge-red">GitHub &amp; GitHub Desktop</span>
+                <span class="badge badge-blue">JFrame &amp; JPanel</span>
+                <span class="badge badge-green">Layout Managers</span>
+                <span class="badge badge-purple">JTextField &amp; JButton</span>
+                <span class="badge badge-gold">JOptionPane &amp; Eventos</span>
+            </div>
+            <div class="mt-4 text-sm" style="color: var(--text-muted);">
+                <i class="fa-regular fa-clock mr-1"></i> Duración estimada: 1 hora 30 minutos &nbsp;·&nbsp;
+                <i class="fa-regular fa-user mr-1"></i> Individual
+            </div>
+        </div>
+
+        <!-- INTRODUCCIÓN -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-gold);">
+            <h2><i class="fa-regular fa-compass mr-2" style="color: var(--una-gold);"></i> Introducción</h2>
+            <p>
+                En este laboratorio daremos el salto definitivo desde la <span class="glossary" tabindex="0" data-tooltip="Interfaz de Línea de Comandos: programas que interactúan con el usuario escribiendo y leyendo texto en una consola (System.out.println, Scanner).">consola de comandos</span> hacia el <strong>desarrollo de aplicaciones de escritorio con ventanas e interfaces gráficas (GUI)</strong>, donde el flujo deja de ser secuencial y pasa a estar <strong>controlado por los eventos</strong> del usuario (clics, tecleo, botones), tal como estudiamos en la <strong>Clase 4</strong>.
+            </p>
+            <p>
+                El paradigma visual se fundamenta en el estándar <span class="glossary" tabindex="0" data-tooltip="Windows (Ventanas), Icons (Íconos), Menus (Menús), Pointer (Puntero): el modelo de interacción de los sistemas operativos modernos.">WIMP</span>: construiremos una ventana <code class="font-mono text-sm">JFrame</code>, la organizaremos con contenedores <code class="font-mono text-sm">JPanel</code> y ordenadores de espacio (Layout Managers), y la llenaremos con componentes atómicos (<code class="font-mono text-sm">JLabel</code>, <code class="font-mono text-sm">JTextField</code>, <code class="font-mono text-sm">JButton</code>) que responderán a eventos.
+            </p>
+
+            <div class="highlight-box">
+                <strong><i class="fa-regular fa-lightbulb mr-1"></i> Objetivo: </strong>
+                Al finalizar este laboratorio, serás capaz de:
+            </div>
+            <ul>
+                <li>Entender el funcionamiento de una ventana creada con <code class="font-mono text-sm">JFrame</code>.</li>
+                <li>Organizar controles con contenedores <code class="font-mono text-sm">JPanel</code> y ordenadores de espacio (Layout Managers: <code class="font-mono text-sm">BorderLayout</code>, <code class="font-mono text-sm">GridLayout</code>, <code class="font-mono text-sm">FlowLayout</code>).</li>
+                <li>Leer datos de cajas de texto <code class="font-mono text-sm">JTextField</code> y ejecutar acciones en botones <code class="font-mono text-sm">JButton</code> mediante eventos (<code class="font-mono text-sm">ActionListener</code>).</li>
+                <li>Desplegar ventanas emergentes de alerta e información usando <code class="font-mono text-sm">JOptionPane</code>.</li>
+                <li>Lanzar aplicaciones gráficas de forma segura en el hilo de eventos de Swing (<code class="font-mono text-sm">EDT</code>) con <code class="font-mono text-sm">SwingUtilities.invokeLater()</code>.</li>
+            </ul>
+        </div>
+
+        <!-- PASO 1 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+            <h2><i class="fa-regular fa-folder-open mr-2" style="color: var(--accent-blue);"></i> Paso 1: Crear el Repositorio en GitHub y Clonarlo con GitHub Desktop</h2>
+
+            <div class="step-sub">
+                <h5>1.1 Crear el Repositorio Remoto en GitHub</h5>
+                <p>Primero crearemos el repositorio directamente en la <strong>página web de GitHub</strong>, para que exista una copia remota (en la nube) del proyecto. Sigue estos pasos:</p>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Entra a <code class="font-mono text-sm">github.com</code> e inicia sesión con tu cuenta.</li>
+                    <li>Haz clic en <em>New</em>.</li>
+                    <li><strong>Repository name:</strong> Escribe <code class="font-mono text-sm">Lab03_GUI</code>.</li>
+                    <li><strong>Description</strong> (opcional): Escribe algo como <em>"Laboratorio 3 — Interfaces Gráficas con Java Swing"</em>.</li>
+                    <li>Selecciona la visibilidad: <strong>Public</strong> o <strong>Private</strong> (a su criterio).</li>
+                    <li>Haz clic en el botón verde <strong>Create repository</strong>.</li>
+                    <li>Haz clic en el botón verde <strong><> Code</strong> y copia la URL del repositorio.</li>
+                </ol>
+                <details>
+                    <summary><strong>¿Qué es un repositorio remoto?</strong></summary>
+                    <p>Es una copia del proyecto almacenada en los servidores de GitHub (en la nube). Sirve como <strong>respaldo central</strong> y como punto de colaboración: cualquier persona con acceso puede clonarlo, hacer cambios y sincronizarlos mediante <code class="font-mono text-sm">push</code> y <code class="font-mono text-sm">pull</code>. El repositorio local es la copia que trabajas en tu computadora; el remoto es la versión "oficial" compartida.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>1.2 Clonar el Repositorio con GitHub Desktop</h5>
+                <p>Ahora traeremos una <strong>copia local</strong> del repositorio a tu computadora usando GitHub Desktop:</p>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Abre la aplicación <strong>GitHub Desktop</strong> (asegúrate de haber iniciado sesión con la misma cuenta).</li>
+                    <li>Ve al menú: <em>File → Clone Repository...</em></li>
+                    <li>En la pestaña <strong>URL</strong>, copia la URL del repositorio <code class="font-mono text-sm">Lab03_GUI</code>.</li>
+                    <li><strong>Local Path:</strong> Selecciona la carpeta de tu computadora donde guardas los laboratorios del curso.</li>
+                    <li>Haz clic en el botón <strong>Clone</strong>.</li>
+                </ol>
+                <div class="highlight-box">
+                    <i class="fa-regular fa-circle-info mr-1"></i> <strong>Atajo:</strong> desde la página del repositorio en GitHub también puedes hacer clic en <em>Code → Open with GitHub Desktop</em> y la aplicación se encargará de clonarlo automáticamente (Solo si inicias sesión en GitHub Desktop).
+                </div>
+                <details>
+                    <summary><strong>¿Qué significa clonar un repositorio?</strong></summary>
+                    <p><span class="glossary" tabindex="0" data-tooltip="Copiar un repositorio remoto a tu computadora, manteniendo el vínculo con el origen para poder sincronizar cambios (push y pull).">Clonar</span> significa <strong>descargar una copia exacta</strong> del repositorio remoto a tu máquina. A diferencia de "crear uno nuevo en GitHub Desktop", al clonar el repositorio local ya queda <strong>vinculado al remoto</strong>: GitHub Desktop sabrá a qué repositorio subir tus commits cuando hagas <code class="font-mono text-sm">push</code>.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>1.3 Abrir la Carpeta del Repositorio en IntelliJ IDEA</h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Abre IntelliJ IDEA y selecciona <em>File → Open...</em>.</li>
+                    <li>Busca y selecciona la carpeta <code class="font-mono text-sm">Lab03_GUI</code> que acabas de clonar.</li>
+                </ol>
+            </div>
+
+            <div class="step-sub">
+                <h5>1.4 Crear y Marcar la Carpeta <code>src</code> como Sources Root</h5>
+                <p>Dado que abrimos una carpeta de repositorio recién clonada, debemos indicarle a IntelliJ dónde estará nuestro código fuente Java:</p>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>En el panel lateral izquierdo de IntelliJ (Project View), haz <strong>Clic Derecho</strong> sobre la carpeta raíz del proyecto (<code class="font-mono text-sm">Lab03_GUI</code>).</li>
+                    <li>Selecciona: <em>New → Directory</em>. Escribe <code class="font-mono text-sm">src</code> y presiona Enter.</li>
+                    <li>Haz <strong>Clic Derecho</strong> sobre la carpeta <code class="font-mono text-sm">src</code> recién creada.</li>
+                    <li>Selecciona: <em>Mark Directory as → Sources Root</em>.</li>
+                </ol>
+                <div class="highlight-box">
+                    <i class="fa-regular fa-circle-info mr-1"></i> Notarás que el ícono de la carpeta <code class="font-mono text-sm">src</code> cambia a color <strong>azul</strong>. Esto le confirma a IntelliJ que ahí vivirá tu código fuente Java.
+                </div>
+                <details>
+                    <summary><strong>¿Qué es una carpeta <em>Sources Root</em>?</strong></summary>
+                    <p>Es una carpeta que IntelliJ reconoce como <strong>raíz del código fuente</strong>. Allí busca los paquetes y clases para compilarlos, autocompletar y detectar errores. Si no marcas <code class="font-mono text-sm">src</code> como <em>Sources Root</em>, IntelliJ no sabrá dónde empieza tu código y no podrá ejecutar el programa.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>1.5 Crear el Paquete Raíz <code>Lab03</code></h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Haz <strong>Clic Derecho</strong> sobre la carpeta azul <code class="font-mono text-sm">src</code>.</li>
+                    <li>Selecciona: <em>New → Package</em>.</li>
+                    <li>Escribe <code class="font-mono text-sm">Lab03</code> y presiona Enter.</li>
+                </ol>
+                <details>
+                    <summary><strong>¿Qué es un paquete en Java?</strong></summary>
+                    <p>Un <span class="glossary" tabindex="0" data-tooltip="Espacio de nombres que agrupa clases relacionadas en Java. Se declara con la palabra clave 'package' al inicio del archivo.">paquete</span> es una carpeta lógica que agrupa clases relacionadas. En Java se declara con la palabra clave <code class="font-mono text-sm">package</code> al inicio de cada archivo. Nos permite organizar el proyecto en módulos y evitar conflictos de nombres, tal como vimos en el laboratorio anterior.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>1.6 Crear los Subpaquetes <code>modelo</code> y <code>vista</code></h5>
+                <p>Para aplicar la <strong>separación de responsabilidades</strong> que estudiamos en la Clase 4, separaremos los datos de la interfaz gráfica:</p>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Haz <strong>Clic Derecho</strong> sobre el paquete <code class="font-mono text-sm">Lab03</code> → <em>New → Package</em>. Escribe <code class="font-mono text-sm">modelo</code> y presiona Enter.</li>
+                    <li>Haz <strong>Clic Derecho</strong> sobre el paquete <code class="font-mono text-sm">Lab03</code> → <em>New → Package</em>. Escribe <code class="font-mono text-sm">vista</code> y presiona Enter.</li>
+                </ol>
+                <details>
+                    <summary><strong>¿Por qué separamos el código en <code>modelo</code> y <code>vista</code>?</strong></summary>
+                    <p>Esta separación es la base de la arquitectura <strong>Modelo-Vista</strong> (una simplificación de MVC). El paquete <code class="font-mono text-sm">modelo</code> contiene las clases de datos (sin ninguna lógica de ventanas), mientras que <code class="font-mono text-sm">vista</code> contiene la interfaz gráfica (Swing). Así, si mañana cambia la apariencia de la ventana, los datos no se ven afectados, y viceversa.</p>
+                </details>
+
+                <p class="mt-2">La jerarquía completa de archivos y carpetas debe verse así en el explorador de IntelliJ:</p>
+                <div class="code-fragment">
+src/
+  └── Lab03/
+      ├── <span class="d-field">modelo</span>/      <span class="d-comment">// Almacenará la clase Estudiante (datos)</span>
+      ├── <span class="d-field">vista</span>/       <span class="d-comment">// Almacenará VentanaRegistro (Swing)</span>
+      └── <span class="d-type">Main.java</span>    <span class="d-comment">// Almacenará el punto de inicio ejecutable</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 2 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-purple);">
+            <h2><i class="fa-regular fa-id-card mr-2" style="color: var(--accent-purple);"></i> Paso 2: Crear el Modelo de Datos (<code>Estudiante.java</code>)</h2>
+
+            <div class="step-sub">
+                <h5>2.1 Crear el Archivo <code>Estudiante.java</code> en IntelliJ</h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Haz <strong>Clic Derecho</strong> sobre el subpaquete <code class="font-mono text-sm">modelo</code> (ubicado dentro de <code class="font-mono text-sm">Lab03</code>).</li>
+                    <li>Selecciona: <em>New → Java Class</em>.</li>
+                    <li>Escribe el nombre <code class="font-mono text-sm">Estudiante</code> y presiona Enter.</li>
+                </ol>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.2 Declarar el Paquete</h5>
+                <p>Al inicio del archivo, escribe la línea que indica a qué paquete pertenece la clase:</p>
+                <div class="code-fragment">
+<span class="d-comment">// Indica que esta clase vive dentro del paquete Lab03.modelo</span>
+<span class="d-keyword">package</span> Lab03.modelo;
+                </div>
+                <details>
+                    <summary><strong>¿Qué hace esta línea?</strong></summary>
+                    <p>Asigna la clase al espacio de nombres del paquete <code class="font-mono text-sm">Lab03.modelo</code>. Sin esta línea, IntelliJ marcaría un error porque la clase no coincidiría con la ubicación de la carpeta donde la creamos.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.3 Declarar la Clase Pública <code>Estudiante</code></h5>
+                <div class="code-fragment">
+<span class="d-comment">// Declara la clase pública Estudiante (molde para crear objetos de estudiantes)</span>
+<span class="d-keyword">public class</span> <span class="d-type">Estudiante</span> {
+                </div>
+                <details>
+                    <summary><strong>¿Qué es una clase?</strong></summary>
+                    <p>Es una <span class="glossary" tabindex="0" data-tooltip="Plantilla o molde que define los atributos y métodos que tendrán los objetos creados a partir de ella con la palabra clave 'new'.">plantilla o molde</span> para crear objetos. <code class="font-mono text-sm">Estudiante</code> definirá qué datos tiene cada estudiante y qué puede hacer. Es la clase del <strong>modelo</strong>, por lo que NO contiene nada de Swing.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.4 Declarar los Atributos Privados</h5>
+                <p>Dentro de la clase, declara los tres datos que caracterizan a un estudiante. Deben ser <code class="font-mono text-sm">private</code> para garantizar el <span class="glossary" tabindex="0" data-tooltip="Principio de POO que oculta los detalles internos de una clase y solo expone lo necesario mediante métodos públicos (getters/setters).">encapsulamiento</span>:</p>
+                <div class="code-fragment">
+<span class="d-comment">// Atributo privado para el número de carnet (encapsulado)</span>
+<span class="d-keyword">private</span> <span class="d-type">String</span> <span class="d-field">carnet</span>;
+
+<span class="d-comment">// Atributo privado para el nombre completo del estudiante</span>
+<span class="d-keyword">private</span> <span class="d-type">String</span> <span class="d-field">nombre</span>;
+
+<span class="d-comment">// Atributo privado para la carrera que cursa</span>
+<span class="d-keyword">private</span> <span class="d-type">String</span> <span class="d-field">carrera</span>;
+                </div>
+                <p><strong>Recuerda:</strong> <code class="font-mono text-sm">String</code> con mayúscula, y <code class="font-mono text-sm">private</code> para que solo la clase pueda acceder directamente.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.5 Escribir el Constructor</h5>
+                <p>El constructor recibe carnet, nombre y carrera, y los asigna a los atributos:</p>
+                <div class="code-fragment">
+<span class="d-comment">// Constructor: se ejecuta con 'new' para inicializar los 3 atributos</span>
+<span class="d-keyword">public</span> <span class="d-method">Estudiante</span>(<span class="d-type">String</span> <span class="d-field">carnet</span>, <span class="d-type">String</span> <span class="d-field">nombre</span>, <span class="d-type">String</span> <span class="d-field">carrera</span>) {
+    <span class="d-comment">// 'this.carnet' es el atributo; 'carnet' es el valor recibido en el parámetro</span>
+    <span class="d-keyword">this</span>.<span class="d-field">carnet</span> = <span class="d-field">carnet</span>;
+
+    <span class="d-comment">// Asigna el nombre recibido al atributo de la clase</span>
+    <span class="d-keyword">this</span>.<span class="d-field">nombre</span> = <span class="d-field">nombre</span>;
+
+    <span class="d-comment">// Asigna la carrera recibida al atributo de la clase</span>
+    <span class="d-keyword">this</span>.<span class="d-field">carrera</span> = <span class="d-field">carrera</span>;
+}
+                </div>
+                <details>
+                    <summary><strong>¿Qué significa <code>this.carnet = carnet;</code>?</strong></summary>
+                    <p>Significa: "<strong>al atributo</strong> de la clase (<code class="font-mono text-sm">this.carnet</code>, el <code class="font-mono text-sm">private String carnet</code> de arriba) asígnale el valor del <strong>parámetro</strong> del constructor (<code class="font-mono text-sm">carnet</code>)". Sin <code class="font-mono text-sm">this</code>, Java no sabría a cuál de los dos te refieres porque tienen el mismo nombre.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.6 Agregar los Getters</h5>
+                <p>Para que la capa de <strong>vista</strong> pueda leer los datos (por ejemplo, para mostrarlos en un mensaje), proporcionamos métodos de consulta:</p>
+                <div class="code-fragment">
+<span class="d-comment">// Getter público que permite leer el carnet</span>
+<span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">getCarnet</span>()  { <span class="d-keyword">return</span> <span class="d-field">carnet</span>; }
+
+<span class="d-comment">// Getter público que permite leer el nombre</span>
+<span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">getNombre</span>() { <span class="d-keyword">return</span> <span class="d-field">nombre</span>; }
+
+<span class="d-comment">// Getter público que permite leer la carrera</span>
+<span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">getCarrera</span>() { <span class="d-keyword">return</span> <span class="d-field">carrera</span>; }
+                </div>
+                <details>
+                    <summary><strong>¿Por qué no accedemos directo a <code>carnet</code>?</strong></summary>
+                    <p>Por el <strong>encapsulamiento</strong>: los atributos son <code class="font-mono text-sm">private</code>, así que la única forma de leerlos desde fuera de la clase es mediante métodos públicos (los getters). Esto nos permite controlar el acceso y modificar la implementación interna sin romper a quienes usan la clase.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.7 Sobrescribir <code>toString()</code></h5>
+                <p>Para que al imprimir un estudiante se vea una cadena legible (en vez de la dirección de memoria), sobrescribimos <code class="font-mono text-sm">toString()</code>:</p>
+                <div class="code-fragment">
+<span class="d-annotation">@Override</span>
+<span class="d-comment">// Sobrescribe toString() para imprimir el estudiante de forma legible</span>
+<span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">toString</span>() {
+    <span class="d-comment">// Concatena carnet, nombre y carrera con el formato "carnet - nombre (carrera)"</span>
+    <span class="d-keyword">return</span> <span class="d-field">carnet</span> + <span class="d-string">" - "</span> + <span class="d-field">nombre</span> + <span class="d-string">" ("</span> + <span class="d-field">carrera</span> + <span class="d-string">")"</span>;
+}
+                </div>
+                <details>
+                    <summary><strong>¿Qué hace la anotación <code>@Override</code>?</strong></summary>
+                    <p>Le indica al compilador que estamos <strong>sobrescribiendo</strong> un método que ya existe en la superclase (<code class="font-mono text-sm">Object</code>). Es opcional, pero recomendada: si nos equivocamos en la firma, el compilador nos avisa con un error.</p>
+                </details>
+            </div>
+        </div>
+
+        <!-- PASO 3 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
+            <h2><i class="fa-regular fa-window-maximize mr-2" style="color: var(--accent-green);"></i> Paso 3: Crear la Ventana — Estructura y Contenedores (<code>VentanaRegistro.java</code>)</h2>
+
+            <div class="step-sub">
+                <h5>3.1 Crear el Archivo <code>VentanaRegistro.java</code> en IntelliJ</h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Haz <strong>Clic Derecho</strong> sobre el subpaquete <code class="font-mono text-sm">vista</code> (ubicado dentro de <code class="font-mono text-sm">Lab03</code>).</li>
+                    <li>Selecciona: <em>New → Java Class</em>.</li>
+                    <li>Escribe el nombre <code class="font-mono text-sm">VentanaRegistro</code> y presiona Enter.</li>
+                </ol>
+                <p class="text-sm" style="color: var(--text-muted);">Esta clase es la <strong>Vista</strong> de nuestro programa: contiene únicamente componentes Swing y delega en el modelo los datos.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.2 Declarar el Paquete y las Importaciones</h5>
+                <div class="code-fragment">
+<span class="d-comment">// Paquete al que pertenece esta clase (la capa de vista)</span>
+<span class="d-keyword">package</span> Lab03.vista;
+
+<span class="d-comment">// Importa el modelo Estudiante para crear objetos con los datos ingresados</span>
+<span class="d-keyword">import</span> Lab03.modelo.<span class="d-type">Estudiante</span>;
+<span class="d-comment">// Importa todos los componentes gráficos de Swing (JFrame, JPanel, JButton...)</span>
+<span class="d-keyword">import</span> javax.swing.*;
+<span class="d-comment">// Importa las herramientas de maquetación AWT (BorderLayout, Font, Color...)</span>
+<span class="d-keyword">import</span> java.awt.*;
+                </div>
+                <details>
+                    <summary><strong>¿Qué importa cada línea?</strong></summary>
+                    <p><code class="font-mono text-sm">import javax.swing.*;</code> trae todos los componentes gráficos (JFrame, JPanel, JLabel, JTextField, JButton...). <br><code class="font-mono text-sm">import java.awt.*;</code> trae las herramientas de maquetación AWT (BorderLayout, Font, Color...). <br><code class="font-mono text-sm">import Lab03.modelo.Estudiante;</code> trae la clase del modelo para poder crear estudiantes con los datos ingresados.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.3 Declarar la Clase y los Componentes Atómicos</h5>
+                <div class="code-fragment">
+<span class="d-comment">// 'extends JFrame': esta clase HEREDA todo el comportamiento de una ventana</span>
+<span class="d-keyword">public class</span> <span class="d-type">VentanaRegistro</span> <span class="d-keyword">extends</span> <span class="d-type">JFrame</span> {
+
+    <span class="d-comment">// Caja de texto donde el usuario escribe el carnet</span>
+    <span class="d-keyword">private</span> <span class="d-type">JTextField</span> <span class="d-field">txtCarnet</span>;
+
+    <span class="d-comment">// Caja de texto para el nombre completo</span>
+    <span class="d-keyword">private</span> <span class="d-type">JTextField</span> <span class="d-field">txtNombre</span>;
+
+    <span class="d-comment">// Caja de texto para la carrera</span>
+    <span class="d-keyword">private</span> <span class="d-type">JTextField</span> <span class="d-field">txtCarrera</span>;
+
+    <span class="d-comment">// Botón para procesar e inscribir al estudiante</span>
+    <span class="d-keyword">private</span> <span class="d-type">JButton</span> <span class="d-field">btnGuardar</span>;
+
+    <span class="d-comment">// Botón para borrar las cajas de texto</span>
+    <span class="d-keyword">private</span> <span class="d-type">JButton</span> <span class="d-field">btnLimpiar</span>;
+                </div>
+                <details>
+                    <summary><strong>¿Qué significa <code>extends JFrame</code>?</strong></summary>
+                    <p><span class="glossary" tabindex="0" data-tooltip="Mecanismo de POO en el que una clase nueva (subclase) adquiere los atributos y métodos de otra (superclase). Aquí VentanaRegistro hereda todo el comportamiento de JFrame.">Heredar</span> de <code class="font-mono text-sm">JFrame</code> significa que nuestra clase <strong>es una ventana</strong> y adquiere todos sus poderes: título, tamaño, botones de cerrar/minimizar, etc. Los <code class="font-mono text-sm">JTextField</code> y <code class="font-mono text-sm">JButton</code> son <strong>componentes atómicos</strong> (el nivel inferior de la jerarquía visual): no pueden contener otros componentes, solo interactuar con el usuario.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.4 Configurar la Ventana</h5>
+                <p>Dentro del constructor, definimos el título, el tamaño, el comportamiento al cerrar y la posición:</p>
+                <div class="code-fragment">
+<span class="d-comment">// Título que aparece en la barra superior de la ventana</span>
+<span class="d-method">setTitle</span>(<span class="d-string">"Sistema de Gestión de Estudiantes — UNA"</span>);
+
+<span class="d-comment">// Dimensiones: 450 píxeles de ancho por 300 de alto</span>
+<span class="d-method">setSize</span>(<span class="d-number">450</span>, <span class="d-number">300</span>);
+
+<span class="d-comment">// Al tocar la 'X', el programa se detiene por completo</span>
+<span class="d-method">setDefaultCloseOperation</span>(<span class="d-type">JFrame</span>.<span class="d-field">EXIT_ON_CLOSE</span>);
+
+<span class="d-comment">// Centra la ventana en la pantalla del monitor</span>
+<span class="d-method">setLocationRelativeTo</span>(<span class="d-keyword">null</span>);
+                </div>
+                <details>
+                    <summary><strong>¿Para qué sirve <code>setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)</code>?</strong></summary>
+                    <p>Define qué pasa cuando el usuario toca la <strong>X</strong> de la ventana. Con <code class="font-mono text-sm">EXIT_ON_CLOSE</code> el programa Java se <strong>detiene por completo</strong>. Si lo omitieras, la ventana se cerraría pero el programa seguiría ejecutándose en segundo plano sin que lo veas.</p>
+                </details>
+                <details>
+                    <summary><strong>¿Qué hace <code>setLocationRelativeTo(null)</code>?</strong></summary>
+                    <p>Posiciona la ventana en el <strong>centro geométrico de la pantalla</strong>. El valor <code class="font-mono text-sm">null</code> le indica a Java: "no lo centres respecto a otra ventana, sino respecto al monitor".</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.5 Crear el Contenedor Principal con <code>BorderLayout</code></h5>
+                <div class="code-fragment">
+<span class="d-comment">// Contenedor principal con BorderLayout (5 regiones) y 10px de separación</span>
+<span class="d-type">JPanel</span> <span class="d-field">panelPrincipal</span> = <span class="d-keyword">new</span> <span class="d-type">JPanel</span>(<span class="d-keyword">new</span> <span class="d-type">BorderLayout</span>(<span class="d-number">10</span>, <span class="d-number">10</span>));
+
+<span class="d-comment">// Margen interno de 15px para no pegar el contenido con el borde</span>
+<span class="d-field">panelPrincipal</span>.<span class="d-method">setBorder</span>(<span class="d-type">BorderFactory</span>.<span class="d-method">createEmptyBorder</span>(<span class="d-number">15</span>, <span class="d-number">15</span>, <span class="d-number">15</span>, <span class="d-number">15</span>));
+                </div>
+                <details>
+                    <summary><strong>¿Qué es un Layout Manager?</strong></summary>
+                    <p>Es un <span class="glossary" tabindex="0" data-tooltip="Algoritmo que decide automáticamente dónde colocar cada componente dentro de un contenedor, y cómo redimensionarlos cuando cambia el tamaño de la ventana.">algoritmo de distribución</span> que coloca automáticamente los componentes dentro de un contenedor. <code class="font-mono text-sm">BorderLayout</code> divide el área en <strong>5 regiones</strong>: NORTH, SOUTH, EAST, WEST y CENTER. Los números <code class="font-mono text-sm">(10, 10)</code> son el espacio horizontal y vertical entre regiones.</p>
+                </details>
+                <details>
+                    <summary><strong>¿Por qué un <code>JPanel</code> intermedio?</strong></summary>
+                    <p>El <code class="font-mono text-sm">JFrame</code> solo puede tener un contenido principal. Al agrupar todo dentro de un <code class="font-mono text-sm">JPanel</code> con un layout, podemos organizar las cajas y botones en zonas (arriba, centro, abajo) y luego "pegar" el panel completo a la ventana. Esta es la <strong>jerarquía de contenedores</strong> de la Clase 4: <code class="font-mono text-sm">JFrame</code> (nivel alto) → <code class="font-mono text-sm">JPanel</code> (nivel intermedio) → componentes atómicos (nivel inferior).</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.6 Crear la Etiqueta de Título con <code>JLabel</code></h5>
+                <div class="code-fragment">
+<span class="d-comment">// Etiqueta de texto centrada para el título del formulario</span>
+<span class="d-type">JLabel</span> <span class="d-field">lblTitulo</span> = <span class="d-keyword">new</span> <span class="d-type">JLabel</span>(<span class="d-string">"Inscripción de Estudiantes"</span>, <span class="d-type">SwingConstants</span>.<span class="d-field">CENTER</span>);
+
+<span class="d-comment">// Aplica tipografía en negrita (BOLD) y tamaño 18</span>
+<span class="d-field">lblTitulo</span>.<span class="d-method">setFont</span>(<span class="d-keyword">new</span> <span class="d-type">Font</span>(<span class="d-string">"Nunito"</span>, <span class="d-type">Font</span>.<span class="d-field">BOLD</span>, <span class="d-number">18</span>));
+
+<span class="d-comment">// Color del texto: rojo institucional UNA (RGB: 200, 16, 46)</span>
+<span class="d-field">lblTitulo</span>.<span class="d-method">setForeground</span>(<span class="d-keyword">new</span> <span class="d-type">Color</span>(<span class="d-number">200</span>, <span class="d-number">16</span>, <span class="d-number">46</span>));
+
+<span class="d-comment">// Lo coloca en la región superior (NORTH) del panel principal</span>
+<span class="d-field">panelPrincipal</span>.<span class="d-method">add</span>(<span class="d-field">lblTitulo</span>, <span class="d-type">BorderLayout</span>.<span class="d-field">NORTH</span>);
+                </div>
+                <details>
+                    <summary><strong>¿Qué es un <code>JLabel</code>?</strong></summary>
+                    <p>Es un componente atómico que muestra <strong>texto estático</strong> (no editable). <code class="font-mono text-sm">SwingConstants.CENTER</code> lo centra horizontalmente; <code class="font-mono text-sm">setFont</code> cambia la tipografía (negrita, tamaño 18) y <code class="font-mono text-sm">setForeground</code> el color del texto, aquí el <strong>rojo institucional UNA</strong> (RGB: 200, 16, 46). Finalmente lo colocamos en la región <strong>NORTH</strong> (superior) del panel.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.7 Crear el Formulario con <code>GridLayout</code> y <code>JTextField</code></h5>
+                <p>El formulario es una cuadrícula de 3 filas × 2 columnas (etiqueta + caja de texto por campo):</p>
+                <div class="code-fragment">
+<span class="d-comment">// Panel del formulario en cuadrícula de 3 filas x 2 columnas con 8px de separación</span>
+<span class="d-type">JPanel</span> <span class="d-field">panelFormulario</span> = <span class="d-keyword">new</span> <span class="d-type">JPanel</span>(<span class="d-keyword">new</span> <span class="d-type">GridLayout</span>(<span class="d-number">3</span>, <span class="d-number">2</span>, <span class="d-number">8</span>, <span class="d-number">8</span>));
+
+<span class="d-comment">// [Fila 1] Etiqueta + caja de texto para el carnet</span>
+<span class="d-field">panelFormulario</span>.<span class="d-method">add</span>(<span class="d-keyword">new</span> <span class="d-type">JLabel</span>(<span class="d-string">"Carnet:"</span>));
+<span class="d-field">txtCarnet</span> = <span class="d-keyword">new</span> <span class="d-type">JTextField</span>();
+<span class="d-field">panelFormulario</span>.<span class="d-method">add</span>(<span class="d-field">txtCarnet</span>);
+
+<span class="d-comment">// [Fila 2] Etiqueta + caja de texto para el nombre completo</span>
+<span class="d-field">panelFormulario</span>.<span class="d-method">add</span>(<span class="d-keyword">new</span> <span class="d-type">JLabel</span>(<span class="d-string">"Nombre Completo:"</span>));
+<span class="d-field">txtNombre</span> = <span class="d-keyword">new</span> <span class="d-type">JTextField</span>();
+<span class="d-field">panelFormulario</span>.<span class="d-method">add</span>(<span class="d-field">txtNombre</span>);
+
+<span class="d-comment">// [Fila 3] Etiqueta + caja de texto para la carrera</span>
+<span class="d-field">panelFormulario</span>.<span class="d-method">add</span>(<span class="d-keyword">new</span> <span class="d-type">JLabel</span>(<span class="d-string">"Carrera:"</span>));
+<span class="d-field">txtCarrera</span> = <span class="d-keyword">new</span> <span class="d-type">JTextField</span>();
+<span class="d-field">panelFormulario</span>.<span class="d-method">add</span>(<span class="d-field">txtCarrera</span>);
+
+<span class="d-comment">// Coloca el formulario en el área central (CENTER) del panel principal</span>
+<span class="d-field">panelPrincipal</span>.<span class="d-method">add</span>(<span class="d-field">panelFormulario</span>, <span class="d-type">BorderLayout</span>.<span class="d-field">CENTER</span>);
+                </div>
+                <details>
+                    <summary><strong>¿Cómo funciona <code>GridLayout(3, 2, 8, 8)</code>?</strong></summary>
+                    <p>Crea una cuadrícula de <strong>3 filas y 2 columnas</strong> donde todos los componentes tienen el mismo tamaño. Los <code class="font-mono text-sm">8, 8</code> son los píxeles de separación horizontal y vertical entre celdas. Los componentes se agregan en orden: fila 1 (etiqueta Carnet, caja), fila 2 (etiqueta Nombre, caja), fila 3 (etiqueta Carrera, caja). El panel del formulario ocupa la región <strong>CENTER</strong> del panel principal.</p>
+                </details>
+                <details>
+                    <summary><strong>¿Qué es un <code>JTextField</code>?</strong></summary>
+                    <p>Es una <strong>caja de texto de una sola línea</strong> donde el usuario escribe datos. Leeremos su contenido con <code class="font-mono text-sm">getText()</code> y lo borraremos con <code class="font-mono text-sm">setText("")</code>.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.8 Crear la Zona de Botones con <code>FlowLayout</code> y <code>JButton</code></h5>
+                <div class="code-fragment">
+<span class="d-comment">// Panel con FlowLayout alineado a la derecha, separación horizontal de 10px</span>
+<span class="d-type">JPanel</span> <span class="d-field">panelBotones</span> = <span class="d-keyword">new</span> <span class="d-type">JPanel</span>(<span class="d-keyword">new</span> <span class="d-type">FlowLayout</span>(<span class="d-type">FlowLayout</span>.<span class="d-field">RIGHT</span>, <span class="d-number">10</span>, <span class="d-number">0</span>));
+
+<span class="d-comment">// Botón para borrar los campos (etiqueta 'Limpiar')</span>
+<span class="d-field">btnLimpiar</span> = <span class="d-keyword">new</span> <span class="d-type">JButton</span>(<span class="d-string">"Limpiar"</span>);
+
+<span class="d-comment">// Botón para procesar e inscribir (etiqueta 'Guardar Estudiante')</span>
+<span class="d-field">btnGuardar</span> = <span class="d-keyword">new</span> <span class="d-type">JButton</span>(<span class="d-string">"Guardar Estudiante"</span>);
+
+<span class="d-comment">// Agrega ambos botones al panel secundario</span>
+<span class="d-field">panelBotones</span>.<span class="d-method">add</span>(<span class="d-field">btnLimpiar</span>);
+<span class="d-field">panelBotones</span>.<span class="d-method">add</span>(<span class="d-field">btnGuardar</span>);
+
+<span class="d-comment">// Coloca el panel de botones en la región inferior (SOUTH)</span>
+<span class="d-field">panelPrincipal</span>.<span class="d-method">add</span>(<span class="d-field">panelBotones</span>, <span class="d-type">BorderLayout</span>.<span class="d-field">SOUTH</span>);
+                </div>
+                <details>
+                    <summary><strong>¿Cómo funciona <code>FlowLayout</code>?</strong></summary>
+                    <p>Coloca los componentes <strong>uno tras otro en línea</strong> (como palabras en un párrafo) y, si no caben, baja a la siguiente línea. Con <code class="font-mono text-sm">FlowLayout.RIGHT</code> los alinea a la derecha, y <code class="font-mono text-sm">(10, 0)</code> define la separación horizontal y vertical. El panel de botones va en la región <strong>SOUTH</strong> (inferior) del panel principal.</p>
+                </details>
+            </div>
+        </div>
+
+        <!-- PASO 4 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-red);">
+            <h2><i class="fa-regular fa-bolt mr-2" style="color: var(--una-red);"></i> Paso 4: Conectar los Eventos de los Botones</h2>
+
+            <p>
+                Ahora daremos vida a la ventana. En el paradigma visual el flujo es <strong>controlado por eventos</strong>: el programa queda a la espera de que el usuario haga clic, y solo entonces ejecuta el código asociado a ese clic.
+            </p>
+
+            <div class="step-sub">
+                <h5>4.1 ¿Qué es un evento?</h5>
+                <p>Un <strong>evento</strong> es una señal que el sistema genera cuando el usuario interactúa (clic en un botón, tecla presionada, etc.). En Swing usamos el patrón de <strong>delegación</strong>: registramos un "oyente" (listener) en un componente y, cuando ocurre el evento, el oyente se encarga de ejecutar la respuesta.</p>
+                <details>
+                    <summary><strong>¿Qué es un <code>ActionListener</code>?</strong></summary>
+                    <p>Es una <strong>interfaz funcional</strong> de Java que define el método <code class="font-mono text-sm">actionPerformed(ActionEvent e)</code>. Al registrarla con <code class="font-mono text-sm">boton.addActionListener(...)</code>, el código dentro del método se ejecuta <strong>cada vez que el usuario presiona el botón</strong>.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>4.2 El Botón <code>Guardar</code> con una Lambda</h5>
+                <div class="code-fragment">
+<span class="d-comment">// Registra un oyente: el código se ejecuta al hacer clic en 'Guardar'</span>
+<span class="d-field">btnGuardar</span>.<span class="d-method">addActionListener</span>(<span class="d-field">e</span> -> {
+
+    <span class="d-comment">// Lee el texto escrito en la caja del carnet</span>
+    <span class="d-type">String</span> <span class="d-field">carnet</span>  = <span class="d-field">txtCarnet</span>.<span class="d-method">getText</span>();
+
+    <span class="d-comment">// Lee el texto escrito en la caja del nombre</span>
+    <span class="d-type">String</span> <span class="d-field">nombre</span>  = <span class="d-field">txtNombre</span>.<span class="d-method">getText</span>();
+
+    <span class="d-comment">// Lee el texto escrito en la caja de la carrera</span>
+    <span class="d-type">String</span> <span class="d-field">carrera</span> = <span class="d-field">txtCarrera</span>.<span class="d-method">getText</span>();
+});
+                </div>
+                <details>
+                    <summary><strong>¿Qué es una lambda (<code>e -> ...</code>)?</strong></summary>
+                    <p>Es una forma abreviada de escribir una clase anónima. <code class="font-mono text-sm">e -> { ... }</code> significa: "cuando ocurra el evento <code class="font-mono text-sm">e</code>, ejecuta lo que está entre llaves". Es la <strong>programación funcional</strong> que ya usamos en el laboratorio anterior.</p>
+                </details>
+                <details>
+                    <summary><strong>¿Qué hace <code>getText()</code>?</strong></summary>
+                    <p>Lee el texto que el usuario escribió dentro de cada <code class="font-mono text-sm">JTextField</code> y lo devuelve como un <code class="font-mono text-sm">String</code>. Ese texto es lo que después enviaremos al modelo.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>4.3 Validar los Campos Vacíos con <code>JOptionPane</code></h5>
+                <div class="code-fragment">
+<span class="d-comment">// Si alguna de las tres cadenas está vacía...</span>
+<span class="d-keyword">if</span> (<span class="d-field">carnet</span>.<span class="d-method">isEmpty</span>() || <span class="d-field">nombre</span>.<span class="d-method">isEmpty</span>() || <span class="d-field">carrera</span>.<span class="d-method">isEmpty</span>()) {
+
+    <span class="d-comment">// Muestra una ventana emergente de advertencia (WARNING)</span>
+    <span class="d-type">JOptionPane</span>.<span class="d-method">showMessageDialog</span>(<span class="d-keyword">this</span>,
+        <span class="d-string">"Por favor complete todos los campos."</span>,
+        <span class="d-string">"Campos Incompletos"</span>,
+        <span class="d-type">JOptionPane</span>.<span class="d-field">WARNING_MESSAGE</span>);
+}
+                </div>
+                <details>
+                    <summary><strong>¿Qué es <code>JOptionPane</code>?</strong></summary>
+                    <p>Es una clase de Swing que muestra <strong>ventanas emergentes (pop-ups)</strong> sin necesidad de crear un <code class="font-mono text-sm">JFrame</code> nuevo. <code class="font-mono text-sm">showMessageDialog(...)</code> muestra un mensaje con un ícono: aquí <code class="font-mono text-sm">WARNING_MESSAGE</code> (advertencia). El primer parámetro <code class="font-mono text-sm">this</code> indica la ventana "padre" que centrará el diálogo.</p>
+                </details>
+                <details>
+                    <summary><strong>¿Qué hace <code>isEmpty()</code>?</strong></summary>
+                    <p>Devuelve <code class="font-mono text-sm">true</code> si el <code class="font-mono text-sm">String</code> está vacío (<code class="font-mono text-sm">""</code>). Con el operador <code class="font-mono text-sm">||</code> (o) validamos que <strong>ninguno</strong> de los tres campos esté vacío antes de guardar.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>4.4 Crear el Objeto <code>Estudiante</code> y Confirmar</h5>
+                <div class="code-fragment">
+<span class="d-comment">// Si todos los campos están completos...</span>
+<span class="d-keyword">else</span> {
+
+    <span class="d-comment">// Crea el objeto Estudiante en la capa de modelo con los datos leídos</span>
+    <span class="d-type">Estudiante</span> <span class="d-field">nuevo</span> = <span class="d-keyword">new</span> <span class="d-type">Estudiante</span>(<span class="d-field">carnet</span>, <span class="d-field">nombre</span>, <span class="d-field">carrera</span>);
+
+    <span class="d-comment">// Muestra una ventana emergente informativa con los datos del registro</span>
+    <span class="d-type">JOptionPane</span>.<span class="d-method">showMessageDialog</span>(<span class="d-keyword">this</span>,
+        <span class="d-string">"Estudiante registrado con éxito:\n"</span> + <span class="d-field">nuevo</span>.<span class="d-method">toString</span>(),
+        <span class="d-string">"Registro Exitoso"</span>,
+        <span class="d-type">JOptionPane</span>.<span class="d-field">INFORMATION_MESSAGE</span>);
+}
+                </div>
+                <details>
+                    <summary><strong>¿Por qué creamos el objeto <code>Estudiante</code>?</strong></summary>
+                    <p>La <strong>vista</strong> no debe guardar lógica: solo toma los textos y los convierte en un objeto del <strong>modelo</strong> usando <code class="font-mono text-sm">new Estudiante(...)</code>. Luego el mensaje usa <code class="font-mono text-sm">nuevo.toString()</code> para mostrar los datos con el formato que definimos en el Paso 2.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>4.5 El Botón <code>Limpiar</code></h5>
+                <div class="code-fragment">
+<span class="d-comment">// Registra un oyente: se ejecuta al hacer clic en 'Limpiar'</span>
+<span class="d-field">btnLimpiar</span>.<span class="d-method">addActionListener</span>(<span class="d-field">e</span> -> {
+
+    <span class="d-comment">// Blanquea la caja del carnet</span>
+    <span class="d-field">txtCarnet</span>.<span class="d-method">setText</span>(<span class="d-string">""</span>);
+
+    <span class="d-comment">// Blanquea la caja del nombre</span>
+    <span class="d-field">txtNombre</span>.<span class="d-method">setText</span>(<span class="d-string">""</span>);
+
+    <span class="d-comment">// Blanquea la caja de la carrera</span>
+    <span class="d-field">txtCarrera</span>.<span class="d-method">setText</span>(<span class="d-string">""</span>);
+});
+                </div>
+                <details>
+                    <summary><strong>¿Qué hace <code>setText("")</code>?</strong></summary>
+                    <p>Reemplaza el contenido del <code class="font-mono text-sm">JTextField</code> por una cadena vacía, es decir, <strong>blanquea la caja de texto</strong> para que el usuario pueda volver a escribir desde cero.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>4.6 Ensamblar el Contenido de la Ventana</h5>
+                <div class="code-fragment">
+<span class="d-comment">// Ensambla el panel principal como contenido visible de la ventana</span>
+<span class="d-keyword">this</span>.<span class="d-method">add</span>(<span class="d-field">panelPrincipal</span>);
+                </div>
+                <p>Al final del constructor, agregamos el panel principal ya construido como <strong>contenido visible</strong> del <code class="font-mono text-sm">JFrame</code>.</p>
+                <details>
+                    <summary><strong>¿Por qué un <code>JPanel</code> intermedio y no agregar todo directo?</strong></summary>
+                    <p>Por la <strong>jerarquía de contenedores</strong>: el <code class="font-mono text-sm">JFrame</code> solo admite un contenido. Al agrupar los componentes en <code class="font-mono text-sm">JPanel</code> con sus layouts (NORTH, CENTER, SOUTH) logramos una ventana ordenada y redimensionable, en vez de una pila desordenada de componentes.</p>
+                </details>
+            </div>
+
+        </div>
+
+        <!-- PASO 5 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+            <h2><i class="fa-regular fa-play mr-2" style="color: var(--accent-blue);"></i> Paso 5: Crear el Punto de Entrada (<code>Main.java</code>)</h2>
+
+            <div class="step-sub">
+                <h5>5.1 Crear el Archivo <code>Main.java</code> en IntelliJ</h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Haz <strong>Clic Derecho</strong> directamente sobre el paquete raíz <code class="font-mono text-sm">Lab03</code>.</li>
+                    <li>Selecciona: <em>New → Java Class</em>.</li>
+                    <li>Escribe el nombre <code class="font-mono text-sm">Main</code> y presiona Enter.</li>
+                </ol>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.2 Declarar el Paquete y las Importaciones</h5>
+                <div class="code-fragment">
+<span class="d-comment">// Paquete principal de la aplicación</span>
+<span class="d-keyword">package</span> Lab03;
+
+<span class="d-comment">// Importa la ventana creada en el paquete vista</span>
+<span class="d-keyword">import</span> Lab03.vista.<span class="d-type">VentanaRegistro</span>;
+
+<span class="d-comment">// Importa utilidades de Swing para lanzar la interfaz en el hilo correcto (EDT)</span>
+<span class="d-keyword">import</span> javax.swing.<span class="d-type">SwingUtilities</span>;
+                </div>
+                <details>
+                    <summary><strong>¿Por qué importamos <code>SwingUtilities</code>?</strong></summary>
+                    <p>Es la clase de utilidades de Swing que nos permite manejar los <strong>hilos de ejecución</strong> de forma segura. Con <code class="font-mono text-sm">SwingUtilities.invokeLater(...)</code> lanzamos la creación de la interfaz en el hilo correcto.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.3 El Método <code>main</code> y el Hilo de Eventos (EDT)</h5>
+                <div class="code-fragment">
+<span class="d-comment">// Método principal: punto de entrada que busca la JVM</span>
+<span class="d-keyword">public static void</span> <span class="d-method">main</span>(<span class="d-type">String</span>[] <span class="d-field">args</span>) {
+
+    <span class="d-comment">// Lanza la creación de la GUI en el hilo de eventos de Swing (EDT)</span>
+    <span class="d-type">SwingUtilities</span>.<span class="d-method">invokeLater</span>(() -> {
+
+        <span class="d-comment">// Construye la ventana llamando a su constructor</span>
+        <span class="d-type">VentanaRegistro</span> <span class="d-field">ventana</span> = <span class="d-keyword">new</span> <span class="d-type">VentanaRegistro</span>();
+
+        <span class="d-comment">// La hace visible (por defecto las ventanas nacen invisibles)</span>
+        <span class="d-field">ventana</span>.<span class="d-method">setVisible</span>(<span class="d-keyword">true</span>);
+    });
+}
+                </div>
+                <details>
+                    <summary><strong>¿Qué es el EDT y por qué usamos <code>invokeLater</code>?</strong></summary>
+                    <p>El <span class="glossary" tabindex="0" data-tooltip="Event Dispatch Thread: hilo especial de Swing encargado de procesar todos los eventos y redibujar la interfaz. Todo el código que toca componentes Swing debe ejecutarse en este hilo.">EDT (Event Dispatch Thread)</span> es el hilo especial de Swing que procesa los eventos y dibuja la interfaz. <code class="font-mono text-sm">SwingUtilities.invokeLater(...)</code> le pide a ese hilo: "cuando puedas, ejecuta esto". Así la ventana se crea y se muestra en el hilo correcto, evitando problemas de concurrencia y ventanas "congeladas".</p>
+                </details>
+                <details>
+                    <summary><strong>¿Por qué <code>setVisible(true)</code>?</strong></summary>
+                    <p>Las ventanas de Swing nacen <strong>invisibles</strong>. Sin esta línea el programa se ejecutaría correctamente pero <strong>no verías ninguna ventana</strong> en pantalla.</p>
+                </details>
+            </div>
+
+        </div>
+
+        <!-- PASO 6 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
+            <h2><i class="fa-regular fa-flask-vial mr-2" style="color: var(--accent-green);"></i> Paso 6: Ejecutar y Probar la Aplicación</h2>
+
+            <div class="step-sub">
+                <h5>6.1 Ejecutar la Aplicación en IntelliJ IDEA</h5>
+                <p>Para poner en marcha tu primera ventana de interfaz gráfica:</p>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Abre el archivo <code class="font-mono text-sm">Main.java</code> en el editor de IntelliJ.</li>
+                    <li>Busca el ícono de <strong>triángulo verde de reproducción</strong> (<span style="color: var(--accent-green);">▶</span>) ubicado a la izquierda de la línea <code class="font-mono text-sm">public static void main(String[] args)</code>.</li>
+                    <li>Haz clic sobre el triángulo verde y selecciona: <em>Run 'Main.main()'</em>.</li>
+                </ol>
+                <div class="highlight-box">
+                    <i class="fa-regular fa-circle-info mr-1"></i> Si IntelliJ te pide elegir el <strong>JDK (Java Development Kit)</strong>, selecciona la versión que tengas instalada (por ejemplo, JDK 17 o superior) y vuelve a ejecutar.
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>6.2 Interacción y Prueba de la Ventana</h5>
+                <ul>
+                    <li>Verifica que aparezca la ventana gráfica titulada <strong>"Sistema de Gestión de Estudiantes — UNA"</strong> en el centro de tu pantalla.</li>
+                    <li>Prueba dejar campos vacíos y presionar "Guardar Estudiante" para comprobar la alerta de advertencia.</li>
+                    <li>Ingresa carnet, nombre y carrera y presiona "Guardar Estudiante" para ver el diálogo de confirmación exitoso.</li>
+                    <li>Presiona el botón "Limpiar" y verifica que las tres cajas de texto queden vacías.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- PREGUNTAS DE REFLEXIÓN -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-gold);">
+            <h2><i class="fa-regular fa-brain mr-2" style="color: var(--una-gold);"></i> Preguntas de Reflexión</h2>
+            <p>
+                Responde estas preguntas con tus propias palabras para afianzar los conceptos de la Clase 4. Puedes discutirlas con tus compañeros o responderlas individualmente.
+            </p>
+            <ol style="list-style-type: decimal; padding-left: 1.5rem; color: var(--text-muted);">
+                <li>
+                    <strong>Repositorios:</strong> ¿Qué diferencia existe entre <strong>crear</strong> un repositorio en GitHub Desktop y <strong>clonar</strong> uno creado en GitHub? ¿Por qué el clon ya "sabe" a dónde subir los cambios?
+                </li>
+                <li>
+                    <strong>Separación de capas:</strong> ¿Qué ventaja tiene organizar las clases dentro de paquetes (<code class="font-mono text-sm">Lab03.modelo</code> y <code class="font-mono text-sm">Lab03.vista</code>) al navegar proyectos grandes en IntelliJ? ¿Cómo se relaciona con la separación Vista-Modelo?
+                </li>
+                <li>
+                    <strong>Jerarquía de Contenedores:</strong> Observa la línea <code class="font-mono text-sm">this.add(panelPrincipal);</code>. ¿Por qué agregamos los botones y cajas dentro de un <code class="font-mono text-sm">JPanel</code> intermedio antes de pegarlo al <code class="font-mono text-sm">JFrame</code>?
+                </li>
+                <li>
+                    <strong>Layout Managers:</strong> ¿Qué pasaría con la distribución de los componentes si cambiáramos el <code class="font-mono text-sm">GridLayout</code> del formulario por un <code class="font-mono text-sm">FlowLayout</code>?
+                </li>
+                <li>
+                    <strong>Flujo por eventos:</strong> En el laboratorio anterior el programa se ejecutaba de forma secuencial. Ahora, ¿quién decide cuándo se ejecuta el código del botón "Guardar Estudiante"? ¿Qué papel juega el <code class="font-mono text-sm">ActionListener</code>?
+                </li>
+                <li>
+                    <strong>Visibilidad y EDT:</strong> ¿Qué sucede si eliminamos la línea <code class="font-mono text-sm">ventana.setVisible(true);</code> del archivo <code class="font-mono text-sm">Main.java</code>? ¿Y si quitas <code class="font-mono text-sm">SwingUtilities.invokeLater(...)</code>?
+                </li>
+            </ol>
+        </div>
+
+        <!-- ENTREGA -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-red); background: rgba(200,16,46,0.04);">
+            <h2><i class="fa-regular fa-circle-check mr-2" style="color: var(--una-red);"></i> Entrega del Laboratorio</h2>
+            <ol style="list-style-type: decimal; padding-left: 1.5rem; color: var(--text-muted);">
+                <li>
+                    <strong>Subir el código a GitHub:</strong> En GitHub Desktop, escribe el mensaje <code class="font-mono text-sm">feat: laboratorio semana 4 — interfaz grafica swing</code>, haz clic en <em>Commit to main</em> y luego en <em>Push origin</em> para subir los cambios al repositorio remoto que creamos en el Paso 1.
+                </li>
+                <li>Sube al aula virtual el enlace de GitHub junto con una captura de pantalla de la ventana ejecutándose y respondiendo al botón de guardar.</li>
+                <li>Sube al aula virtual las respuestas a las preguntas de reflexión.</li>
+            </ol>
+        </div>
+
+        <!-- PIE DE PÁGINA -->
+        <div class="text-center text-xs" style="color: var(--text-muted); padding: 2rem 0 1rem 0; border-top: 1px solid var(--border-panel);">
+            <p>Laboratorio 3 — Programación III &bull; Universidad Nacional &bull; 2026</p>
+            <p class="mt-1">Elaborado por: Siandi Araya Bello y Kristel Duarte Pérez</p>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', next);
+            const icon = document.getElementById('theme-icon');
+            icon.className = next === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+        }
+    </script>
+</body>
+</html>
