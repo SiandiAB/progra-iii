@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio 4 — Programación III (Semana 5)</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --bg-panel: #ffffff;
+            --bg-terminal: #2b2b2b;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-panel: #e2e8f0;
+            --una-red: #c8102e;
+            --una-gold: #d4ac0d;
+            --accent-blue: #2563eb;
+            --accent-green: #16a34a;
+            --accent-purple: #7c3aed;
+            --accent-peach: #ea580c;
+        }
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --bg-panel: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-panel: #334155;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .glass-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .glass-panel h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.75rem; }
+        .glass-panel h3 { font-size: 1.3rem; font-weight: 700; margin: 1.2rem 0 0.6rem 0; }
+        .glass-panel h4 { font-size: 1.1rem; font-weight: 700; margin: 1rem 0 0.4rem 0; }
+        .glass-panel h2 code { font-size: 1.4rem; }
+        .glass-panel p { color: var(--text-muted); margin-bottom: 0.75rem; }
+        .glass-panel p:not([class*="text-"]) { font-size: 1.15rem; }
+        .glass-panel ul, .glass-panel ol { color: var(--text-muted); padding-left: 1.5rem; margin-bottom: 0.75rem; }
+        .glass-panel li { margin-bottom: 0.3rem; font-size: 1.1rem; }
+
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .badge-red { background: rgba(200,16,46,0.12); color: var(--una-red); }
+        .badge-blue { background: rgba(37,99,235,0.12); color: var(--accent-blue); }
+        .badge-green { background: rgba(22,163,74,0.12); color: var(--accent-green); }
+        .badge-purple { background: rgba(124,58,237,0.12); color: var(--accent-purple); }
+        .badge-gold { background: rgba(212,172,13,0.12); color: var(--una-gold); }
+
+        .code-fragment {
+            background: #2b2b2b;
+            border-radius: 0.6rem;
+            padding: 1rem 1.2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.05rem;
+            color: #a9b7c6;
+            margin: 0.5rem 0;
+            border: 1px solid #323232;
+            display: block;
+            white-space: pre;
+            overflow-x: auto;
+            width: 100%;
+            line-height: 1.5;
+        }
+
+        code.text-sm { font-size: 1.05rem; }
+        code.text-xs { font-size: 0.95rem; }
+        code:not([class*="text-"]) { font-size: 1.1rem; }
+
+        .d-comment { color: #808080; font-style: italic; }
+        .d-keyword { color: #cc7832; font-weight: bold; }
+        .d-string { color: #6a8759; }
+        .d-number { color: #6897bb; }
+        .d-annotation { color: #bbb529; }
+        .d-method { color: #ffc66d; }
+        .d-field { color: #9876aa; }
+        .d-type { color: #a9b7c6; font-weight: bold; }
+
+        .step-sub {
+            border-left: 3px solid var(--accent-blue);
+            padding-left: 1rem;
+            margin: 1.2rem 0;
+        }
+        .step-sub h5 {
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.2rem;
+        }
+        .step-sub p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+        }
+
+        .highlight-box {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--una-gold);
+            background: rgba(212,172,13,0.06);
+            margin: 0.75rem 0;
+        }
+        .highlight-box strong { color: var(--una-gold); }
+
+        .float-btn {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 9999px;
+            padding: 0.65rem 1rem;
+            font-size: 1rem;
+            color: var(--text-main);
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transition: transform 0.15s, background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .float-btn:hover { transform: scale(1.05); background: var(--border-panel); }
+
+        details { margin-top: 1.2rem; }
+        details summary { cursor: pointer; font-weight: 700; color: var(--text-main); }
+        details summary:hover { color: var(--accent-blue); }
+
+        .glossary {
+            text-decoration: underline;
+            text-decoration-style: dotted;
+            text-underline-offset: 0.2em;
+            cursor: help;
+            position: relative;
+        }
+        .glossary:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2b2b2b;
+            color: #a9b7c6;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.4rem;
+            font-size: 0.8rem;
+            font-weight: 400;
+            white-space: nowrap;
+            z-index: 100;
+            pointer-events: none;
+            border: 1px solid #555555;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .glass-panel { padding: 1rem; }
+            .glass-panel h2 { font-size: 1.4rem; }
+            .code-fragment { font-size: 0.8rem; padding: 0.4rem 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar modo claro/oscuro">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+
+    <div class="container">
+
+        <!-- PORTADA -->
+        <div class="glass-panel text-center" style="border-top: 6px solid var(--una-red);">
+            <div class="flex justify-center mb-4">
+                <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png" alt="Logo UNA" class="h-20 object-contain"
+                     onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png';">
+            </div>
+            <h2 class="text-3xl font-extrabold">Laboratorio 4</h2>
+            <p class="text-xl" style="color: var(--una-red); font-weight: 700;">Sistema Interactivo de Registro de Productos con Eventos</p>
+            <p class="text-sm" style="color: var(--text-muted);">Programación III — Semana 5: Aplicaciones Dirigidas por Eventos</p>
+            <div class="flex flex-wrap justify-center gap-3 mt-3">
+                <span class="badge badge-red">KeyAdapter &amp; e.consume()</span>
+                <span class="badge badge-blue">FocusAdapter &amp; Validación</span>
+                <span class="badge badge-green">MouseAdapter &amp; Hover</span>
+                <span class="badge badge-purple">WindowAdapter &amp; Cierre</span>
+                <span class="badge badge-gold">Patrón de Delegación</span>
+            </div>
+            <div class="mt-4 text-sm" style="color: var(--text-muted);">
+                <i class="fa-regular fa-clock mr-1"></i> Duración estimada: 1 hora 15 minutos &nbsp;·&nbsp;
+                <i class="fa-regular fa-user mr-1"></i> Trabajo Individual
+            </div>
+        </div>
+
+        <!-- INTRODUCCIÓN -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-gold);">
+            <h2><i class="fa-regular fa-compass mr-2" style="color: var(--una-gold);"></i> Introducción al Reto Individual</h2>
+            <p>
+                En la primera parte de la sesión construimos juntos un sistema aplicando el <strong>ciclo de eventos</strong>, el <strong>modelo de delegación</strong> y las <strong>clases adaptadoras</strong> de Swing.
+            </p>
+            <p>
+                Ahora pondrás a prueba tus conocimientos de forma individual creando un <strong>Sistema de Registro de Productos de Cafetería</strong>. Siguiendo exactamente la misma arquitectura y los patrones vistos en el live coding, deberás construir el modelo, el servicio y la interfaz gráfica que valide entradas del teclado, detecte el foco, proporcione retroalimentación visual al mouse e intercepte el cierre de la ventana.
+            </p>
+
+            <div class="highlight-box">
+                <strong><i class="fa-regular fa-lightbulb mr-1"></i> Objetivo: </strong>
+                Demostrar dominio práctico en:
+            </div>
+            <ul>
+                <li>Validar restricciones de teclado con <code class="font-mono text-sm">KeyListener / KeyAdapter</code> y el método <code class="font-mono text-sm">e.consume()</code>.</li>
+                <li>Manejar eventos de foco con <code class="font-mono text-sm">FocusListener / FocusAdapter</code> para alertas visuales de campos requeridos.</li>
+                <li>Generar interactividad visual de mouse con <code class="font-mono text-sm">MouseListener / MouseAdapter</code> (efecto hover).</li>
+                <li>Interceptar el evento de sistema de salida con <code class="font-mono text-sm">WindowListener / WindowAdapter</code> y confirmar con <code class="font-mono text-sm">JOptionPane</code>.</li>
+                <li>Mantener la separación estricta entre <strong>Modelo</strong>, <strong>Servicio</strong> y <strong>Vista</strong>.</li>
+            </ul>
+        </div>
+
+        <!-- PASO 1: ESTRUCTURA -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+            <h2><i class="fa-regular fa-folder-open mr-2" style="color: var(--accent-blue);"></i> Paso 1: Configurar el Repositorio y Paquetes</h2>
+
+            <div class="step-sub">
+                <h5>1.1 Crear el repositorio en GitHub y clonarlo</h5>
+                <p>Crea en GitHub un repositorio para el laboratorio, clónalo en tu computadora con GitHub Desktop y ábrelo en IntelliJ IDEA asegurando la carpeta <code class="font-mono text-sm">src</code> como <strong>Sources Root</strong>.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>1.2 Estructura de paquetes requerida</h5>
+                <p>Dentro de <code class="font-mono text-sm">src</code> crea la siguiente estructura:</p>
+                <div class="code-fragment">
+src/
+  ├── <span class="d-field">modelo</span>/      <span class="d-comment">// Clase Producto</span>
+  ├── <span class="d-field">servicio</span>/    <span class="d-comment">// Clase InventarioServicio</span>
+  ├── <span class="d-field">vista</span>/       <span class="d-comment">// Clase VentanaProducto</span>
+  └── <span class="d-type">Main.java</span>    <span class="d-comment">// Lanzador seguro en EDT</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 2: MODELO -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-purple);">
+            <h2><i class="fa-regular fa-id-card mr-2" style="color: var(--accent-purple);"></i> Paso 2: Crear el Modelo <code>Producto.java</code></h2>
+
+            <div class="step-sub">
+                <h5>2.1 Requisitos de la clase</h5>
+                <p>En el paquete <code class="font-mono text-sm">modelo</code>, crea la clase <code class="font-mono text-sm">Producto</code> con los siguientes miembros:</p>
+                <ul>
+                    <li>Atributos privados: <code class="font-mono text-sm">private String codigo</code>, <code class="font-mono text-sm">private String nombre</code>, <code class="font-mono text-sm">private double precio</code>, <code class="font-mono text-sm">private int stock</code>.</li>
+                    <li>Constructor completo que inicialice todos los atributos.</li>
+                    <li>Métodos Getters y Setters para cada atributo.</li>
+                    <li>Sobrescritura del método <code class="font-mono text-sm">toString()</code> devolviendo una cadena con el formato: <br><code class="font-mono text-xs">[COD] Nombre - $Precio (Stock: N)</code>.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- PASO 3: SERVICIO -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
+            <h2><i class="fa-regular fa-cubes mr-2" style="color: var(--accent-green);"></i> Paso 3: Crear el Servicio <code>InventarioServicio.java</code></h2>
+
+            <div class="step-sub">
+                <h5>3.1 Requisitos del servicio</h5>
+                <p>En el paquete <code class="font-mono text-sm">servicio</code>, crea la clase <code class="font-mono text-sm">InventarioServicio</code>:</p>
+                <ul>
+                    <li>Atributo privado: <code class="font-mono text-sm">private List&lt;Producto&gt; listaProductos = new ArrayList&lt;&gt;();</code>.</li>
+                    <li>Método <code class="font-mono text-sm">public void registrarProducto(Producto p)</code> que valide que el código no esté repetido (usando Streams o bucle) y lo agregue a la lista. Si está repetido, lanzar <code class="font-mono text-sm">IllegalArgumentException("El código ya existe")</code>.</li>
+                    <li>Método <code class="font-mono text-sm">public List&lt;Producto&gt; getProductos()</code> que retorne una copia de la lista.</li>
+                    <li>Método <code class="font-mono text-sm">public int getTotalStock()</code> que calcule la sumatoria de stock de todos los productos registrados.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- PASO 4: VISTA -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-red);">
+            <h2><i class="fa-regular fa-window-maximize mr-2" style="color: var(--una-red);"></i> Paso 4: Construir la Interfaz y Eventos en <code>VentanaProducto.java</code></h2>
+
+            <p>En el paquete <code class="font-mono text-sm">vista</code>, crea <code class="font-mono text-sm">VentanaProducto extends JFrame</code>.</p>
+
+            <div class="step-sub">
+                <h5>4.1 Componentes de la interfaz</h5>
+                <ul>
+                    <li>Cajas de texto: <code class="font-mono text-sm">txtCodigo</code>, <code class="font-mono text-sm">txtNombre</code>, <code class="font-mono text-sm">txtPrecio</code>, <code class="font-mono text-sm">txtStock</code>.</li>
+                    <li>Etiqueta de estado/contador: <code class="font-mono text-sm">lblContadorCodigo</code> (para mostrar ej: <em>"4/4 dígitos"</em>).</li>
+                    <li>Etiqueta de resumen inferior: <code class="font-mono text-sm">lblResumenInventario</code>.</li>
+                    <li>Botones: <code class="font-mono text-sm">btnRegistrar</code>, <code class="font-mono text-sm">btnLimpiar</code>.</li>
+                </ul>
+            </div>
+
+            <div class="step-sub">
+                <h5>4.2 Requisitos Obligatorios de Eventos a Implementar:</h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>
+                        <strong>Validación de Teclado con <code>KeyAdapter</code> en <code>txtCodigo</code>:</strong>
+                        <br>Debe admitir únicamente dígitos y un máximo estricto de 4 caracteres. Usar <code class="font-mono text-xs">e.consume()</code> si se presiona un caracter no numérico o si la longitud supera 4. En <code class="font-mono text-xs">keyReleased</code>, actualizar <code class="font-mono text-xs">lblContadorCodigo</code>.
+                    </li>
+                    <li>
+                        <strong>Validación de Teclado con <code>KeyAdapter</code> en <code>txtStock</code>:</strong>
+                        <br>Debe admitir únicamente dígitos numéricos enteros usando <code class="font-mono text-xs">Character.isDigit()</code> y <code class="font-mono text-xs">e.consume()</code>.
+                    </li>
+                    <li>
+                        <strong>Validación de Foco con <code>FocusAdapter</code> en <code>txtPrecio</code>:</strong>
+                        <br>En <code class="font-mono text-xs">focusLost</code>, verificar si lo ingresado es un número decimal válido (<code class="font-mono text-xs">Double.parseDouble</code>). Si falla o está vacío, pintar el fondo de la caja en color rojo claro (<code class="font-mono text-xs">new Color(255, 220, 220)</code>); si es válido, restaurar a blanco.
+                    </li>
+                    <li>
+                        <strong>Efecto Hover con <code>MouseAdapter</code> en <code>btnRegistrar</code>:</strong>
+                        <br>En <code class="font-mono text-xs">mouseEntered</code>, cambiar el fondo del botón a verde y el cursor a <code class="font-mono text-xs">Cursor.HAND_CURSOR</code>. En <code class="font-mono text-xs">mouseExited</code>, restaurar los colores por defecto.
+                    </li>
+                    <li>
+                        <strong>Evento del Botón Registrar (<code>ActionListener</code> con Lambda):</strong>
+                        <br>Extraer los textos, validar que no existan campos vacíos, llamar a <code class="font-mono text-xs">servicio.registrarProducto(...)</code>, mostrar mensaje con <code class="font-mono text-xs">JOptionPane.showMessageDialog</code> y actualizar el resumen de inventario.
+                    </li>
+                    <li>
+                        <strong>Interceptación de Salida con <code>WindowAdapter</code> en la ventana:</strong>
+                        <br>Configurar <code class="font-mono text-xs">setDefaultCloseOperation(DO_NOTHING_ON_CLOSE)</code>. En <code class="font-mono text-xs">windowClosing</code>, preguntar con <code class="font-mono text-xs">JOptionPane.showConfirmDialog</code>: <em>"¿Está seguro de que desea salir del sistema?"</em>. Cerrar con <code class="font-mono text-xs">dispose()</code> solo si responde afirmativamente.
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- PASO 5: MAIN -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+            <h2><i class="fa-regular fa-play mr-2" style="color: var(--accent-blue);"></i> Paso 5: Punto de Entrada <code>Main.java</code></h2>
+            <div class="step-sub">
+                <h5>5.1 Inicialización segura</h5>
+                <p>En <code class="font-mono text-sm">Main</code>, instanciar <code class="font-mono text-sm">InventarioServicio</code>, inyectarlo a <code class="font-mono text-sm">VentanaProducto</code> y desplegarla usando <code class="font-mono text-sm">SwingUtilities.invokeLater(() -> { ... })</code>.</p>
+            </div>
+        </div>
+
+        <!-- PREGUNTAS DE REFLEXIÓN -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-gold);">
+            <h2><i class="fa-regular fa-brain mr-2" style="color: var(--una-gold);"></i> Preguntas de Reflexión</h2>
+            <ol style="list-style-type: decimal; padding-left: 1.5rem; color: var(--text-muted);">
+                <li>¿Por qué es necesario usar <code class="font-mono text-sm">e.consume()</code> en lugar de simplemente no hacer nada dentro del <code class="font-mono text-sm">keyTyped</code>?</li>
+                <li>¿Qué diferencia técnica existe entre una clase que implementa <code class="font-mono text-sm">KeyListener</code> directamente y una que extiende de <code class="font-mono text-sm">KeyAdapter</code>?</li>
+                <li>¿Por qué debemos establecer <code class="font-mono text-sm">DO_NOTHING_ON_CLOSE</code> al interceptar el cierre de una ventana con <code class="font-mono text-sm">WindowListener</code>?</li>
+                <li>Si un cálculo tomara 10 segundos, ¿por qué NO debemos programarlo directamente dentro del <code class="font-mono text-sm">actionPerformed</code> de un botón?</li>
+            </ol>
+        </div>
+
+        <!-- ENTREGA -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-red); background: rgba(200,16,46,0.04);">
+            <h2><i class="fa-regular fa-circle-check mr-2" style="color: var(--una-red);"></i> Entrega del Laboratorio</h2>
+            <ol style="list-style-type: decimal; padding-left: 1.5rem; color: var(--text-muted);">
+                <li>Haz commit en GitHub Desktop con el mensaje: <code class="font-mono text-sm">feat: laboratorio 4 — aplicaciones dirigidas por eventos</code> y sube con <em>Push origin</em>.</li>
+                <li>Sube al aula virtual el enlace de tu repositorio de GitHub, capturas de pantalla probando las validaciones y el archivo con las respuestas a las preguntas de reflexión.</li>
+            </ol>
+        </div>
+
+        <!-- PIE DE PÁGINA -->
+        <div class="text-center text-xs" style="color: var(--text-muted); padding: 2rem 0 1rem 0; border-top: 1px solid var(--border-panel);">
+            <p>Laboratorio 4 — Programación III &bull; Universidad Nacional &bull; 2026</p>
+            <p class="mt-1">Elaborado por: Kristel Duarte Pérez</p>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', next);
+            const icon = document.getElementById('theme-icon');
+            icon.className = next === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+        }
+    </script>
+</body>
+</html>

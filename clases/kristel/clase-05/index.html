@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 5 — Programación III</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+
+    <!-- Recursos compartidos del proyecto -->
+    <link rel="icon" type="image/svg+xml" href="../../../assets/img/favicon.svg">
+    <link rel="stylesheet" href="../../../assets/css/presentacion.css">
+
+    <!-- Tooltips interactivos para palabras clave -->
+    <style>
+        .keyword {
+            position: relative;
+            cursor: help;
+            border-bottom: 2px dotted var(--una-red, #c41e3a);
+            font-weight: 700;
+            color: var(--una-red, #c41e3a);
+        }
+        .keyword::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2b2b2b;
+            color: #a9b7c6;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid #555555;
+            font-size: 0.85rem;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 400;
+            white-space: normal;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 999;
+            width: max-content;
+            max-width: 320px;
+            text-align: left;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            line-height: 1.5;
+        }
+        .keyword:hover::after,
+        .keyword:focus::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-4px);
+        }
+        
+        /* Tema Darcula (IntelliJ Default Dark) para bloques de código */
+        .darcula-bg { background-color: #2b2b2b; color: #a9b7c6; }
+        .darcula-kw { color: #cc7832; font-weight: bold; }
+        .darcula-str { color: #6a8759; }
+        .darcula-num { color: #6897bb; }
+        .darcula-com { color: #808080; font-style: italic; }
+        .darcula-func { color: #ffc66d; }
+        .darcula-class { color: #a9b7c6; }
+        .darcula-anno { color: #bbb529; }
+        .darcula-field { color: #9876aa; }
+    </style>
+</head>
+<body>
+
+    <!-- Botones flotantes -->
+    <button class="float-btn" id="downloadBtn" onclick="downloadPresentation()" title="Descargar presentación para ver sin internet">
+        <i class="fa-solid fa-download"></i>
+    </button>
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar modo claro/oscuro">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+    <button class="float-btn" id="prevBtn" onclick="changeSlide(-1)"><i class="fa-solid fa-arrow-left"></i></button>
+    <button class="float-btn" id="nextBtn" onclick="changeSlide(1)"><i class="fa-solid fa-arrow-right"></i></button>
+
+    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+
+    <!-- ========== CONTENEDOR DE SLIDES ========== -->
+    <div class="slides-container" id="slides-container">
+
+        <!-- ==================== SLIDE 0: PORTADA ==================== -->
+        <div class="slide active">
+            <div class="text-center w-full max-w-6xl z-10 relative">
+                <i class="fa-solid fa-bolt-lightning bg-icon text-[350px] -top-20 -left-20" style="color: var(--una-red, #c41e3a);"></i>
+                <i class="fa-brands fa-java bg-icon text-[250px] -bottom-10 right-10" style="color: var(--accent-blue, #1e88e5);"></i>
+
+                <div class="bg-white px-8 py-4 rounded-3xl inline-block mb-6 shadow-md border border-gray-100 relative z-10">
+                    <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png"
+                         alt="Logo UNA" class="h-28 object-contain">
+                </div>
+
+                <h2 class="text-lg md:text-xl font-bold tracking-[0.2em] mb-4 uppercase" style="color: var(--text-muted, #6c757d);">Sección Regional Central Occidente, UNA</h2>
+
+                <h1 class="text-3xl md:text-4xl font-extrabold mb-4 tracking-tight">
+                    Programación <span style="color: var(--una-red, #c41e3a);">III</span>
+                </h1>
+                <h2 class="text-5xl md:text-7xl font-extrabold mb-2" style="color: var(--text-main, #212529);">Semana 5</h2>
+                <h3 class="text-3xl md:text-5xl font-bold mb-6" style="color: var(--una-red, #c41e3a);">
+                    Aplicaciones Dirigidas por Eventos
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-6 relative z-10">
+                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--accent-blue, #1e88e5);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-blue flex items-center justify-center text-2xl"><i class="fa-solid fa-chalkboard-user"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted, #6c757d);">Docente — Grupo 40</p>
+                            <p class="text-lg font-bold" data-curso="40-docente">Kristel Duarte Pérez</p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted, #6c757d);" data-curso="40-horario">K 08:00 - 11:20</p>
+                        </div>
+                    </div>
+                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--una-gold, #f59e0b);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-gold flex items-center justify-center text-2xl"><i class="fa-solid fa-clock"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted, #6c757d);">Atención a Estudiantes</p>
+                            <p class="text-lg font-bold" data-curso="40-atencion">K 13:00 - 14:00</p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted, #6c757d);">Consultas y tutorías</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-sm animate-pulse mt-6" style="color: var(--text-muted, #6c757d);"><i class="fa-solid fa-keyboard mr-2"></i>Usa las flechas del teclado para navegar</p>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 1: Agenda del Día ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-map-location-dot bg-icon text-[350px] top-10 right-0 opacity-5" style="color: var(--una-gold, #f59e0b);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">¿Qué vamos a dominar hoy?</h2>
+                    <p class="text-sm mt-2" style="color: var(--text-muted, #6c757d);"><i class="fa-solid fa-hand-pointer mr-1"></i> Hacé clic en cada tema para navegar a esa sección.</p>
+                </div>
+
+                <div class="relative max-w-2xl mx-auto">
+                    <div class="absolute border-l-2 border-dashed border-gray-300 h-full" style="left: 50%; transform: translateX(-50%);"></div>
+
+                    <!-- 1 -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-gold font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">1</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(2)">
+                            <div class="glass-panel py-2.5 px-5 border-r-4" style="border-right-color: var(--una-gold, #f59e0b);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Ciclo de Vida y el EDT</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2 -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(4)">
+                            <div class="glass-panel py-2.5 px-5 border-l-4" style="border-left-color: var(--accent-blue, #1e88e5);">
+                                <h3 class="font-bold text-base md:text-lg text-left">Patrón de Delegación</h3>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-blue font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">2</div>
+                        <div class="w-1/2"></div>
+                    </div>
+
+                    <!-- 3 -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-green font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">3</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(6)">
+                            <div class="glass-panel py-2.5 px-5 border-r-4" style="border-right-color: var(--accent-green, #10b981);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Eventos de Hardware</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4 -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(8)">
+                            <div class="glass-panel py-2.5 px-5 border-l-4" style="border-left-color: var(--una-red, #c41e3a);">
+                                <h3 class="font-bold text-base md:text-lg text-left">Eventos de Sistema y Aplicación</h3>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-red font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">4</div>
+                        <div class="w-1/2"></div>
+                    </div>
+
+                    <!-- 5 -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-purple font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">5</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(11)">
+                            <div class="glass-panel py-2.5 px-2 border-r-4" style="border-right-color: var(--accent-purple, #8b5cf6);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Formas de Programar Listeners</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6 -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(12)">
+                            <div class="glass-panel py-2.5 px-5 border-l-4" style="border-left-color: var(--accent-peach, #f97316);">
+                                <h3 class="font-bold text-base md:text-lg text-left">Jerarquías y Consumo</h3>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-peach font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">6</div>
+                        <div class="w-1/2"></div>
+                    </div>
+
+                    <!-- 7 -->
+                    <div class="flex items-center relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-green font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">7</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(15)">
+                            <div class="glass-panel py-2.5 px-5 border-r-4" style="border-right-color: var(--accent-green, #10b981);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Laboratorio #4</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 2: EL CORAZÓN DE LOS EVENTOS ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-heart-pulse bg-icon text-[350px] -right-10 opacity-5" style="color: var(--una-red, #c41e3a);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">El Ciclo Básico de Atención de Eventos</h2>
+                    <p class="text-xl" style="color: var(--text-muted, #6c757d);">¿Cómo pasa un clic físico del mouse a ejecutar código Java?</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch max-w-6xl mx-auto">
+                    <div class="lg:col-span-12 glass-panel p-6 border-t-4 flex flex-col" style="border-color: var(--una-red, #c41e3a);">
+                        <h3 class="text-2xl font-bold mb-3 text-red-700">Del Hardware al CPU: El viaje en 4 fases</h3>
+                        <p class="text-base leading-relaxed mb-4 text-gray-700">
+                            En un entorno gráfico, el procesador no pasa preguntando en bucle <code class="font-mono text-xs">"¿hicieron clic ya?"</code>. Eso consumiría el 100% de la batería y CPU (llamado <span class="keyword" tabindex="0" data-tooltip="Sondeo activo ineficiente donde el programa consulta continuamente el estado de un dispositivo en un bucle cerrado.">Polling</span>). En su lugar, el sistema funciona por interrupciones y colas.
+                        </p>
+                        
+                        <div class="space-y-3 grow">
+                            <div class="p-3 bg-gray-50 rounded-xl border-l-4 border-red-500 shadow-sm flex items-start gap-3">
+                                <span class="w-7 h-7 rounded-full bg-red-100 text-red-700 font-bold flex items-center justify-center shrink-0 text-sm">1</span>
+                                <div>
+                                    <h4 class="font-bold text-gray-800 text-sm">Acción Física (Hardware Interrupt)</h4>
+                                    <p class="text-xs text-gray-600">El usuario presiona una tecla o mueve el mouse. El hardware envía una interrupción eléctrica al microprocesador del computador.</p>
+                                </div>
+                            </div>
+
+                            <div class="p-3 bg-gray-50 rounded-xl border-l-4 border-yellow-500 shadow-sm flex items-start gap-3">
+                                <span class="w-7 h-7 rounded-full bg-yellow-100 text-yellow-700 font-bold flex items-center justify-center shrink-0 text-sm">2</span>
+                                <div>
+                                    <h4 class="font-bold text-gray-800 text-sm">Captura del Sistema Operativo</h4>
+                                    <p class="text-xs text-gray-600">El driver de Windows/macOS/Linux detecta la coordenada (X, Y) y determina qué ventana activa posee el <span class="keyword" tabindex="0" data-tooltip="Propiedad de la ventana o componente que actualmente recibe la entrada del usuario activo.">Foco de Entrada</span>.</p>
+                                </div>
+                            </div>
+
+                            <div class="p-3 bg-gray-50 rounded-xl border-l-4 border-blue-500 shadow-sm flex items-start gap-3">
+                                <span class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center shrink-0 text-sm">3</span>
+                                <div>
+                                    <h4 class="font-bold text-gray-800 text-sm">La Cola de Mensajes de Java (EventQueue)</h4>
+                                    <p class="text-xs text-gray-600">La JVM empaqueta la señal en un objeto Java (<code class="font-mono text-xs font-bold">AWTEvent</code>) y lo coloca ordenadamente en la cola <span class="keyword" tabindex="0" data-tooltip="Cola primero en entrar, primero en salir (FIFO) donde se almacenan todos los eventos pendientes por procesar.">EventQueue</span>.</p>
+                                </div>
+                            </div>
+
+                            <div class="p-3 bg-gray-50 rounded-xl border-l-4 border-green-500 shadow-sm flex items-start gap-3">
+                                <span class="w-7 h-7 rounded-full bg-green-100 text-green-700 font-bold flex items-center justify-center shrink-0 text-sm">4</span>
+                                <div>
+                                    <h4 class="font-bold text-gray-800 text-sm">Despacho y Ejecución (Event Dispatching)</h4>
+                                    <p class="text-xs text-gray-600">El hilo despachador saca el evento de la cola, busca al componente objetivo y ejecuta el método de su Listener correspondiente.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="darcula-bg p-3 rounded-xl font-mono text-xs border border-gray-600 shadow-inner mt-4">
+                            <span class="darcula-com">// Cómo consultar la cola de eventos en Java</span><br>
+                            <span class="darcula-class">EventQueue</span> eq = <span class="darcula-class">Toolkit</span>.<span class="darcula-func">getDefaultToolkit</span>().<span class="darcula-func">getSystemEventQueue</span>();<br>
+                            <span class="darcula-com">// La JVM atiende esta cola transparentemente en segundo plano</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 3: EL EVENT DISPATCH THREAD (EDT) ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-microchip bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-purple, #8b5cf6);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">El Hilo de Eventos: Event Dispatch Thread (EDT)</h2>
+                    <p class="text-xl" style="color: var(--text-muted, #6c757d);">La Regla de Oro de Swing: ¿Por qué una ventana se congela?</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch max-w-6xl mx-auto">
+                    <!-- Concepto -->
+                    <div class="glass-panel p-6 border-l-8 flex flex-col justify-between" style="border-color: var(--accent-purple, #8b5cf6);">
+                        <div>
+                            <div class="flex items-center gap-3 mb-3">
+                                <span class="tint-purple px-3 py-1 rounded-full font-bold text-sm">Concepto Vital</span>
+                                <h3 class="text-2xl font-bold text-gray-800">El Hilo Dedicado de GUI</h3>
+                            </div>
+                            <p class="text-sm leading-relaxed text-gray-700 mb-3">
+                                Java Swing es <span class="keyword" tabindex="0" data-tooltip="No seguro para múltiples hilos. Sus métodos de actualización visual no están sincronizados internamente para acceso concurrente.">Single-Threaded (No Thread-Safe)</span>. Esto significa que <strong>un solo hilo</strong> (el EDT) se encarga de:
+                            </p>
+                            <ul class="space-y-2 text-xs text-gray-700 list-disc list-inside mb-4">
+                                <li>Pintar y redibujar los componentes gráficos en pantalla (<code class="font-mono">paint()</code>, <code class="font-mono">repaint()</code>).</li>
+                                <li>Atender las pulsaciones del teclado y clics del mouse.</li>
+                                <li>Ejecutar el código que tú escribes dentro de los métodos <code class="font-mono">actionPerformed()</code>, <code class="font-mono">keyPressed()</code>, etc.</li>
+                            </ul>
+
+                            <div class="p-3 bg-red-50 border-l-4 border-red-500 rounded-lg text-xs text-red-900">
+                                <strong><i class="fa-solid fa-triangle-exclamation mr-1"></i> ¡Peligro de Congelamiento!</strong> Si dentro de un Listener ejecutas una tarea pesada (ej: descargar un archivo de 500MB o un <code class="font-mono">Thread.sleep(10000)</code>), <strong>bloqueas el EDT</strong>. La ventana no se redibuja, el usuario ve el cursor de reloj de arena y el sistema operativo reporta <em>"La aplicación no responde"</em>.
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-t border-gray-200">
+                            <p class="text-xs font-bold text-purple-800 mb-1"><i class="fa-solid fa-rocket mr-1"></i> La buena práctica de inicialización segura:</p>
+                            <div class="darcula-bg p-2.5 rounded-xl font-mono text-xs border border-gray-600">
+                                <span class="darcula-class">SwingUtilities</span>.<span class="darcula-func">invokeLater</span>(() -> {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="darcula-kw">new</span> <span class="darcula-class">VentanaPrincipal</span>().<span class="darcula-func">setVisible</span>(<span class="darcula-kw">true</span>);<br>
+                                });
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ejemplo gráfico del bloqueo -->
+                    <div class="darcula-bg p-6 rounded-2xl shadow-xl border border-gray-700 flex flex-col justify-between text-xs font-mono">
+                        <div>
+                            <div class="flex items-center justify-between border-b border-gray-600 pb-2 mb-3">
+                                <span class="text-red-400 font-bold flex items-center gap-2">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> ¿Por qué se muere tu ventana?
+                                </span>
+                                <span class="text-gray-400">Demostracion.java</span>
+                            </div>
+                            <pre class="leading-relaxed"><code><span class="darcula-com">// <i class="fa-solid fa-xmark"></i> ERROR COMÚN: Bloquear el EDT</span>
+btnDescargar.<span class="darcula-func">addActionListener</span>(e -> {
+    <span class="darcula-com">// Al estar en el EDT, este ciclo congela la UI</span>
+    <span class="darcula-kw">for</span> (<span class="darcula-kw">int</span> i = <span class="darcula-num">0</span>; i < <span class="darcula-num">100</span>; i++) {
+        <span class="darcula-class">Thread</span>.<span class="darcula-func">sleep</span>(<span class="darcula-num">200</span>); <span class="darcula-com">// ¡La ventana se vuelve blanca!</span>
+        lblProgreso.<span class="darcula-func">setText</span>(i + <span class="darcula-str">"%"</span>); <span class="darcula-com">// Nunca se ve en tiempo real</span>
+    }
+});
+
+<span class="darcula-com">// <i class="fa-solid fa-check"></i> FORMA CORRECTA: Tarea pesada en hilo separado (Semana 14)</span>
+<span class="darcula-com">// El EDT solo se encarga de recibir clics instantáneos</span></code></pre>
+                        </div>
+
+                        <div class="mt-4 p-3 bg-[#1e1e1e] rounded-xl border border-gray-700 text-gray-300">
+                            <p class="text-yellow-400 font-bold mb-1"><i class="fa-solid fa-circle-check mr-1"></i> Regla de diseño:</p>
+                            <p class="text-gray-400 leading-normal">Los métodos que atienden eventos deben ejecutarse en <strong>milisegundos</strong>. Solo toman los datos y delegan.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 4: EL PATRÓN DE DELEGACIÓN ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-diagram-project bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-blue, #1e88e5);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">El Modelo de Delegación de Eventos</h2>
+                    <p class="text-xl" style="color: var(--text-muted, #6c757d);">La Santísima Trinidad de los Eventos en Java: Source, Event Object y Listener.</p>
+                </div>
+
+                <div class="glass-panel p-6 border-t-4 max-w-5xl mx-auto" style="border-color: var(--accent-blue, #1e88e5);">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+                        
+                        <!-- 1. Event Source -->
+                        <div class="bg-blue-50 p-5 rounded-2xl border border-blue-200 flex flex-col">
+                            <div class="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center text-2xl font-bold mb-3 shadow">
+                                <i class="fa-solid fa-cube"></i>
+                            </div>
+                            <h4 class="font-bold text-lg text-blue-900 mb-1">1. Event Source (Origen)</h4>
+                            <p class="text-xs font-semibold text-blue-700 mb-2">El generador del evento</p>
+                            <p class="text-xs text-gray-700 leading-relaxed grow">
+                                Es el componente de interfaz con el que interactúa el usuario (<code class="font-mono text-xs">JButton</code>, <code class="font-mono text-xs">JTextField</code>, <code class="font-mono text-xs">JTable</code>). Mantiene internamente una lista de escuchadores suscritos.
+                            </p>
+                            <div class="mt-3 p-2 bg-white rounded border border-blue-200 text-xs font-mono text-blue-800">
+                                btnGuardar
+                            </div>
+                        </div>
+
+                        <!-- 2. Event Object -->
+                        <div class="bg-amber-50 p-5 rounded-2xl border border-amber-200 flex flex-col">
+                            <div class="w-12 h-12 rounded-xl bg-amber-500 text-white flex items-center justify-center text-2xl font-bold mb-3 shadow">
+                                <i class="fa-solid fa-envelope-open-text"></i>
+                            </div>
+                            <h4 class="font-bold text-lg text-amber-900 mb-1">2. Event Object (Mensaje)</h4>
+                            <p class="text-xs font-semibold text-amber-700 mb-2">El paquete informativo</p>
+                            <p class="text-xs text-gray-700 leading-relaxed grow">
+                                Clase Java derivada de <span class="keyword" tabindex="0" data-tooltip="Clase raíz de todos los objetos de eventos en Java. Contiene la referencia al origen mediante getSource().">EventObject</span>. Encapsula los detalles: qué botón fue, a qué hora, qué coordenada (X,Y) o qué tecla se presionó.
+                            </p>
+                            <div class="mt-3 p-2 bg-white rounded border border-amber-200 text-xs font-mono text-amber-800">
+                                ActionEvent e
+                            </div>
+                        </div>
+
+                        <!-- 3. Event Listener -->
+                        <div class="bg-green-50 p-5 rounded-2xl border border-green-200 flex flex-col">
+                            <div class="w-12 h-12 rounded-xl bg-green-600 text-white flex items-center justify-center text-2xl font-bold mb-3 shadow">
+                                <i class="fa-solid fa-ear-listen"></i>
+                            </div>
+                            <h4 class="font-bold text-lg text-green-900 mb-1">3. Event Listener (Receptor)</h4>
+                            <p class="text-xs font-semibold text-green-700 mb-2">El que ejecuta la acción</p>
+                            <p class="text-xs text-gray-700 leading-relaxed grow">
+                                Una <span class="keyword" tabindex="0" data-tooltip="Interfaz que define la firma de métodos como actionPerformed, mouseClicked o keyTyped.">Interface</span> de Java que contiene el método que será invocado cuando ocurra la acción. El programador implementa su lógica ahí.
+                            </p>
+                            <div class="mt-3 p-2 bg-white rounded border border-green-200 text-xs font-mono text-green-800">
+                                ActionListener
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Diagrama de flujo -->
+                    <div class="bg-gray-100 p-4 rounded-xl border border-gray-300 flex flex-col md:flex-row items-center justify-between text-center gap-3">
+                        <div class="flex-1 font-bold text-sm text-gray-700">
+                            <i class="fa-solid fa-computer-mouse text-blue-600 mr-2"></i> Usuario hace clic en <code class="bg-white px-1.5 py-0.5 rounded border">JButton</code>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-gray-400 hidden md:block"></i>
+                        <div class="flex-1 font-bold text-sm text-gray-700">
+                            <i class="fa-solid fa-box text-amber-600 mr-2"></i> Se crea instancia de <code class="bg-white px-1.5 py-0.5 rounded border">ActionEvent</code>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-gray-400 hidden md:block"></i>
+                        <div class="flex-1 font-bold text-sm text-gray-700">
+                            <i class="fa-solid fa-gears text-green-600 mr-2"></i> Se invoca <code class="bg-white px-1.5 py-0.5 rounded border">actionPerformed(e)</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 5: JERARQUÍA DE EVENTOS ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-sitemap bg-icon text-[350px] -left-10 opacity-5" style="color: var(--una-gold, #f59e0b);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Clasificación y Jerarquía de Clases de Eventos</h2>
+                    <p class="text-xl" style="color: var(--text-muted, #6c757d);">El árbol genealógico dentro del paquete <code class="font-mono text-lg font-bold text-yellow-600">java.awt.event</code></p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-6xl mx-auto items-stretch">
+                    <!-- Árbol de Herencia Visual -->
+                    <div class="lg:col-span-7 darcula-bg p-5 rounded-2xl shadow-xl border border-gray-700 font-mono text-xs flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 border-b border-gray-600 pb-2 mb-3">
+                                <i class="fa-solid fa-folder-tree text-yellow-400"></i>
+                                <span class="text-gray-300 font-bold">Jerarquía de Herencia en Java</span>
+                            </div>
+                            <pre class="leading-loose text-gray-300">
+<span class="darcula-class">java.util.EventObject</span> <span class="darcula-com">(Raíz general de Java)</span>
+  └── <span class="darcula-class">java.awt.AWTEvent</span> <span class="darcula-com">(Raíz de eventos gráficos)</span>
+        ├── <span class="darcula-kw">Eventos Semánticos / Alto Nivel</span>
+        │     ├── <span class="darcula-class">ActionEvent</span> <span class="darcula-com">(Clics en botón, Enter en texto, selección menú)</span>
+        │     ├── <span class="darcula-class">ItemEvent</span> <span class="darcula-com">(Cambio en CheckBox, RadioButton, ComboBox)</span>
+        │     ├── <span class="darcula-class">AdjustmentEvent</span> <span class="darcula-com">(Movimiento en Scrollbars)</span>
+        │     └── <span class="darcula-class">TextEvent</span> <span class="darcula-com">(Modificación de caracteres en campos)</span>
+        │
+        └── <span class="darcula-kw">ComponentEvent (Eventos de Bajo Nivel / Hardware)</span>
+              ├── <span class="darcula-class">MouseEvent</span> <span class="darcula-com">(Clics, arrastre, entrada/salida del cursor)</span>
+              ├── <span class="darcula-class">KeyEvent</span> <span class="darcula-com">(Teclas presionadas, soltadas o digitadas)</span>
+              ├── <span class="darcula-class">FocusEvent</span> <span class="darcula-com">(Componente gana o pierde el foco de entrada)</span>
+              ├── <span class="darcula-class">WindowEvent</span> <span class="darcula-com">(Ventana abierta, minimizada, cerrada)</span>
+              └── <span class="darcula-class">ContainerEvent</span> <span class="darcula-com">(Componente agregado/removido de un JPanel)</span></pre>
+                        </div>
+                        <p class="text-yellow-400 text-[0.7rem] pt-2 border-t border-gray-700">
+                            <i class="fa-solid fa-lightbulb mr-1"></i> Todos heredan los métodos <code class="text-white">getSource()</code> (quién lo disparó) y <code class="text-white">getID()</code> (tipo de evento).
+                        </p>
+                    </div>
+
+                    <!-- Explicación de Categorías -->
+                    <div class="lg:col-span-5 glass-panel p-5 border-t-4 flex flex-col justify-between" style="border-color: var(--una-gold, #f59e0b);">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-3 text-yellow-700">¿Bajo Nivel vs Alto Nivel?</h3>
+                            
+                            <div class="space-y-3 text-xs text-gray-700">
+                                <div class="p-3 bg-white rounded-xl border border-gray-200">
+                                    <h4 class="font-bold text-gray-900 text-sm mb-1"><i class="fa-solid fa-microchip text-yellow-600 mr-1"></i> Eventos de Bajo Nivel (Raw / Hardware)</h4>
+                                    <p class="text-gray-600 leading-relaxed">
+                                        Representan exactamente la señal del hardware sin interpretar intenciones. Informan posiciones exactas de píxeles (X,Y) o códigos de teclas (<code class="font-mono">VK_ENTER</code>, <code class="font-mono">VK_ESCAPE</code>).
+                                    </p>
+                                </div>
+
+                                <div class="p-3 bg-white rounded-xl border border-gray-200">
+                                    <h4 class="font-bold text-gray-900 text-sm mb-1"><i class="fa-solid fa-wand-magic-sparkles text-blue-600 mr-1"></i> Eventos Semánticos (Alto Nivel)</h4>
+                                    <p class="text-gray-600 leading-relaxed">
+                                        Representan la <strong>intención del usuario</strong>, abstrayendo cómo ocurrió. Por ejemplo, un <code class="font-mono">ActionEvent</code> en un botón puede ocurrir por hacer clic con el mouse, o por presionar la barra espaciadora cuando el botón tiene el foco. Para tu código, ¡es lo mismo!
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tint-gold p-3 rounded-xl text-xs mt-3">
+                            <strong>Consejo:</strong> Siempre preferí usar eventos semánticos (<code class="font-mono">ActionListener</code>) a menos que ocupes controlar píxeles específicos o teclas individuales.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 6: EVENTOS DE HARDWARE - MOUSE ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-arrow-pointer bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-blue, #1e88e5);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Eventos de Hardware: El Ratón (Mouse)</h2>
+                    <p class="text-xl" style="color: var(--text-muted, #6c757d);">Capturando clics, coordenadas, arrastres y efectos hover.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 max-w-6xl mx-auto items-stretch">
+                    <!-- Interfaces MouseListener y MouseMotionListener -->
+                    <div class="glass-panel p-5 border-l-8 flex flex-col justify-between" style="border-color: var(--accent-blue, #1e88e5);">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 text-blue-700">Las 2 Interfaces de Ratón</h3>
+                            <p class="text-xs text-gray-600 mb-3">
+                                En Java, las acciones del ratón están divididas en dos interfaces según si el ratón se mueve o hace clic:
+                            </p>
+
+                            <div class="space-y-2.5 text-xs">
+                                <div class="p-2.5 bg-blue-50 rounded-xl border border-blue-200">
+                                    <h4 class="font-bold text-blue-900 font-mono text-sm">MouseListener (5 métodos)</h4>
+                                    <ul class="list-disc list-inside text-gray-700 mt-1 space-y-0.5">
+                                        <li><code class="font-mono text-blue-700">mouseClicked(e)</code>: Clic completo (presionar y soltar en el mismo sitio).</li>
+                                        <li><code class="font-mono text-blue-700">mousePressed(e)</code>: Momento exacto de presionar el botón del mouse.</li>
+                                        <li><code class="font-mono text-blue-700">mouseReleased(e)</code>: Momento exacto de soltar el botón.</li>
+                                        <li><code class="font-mono text-blue-700">mouseEntered(e)</code>: El cursor entra al área del componente (Hover in).</li>
+                                        <li><code class="font-mono text-blue-700">mouseExited(e)</code>: El cursor sale del componente (Hover out).</li>
+                                    </ul>
+                                </div>
+
+                                <div class="p-2.5 bg-green-50 rounded-xl border border-green-200">
+                                    <h4 class="font-bold text-green-900 font-mono text-sm">MouseMotionListener (2 métodos)</h4>
+                                    <ul class="list-disc list-inside text-gray-700 mt-1 space-y-0.5">
+                                        <li><code class="font-mono text-green-700">mouseMoved(e)</code>: Se mueve el mouse sin presionar ningún botón.</li>
+                                        <li><code class="font-mono text-green-700">mouseDragged(e)</code>: Se mueve el mouse mientras se mantiene presionado un botón.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-2.5 bg-gray-100 rounded-lg text-[0.75rem] text-gray-700 mt-2">
+                            <strong>Propiedades útiles de <code class="font-mono">MouseEvent e</code>:</strong><br>
+                            <code class="font-mono text-blue-800">e.getX() / e.getY()</code> (coordenadas locales) | <code class="font-mono text-blue-800">e.getClickCount() == 2</code> (doble clic) | <code class="font-mono text-blue-800">e.getButton()</code> (1=izquierdo, 3=derecho).
+                        </div>
+                    </div>
+
+                    <!-- Código de Ejemplo con MouseAdapter -->
+                    <div class="darcula-bg p-5 rounded-2xl shadow-xl border border-gray-700 text-xs font-mono flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between border-b border-gray-600 pb-2 mb-3">
+                                <span class="text-blue-400 font-bold flex items-center gap-2">
+                                    <i class="fa-solid fa-code"></i> Implementación con MouseAdapter
+                                </span>
+                                <span class="text-gray-400">EfectoHover.java</span>
+                            </div>
+                            <pre class="leading-relaxed"><code><span class="darcula-com">// Creamos un botón con efecto interactivo al pasar el mouse</span>
+<span class="darcula-class">JButton</span> btnMagico = <span class="darcula-kw">new</span> <span class="darcula-class">JButton</span>(<span class="darcula-str">"Pasa el mouse sobre mí"</span>);
+
+<span class="darcula-com">// Usamos MouseAdapter para no tener que implementar los 5 métodos vacíos</span>
+btnMagico.<span class="darcula-func">addMouseListener</span>(<span class="darcula-kw">new</span> <span class="darcula-class">MouseAdapter</span>() {
+    <span class="darcula-anno">@Override</span>
+    <span class="darcula-kw">public void</span> <span class="darcula-func">mouseEntered</span>(<span class="darcula-class">MouseEvent</span> e) {
+        btnMagico.<span class="darcula-func">setBackground</span>(<span class="darcula-class">Color</span>.GREEN);
+        btnMagico.<span class="darcula-func">setText</span>(<span class="darcula-str">"¡Cursor adentro!"</span>);
+    }
+
+    <span class="darcula-anno">@Override</span>
+    <span class="darcula-kw">public void</span> <span class="darcula-func">mouseExited</span>(<span class="darcula-class">MouseEvent</span> e) {
+        btnMagico.<span class="darcula-func">setBackground</span>(<span class="darcula-class">Color</span>.LIGHT_GRAY);
+        btnMagico.<span class="darcula-func">setText</span>(<span class="darcula-str">"Pasa el mouse sobre mí"</span>);
+    }
+});</code></pre>
+                        </div>
+
+                        <div class="mt-3 p-2 bg-[#1e1e1e] rounded border border-gray-700 text-gray-300 text-[0.7rem]">
+                            <i class="fa-solid fa-lightbulb mr-1"></i> <span class="text-yellow-400 font-bold">¿Qué es MouseAdapter?</span> Es una clase abstracta que ya implementa los métodos vacíos. Solo sobreescribís los que te interesan.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 7: EVENTOS DE HARDWARE - TECLADO ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-keyboard bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-green, #10b981);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Eventos de Hardware: El Teclado (Keyboard)</h2>
+                    <p class="text-xl" style="color: var(--text-muted, #6c757d);">Validaciones en tiempo real: números, límites de caracteres y atajos.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 max-w-6xl mx-auto items-stretch">
+                    <!-- Los 3 métodos de KeyListener -->
+                    <div class="lg:col-span-5 glass-panel p-5 border-t-4 flex flex-col justify-between" style="border-color: var(--accent-green, #10b981);">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 text-green-700">La Interfaz KeyListener</h3>
+                            <p class="text-xs text-gray-600 mb-3">
+                                Se dispara cuando un componente tiene el <span class="keyword" tabindex="0" data-tooltip="Para que un componente reciba eventos de teclado, debe estar enfocado (cursor parpadeando en él).">Foco Activo</span> y se toca una tecla:
+                            </p>
+
+                            <div class="space-y-2 text-xs">
+                                <div class="p-2.5 bg-gray-50 rounded-xl border border-gray-200">
+                                    <h4 class="font-bold text-gray-900 font-mono text-sm">1. keyPressed(e)</h4>
+                                    <p class="text-gray-600">Al pulsar la tecla física hacia abajo. Sirve para teclas especiales como <kbd class="bg-gray-200 px-1 rounded">F1</kbd>, <kbd class="bg-gray-200 px-1 rounded">Ctrl</kbd>, flechas o <kbd class="bg-gray-200 px-1 rounded">Enter</kbd>.</p>
+                                </div>
+
+                                <div class="p-2.5 bg-green-50 rounded-xl border border-green-200">
+                                    <h4 class="font-bold text-green-900 font-mono text-sm">2. keyTyped(e)</h4>
+                                    <p class="text-gray-600">Ocurre cuando se genera un <strong>carácter Unicode imprimible</strong> (letras, números, símbolos). <strong>¡Aquí es donde se validan campos numéricos o de solo letras!</strong></p>
+                                </div>
+
+                                <div class="p-2.5 bg-gray-50 rounded-xl border border-gray-200">
+                                    <h4 class="font-bold text-gray-900 font-mono text-sm">3. keyReleased(e)</h4>
+                                    <p class="text-gray-600">Al soltar la tecla física hacia arriba. Ideal para búsquedas en tiempo real en una tabla mientras se escribe.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tint-green p-2.5 rounded-lg text-xs mt-2">
+                            <i class="fa-solid fa-magnifying-glass mr-1"></i> <code class="font-mono text-green-900 font-bold">e.getKeyChar()</code> devuelve la letra o dígito.<br>
+                            <i class="fa-solid fa-magnifying-glass mr-1"></i> <code class="font-mono text-green-900 font-bold">e.getKeyCode()</code> devuelve el código entero (ej: <code class="font-mono">KeyEvent.VK_ENTER</code>).
+                        </div>
+                    </div>
+
+                    <!-- Código: Validación Solo Números con e.consume() -->
+                    <div class="lg:col-span-7 darcula-bg p-5 rounded-2xl shadow-xl border border-gray-700 text-xs font-mono flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between border-b border-gray-600 pb-2 mb-3">
+                                <span class="text-green-400 font-bold flex items-center gap-2">
+                                    <i class="fa-solid fa-shield-halved"></i> Validación de Campo: Solo Números
+                                </span>
+                                <span class="text-gray-400">ValidacionTeclado.java</span>
+                            </div>
+                            <pre class="leading-relaxed"><code><span class="darcula-class">JTextField</span> txtTelefono = <span class="darcula-kw">new</span> <span class="darcula-class">JTextField</span>(<span class="darcula-num">10</span>);
+
+<span class="darcula-com">// Restringir para que el usuario NO pueda escribir letras</span>
+txtTelefono.<span class="darcula-func">addKeyListener</span>(<span class="darcula-kw">new</span> <span class="darcula-class">KeyAdapter</span>() {
+    <span class="darcula-anno">@Override</span>
+    <span class="darcula-kw">public void</span> <span class="darcula-func">keyTyped</span>(<span class="darcula-class">KeyEvent</span> e) {
+        <span class="darcula-kw">char</span> c = e.<span class="darcula-func">getKeyChar</span>();
+
+        <span class="darcula-com">// Si el carácter NO es un dígito del 0 al 9:</span>
+        <span class="darcula-kw">if</span> (!<span class="darcula-class">Character</span>.<span class="darcula-func">isDigit</span>(c)) {
+            <span class="darcula-com">// ¡CONSUMIMOS el evento! Java lo destruye y NO lo escribe</span>
+            e.<span class="darcula-func">consume</span>();
+            <span class="darcula-class">Toolkit</span>.<span class="darcula-func">getDefaultToolkit</span>().<span class="darcula-func">beep</span>(); <span class="darcula-com">// Alerta sonora opcional</span>
+        }
+    }
+});</code></pre>
+                        </div>
+
+                        <div class="mt-3 p-2.5 bg-[#1a2e1a] rounded border border-green-600 text-green-300 text-xs">
+                            <i class="fa-solid fa-lightbulb mr-1"></i> <strong>¿Qué hace <code class="font-mono text-white">e.consume()</code>?</strong> Le dice a Java: <em>"Este evento ya fue atendido, destrúyelo y no permitas que llegue al componente de texto"</em>. El usuario presiona una letra y simplemente nada se escribe en la caja.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 8: EVENTOS DE VENTANA Y FOCO ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-desktop bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-peach, #f97316);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Eventos de Sistema: Ventana y Foco</h2>
+                    <p class="text-xl" style="color: var(--text-muted, #6c757d);">Confirmaciones antes de salir y validaciones al salir de un campo.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 max-w-6xl mx-auto items-stretch">
+                    <!-- WindowListener -->
+                    <div class="glass-panel p-5 border-t-4 flex flex-col justify-between" style="border-color: var(--una-red, #c41e3a);">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fa-solid fa-window-restore text-red-600 text-lg"></i>
+                                <h3 class="text-xl font-bold text-gray-800">WindowEvent y WindowListener</h3>
+                            </div>
+                            <p class="text-xs text-gray-600 leading-relaxed mb-3">
+                                Se aplican a los <code class="font-mono text-xs">JFrame</code> y <code class="font-mono text-xs">JDialog</code>. Permiten interceptar cuándo la ventana se abre, se minimiza o se va a cerrar.
+                            </p>
+
+                            <div class="darcula-bg p-3 rounded-xl font-mono text-xs border border-gray-700 mb-2">
+                                <span class="darcula-com">// 1. Desactivar el cierre automático inmediato</span><br>
+                                ventana.<span class="darcula-func">setDefaultCloseOperation</span>(<span class="darcula-class">JFrame</span>.DO_NOTHING_ON_CLOSE);<br><br>
+                                <span class="darcula-com">// 2. Interceptar el clic en la "X"</span><br>
+                                ventana.<span class="darcula-func">addWindowListener</span>(<span class="darcula-kw">new</span> <span class="darcula-class">WindowAdapter</span>() {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="darcula-anno">@Override</span><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="darcula-kw">public void</span> <span class="darcula-func">windowClosing</span>(<span class="darcula-class">WindowEvent</span> e) {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="darcula-kw">int</span> res = <span class="darcula-class">JOptionPane</span>.<span class="darcula-func">showConfirmDialog</span>(ventana,<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="darcula-str">"¿Desea guardar antes de salir?"</span>);<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="darcula-kw">if</span> (res == <span class="darcula-class">JOptionPane</span>.YES_OPTION) {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ventana.<span class="darcula-func">dispose</span>(); <span class="darcula-com">// Cierra de verdad</span><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                                });
+                            </div>
+                        </div>
+                        <p class="text-[0.7rem] text-gray-500">
+                            <i class="fa-solid fa-shield-halved mr-1"></i> Evita que el usuario pierda su trabajo por error al darle a la 'X' roja.
+                        </p>
+                    </div>
+
+                    <!-- FocusListener -->
+                    <div class="glass-panel p-5 border-t-4 flex flex-col justify-between" style="border-color: var(--accent-blue, #1e88e5);">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fa-solid fa-bullseye text-blue-600 text-lg"></i>
+                                <h3 class="text-xl font-bold text-gray-800">FocusEvent y FocusListener</h3>
+                            </div>
+                            <p class="text-xs text-gray-600 leading-relaxed mb-3">
+                                Permite saber cuándo el usuario entra o sale de un cuadro de texto (con tabulador o clic). Súper útil para formato de cédulas o <span class="keyword" tabindex="0" data-tooltip="Texto de marcador de posición temporal que desaparece cuando el usuario entra a escribir.">Placeholders</span>.
+                            </p>
+
+                            <div class="darcula-bg p-3 rounded-xl font-mono text-xs border border-gray-700 mb-2">
+                                txtEmail.<span class="darcula-func">addFocusListener</span>(<span class="darcula-kw">new</span> <span class="darcula-class">FocusAdapter</span>() {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="darcula-anno">@Override</span><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="darcula-kw">public void</span> <span class="darcula-func">focusLost</span>(<span class="darcula-class">FocusEvent</span> e) {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="darcula-com">// Se dispara cuando el usuario pasa a otro campo</span><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="darcula-kw">if</span> (!txtEmail.<span class="darcula-func">getText</span>().<span class="darcula-func">contains</span>(<span class="darcula-str">"@"</span>)) {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;txtEmail.<span class="darcula-func">setBackground</span>(<span class="darcula-kw">new</span> <span class="darcula-class">Color</span>(<span class="darcula-num">255</span>,<span class="darcula-num">220</span>,<span class="darcula-num">220</span>));<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lblError.<span class="darcula-func">setText</span>(<span class="darcula-str">"Formato de correo inválido"</span>);<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                                });
+                            </div>
+                        </div>
+                        <p class="text-[0.7rem] text-gray-500">
+                            <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Validación inmediata sin tener que esperar a que el usuario presione el botón final.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 9: PSEUDOEVENTOS Y EVENTOS DE APLICACIÓN ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-bullhorn bg-icon text-[350px] -left-10 opacity-5" style="color: var(--una-gold, #f59e0b);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Pseudoeventos y Eventos de Aplicación</h2>
+                    <p class="text-xl" style="color: var(--text-muted, #6c757d);">Creando nuestros propios eventos personalizados del dominio del negocio.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 max-w-6xl mx-auto items-stretch">
+                    <!-- Concepto de Pseudoevento -->
+                    <div class="lg:col-span-5 glass-panel p-5 border-l-8 flex flex-col justify-between" style="border-color: var(--una-gold, #f59e0b);">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 text-yellow-700">¿Qué es un Pseudoevento?</h3>
+                            <p class="text-xs leading-relaxed text-gray-700 mb-3">
+                                No todos los eventos nacen de un clic de mouse o de una tecla. Un <span class="keyword" tabindex="0" data-tooltip="Evento lógico generado por el propio software cuando se cumple una regla de negocio interna (ej: 'SaldoInsuficienteEvent' o 'ProductoAgotadoEvent').">Pseudoevento</span> es un evento <strong>creado por nosotros mismos</strong> para comunicar cambios internos en nuestro sistema.
+                            </p>
+
+                            <div class="space-y-2 text-xs text-gray-700">
+                                <div class="p-2.5 bg-yellow-50 rounded-lg border border-yellow-200">
+                                    <strong class="text-yellow-900">Ejemplo en el mundo real:</strong>
+                                    <p class="mt-1">Cuando una cuenta bancaria llega a saldo negativo, la clase <code class="font-mono text-xs">Cuenta</code> dispara un <code class="font-mono text-xs">SaldoAgotadoEvent</code>. La vista se entera y se pinta en rojo automáticamente.</p>
+                                </div>
+                                <div class="p-2.5 bg-blue-50 rounded-lg border border-blue-200">
+                                    <strong class="text-blue-900">Beneficio Arquitectónico:</strong>
+                                    <p class="mt-1">Permite que el Modelo y el Controlador le avisen a la Vista que algo cambió <strong>sin conocer los componentes gráficos</strong> (desacoplamiento total).</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tint-gold p-2 rounded text-[0.7rem] mt-2">
+                            <i class="fa-solid fa-thumbtack mr-1"></i> Este es el corazón del Patrón de Diseño <strong>Observer</strong> que veremos en la Semana 7.
+                        </div>
+                    </div>
+
+                    <!-- Código de Creación de un Evento Propio -->
+                    <div class="lg:col-span-7 darcula-bg p-5 rounded-2xl shadow-xl border border-gray-700 text-xs font-mono flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between border-b border-gray-600 pb-2 mb-2">
+                                <span class="text-yellow-400 font-bold flex items-center gap-2">
+                                    <i class="fa-solid fa-code"></i> Cómo crear tu propio evento a la medida
+                                </span>
+                                <span class="text-gray-400">StockEvent.java</span>
+                            </div>
+                            <pre class="leading-relaxed"><code><span class="darcula-com">// 1. Creamos el objeto del evento personalizado</span>
+<span class="darcula-kw">public class</span> <span class="darcula-class">StockAgotadoEvent</span> <span class="darcula-kw">extends</span> <span class="darcula-class">java.util.EventObject</span> {
+    <span class="darcula-kw">private</span> <span class="darcula-class">String</span> codigoProducto;
+
+    <span class="darcula-kw">public</span> <span class="darcula-func">StockAgotadoEvent</span>(<span class="darcula-class">Object</span> source, <span class="darcula-class">String</span> codigo) {
+        <span class="darcula-kw">super</span>(source);
+        <span class="darcula-kw">this</span>.codigoProducto = codigo;
+    }
+    <span class="darcula-kw">public</span> <span class="darcula-class">String</span> <span class="darcula-func">getCodigo</span>() { <span class="darcula-kw">return</span> codigoProducto; }
+}
+
+<span class="darcula-com">// 2. Creamos la interfaz del Listener personalizado</span>
+<span class="darcula-kw">public interface</span> <span class="darcula-class">StockListener</span> {
+    <span class="darcula-kw">void</span> <span class="darcula-func">onStockAgotado</span>(<span class="darcula-class">StockAgotadoEvent</span> e);
+}</code></pre>
+                        </div>
+
+                        <div class="mt-2 p-2 bg-[#2d2512] rounded border border-yellow-600 text-yellow-200 text-[0.7rem]">
+                            <i class="fa-solid fa-rocket mr-1"></i> ¡Cualquier clase de tu sistema ahora puede suscribirse a <code class="text-white">StockListener</code> y enterarse al instante cuando se acabe el inventario!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 10: DISPARO DE EVENTOS PROPIOS ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-satellite-dish bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-purple, #8b5cf6);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Disparando el Evento de Aplicación</h2>
+                    <p class="text-xl" style="color: var(--text-muted, #6c757d);">Conectando el emisor con los escuchadores en Java puro.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 max-w-6xl mx-auto items-stretch">
+                    <!-- Clase Emisora -->
+                    <div class="lg:col-span-6 darcula-bg p-5 rounded-2xl shadow-xl border border-gray-700 text-xs font-mono flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 border-b border-gray-600 pb-2 mb-3 text-purple-300 font-bold">
+                                <i class="fa-solid fa-box"></i> Inventario.java (El Emisor)
+                            </div>
+                            <pre class="leading-relaxed"><code><span class="darcula-kw">public class</span> <span class="darcula-class">Inventario</span> {
+    <span class="darcula-com">// Lista de escuchadores suscritos</span>
+    <span class="darcula-kw">private</span> <span class="darcula-class">List</span>&lt;<span class="darcula-class">StockListener</span>&gt; listeners = <span class="darcula-kw">new</span> <span class="darcula-class">ArrayList</span>&lt;&gt;();
+
+    <span class="darcula-kw">public void</span> <span class="darcula-func">addStockListener</span>(<span class="darcula-class">StockListener</span> l) {
+        listeners.<span class="darcula-func">add</span>(l);
+    }
+
+    <span class="darcula-kw">public void</span> <span class="darcula-func">venderProducto</span>(<span class="darcula-class">String</span> cod, <span class="darcula-kw">int</span> cant) {
+        <span class="darcula-com">// ... lógica de reducción de stock ...</span>
+        <span class="darcula-kw">if</span> (stockRestante == <span class="darcula-num">0</span>) {
+            <span class="darcula-func">dispararEventoAgotado</span>(cod);
+        }
+    }
+
+    <span class="darcula-kw">private void</span> <span class="darcula-func">dispararEventoAgotado</span>(<span class="darcula-class">String</span> cod) {
+        <span class="darcula-class">StockAgotadoEvent</span> evento = 
+            <span class="darcula-kw">new</span> <span class="darcula-class">StockAgotadoEvent</span>(<span class="darcula-kw">this</span>, cod);
+        <span class="darcula-kw">for</span> (<span class="darcula-class">StockListener</span> l : listeners) {
+            l.<span class="darcula-func">onStockAgotado</span>(evento);
+        }
+    }
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Clase Receptora en la Vista -->
+                    <div class="lg:col-span-6 darcula-bg p-5 rounded-2xl shadow-xl border border-gray-700 text-xs font-mono flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 border-b border-gray-600 pb-2 mb-3 text-green-300 font-bold">
+                                <i class="fa-regular fa-window-maximize"></i> VentanaPrincipal.java (El Receptor)
+                            </div>
+                            <pre class="leading-relaxed"><code><span class="darcula-com">// En la ventana gráfica nos suscribimos al inventario:</span>
+inventario.<span class="darcula-func">addStockListener</span>(e -> {
+    <span class="darcula-com">// Se ejecuta automáticamente cuando el inventario se agota</span>
+    <span class="darcula-class">JOptionPane</span>.<span class="darcula-func">showMessageDialog</span>(<span class="darcula-kw">this</span>,
+        <span class="darcula-str">"¡ALERTA! El producto "</span> + e.<span class="darcula-func">getCodigo</span>() + <span class="darcula-str">" se agotó."</span>,
+        <span class="darcula-str">"Stock Vacío"</span>,
+        <span class="darcula-class">JOptionPane</span>.WARNING_MESSAGE);
+    
+    lblEstado.<span class="darcula-func">setText</span>(<span class="darcula-str">"Sin existencias"</span>);
+    lblEstado.<span class="darcula-func">setForeground</span>(<span class="darcula-class">Color</span>.RED);
+});</code></pre>
+                        </div>
+
+                        <div class="p-3 bg-[#1e1e1e] rounded border border-gray-700 text-gray-300 text-xs mt-3">
+                            <i class="fa-solid fa-bullseye mr-1"></i> <strong>¿La magia de esto?</strong> <code class="font-mono text-purple-400">Inventario</code> no sabe qué es un <code class="font-mono text-green-400">JOptionPane</code> ni un <code class="font-mono text-green-400">JLabel</code>. Solo notifica a sus listeners. Cero acoplamiento visual.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 11: 4 FORMAS DE IMPLEMENTAR LISTENERS ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[94%] mx-auto relative z-10">
+                <i class="fa-solid fa-code-branch bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-purple, #8b5cf6);"></i>
+                <div class="text-center mb-3">
+                    <h2 class="text-5xl font-bold mb-2">Las 4 Formas de Implementar Listeners en Java</h2>
+                    <p class="text-lg" style="color: var(--text-muted, #6c757d);">Evolución histórica y sintáctica: ¿Cuál usar en cada caso?</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 max-w-7xl mx-auto items-stretch text-xs">
+                    
+                    <!-- 1. Misma Clase -->
+                    <div class="glass-panel p-3.5 flex flex-col justify-between border-t-4" style="border-color: var(--text-muted, #6c757d);">
+                        <div>
+                            <span class="bg-gray-200 text-gray-800 font-bold px-2 py-0.5 rounded text-[0.7rem]">Forma 1 (Clásica)</span>
+                            <h4 class="font-bold text-sm text-gray-800 mt-1 mb-1 font-mono">implements ActionListener</h4>
+                            <p class="text-gray-600 text-[0.75rem] leading-snug mb-2">
+                                La propia ventana implementa la interfaz. Obliga a poner un <code class="font-mono text-xs">if/else</code> gigante con <code class="font-mono text-xs">e.getSource()</code> para saber qué botón se presionó.
+                            </p>
+                        </div>
+                        <div class="darcula-bg p-2 rounded text-[0.65rem] font-mono">
+                            <span class="darcula-kw">public void</span> <span class="darcula-func">actionPerformed</span>(<span class="darcula-class">ActionEvent</span> e) {<br>
+                            &nbsp;&nbsp;<span class="darcula-kw">if</span> (e.<span class="darcula-func">getSource</span>() == btn1) { ... }<br>
+                            &nbsp;&nbsp;<span class="darcula-kw">else if</span> (e.<span class="darcula-func">getSource</span>() == btn2) { ... }<br>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- 2. Clase Anónima -->
+                    <div class="glass-panel p-3.5 flex flex-col justify-between border-t-4" style="border-color: var(--accent-blue, #1e88e5);">
+                        <div>
+                            <span class="bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded text-[0.7rem]">Forma 2</span>
+                            <h4 class="font-bold text-sm text-blue-900 mt-1 mb-1 font-mono">Clase Interna Anónima</h4>
+                            <p class="text-gray-600 text-[0.75rem] leading-snug mb-2">
+                                Se instancia la interfaz directamente dentro del <code class="font-mono text-xs">addActionListener</code>. Muy usada antes de Java 8 y en adaptadores con múltiples métodos.
+                            </p>
+                        </div>
+                        <div class="darcula-bg p-2 rounded text-[0.65rem] font-mono">
+                            btn.<span class="darcula-func">addActionListener</span>(<span class="darcula-kw">new</span> <span class="darcula-class">ActionListener</span>() {<br>
+                            &nbsp;&nbsp;<span class="darcula-anno">@Override</span><br>
+                            &nbsp;&nbsp;<span class="darcula-kw">public void</span> <span class="darcula-func">actionPerformed</span>(<span class="darcula-class">ActionEvent</span> e) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="darcula-func">guardar</span>();<br>
+                            &nbsp;&nbsp;}<br>
+                            });
+                        </div>
+                    </div>
+
+                    <!-- 3. Expresión Lambda -->
+                    <div class="glass-panel p-3.5 flex flex-col justify-between border-t-4" style="border-color: var(--accent-green, #10b981);">
+                        <div>
+                            <span class="bg-green-100 text-green-800 font-bold px-2 py-0.5 rounded text-[0.7rem]">Forma 3 (Estándar Moderno)</span>
+                            <h4 class="font-bold text-sm text-green-900 mt-1 mb-1 font-mono">Expresiones Lambda (->)</h4>
+                            <p class="text-gray-600 text-[0.75rem] leading-snug mb-2">
+                                Sintaxis compacta y limpia introducida en Java 8. Aplica para cualquier <span class="keyword" tabindex="0" data-tooltip="Interfaz que tiene exactamente un solo método abstracto (como ActionListener).">Interfaz Funcional</span>.
+                            </p>
+                        </div>
+                        <div class="darcula-bg p-2 rounded text-[0.65rem] font-mono">
+                            <span class="darcula-com">// Limpio, directo y legible</span><br>
+                            btnGuardar.<span class="darcula-func">addActionListener</span>(e -> {<br>
+                            &nbsp;&nbsp;<span class="darcula-func">guardar</span>();<br>
+                            });
+                        </div>
+                    </div>
+
+                    <!-- 4. Clases Adaptadoras -->
+                    <div class="glass-panel p-3.5 flex flex-col justify-between border-t-4" style="border-color: var(--accent-peach, #f97316);">
+                        <div>
+                            <span class="bg-orange-100 text-orange-800 font-bold px-2 py-0.5 rounded text-[0.7rem]">Forma 4 (Eventos Complejos)</span>
+                            <h4 class="font-bold text-sm text-orange-900 mt-1 mb-1 font-mono">Clases Adapter</h4>
+                            <p class="text-gray-600 text-[0.75rem] leading-snug mb-2">
+                                Para interfaces con muchos métodos (<code class="font-mono text-xs">MouseListener</code>, <code class="font-mono text-xs">WindowListener</code>). Permite sobreescribir solo 1 método en vez de 5.
+                            </p>
+                        </div>
+                        <div class="darcula-bg p-2 rounded text-[0.65rem] font-mono">
+                            comp.<span class="darcula-func">addMouseListener</span>(<span class="darcula-kw">new</span> <span class="darcula-class">MouseAdapter</span>() {<br>
+                            &nbsp;&nbsp;<span class="darcula-anno">@Override</span><br>
+                            &nbsp;&nbsp;<span class="darcula-kw">public void</span> <span class="darcula-func">mouseClicked</span>(<span class="darcula-class">MouseEvent</span> e) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="darcula-func">seleccionar</span>();<br>
+                            &nbsp;&nbsp;}<br>
+                            });
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 12: JERARQUÍAS Y PROPAGACIÓN DE EVENTOS ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-water bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-blue, #1e88e5);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Jerarquías de Atención y Propagación</h2>
+                    <p class="text-xl" style="color: var(--text-muted, #6c757d);">¿Quién atiende primero un evento cuando hay componentes dentro de otros?</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 max-w-6xl mx-auto items-stretch">
+                    <!-- Concepto de burbujeo/propagación -->
+                    <div class="lg:col-span-6 glass-panel p-5 border-t-4 flex flex-col justify-between" style="border-color: var(--accent-blue, #1e88e5);">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-3 text-blue-700">El Árbol de Componentes</h3>
+                            <p class="text-xs text-gray-700 leading-relaxed mb-3">
+                                Recuerden la jerarquía: <code class="font-mono font-bold text-blue-800">JFrame</code> &rarr; <code class="font-mono font-bold text-green-800">JPanel</code> &rarr; <code class="font-mono font-bold text-orange-800">JButton</code>.
+                            </p>
+                            <p class="text-xs text-gray-700 leading-relaxed mb-3">
+                                Cuando el usuario hace clic en el botón:
+                            </p>
+                            <ol class="space-y-2 text-xs text-gray-700 list-decimal list-inside">
+                                <li>El evento se envía primero al <strong>nodo más específico</strong> (el botón).</li>
+                                <li>Si el botón no consume el evento, o si es un evento de hardware no manejado, este <strong>se propaga hacia su contenedor padre</strong> (<span class="keyword" tabindex="0" data-tooltip="Comportamiento en el cual un evento no consumido viaja hacia arriba en la jerarquía visual de componentes.">Event Bubbling / Propagación</span>).</li>
+                                <li>El panel padre puede tener un Listener global para monitorear todos los clics de sus hijos.</li>
+                            </ol>
+                        </div>
+
+                        <div class="p-3 bg-blue-50 rounded-xl border border-blue-200 text-xs text-blue-950 mt-3">
+                            <i class="fa-solid fa-shield-halved mr-1"></i> <strong>El freno de mano (<code class="font-mono font-bold">e.consume()</code>):</strong> Al invocar este método, detienes la propagación del evento hacia niveles superiores o evitas el comportamiento predeterminado del componente.
+                        </div>
+                    </div>
+
+                    <!-- Código demostrativo de propagación -->
+                    <div class="lg:col-span-6 darcula-bg p-5 rounded-2xl shadow-xl border border-gray-700 text-xs font-mono flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 border-b border-gray-600 pb-2 mb-3 text-gray-300 font-bold">
+                                <i class="fa-solid fa-code"></i> Ejemplo de Listener Global en el Panel
+                            </div>
+                            <pre class="leading-relaxed"><code><span class="darcula-class">JPanel</span> panelPrincipal = <span class="darcula-kw">new</span> <span class="darcula-class">JPanel</span>();
+
+<span class="darcula-com">// El panel padre puede escuchar cualquier tecla presionada</span>
+<span class="darcula-com">// en la ventana para proveer atajos de teclado globales (ej. F5 = Refrescar)</span>
+panelPrincipal.<span class="darcula-func">addKeyListener</span>(<span class="darcula-kw">new</span> <span class="darcula-class">KeyAdapter</span>() {
+    <span class="darcula-anno">@Override</span>
+    <span class="darcula-kw">public void</span> <span class="darcula-func">keyPressed</span>(<span class="darcula-class">KeyEvent</span> e) {
+        <span class="darcula-kw">if</span> (e.<span class="darcula-func">getKeyCode</span>() == <span class="darcula-class">KeyEvent</span>.VK_F5) {
+            <span class="darcula-func">recargarDatos</span>();
+            e.<span class="darcula-func">consume</span>(); <span class="darcula-com">// Detiene cualquier otra acción</span>
+        }
+    }
+});</code></pre>
+                        </div>
+
+                        <div class="p-2 bg-[#1e1e1e] rounded border border-gray-700 text-gray-400 text-[0.7rem] mt-3">
+                            <i class="fa-solid fa-lightbulb mr-1"></i> Para que un <code class="text-white">JPanel</code> reciba eventos de teclado directamente, recordá llamar a <code class="text-yellow-400">panelPrincipal.setFocusable(true)</code>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 13: EJEMPLO INTEGRADOR ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[94%] mx-auto relative z-10">
+                <i class="fa-solid fa-laptop-code bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-green, #10b981);"></i>
+                <div class="text-center mb-3">
+                    <h2 class="text-5xl font-bold mb-2">Ejemplo Completo: Formulario Interactivo</h2>
+                    <p class="text-lg" style="color: var(--text-muted, #6c757d);">Combinando KeyListener, MouseListener y ActionListener de forma limpia.</p>
+                </div>
+
+                <div class="darcula-bg p-4 rounded-2xl shadow-2xl border border-gray-700 text-xs font-mono max-w-5xl mx-auto overflow-x-auto">
+                    <div class="flex items-center justify-between border-b border-gray-600 pb-2 mb-2">
+                        <span class="text-green-400 font-bold"><i class="fa-brands fa-java mr-2"></i>FormularioRegistro.java</span>
+                        <span class="text-gray-400">Arquitectura de Eventos Limpia</span>
+                    </div>
+                    <pre class="leading-snug"><code><span class="darcula-kw">public class</span> <span class="darcula-class">FormularioRegistro</span> <span class="darcula-kw">extends</span> <span class="darcula-class">JFrame</span> {
+    <span class="darcula-kw">private</span> <span class="darcula-class">JTextField</span> txtCedula, txtNombre;
+    <span class="darcula-kw">private</span> <span class="darcula-class">JButton</span> btnGuardar;
+    <span class="darcula-kw">private</span> <span class="darcula-class">JLabel</span> lblContador;
+
+    <span class="darcula-kw">public</span> <span class="darcula-func">FormularioRegistro</span>() {
+        <span class="darcula-com">// 1. EVENTO DE TECLADO: Validación inmediata de cédula (Solo números, máx 9 dígitos)</span>
+        txtCedula.<span class="darcula-func">addKeyListener</span>(<span class="darcula-kw">new</span> <span class="darcula-class">KeyAdapter</span>() {
+            <span class="darcula-anno">@Override</span>
+            <span class="darcula-kw">public void</span> <span class="darcula-func">keyTyped</span>(<span class="darcula-class">KeyEvent</span> e) {
+                <span class="darcula-kw">if</span> (!<span class="darcula-class">Character</span>.<span class="darcula-func">isDigit</span>(e.<span class="darcula-func">getKeyChar</span>()) || txtCedula.<span class="darcula-func">getText</span>().<span class="darcula-func">length</span>() >= <span class="darcula-num">9</span>) {
+                    e.<span class="darcula-func">consume</span>(); <span class="darcula-com">// Bloquea la tecla</span>
+                }
+            }
+            <span class="darcula-anno">@Override</span>
+            <span class="darcula-kw">public void</span> <span class="darcula-func">keyReleased</span>(<span class="darcula-class">KeyEvent</span> e) {
+                <span class="darcula-com">// Contador en tiempo real</span>
+                lblContador.<span class="darcula-func">setText</span>(txtCedula.<span class="darcula-func">getText</span>().<span class="darcula-func">length</span>() + <span class="darcula-str">"/9 dígitos"</span>);
+            }
+        });
+
+        <span class="darcula-com">// 2. EVENTO SEMÁNTICO: Acción del botón guardar delegada al servicio</span>
+        btnGuardar.<span class="darcula-func">addActionListener</span>(e -> <span class="darcula-func">ejecutarGuardado</span>());
+    }
+
+    <span class="darcula-kw">private void</span> <span class="darcula-func">ejecutarGuardado</span>() {
+        <span class="darcula-kw">if</span> (txtCedula.<span class="darcula-func">getText</span>().<span class="darcula-func">length</span>() < <span class="darcula-num">9</span>) {
+            <span class="darcula-class">JOptionPane</span>.<span class="darcula-func">showMessageDialog</span>(<span class="darcula-kw">this</span>, <span class="darcula-str">"La cédula debe tener 9 dígitos"</span>, <span class="darcula-str">"Error"</span>, <span class="darcula-class">JOptionPane</span>.ERROR_MESSAGE);
+            <span class="darcula-kw">return</span>;
+        }
+        <span class="darcula-com">// Delegar a la capa de lógica...</span>
+    }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 14: EVENTOS Y EL PATRÓN MVC ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-shapes bg-icon text-[350px] -right-10 opacity-5" style="color: var(--una-red, #c41e3a);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Eventos y la Arquitectura de Software</h2>
+                    <p class="text-xl" style="color: var(--text-muted, #6c757d);">Conectando la gestión de eventos con el Proyecto #1 sin código espagueti.</p>
+                </div>
+
+                <div class="glass-panel p-6 border-t-4 max-w-5xl mx-auto" style="border-color: var(--una-red, #c41e3a);">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-center">
+                        <div class="p-4 bg-blue-50 rounded-xl border border-blue-200">
+                            <i class="fa-regular fa-window-maximize text-3xl text-blue-600 mb-2"></i>
+                            <h4 class="font-bold text-gray-900 mb-1">1. Vista (GUI)</h4>
+                            <p class="text-xs text-gray-600">Captura el <code class="font-mono text-xs">ActionEvent</code> o <code class="font-mono text-xs">KeyEvent</code>, extrae los textos de los campos y <strong>no hace cálculos matemáticos</strong>.</p>
+                        </div>
+
+                        <div class="p-4 bg-purple-50 rounded-xl border border-purple-200">
+                            <i class="fa-solid fa-arrow-right-arrow-left text-3xl text-purple-600 mb-2"></i>
+                            <h4 class="font-bold text-gray-900 mb-1">2. Controlador</h4>
+                            <p class="text-xs text-gray-600">Recibe la llamada del Listener, valida las reglas del negocio y llama a los métodos del modelo para guardar o consultar.</p>
+                        </div>
+
+                        <div class="p-4 bg-green-50 rounded-xl border border-green-200">
+                            <i class="fa-solid fa-database text-3xl text-green-600 mb-2"></i>
+                            <h4 class="font-bold text-gray-900 mb-1">3. Modelo</h4>
+                            <p class="text-xs text-gray-600">Guarda los objetos en las listas en memoria (<code class="font-mono text-xs">ArrayList</code>) y dispara eventos de negocio si el estado cambia.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 p-3 bg-red-50 rounded-xl border border-red-200 text-xs text-red-900 flex items-start gap-3">
+                        <i class="fa-solid fa-circle-exclamation text-lg text-red-600 shrink-0 mt-0.5"></i>
+                        <span><strong>Recordatorio para el Proyecto #1:</strong> En las revisiones se penaliza duramente poner sentencias <code class="font-mono">new ArrayList<>()</code> o cálculos financieros dentro de los métodos <code class="font-mono">actionPerformed</code> de la Vista. Los Listeners solo son <em>disparadores</em> que delegan el trabajo.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 15: LABORATORIO ==================== -->
+        <div class="slide">
+            <div class="text-center w-full max-w-5xl relative z-10">
+                <i class="fa-solid fa-flask-vial bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-green, #10b981);"></i>
+
+                <div class="glass-panel inline-block px-8 py-4 rounded-full mb-8 border-2" style="border-color: var(--accent-green, #10b981);">
+                    <h2 class="text-5xl font-bold text-green-700">¡Hora del Laboratorio #4!</h2>
+                </div>
+
+                <div class="glass-panel p-8 max-w-4xl mx-auto border-t-8 text-left shadow-2xl" style="border-color: var(--accent-green, #10b981);">
+                    <h3 class="text-3xl font-bold mb-3 flex items-center gap-3 text-green-800">
+                        <i class="fa-solid fa-laptop-code"></i>
+                        Poniendo los Eventos en Práctica: Sistema de Cafetería
+                    </h3>
+                    <p class="text-base leading-relaxed mb-6 text-gray-700">
+                        Llevaremos a código real la gestión de eventos, validaciones y retroalimentación visual integrando Modelo, Servicio y Vista:
+                    </p>
+                    
+                    <div class="space-y-4 text-sm text-gray-800">
+                        <div class="flex items-start gap-4 bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm">
+                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold shrink-0">1</div>
+                            <p class="pt-1"><strong>Validación y Contadores con KeyAdapter:</strong> Filtro de solo dígitos numéricos y control de longitud máxima mediante <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">e.consume()</code> con actualización de estado en tiempo real.</p>
+                        </div>
+                        
+                        <div class="flex items-start gap-4 bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm">
+                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold shrink-0">2</div>
+                            <p class="pt-1"><strong>Alertas con FocusAdapter y Hover con MouseAdapter:</strong> Validación de formato decimal al perder el foco con cambios de color y efectos interactivos sobre botones de acción.</p>
+                        </div>
+                        
+                        <div class="flex items-start gap-4 bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm">
+                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold shrink-0">3</div>
+                            <p class="pt-1"><strong>Delegación y WindowAdapter:</strong> Registro desacoplado mediante <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">ActionListener</code> e interceptación controlada del cierre con <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">DO_NOTHING_ON_CLOSE</code> y <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">JOptionPane</code>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- fin slides-container -->
+
+    <!-- Scripts compartidos del proyecto — NO borrar ni agregar scripts abajo -->
+    <script src="../../../assets/js/curso-info.js"></script>
+    <script src="../../../assets/js/presentacion.js"></script>
+
+</body>
+</html>

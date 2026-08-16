@@ -220,3 +220,92 @@ body::before {
 .steam-1 { animation: steam 3s ease-out infinite; }
 .steam-2 { animation: steam 3s ease-out infinite 1s; }
 .steam-3 { animation: steam 3s ease-out infinite 2s; }
+
+/* ============================================================
+   TEMA OSCURO — Ajustes para clases de color fijas de Tailwind
+   El sistema de variables CSS cubre los elementos estructurales
+   (body, .glass-panel, botones, barra de progreso, modales, etc.),
+   pero los slides usan colores de utilidad de Tailwind (bg-white,
+   text-gray-700, bg-blue-50...) que NO consumen variables. Estos
+   overrides corrigen esos colores cuando está activo [data-theme="dark"].
+   Se antepone [data-theme="dark"] para mayor especificidad que las
+   utilidades generadas por Tailwind CDN.
+   ============================================================ */
+[data-theme="dark"] .bg-white   { background-color: var(--bg-panel); }
+[data-theme="dark"] .bg-gray-50 { background-color: #181820; }
+[data-theme="dark"] .bg-gray-100 { background-color: #21212a; }
+[data-theme="dark"] .bg-gray-200 { background-color: #2b2b35; }
+
+[data-theme="dark"] .text-gray-500 { color: #9CA3AF; }
+[data-theme="dark"] .text-gray-600 { color: #A6AEBD; }
+[data-theme="dark"] .text-gray-700 { color: #C6CDDA; }
+[data-theme="dark"] .text-gray-800 { color: #DCE2EB; }
+[data-theme="dark"] .text-gray-900 { color: #EDF1F7; }
+
+[data-theme="dark"] .border-gray-100 { border-color: rgba(255, 255, 255, 0.08); }
+[data-theme="dark"] .border-gray-200 { border-color: rgba(255, 255, 255, 0.10); }
+[data-theme="dark"] .border-gray-300 { border-color: rgba(255, 255, 255, 0.14); }
+[data-theme="dark"] .border-white    { border-color: rgba(255, 255, 255, 0.22); }
+/* Chips de código con borde neutro (clase .border sin color) */
+[data-theme="dark"] .border:not([class*="border-"]) { border-color: rgba(255, 255, 255, 0.15); }
+
+/* Superficies de color (fondo 50 + borde 200) */
+[data-theme="dark"] .bg-blue-50   { background-color: rgba(93, 173, 226, 0.14); }
+[data-theme="dark"] .bg-red-50    { background-color: rgba(231, 76, 60, 0.14); }
+[data-theme="dark"] .bg-amber-50  { background-color: rgba(244, 208, 63, 0.14); }
+[data-theme="dark"] .bg-green-50  { background-color: rgba(72, 201, 176, 0.14); }
+[data-theme="dark"] .bg-yellow-50 { background-color: rgba(244, 208, 63, 0.14); }
+[data-theme="dark"] .bg-purple-50 { background-color: rgba(175, 122, 197, 0.14); }
+
+[data-theme="dark"] .border-blue-200   { border-color: rgba(93, 173, 226, 0.30); }
+[data-theme="dark"] .border-red-200    { border-color: rgba(231, 76, 60, 0.30); }
+[data-theme="dark"] .border-amber-200  { border-color: rgba(244, 208, 63, 0.30); }
+[data-theme="dark"] .border-green-200  { border-color: rgba(72, 201, 176, 0.30); }
+[data-theme="dark"] .border-yellow-200 { border-color: rgba(244, 208, 63, 0.30); }
+[data-theme="dark"] .border-purple-200 { border-color: rgba(175, 122, 197, 0.30); }
+
+/* Círculos numerados (fondo 100 + texto 700) */
+[data-theme="dark"] .bg-blue-100   { background-color: rgba(93, 173, 226, 0.18); }
+[data-theme="dark"] .bg-red-100    { background-color: rgba(231, 76, 60, 0.18); }
+[data-theme="dark"] .bg-green-100  { background-color: rgba(72, 201, 176, 0.18); }
+[data-theme="dark"] .bg-yellow-100 { background-color: rgba(244, 208, 63, 0.18); }
+[data-theme="dark"] .bg-orange-100 { background-color: rgba(235, 152, 78, 0.18); }
+
+/* Textos de color: tonos oscuros → tonos claros legibles */
+[data-theme="dark"] .text-blue-700  { color: #A9CFF0; }
+[data-theme="dark"] .text-blue-800  { color: #BFD9F5; }
+[data-theme="dark"] .text-blue-900  { color: #D3E4F9; }
+[data-theme="dark"] .text-blue-950  { color: #E1ECFB; }
+[data-theme="dark"] .text-blue-600  { color: #85C1E9; }
+[data-theme="dark"] .text-blue-400  { color: #A9CFF0; }
+
+[data-theme="dark"] .text-red-700   { color: #F5A3A3; }
+[data-theme="dark"] .text-red-900   { color: #F8C2C2; }
+[data-theme="dark"] .text-red-600   { color: #F1948A; }
+[data-theme="dark"] .text-red-400   { color: #F1948A; }
+
+[data-theme="dark"] .text-green-700  { color: #A9DFBF; }
+[data-theme="dark"] .text-green-800  { color: #C3E9D3; }
+[data-theme="dark"] .text-green-900  { color: #D7F0E3; }
+[data-theme="dark"] .text-green-600  { color: #A9DFBF; }
+[data-theme="dark"] .text-green-400  { color: #A9DFBF; }
+[data-theme="dark"] .text-green-300  { color: #A9DFBF; }
+
+[data-theme="dark"] .text-yellow-700 { color: #F4D03F; }
+[data-theme="dark"] .text-yellow-900 { color: #F7DC6F; }
+[data-theme="dark"] .text-yellow-600 { color: #F4D03F; }
+[data-theme="dark"] .text-yellow-400 { color: #F4D03F; }
+
+[data-theme="dark"] .text-amber-700  { color: #F5CBA7; }
+[data-theme="dark"] .text-amber-800  { color: #F8DCC0; }
+[data-theme="dark"] .text-amber-900  { color: #FBE8D4; }
+[data-theme="dark"] .text-amber-600  { color: #F4D03F; }
+
+[data-theme="dark"] .text-purple-800 { color: #D7BDE2; }
+[data-theme="dark"] .text-purple-900 { color: #E6D5EE; }
+[data-theme="dark"] .text-purple-600 { color: #D7BDE2; }
+[data-theme="dark"] .text-purple-400 { color: #D7BDE2; }
+[data-theme="dark"] .text-purple-300 { color: #E0CCEB; }
+
+[data-theme="dark"] .text-orange-800 { color: #F5CBA7; }
+[data-theme="dark"] .text-orange-900 { color: #F8DCC0; }
