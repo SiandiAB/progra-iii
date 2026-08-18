@@ -96,6 +96,52 @@
             line-height: 1.5;
         }
 
+        .code-line {
+            margin: 0.9rem 0;
+        }
+        .code-line .code-fragment {
+            margin: 0;
+            padding: 0.5rem 0.9rem;
+            border-radius: 0.5rem 0.5rem 0 0;
+            border-bottom: none;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .code-note {
+            font-size: 0.84rem;
+            color: var(--text-muted);
+            margin: 0;
+            padding: 0.45rem 0.9rem;
+            background: rgba(0,0,0,0.035);
+            border-left: 3px solid var(--accent-blue);
+            border-radius: 0 0 0.5rem 0.5rem;
+            line-height: 1.5;
+        }
+        .code-note code {
+            background: var(--bg-terminal);
+            color: #e2e8f0;
+            padding: 0.05rem 0.3rem;
+            border-radius: 0.2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+        }
+
+        .tree-view {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            white-space: pre;
+            border: 1px solid #333;
+            margin: 1rem 0;
+        }
+
+        .tree-folder { color: #e8ab53; font-weight: bold; }
+        .tree-file { color: #9cdcfe; }
+
         .d-comment { color: #808080; font-style: italic; }
         .d-keyword { color: #cc7832; font-weight: bold; }
         .d-string { color: #6a8759; }
@@ -162,6 +208,10 @@
 
         details {
             margin-top: 1.2rem;
+            background: rgba(0,0,0,0.02);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-panel);
         }
         details summary {
             cursor: pointer;
@@ -169,6 +219,21 @@
             color: var(--text-main);
         }
         details summary:hover { color: var(--accent-blue); }
+        .line-explanation {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            padding-left: 1rem;
+        }
+        .line-explanation li {
+            margin-bottom: 0.4rem;
+        }
+        .line-explanation code {
+            background: var(--bg-terminal);
+            color: #e2e8f0;
+            padding: 0.1rem 0.3rem;
+            border-radius: 0.2rem;
+        }
 
         .glossary {
             text-decoration: underline;
@@ -214,7 +279,7 @@
         <!-- PORTADA -->
         <div class="glass-panel text-center" style="border-top: 6px solid var(--una-red);">
             <div class="flex justify-center mb-4">
-                <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png" alt="Logo UNA" class="h-20 object-contain"
+                <img src="../../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png" alt="Logo UNA" class="h-20 object-contain"
                      onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png';">
             </div>
             <h2 class="text-3xl font-extrabold">Laboratorio 5a — Taquilla de Cine</h2>
@@ -229,7 +294,7 @@
             </div>
             <div class="mt-4 text-sm" style="color: var(--text-muted);">
                 <i class="fa-regular fa-clock mr-1"></i> Duración estimada: 1 hora &nbsp;·&nbsp;
-                <i class="fa-regular fa-user mr-1"></i> Individual / Parejas
+                <i class="fa-regular fa-user mr-1"></i> Individual
             </div>
         </div>
 
@@ -243,7 +308,7 @@
             </p>
             <p>
                 Trabajaremos con <strong>IntelliJ IDEA y su GUI Designer</strong> para crear el formulario visualmente, 
-                y aprenderemos a cargar imágenes desde el <strong>classpath</strong>.
+                y aprenderemos a cargar y escalar imágenes dinámicamente desde nuestros recursos.
             </p>
             <div class="highlight-box">
                 <strong><i class="fa-regular fa-lightbulb mr-1"></i> Objetivo: </strong>
@@ -254,7 +319,7 @@
                 <li>Implementar la separación de responsabilidades en 3 capas.</li>
                 <li>Manejar eventos de acción (<code class="font-mono text-sm">ActionListener</code>), teclado (<code class="font-mono text-sm">KeyAdapter</code>) y ratón (<code class="font-mono text-sm">MouseAdapter</code>).</li>
                 <li>Validar entradas del usuario con <code class="font-mono text-sm">try-catch</code> y <code class="font-mono text-sm">JOptionPane</code>.</li>
-                <li>Cargar imágenes desde el classpath para mostrar logos.</li>
+                <li>Manipular rutas absolutas del sistema para la carga y redimensionado de imágenes.</li>
             </ul>
         </div>
 
@@ -268,7 +333,7 @@
                     <li>Abrir IntelliJ IDEA y seleccionar <em>New Project</em>.</li>
                     <li>Elegir <strong>Java</strong> con el JDK instalado (versión 11 o superior).</li>
                     <li>Nombre del proyecto: <code class="font-mono text-sm">TaquillaCine</code>.</li>
-                    <li>Crear el proyecto.</li>
+                    <li>Crear el proyecto sin código de ejemplo.</li>
                 </ol>
             </div>
 
@@ -279,13 +344,6 @@
                     <li>Seleccionar <em>New → Directory</em> y escribir <code class="font-mono text-sm">src</code>.</li>
                     <li>Hacer clic derecho sobre <code class="font-mono text-sm">src</code> → <em>Mark Directory as → Sources Root</em>.</li>
                 </ol>
-                <div class="highlight-box">
-                    <i class="fa-regular fa-circle-info mr-1"></i> La carpeta <code class="font-mono text-sm">src</code> quedará de color azul, indicando que es la raíz del código fuente.
-                </div>
-                <details>
-                    <summary><strong>¿Por qué "Sources Root"?</strong></summary>
-                    <p>Al marcar la carpeta como <em>Sources Root</em>, estamos diciendo a IntelliJ: "Aquí empieza mi código Java". El IDE usará esta carpeta como punto de partida para buscar clases, lo que permite que los nombres de los paquetes se resuelvan correctamente.</p>
-                </details>
             </div>
 
             <div class="step-sub">
@@ -297,13 +355,8 @@
                 </ol>
                 <div class="error-box">
                     <strong><i class="fa-regular fa-circle-exclamation mr-1"></i> ¡Atención! ¿Carpeta (Directory) o Paquete (Package)?</strong>
-                    <p>Esta es la confusión más común: como los paquetes se ven como carpetas en el explorador de archivos, muchas veces intentamos hacer clic en <em>New → Directory</em>. <br>
-                    <strong>Regla de oro:</strong> Si estás creando una carpeta <strong>dentro de <code>src</code></strong> (que es azul), <strong>siempre debes usar <em>New → Package</em></strong>. Java necesita que se definan como paquetes para poder organizar las clases. La opción <em>Directory</em> se usa para carpetas que no contienen código Java (por ejemplo, las imágenes y archivos de configuración que veremos en el siguiente paso).</p>
+                    <p>Esta es la confusión más común. Si estás creando una división <strong>dentro de <code>src</code></strong> (que es azul), <strong>siempre debes usar <em>New → Package</em></strong>. La opción <em>Directory</em> se usa para carpetas que no contienen código Java.</p>
                 </div>
-                <details>
-                    <summary><strong>¿Por qué separamos en paquetes?</strong></summary>
-                    <p>Para mantener la <strong>arquitectura de 3 capas</strong>: los datos (modelo), la lógica de negocio (servicio) y la interfaz de usuario (vista). Esto evita el código espagueti y facilita el mantenimiento.</p>
-                </details>
             </div>
 
             <div class="step-sub">
@@ -312,12 +365,26 @@
                     <li>Hacer clic derecho sobre la raíz del proyecto → <em>New → Directory</em> → <code class="font-mono text-sm">resources</code>. <strong>Aquí sí usamos Directory.</strong></li>
                     <li>Hacer clic derecho sobre <code class="font-mono text-sm">resources</code> → <em>Mark Directory as → Resources Root</em>.</li>
                     <li>Dentro de <code class="font-mono text-sm">resources</code>, crear la carpeta <code class="font-mono text-sm">img</code>.</li>
+                    <li>Colocar el logo de cine con el nombre <code class="font-mono text-sm">logo.png</code> dentro de <code class="font-mono text-sm">img</code>.</li>
                 </ol>
-                <p>Descargar una imagen de logo de cine (o usar la de la UNA) y colocarla dentro de <code class="font-mono text-sm">resources/img/</code> con el nombre <code class="font-mono text-sm">logo.png</code>.</p>
-                <details>
-                    <summary><strong>¿Por qué en resources usamos Directory?</strong></summary>
-                    <p>La carpeta <code class="font-mono text-sm">resources</code> contiene archivos estáticos (imágenes, textos, configuraciones). No son clases de Java, por lo tanto no necesitan ser tratados como paquetes. Aquí, la opción <em>Directory</em> es la correcta para no confundir al compilador.</p>
-                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>1.5 Estructura visual esperada</h5>
+                <p>Al terminar este paso, la estructura de tu proyecto en IntelliJ debería verse exactamente así:</p>
+                <div class="tree-view">TaquillaCine/
+├── <span class="tree-folder">resources/</span>
+│   └── <span class="tree-folder">img/</span>
+│       └── <span class="tree-file">logo.png</span>
+└── <span class="tree-folder">src/</span>
+    ├── <span class="tree-file">Main.java</span> <span class="d-comment">(Lo crearemos al final)</span>
+    ├── <span class="tree-folder">modelo/</span>
+    │   └── <span class="tree-file">Boleto.java</span>
+    ├── <span class="tree-folder">servicio/</span>
+    │   └── <span class="tree-file">TaquillaService.java</span>
+    └── <span class="tree-folder">vista/</span>
+        ├── <span class="tree-file">FormTaquilla.form</span>
+        └── <span class="tree-file">FormTaquilla.java</span></div>
             </div>
         </div>
 
@@ -335,38 +402,81 @@
 
             <div class="step-sub">
                 <h5>2.2 Escribir el código de la clase</h5>
-                <div class="code-fragment">
-<span class="d-comment">// Paquete modelo</span>
-<span class="d-keyword">package</span> modelo;
-
-<span class="d-comment">// Clase que representa un boleto de cine</span>
-<span class="d-keyword">public class</span> <span class="d-type">Boleto</span> {
-    <span class="d-keyword">private</span> <span class="d-type">String</span> <span class="d-field">pelicula</span>;
-    <span class="d-keyword">private</span> <span class="d-type">String</span> <span class="d-field">sala</span>;
-    <span class="d-keyword">private</span> <span class="d-type">double</span> <span class="d-field">precio</span>;
-
-    <span class="d-comment">// Constructor</span>
-    <span class="d-keyword">public</span> <span class="d-method">Boleto</span>(<span class="d-type">String</span> <span class="d-field">pelicula</span>, <span class="d-type">String</span> <span class="d-field">sala</span>, <span class="d-type">double</span> <span class="d-field">precio</span>) {
-        <span class="d-keyword">this</span>.<span class="d-field">pelicula</span> = <span class="d-field">pelicula</span>;
-        <span class="d-keyword">this</span>.<span class="d-field">sala</span> = <span class="d-field">sala</span>;
-        <span class="d-keyword">this</span>.<span class="d-field">precio</span> = <span class="d-field">precio</span>;
-    }
-
-    <span class="d-comment">// Getters</span>
-    <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">getPelicula</span>() { <span class="d-keyword">return</span> <span class="d-field">pelicula</span>; }
-    <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">getSala</span>()     { <span class="d-keyword">return</span> <span class="d-field">sala</span>; }
-    <span class="d-keyword">public</span> <span class="d-type">double</span> <span class="d-method">getPrecio</span>()   { <span class="d-keyword">return</span> <span class="d-field">precio</span>; }
-
-    <span class="d-annotation">@Override</span>
-    <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">toString</span>() {
-        <span class="d-keyword">return</span> <span class="d-field">pelicula</span> + <span class="d-string">" - Sala "</span> + <span class="d-field">sala</span> + <span class="d-string">" - ¢"</span> + <span class="d-field">precio</span>;
-    }
-}
+                <div class="code-line">
+                    <div class="code-fragment"><span class="d-keyword">package</span> modelo;</div>
+                    <p class="code-note">Indica que esta clase vive dentro del paquete <code>modelo</code>.</p>
                 </div>
-                <details>
-                    <summary><strong>¿Qué contiene la clase <code>Boleto</code>?</strong></summary>
-                    <p>Es un <span class="glossary" tabindex="0" data-tooltip="Plain Old Java Object: clase simple con atributos privados, constructor y getters.">POJO</span> que representa los datos de un boleto. No tiene lógica de negocio, solo almacena información.</p>
-                </details>
+
+                <div class="code-line">
+                    <div class="code-fragment"><span class="d-keyword">public class</span> <span class="d-type">Boleto</span> {</div>
+                    <p class="code-note">Crea la clase pública llamada <code>Boleto</code>. Aquí empieza el molde de nuestros boletos.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-keyword">private</span> <span class="d-type">String</span> <span class="d-field">pelicula</span>;</div>
+                    <p class="code-note">Atributo privado para guardar el nombre de la película.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-keyword">private</span> <span class="d-type">String</span> <span class="d-field">sala</span>;</div>
+                    <p class="code-note">Atributo privado para guardar el nombre de la sala.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-keyword">private double</span> <span class="d-field">precio</span>;</div>
+                    <p class="code-note">Atributo privado para guardar el precio (número con decimales).</p>
+                </div>
+
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-keyword">public</span> <span class="d-method">Boleto</span>(<span class="d-type">String</span> <span class="d-field">pelicula</span>, <span class="d-type">String</span> <span class="d-field">sala</span>, <span class="d-type">double</span> <span class="d-field">precio</span>) {</div>
+                    <p class="code-note">Constructor: se ejecuta al hacer <code>new Boleto(...)</code> y recibe los 3 datos por parámetro.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-keyword">this</span>.<span class="d-field">pelicula</span> = <span class="d-field">pelicula</span>;</div>
+                    <p class="code-note">Guarda el valor recibido en el atributo de la clase. <code>this</code> distingue el atributo del parámetro.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-keyword">this</span>.<span class="d-field">sala</span> = <span class="d-field">sala</span>;</div>
+                    <p class="code-note">Hace lo mismo con la sala recibida.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-keyword">this</span>.<span class="d-field">precio</span> = <span class="d-field">precio</span>;</div>
+                    <p class="code-note">Hace lo mismo con el precio recibido.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    }</div>
+                    <p class="code-note">Cierra el constructor.</p>
+                </div>
+
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">getPelicula</span>() { <span class="d-keyword">return</span> <span class="d-field">pelicula</span>; }</div>
+                    <p class="code-note">Devuelve el valor de <code>pelicula</code> a quien lo pida.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">getSala</span>()     { <span class="d-keyword">return</span> <span class="d-field">sala</span>; }</div>
+                    <p class="code-note">Devuelve el valor de <code>sala</code>.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-keyword">public double</span> <span class="d-method">getPrecio</span>()   { <span class="d-keyword">return</span> <span class="d-field">precio</span>; }</div>
+                    <p class="code-note">Devuelve el valor de <code>precio</code>.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-annotation">@Override</span></div>
+                    <p class="code-note">Avisa que estamos reemplazando un método que ya existe en la clase padre (<code>Object</code>).</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">toString</span>() {</div>
+                    <p class="code-note">Método que define cómo se mostrará el boleto cuando se convierta a texto.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-keyword">return</span> <span class="d-field">pelicula</span> + <span class="d-string">" - Sala "</span> + <span class="d-field">sala</span> + <span class="d-string">" - ¢"</span> + <span class="d-field">precio</span>;</div>
+                    <p class="code-note">Arma el texto final uniendo los tres datos con guiones y el símbolo <code>¢</code>.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    }</div>
+                    <p class="code-note">Cierra el método <code>toString</code>.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">}</div>
+                    <p class="code-note">Cierra la clase <code>Boleto</code>.</p>
+                </div>
             </div>
         </div>
 
@@ -375,7 +485,7 @@
             <h2><i class="fa-regular fa-gears mr-2" style="color: var(--accent-green);"></i> Paso 3: Crear la Capa de Servicio (<code>TaquillaService.java</code>)</h2>
 
             <div class="step-sub">
-                <h5>3.1 Crear la clase <code>TaquillaService</code> en el paquete <code>servicio</code></h5>
+                <h5>3.1 Crear la clase en el paquete <code>servicio</code></h5>
                 <ol style="list-style-type: decimal; padding-left: 1.5rem;">
                     <li>Clic derecho sobre <code class="font-mono text-sm">servicio</code> → <em>New → Java Class</em>.</li>
                     <li>Escribir <code class="font-mono text-sm">TaquillaService</code>.</li>
@@ -384,107 +494,272 @@
 
             <div class="step-sub">
                 <h5>3.2 Implementar la lógica de negocio</h5>
-                <div class="code-fragment">
-<span class="d-keyword">package</span> servicio;
-
-<span class="d-keyword">import</span> modelo.<span class="d-type">Boleto</span>;
-<span class="d-keyword">import</span> java.util.<span class="d-type">ArrayList</span>;
-
-<span class="d-keyword">public class</span> <span class="d-type">TaquillaService</span> {
-    <span class="d-keyword">private</span> <span class="d-type">ArrayList</span>&lt;<span class="d-type">Boleto</span>&gt; <span class="d-field">boletos</span>;
-
-    <span class="d-keyword">public</span> <span class="d-method">TaquillaService</span>() {
-        <span class="d-field">boletos</span> = <span class="d-keyword">new</span> <span class="d-type">ArrayList</span>&lt;&gt;();
-    }
-
-    <span class="d-comment">// Agregar boleto a la lista</span>
-    <span class="d-keyword">public void</span> <span class="d-method">venderBoleto</span>(<span class="d-type">Boleto</span> <span class="d-field">boleto</span>) {
-        <span class="d-field">boletos</span>.<span class="d-method">add</span>(<span class="d-field">boleto</span>);
-    }
-
-    <span class="d-comment">// Calcular el total de ingresos</span>
-    <span class="d-keyword">public double</span> <span class="d-method">calcularTotal</span>() {
-        <span class="d-type">double</span> <span class="d-field">total</span> = <span class="d-number">0</span>;
-        <span class="d-keyword">for</span> (<span class="d-type">Boleto</span> <span class="d-field">b</span> : <span class="d-field">boletos</span>) {
-            <span class="d-field">total</span> += <span class="d-field">b</span>.<span class="d-method">getPrecio</span>();
-        }
-        <span class="d-keyword">return</span> <span class="d-field">total</span>;
-    }
-
-    <span class="d-comment">// Obtener la cantidad de boletos vendidos</span>
-    <span class="d-keyword">public int</span> <span class="d-method">contarBoletos</span>() {
-        <span class="d-keyword">return</span> <span class="d-field">boletos</span>.<span class="d-method">size</span>();
-    }
-}
+                <div class="code-line">
+                    <div class="code-fragment"><span class="d-keyword">package</span> servicio;</div>
+                    <p class="code-note">Indica que esta clase vive dentro del paquete <code>servicio</code>.</p>
                 </div>
-                <details>
-                    <summary><strong>¿Qué hace <code>TaquillaService</code>?</strong></summary>
-                    <p>Esta clase gestiona la colección de boletos en un <code class="font-mono text-sm">ArrayList</code>. Proporciona métodos para agregar boletos, calcular el total de ingresos y contar cuántos boletos se han vendido. Es la <strong>lógica de negocio</strong>.</p>
-                </details>
+                <div class="code-line">
+                    <div class="code-fragment"><span class="d-keyword">import</span> modelo.<span class="d-type">Boleto</span>;</div>
+                    <p class="code-note">Trae la clase <code>Boleto</code> para poder usarla aquí.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment"><span class="d-keyword">import</span> java.util.<span class="d-type">ArrayList</span>;</div>
+                    <p class="code-note">Trae la lista dinámica <code>ArrayList</code> de Java.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment"><span class="d-keyword">public class</span> <span class="d-type">TaquillaService</span> {</div>
+                    <p class="code-note">Crea la clase que maneja la lógica de negocio de la taquilla.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-keyword">private</span> <span class="d-type">ArrayList</span>&lt;<span class="d-type">Boleto</span>&gt; <span class="d-field">boletos</span>;</div>
+                    <p class="code-note">Declara una lista que crecerá sola y guardará objetos de tipo <code>Boleto</code>.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-keyword">public</span> <span class="d-method">TaquillaService</span>() {</div>
+                    <p class="code-note">Constructor: se ejecuta al crear el servicio.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-field">boletos</span> = <span class="d-keyword">new</span> <span class="d-type">ArrayList</span>&lt;&gt;();</div>
+                    <p class="code-note">Inicializa la lista vacía en memoria. Sin esto, la lista sería <code>null</code>.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    }</div>
+                    <p class="code-note">Cierra el constructor.</p>
+                </div>
+
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-keyword">public void</span> <span class="d-method">venderBoleto</span>(<span class="d-type">Boleto</span> <span class="d-field">boleto</span>) {</div>
+                    <p class="code-note">Método que recibe un boleto para venderlo.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-field">boletos</span>.<span class="d-method">add</span>(<span class="d-field">boleto</span>);</div>
+                    <p class="code-note">Añade el boleto recibido al final de la lista.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    }</div>
+                    <p class="code-note">Cierra el método <code>venderBoleto</code>.</p>
+                </div>
+
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-keyword">public double</span> <span class="d-method">calcularTotal</span>() {</div>
+                    <p class="code-note">Método que suma los precios de todos los boletos vendidos.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-type">double</span> <span class="d-field">total</span> = <span class="d-number">0</span>;</div>
+                    <p class="code-note">Crea un acumulador que empieza en cero para ir sumando.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-keyword">for</span> (<span class="d-type">Boleto</span> <span class="d-field">b</span> : <span class="d-field">boletos</span>) {</div>
+                    <p class="code-note">Ciclo <em>for-each</em>: "por cada boleto <code>b</code> que haya en la lista <code>boletos</code>...".</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">            <span class="d-field">total</span> += <span class="d-field">b</span>.<span class="d-method">getPrecio</span>();</div>
+                    <p class="code-note">Suma el precio del boleto actual al acumulador.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        }</div>
+                    <p class="code-note">Cierra el ciclo.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-keyword">return</span> <span class="d-field">total</span>;</div>
+                    <p class="code-note">Devuelve la suma final de todos los precios.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    }</div>
+                    <p class="code-note">Cierra el método <code>calcularTotal</code>.</p>
+                </div>
+
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-keyword">public int</span> <span class="d-method">contarBoletos</span>() {</div>
+                    <p class="code-note">Método que cuenta cuántos boletos hay en la lista.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-keyword">return</span> <span class="d-field">boletos</span>.<span class="d-method">size</span>();</div>
+                    <p class="code-note">Devuelve el número exacto de elementos que contiene la lista.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    }</div>
+                    <p class="code-note">Cierra el método <code>contarBoletos</code>.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">}</div>
+                    <p class="code-note">Cierra la clase <code>TaquillaService</code>.</p>
+                </div>
             </div>
         </div>
 
         <!-- PASO 4: VISTA (GUI Designer) -->
         <div class="glass-panel" style="border-left: 4px solid var(--una-red);">
-            <h2><i class="fa-regular fa-window-maximize mr-2" style="color: var(--una-red);"></i> Paso 4: Crear la Vista con IntelliJ GUI Designer</h2>
+            <h2><i class="fa-regular fa-window-maximize mr-2" style="color: var(--una-red);"></i> Paso 4: Crear la Vista con GUI Designer</h2>
 
             <div class="step-sub">
                 <h5>4.1 Crear un GUI Form</h5>
                 <ol style="list-style-type: decimal; padding-left: 1.5rem;">
                     <li>Clic derecho sobre el paquete <code class="font-mono text-sm">vista</code> → <em>New → GUI Form</em>.</li>
                     <li>Nombre: <code class="font-mono text-sm">FormTaquilla</code>.</li>
-                    <li>Aceptar. Se crearán dos archivos: <code class="font-mono text-sm">FormTaquilla.form</code> y <code class="font-mono text-sm">FormTaquilla.java</code>.</li>
+                    <li>Aceptar. Se crearán <code class="font-mono text-sm">FormTaquilla.form</code> (diseño) y <code class="font-mono text-sm">FormTaquilla.java</code> (código).</li>
                 </ol>
-                <div class="highlight-box">
-                    <i class="fa-regular fa-circle-info mr-1"></i> <strong>Acoplamiento:</strong> El archivo <code class="font-mono text-sm">.form</code> contiene el diseño en XML, y el <code class="font-mono text-sm">.java</code> contiene el código de la clase. IntelliJ inyecta el código de creación en tiempo de compilación.
-                </div>
             </div>
 
             <div class="step-sub">
                 <h5>4.2 Diseñar el formulario</h5>
-                <p>En la pestaña de diseño (Design), arrastra los siguientes componentes desde la paleta:</p>
+                <p>Arrastra los componentes desde la paleta y nómbralos usando notación húngara (en la propiedad <code>field name</code>):</p>
                 <ul>
-                    <li><strong>JPanel</strong> como contenedor principal (puedes usar el que viene por defecto).</li>
-                    <li><strong>JLabel</strong> para el título: "Taquilla de Cine".</li>
-                    <li><strong>JLabel</strong> para el logo: coloca un <code class="font-mono text-sm">JLabel</code> y en la propiedad <code class="font-mono text-sm">icon</code> selecciona <em>Classpath</em> y elige la imagen <code class="font-mono text-sm">logo.png</code>.</li>
-                    <li><strong>JLabel</strong> y <strong>JTextField</strong> para "Película": <code class="font-mono text-sm">txtPelicula</code>.</li>
-                    <li><strong>JLabel</strong> y <strong>JTextField</strong> para "Sala": <code class="font-mono text-sm">txtSala</code>.</li>
-                    <li><strong>JLabel</strong> y <strong>JTextField</strong> para "Precio": <code class="font-mono text-sm">txtPrecio</code>.</li>
-                    <li><strong>JButton</strong> "Vender Boleto": <code class="font-mono text-sm">btnVender</code>.</li>
-                    <li><strong>JButton</strong> "Mostrar Total": <code class="font-mono text-sm">btnTotal</code>.</li>
-                    <li><strong>JButton</strong> "Limpiar Campos": <code class="font-mono text-sm">btnLimpiar</code>.</li>
-                    <li><strong>JLabel</strong> para mostrar mensajes o totales: <code class="font-mono text-sm">lblMensaje</code>.</li>
+                    <li><strong>JPanel:</strong> <code class="font-mono text-sm">panelPrincipal</code></li>
+                    <li><strong>JLabel</strong> para logo: <code class="font-mono text-sm">lblLogo</code> (déjalo vacío por ahora).</li>
+                    <li><strong>JTextFields:</strong> <code class="font-mono text-sm">txtPelicula</code>, <code class="font-mono text-sm">txtSala</code>, <code class="font-mono text-sm">txtPrecio</code></li>
+                    <li><strong>JButtons:</strong> <code class="font-mono text-sm">btnVender</code>, <code class="font-mono text-sm">btnTotal</code>, <code class="font-mono text-sm">btnLimpiar</code></li>
+                    <li><strong>JLabel</strong> inferior: <code class="font-mono text-sm">lblMensaje</code></li>
                 </ul>
-                <p>Organiza los componentes con un <code class="font-mono text-sm">GridLayout</code> o <code class="font-mono text-sm">BorderLayout</code> según prefieras. Asegúrate de asignar nombres a las variables (field name) usando <strong>notación húngara</strong>.</p>
-                <details>
-                    <summary><strong>¿Cómo asignar nombres a los componentes y qué es la notación húngara?</strong></summary>
-                    <p>Selecciona el componente en el diseño, ve al Inspector de propiedades y en <code class="font-mono text-sm">field name</code> escribe el nombre de la variable.<br>
-                    Usamos <strong>notación húngara</strong> (poner un prefijo al nombre) para identificar rápidamente el tipo de componente en el código:
-                    <ul>
-                        <li><strong>txt</strong> para JTextField (ej: <code>txtPelicula</code>)</li>
-                        <li><strong>btn</strong> para JButton (ej: <code>btnVender</code>)</li>
-                        <li><strong>lbl</strong> para JLabel (ej: <code>lblMensaje</code>)</li>
-                    </ul>
-                    Esto hará que el código sea mucho más fácil de leer.</p>
-                </details>
             </div>
 
             <div class="step-sub">
-                <h5>4.3 Configurar la ventana</h5>
-                <p>En el código <code class="font-mono text-sm">FormTaquilla.java</code>, agrega el siguiente constructor y configuración:</p>
-                <div class="code-fragment">
-<span class="d-keyword">public</span> <span class="d-method">FormTaquilla</span>() {
-    <span class="d-comment">// Inicializa los componentes del formulario (generado por IntelliJ)</span>
-    <span class="d-method">$$$setupUI$$$</span>();
-    <span class="d-comment">// Configuración de la ventana</span>
-    <span class="d-method">setTitle</span>(<span class="d-string">"Taquilla de Cine"</span>);
-    <span class="d-method">setSize</span>(<span class="d-number">500</span>, <span class="d-number">400</span>);
-    <span class="d-method">setDefaultCloseOperation</span>(<span class="d-type">JFrame</span>.<span class="d-field">EXIT_ON_CLOSE</span>);
-    <span class="d-method">setLocationRelativeTo</span>(<span class="d-keyword">null</span>);
-    <span class="d-method">setContentPane</span>(<span class="d-field">panelPrincipal</span>); <span class="d-comment">// panelPrincipal es el JPanel principal del formulario</span>
-}
+                <h5>4.3 Configuración base y solución de escalado de imagen</h5>
+                <p>En <code class="font-mono text-sm">FormTaquilla.java</code>, vamos a agregar el constructor y la lógica para cargar el logo usando la ruta del proyecto:</p>
+                <div class="code-line">
+                    <div class="code-fragment"><span class="d-keyword">package</span> vista;</div>
+                    <p class="code-note">La clase vive dentro del paquete <code>vista</code>.</p>
                 </div>
-                <p><strong>Nota:</strong> El método <code class="font-mono text-sm">$$$setupUI$$$()</code> es generado automáticamente por IntelliJ; no lo modifiques. El panel principal se llama <code class="font-mono text-sm">panelPrincipal</code> por defecto, pero puedes cambiarle el nombre en el Inspector.</p>
+                <div class="code-line">
+                    <div class="code-fragment"><span class="d-keyword">import</span> modelo.<span class="d-type">Boleto</span>;</div>
+                    <p class="code-note">Trae la clase <code>Boleto</code> (la usaremos en los eventos).</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment"><span class="d-keyword">import</span> servicio.<span class="d-type">TaquillaService</span>;</div>
+                    <p class="code-note">Trae el servicio de lógica de negocio.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment"><span class="d-keyword">import</span> javax.swing.*;</div>
+                    <p class="code-note">El <code>*</code> trae todos los componentes gráficos (<code>JFrame</code>, <code>JButton</code>, <code>JLabel</code>...).</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment"><span class="d-keyword">import</span> java.awt.Color;</div>
+                    <p class="code-note">Trae <code>Color</code> para pintar botones en el evento de ratón.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment"><span class="d-keyword">import</span> java.awt.Image;</div>
+                    <p class="code-note">Trae <code>Image</code> para poder escalar la imagen del logo.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment"><span class="d-keyword">import</span> java.awt.event.*;</div>
+                    <p class="code-note">Trae las interfaces de eventos (<code>ActionListener</code>, <code>KeyEvent</code>, <code>MouseEvent</code>...).</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment"><span class="d-keyword">import</span> java.io.File;</div>
+                    <p class="code-note">Trae <code>File</code> para trabajar con rutas de archivos.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment"><span class="d-keyword">public class</span> <span class="d-type">FormTaquilla</span> <span class="d-keyword">extends</span> <span class="d-type">JFrame</span> {</div>
+                    <p class="code-note">Nuestra clase ES una ventana: al extender <code>JFrame</code> hereda marco, minimizar, cerrar, etc.</p>
+                </div>
+
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-keyword">private</span> <span class="d-type">JPanel</span> <span class="d-field">panelPrincipal</span>;</div>
+                    <p class="code-note">El panel que contiene todo el diseño del formulario.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-keyword">private</span> <span class="d-type">JLabel</span> <span class="d-field">lblLogo</span>;</div>
+                    <p class="code-note">Etiqueta donde se mostrará el logo del cine.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-keyword">private</span> <span class="d-type">JTextField</span> <span class="d-field">txtPelicula</span>, <span class="d-field">txtSala</span>, <span class="d-field">txtPrecio</span>;</div>
+                    <p class="code-note">Tres cajas de texto para escribir película, sala y precio (se declaran en una sola línea).</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-keyword">private</span> <span class="d-type">JButton</span> <span class="d-field">btnVender</span>, <span class="d-field">btnTotal</span>, <span class="d-field">btnLimpiar</span>;</div>
+                    <p class="code-note">Tres botones: vender, mostrar total y limpiar.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-keyword">private</span> <span class="d-type">JLabel</span> <span class="d-field">lblMensaje</span>;</div>
+                    <p class="code-note">Etiqueta inferior para mostrar mensajes al usuario.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-keyword">private</span> <span class="d-type">TaquillaService</span> <span class="d-field">servicio</span>;</div>
+                    <p class="code-note">Referencia a nuestro servicio de lógica de negocio.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-keyword">public</span> <span class="d-method">FormTaquilla</span>() {</div>
+                    <p class="code-note">Constructor de la ventana: aquí se configura todo.</p>
+                </div>
+
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-method">setTitle</span>(<span class="d-string">"Taquilla de Cine"</span>);</div>
+                    <p class="code-note">Pone el título que aparece en la barra de la ventana.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-method">setSize</span>(<span class="d-number">500</span>, <span class="d-number">500</span>);</div>
+                    <p class="code-note">Define el tamaño: 500 píxeles de ancho por 500 de alto.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-method">setDefaultCloseOperation</span>(<span class="d-type">JFrame</span>.<span class="d-field">EXIT_ON_CLOSE</span>);</div>
+                    <p class="code-note">Cierra el programa por completo cuando se cierra la ventana.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-method">setLocationRelativeTo</span>(<span class="d-keyword">null</span>);</div>
+                    <p class="code-note">Centra la ventana en medio de la pantalla.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-method">setContentPane</span>(<span class="d-field">panelPrincipal</span>);</div>
+                    <p class="code-note">Usa el panel diseñado en el GUI Designer como contenido de la ventana.</p>
+                </div>
+
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-field">servicio</span> = <span class="d-keyword">new</span> <span class="d-type">TaquillaService</span>();</div>
+                    <p class="code-note">Crea el servicio para poder vender boletos y calcular totales.</p>
+                </div>
+
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-field">lblLogo</span>.<span class="d-method">setText</span>(<span class="d-string">""</span>);</div>
+                    <p class="code-note">Quita el texto por defecto de la etiqueta del logo.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-type">String</span> <span class="d-field">rutaDinamica</span> = <span class="d-type">System</span>.<span class="d-method">getProperty</span>(<span class="d-string">"user.dir"</span>) + <span class="d-type">File</span>.<span class="d-field">separator</span> + <span class="d-string">"resources"</span> + <span class="d-type">File</span>.<span class="d-field">separator</span> + <span class="d-string">"img"</span> + <span class="d-type">File</span>.<span class="d-field">separator</span> + <span class="d-string">"logo.png"</span>;</div>
+                    <p class="code-note">Arma la ruta completa hasta <code>logo.png</code> usando la carpeta donde se ejecuta el proyecto.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-type">File</span> <span class="d-field">archivoImagen</span> = <span class="d-keyword">new</span> <span class="d-type">File</span>(<span class="d-field">rutaDinamica</span>);</div>
+                    <p class="code-note">Envuelve esa ruta en un objeto <code>File</code> para trabajar con el archivo.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-keyword">if</span> (<span class="d-field">archivoImagen</span>.<span class="d-method">exists</span>()) {</div>
+                    <p class="code-note">Pregunta si el archivo realmente existe en el disco.</p>
+                </div>
+
+                <div class="code-line">
+                    <div class="code-fragment">            <span class="d-type">ImageIcon</span> <span class="d-field">iconoOriginal</span> = <span class="d-keyword">new</span> <span class="d-type">ImageIcon</span>(<span class="d-field">archivoImagen</span>.<span class="d-method">getAbsolutePath</span>());</div>
+                    <p class="code-note">Carga la imagen desde su ruta absoluta en un <code>ImageIcon</code>.</p>
+                </div>
+
+                <div class="code-line">
+                    <div class="code-fragment">            <span class="d-type">Image</span> <span class="d-field">imagenEscalada</span> = <span class="d-field">iconoOriginal</span>.<span class="d-method">getImage</span>().<span class="d-method">getScaledInstance</span>(<span class="d-number">150</span>, <span class="d-number">150</span>, <span class="d-type">Image</span>.<span class="d-field">SCALE_SMOOTH</span>);</div>
+                    <p class="code-note">Redimensiona la imagen a 150x150 con suavizado (<code>SCALE_SMOOTH</code> evita que se pixele feo).</p>
+                </div>
+
+                <div class="code-line">
+                    <div class="code-fragment">            <span class="d-field">lblLogo</span>.<span class="d-method">setIcon</span>(<span class="d-keyword">new</span> <span class="d-type">ImageIcon</span>(<span class="d-field">imagenEscalada</span>));</div>
+                    <p class="code-note">Coloca la imagen ya escalada en la etiqueta del logo.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        } <span class="d-keyword">else</span> {</div>
+                    <p class="code-note">Si el archivo NO existe, entra a esta rama.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">            <span class="d-field">lblLogo</span>.<span class="d-method">setText</span>(<span class="d-string">"Logo no encontrado"</span>);</div>
+                    <p class="code-note">Muestra ese aviso en lugar de la imagen.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        }</div>
+                    <p class="code-note">Cierra el <code>if/else</code>.</p>
+                </div>
+
+                <div class="code-line">
+                    <div class="code-fragment">    }</div>
+                    <p class="code-note">Cierra el constructor.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">}</div>
+                    <p class="code-note">Cierra la clase <code>FormTaquilla</code>.</p>
+                </div>
             </div>
         </div>
 
@@ -492,119 +767,218 @@
         <div class="glass-panel" style="border-left: 4px solid var(--accent-peach);">
             <h2><i class="fa-regular fa-bolt mr-2" style="color: var(--accent-peach);"></i> Paso 5: Conectar los Eventos</h2>
 
-            <p>Ahora vamos a darle funcionalidad a los botones y campos. Trabajaremos en el archivo <code class="font-mono text-sm">FormTaquilla.java</code>.</p>
+            <p>Dentro del constructor de <code class="font-mono text-sm">FormTaquilla</code>, justo debajo del código de la imagen, agregaremos las lógicas de interacción.</p>
 
             <div class="step-sub">
-                <h5>5.1 Declarar el servicio como atributo</h5>
-                <div class="code-fragment">
-<span class="d-keyword">private</span> <span class="d-type">TaquillaService</span> <span class="d-field">servicio</span>;
+                <h5>5.1 Eventos de los Botones (<code>ActionListener</code>)</h5>
+
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-field">btnVender</span>.<span class="d-method">addActionListener</span>(<span class="d-field">e</span> -> {</div>
+                    <p class="code-note">Escucha los clics en el botón Vender. La flecha <code>-&gt;</code> es una <em>expresión lambda</em>.</p>
                 </div>
-                <p>En el constructor, instanciar el servicio:</p>
-                <div class="code-fragment">
-<span class="d-field">servicio</span> = <span class="d-keyword">new</span> <span class="d-type">TaquillaService</span>();
+                <div class="code-line">
+                    <div class="code-fragment">            <span class="d-keyword">try</span> {</div>
+                    <p class="code-note">Intenta ejecutar el código de abajo; si algo falla, salta al <code>catch</code>.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">                <span class="d-type">String</span> <span class="d-field">pelicula</span> = <span class="d-field">txtPelicula</span>.<span class="d-method">getText</span>().<span class="d-method">trim</span>();</div>
+                    <p class="code-note">Lee el texto de la película y le quita los espacios sobrantes con <code>trim()</code>.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">                <span class="d-type">String</span> <span class="d-field">sala</span> = <span class="d-field">txtSala</span>.<span class="d-method">getText</span>().<span class="d-method">trim</span>();</div>
+                    <p class="code-note">Lee el texto de la sala y le quita los espacios sobrantes.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">                <span class="d-type">String</span> <span class="d-field">precioStr</span> = <span class="d-field">txtPrecio</span>.<span class="d-method">getText</span>().<span class="d-method">trim</span>();</div>
+                    <p class="code-note">Lee el precio <strong>como texto</strong> (aún no es número).</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">                <span class="d-keyword">if</span> (<span class="d-field">pelicula</span>.<span class="d-method">isEmpty</span>() || <span class="d-field">sala</span>.<span class="d-method">isEmpty</span>() || <span class="d-field">precioStr</span>.<span class="d-method">isEmpty</span>()) {</div>
+                    <p class="code-note">Si alguno de los 3 campos está vacío, entra aquí. <code>||</code> significa "o".</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">                    <span class="d-type">JOptionPane</span>.<span class="d-method">showMessageDialog</span>(<span class="d-keyword">this</span>, <span class="d-string">"Todos los campos son obligatorios."</span>, <span class="d-string">"Error"</span>, <span class="d-type">JOptionPane</span>.<span class="d-field">WARNING_MESSAGE</span>);</div>
+                    <p class="code-note">Muestra una ventana emergente de advertencia pidiendo llenar todos los campos.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">                    <span class="d-keyword">return</span>;</div>
+                    <p class="code-note">Sale del método sin vender nada.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">                }</div>
+                    <p class="code-note">Cierra el <code>if</code> de validación de campos vacíos.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">                <span class="d-type">double</span> <span class="d-field">precio</span> = <span class="d-type">Double</span>.<span class="d-method">parseDouble</span>(<span class="d-field">precioStr</span>);</div>
+                    <p class="code-note">Convierte el texto a número decimal. Si escribes letras, esta línea falla.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">                <span class="d-keyword">if</span> (<span class="d-field">precio</span> &lt;= <span class="d-number">0</span>) {</div>
+                    <p class="code-note">Si el precio es cero o negativo, entra aquí.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">                    <span class="d-type">JOptionPane</span>.<span class="d-method">showMessageDialog</span>(<span class="d-keyword">this</span>, <span class="d-string">"El precio debe ser mayor que 0."</span>, <span class="d-string">"Error"</span>, <span class="d-type">JOptionPane</span>.<span class="d-field">WARNING_MESSAGE</span>);</div>
+                    <p class="code-note">Avisa que el precio no es válido.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">                    <span class="d-keyword">return</span>;</div>
+                    <p class="code-note">Sale sin vender.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">                }</div>
+                    <p class="code-note">Cierra el <code>if</code> de precio.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">                <span class="d-type">Boleto</span> <span class="d-field">boleto</span> = <span class="d-keyword">new</span> <span class="d-type">Boleto</span>(<span class="d-field">pelicula</span>, <span class="d-field">sala</span>, <span class="d-field">precio</span>);</div>
+                    <p class="code-note">Crea un nuevo objeto <code>Boleto</code> con los 3 datos.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">                <span class="d-field">servicio</span>.<span class="d-method">venderBoleto</span>(<span class="d-field">boleto</span>);</div>
+                    <p class="code-note">Envía el boleto al servicio para guardarlo en la lista.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">                <span class="d-type">JOptionPane</span>.<span class="d-method">showMessageDialog</span>(<span class="d-keyword">this</span>, <span class="d-string">"¡Boleto vendido!\n"</span> + <span class="d-field">boleto</span>.<span class="d-method">toString</span>(), <span class="d-string">"Éxito"</span>, <span class="d-type">JOptionPane</span>.<span class="d-field">INFORMATION_MESSAGE</span>);</div>
+                    <p class="code-note">Muestra confirmación con los datos del boleto. <code>\n</code> hace un salto de línea.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">                <span class="d-field">lblMensaje</span>.<span class="d-method">setText</span>(<span class="d-string">"Boletos vendidos: "</span> + <span class="d-field">servicio</span>.<span class="d-method">contarBoletos</span>());</div>
+                    <p class="code-note">Actualiza la etiqueta inferior con el total de boletos vendidos.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">            } <span class="d-keyword">catch</span> (<span class="d-type">NumberFormatException</span> <span class="d-field">ex</span>) {</div>
+                    <p class="code-note">Si <code>parseDouble</code> falló (escribiste letras en el precio), salta aquí.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">                <span class="d-type">JOptionPane</span>.<span class="d-method">showMessageDialog</span>(<span class="d-keyword">this</span>, <span class="d-string">"El precio debe ser un número válido."</span>, <span class="d-string">"Error de Formato"</span>, <span class="d-type">JOptionPane</span>.<span class="d-field">ERROR_MESSAGE</span>);</div>
+                    <p class="code-note">Muestra el error de formato en lugar de que el programa se cierre de golpe.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">            }</div>
+                    <p class="code-note">Cierra el <code>catch</code>.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        });</div>
+                    <p class="code-note">Cierra el listener del botón Vender.</p>
+                </div>
+
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-field">btnTotal</span>.<span class="d-method">addActionListener</span>(<span class="d-field">e</span> -> {</div>
+                    <p class="code-note">Escucha los clics en el botón Total.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">            <span class="d-type">double</span> <span class="d-field">total</span> = <span class="d-field">servicio</span>.<span class="d-method">calcularTotal</span>();</div>
+                    <p class="code-note">Pide al servicio la suma de todos los ingresos.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">            <span class="d-type">JOptionPane</span>.<span class="d-method">showMessageDialog</span>(<span class="d-keyword">this</span>, <span class="d-string">"Total de ingresos: ¢"</span> + <span class="d-field">total</span>, <span class="d-string">"Resumen"</span>, <span class="d-type">JOptionPane</span>.<span class="d-field">INFORMATION_MESSAGE</span>);</div>
+                    <p class="code-note">Muestra el total de ingresos en una ventana emergente.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        });</div>
+                    <p class="code-note">Cierra el listener del botón Total.</p>
+                </div>
+
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-field">btnLimpiar</span>.<span class="d-method">addActionListener</span>(<span class="d-field">e</span> -> {</div>
+                    <p class="code-note">Escucha los clics en el botón Limpiar.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">            <span class="d-field">txtPelicula</span>.<span class="d-method">setText</span>(<span class="d-string">""</span>);</div>
+                    <p class="code-note">Vacía el campo de película.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">            <span class="d-field">txtSala</span>.<span class="d-method">setText</span>(<span class="d-string">""</span>);</div>
+                    <p class="code-note">Vacía el campo de sala.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">            <span class="d-field">txtPrecio</span>.<span class="d-method">setText</span>(<span class="d-string">""</span>);</div>
+                    <p class="code-note">Vacía el campo de precio.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">            <span class="d-field">lblMensaje</span>.<span class="d-method">setText</span>(<span class="d-string">"Campos limpiados"</span>);</div>
+                    <p class="code-note">Muestra un mensaje de confirmación.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        });</div>
+                    <p class="code-note">Cierra el listener del botón Limpiar.</p>
                 </div>
             </div>
 
             <div class="step-sub">
-                <h5>5.2 Evento de clic en "Vender Boleto" (<code>ActionListener</code>)</h5>
-                <p>Usaremos una expresión lambda para el <code class="font-mono text-sm">ActionListener</code>.</p>
-                <div class="code-fragment">
-<span class="d-field">btnVender</span>.<span class="d-method">addActionListener</span>(<span class="d-field">e</span> -> {
-    <span class="d-keyword">try</span> {
-        <span class="d-type">String</span> <span class="d-field">pelicula</span> = <span class="d-field">txtPelicula</span>.<span class="d-method">getText</span>().<span class="d-method">trim</span>();
-        <span class="d-type">String</span> <span class="d-field">sala</span>     = <span class="d-field">txtSala</span>.<span class="d-method">getText</span>().<span class="d-method">trim</span>();
-        <span class="d-type">String</span> <span class="d-field">precioStr</span> = <span class="d-field">txtPrecio</span>.<span class="d-method">getText</span>().<span class="d-method">trim</span>();
+                <h5>5.2 Eventos Periféricos (Teclado y Ratón)</h5>
 
-        <span class="d-comment">// Validar campos vacíos</span>
-        <span class="d-keyword">if</span> (<span class="d-field">pelicula</span>.<span class="d-method">isEmpty</span>() || <span class="d-field">sala</span>.<span class="d-method">isEmpty</span>() || <span class="d-field">precioStr</span>.<span class="d-method">isEmpty</span>()) {
-            <span class="d-type">JOptionPane</span>.<span class="d-method">showMessageDialog</span>(<span class="d-keyword">this</span>, <span class="d-string">"Todos los campos son obligatorios."</span>, <span class="d-string">"Error"</span>, <span class="d-type">JOptionPane</span>.<span class="d-field">WARNING_MESSAGE</span>);
-            <span class="d-keyword">return</span>;
-        }
-
-        <span class="d-comment">// Convertir precio</span>
-        <span class="d-type">double</span> <span class="d-field">precio</span> = <span class="d-type">Double</span>.<span class="d-method">parseDouble</span>(<span class="d-field">precioStr</span>);
-        <span class="d-keyword">if</span> (<span class="d-field">precio</span> <= <span class="d-number">0</span>) {
-            <span class="d-type">JOptionPane</span>.<span class="d-method">showMessageDialog</span>(<span class="d-keyword">this</span>, <span class="d-string">"El precio debe ser mayor que 0."</span>, <span class="d-string">"Error"</span>, <span class="d-type">JOptionPane</span>.<span class="d-field">WARNING_MESSAGE</span>);
-            <span class="d-keyword">return</span>;
-        }
-
-        <span class="d-comment">// Crear boleto y registrarlo</span>
-        <span class="d-type">Boleto</span> <span class="d-field">boleto</span> = <span class="d-keyword">new</span> <span class="d-type">Boleto</span>(<span class="d-field">pelicula</span>, <span class="d-field">sala</span>, <span class="d-field">precio</span>);
-        <span class="d-field">servicio</span>.<span class="d-method">venderBoleto</span>(<span class="d-field">boleto</span>);
-
-        <span class="d-comment">// Mostrar mensaje de éxito</span>
-        <span class="d-type">JOptionPane</span>.<span class="d-method">showMessageDialog</span>(<span class="d-keyword">this</span>, <span class="d-string">"¡Boleto vendido!\n"</span> + <span class="d-field">boleto</span>.<span class="d-method">toString</span>(), <span class="d-string">"Éxito"</span>, <span class="d-type">JOptionPane</span>.<span class="d-field">INFORMATION_MESSAGE</span>);
-
-        <span class="d-comment">// Actualizar el contador en la interfaz (opcional)</span>
-        <span class="d-field">lblMensaje</span>.<span class="d-method">setText</span>(<span class="d-string">"Boletos vendidos: "</span> + <span class="d-field">servicio</span>.<span class="d-method">contarBoletos</span>());
-
-    } <span class="d-keyword">catch</span> (<span class="d-type">NumberFormatException</span> <span class="d-field">ex</span>) {
-        <span class="d-type">JOptionPane</span>.<span class="d-method">showMessageDialog</span>(<span class="d-keyword">this</span>, <span class="d-string">"El precio debe ser un número válido."</span>, <span class="d-string">"Error de Formato"</span>, <span class="d-type">JOptionPane</span>.<span class="d-field">ERROR_MESSAGE</span>);
-    }
-});
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-field">txtPrecio</span>.<span class="d-method">addKeyListener</span>(<span class="d-keyword">new</span> <span class="d-type">KeyAdapter</span>() {</div>
+                    <p class="code-note">Agrega un sensor de teclado a la caja de precio. <code>KeyAdapter</code> facilita usar solo los métodos que necesitamos.</p>
                 </div>
-                <details>
-                    <summary><strong>¿Qué hace el <code>try-catch</code>? ¿Por qué usar <code>JOptionPane</code>?</strong></summary>
-                    <p>El <code>try-catch</code> captura la excepción <code class="font-mono text-sm">NumberFormatException</code> si el usuario escribe un precio no numérico (letras o símbolos), evitando que la aplicación se estrelle.<br>
-                    Usamos <code class="font-mono text-sm">JOptionPane.showMessageDialog</code> en lugar de imprimir en la consola (<code>System.out</code>), porque el usuario está viendo la ventana de la aplicación y no tiene acceso a la consola del programador. ¡El mensaje debe aparecer en la pantalla!</p>
-                </details>
-            </div>
-
-            <div class="step-sub">
-                <h5>5.3 Evento "Mostrar Total"</h5>
-                <div class="code-fragment">
-<span class="d-field">btnTotal</span>.<span class="d-method">addActionListener</span>(<span class="d-field">e</span> -> {
-    <span class="d-type">double</span> <span class="d-field">total</span> = <span class="d-field">servicio</span>.<span class="d-method">calcularTotal</span>();
-    <span class="d-type">JOptionPane</span>.<span class="d-method">showMessageDialog</span>(<span class="d-keyword">this</span>, <span class="d-string">"Total de ingresos: ¢"</span> + <span class="d-field">total</span>, <span class="d-string">"Resumen"</span>, <span class="d-type">JOptionPane</span>.<span class="d-field">INFORMATION_MESSAGE</span>);
-});
+                <div class="code-line">
+                    <div class="code-fragment">            <span class="d-annotation">@Override</span></div>
+                    <p class="code-note">Avisa que estamos reemplazando el método <code>keyPressed</code>.</p>
                 </div>
-            </div>
-
-            <div class="step-sub">
-                <h5>5.4 Evento "Limpiar Campos"</h5>
-                <div class="code-fragment">
-<span class="d-field">btnLimpiar</span>.<span class="d-method">addActionListener</span>(<span class="d-field">e</span> -> {
-    <span class="d-field">txtPelicula</span>.<span class="d-method">setText</span>(<span class="d-string">""</span>);
-    <span class="d-field">txtSala</span>.<span class="d-method">setText</span>(<span class="d-string">""</span>);
-    <span class="d-field">txtPrecio</span>.<span class="d-method">setText</span>(<span class="d-string">""</span>);
-    <span class="d-field">lblMensaje</span>.<span class="d-method">setText</span>(<span class="d-string">"Campos limpiados"</span>);
-});
+                <div class="code-line">
+                    <div class="code-fragment">            <span class="d-keyword">public void</span> <span class="d-method">keyPressed</span>(<span class="d-type">KeyEvent</span> <span class="d-field">e</span>) {</div>
+                    <p class="code-note">Se ejecuta cada vez que se presiona una tecla.</p>
                 </div>
-            </div>
-
-            <div class="step-sub">
-                <h5>5.5 Evento de teclado: <code>KeyAdapter</code> para presionar Enter</h5>
-                <p>Agregaremos un <code class="font-mono text-sm">KeyAdapter</code> al campo de precio para que al presionar Enter se dispare el botón "Vender Boleto". Esto mejora la experiencia del usuario al permitirle trabajar solo con el teclado.</p>
-                <div class="code-fragment">
-<span class="d-field">txtPrecio</span>.<span class="d-method">addKeyListener</span>(<span class="d-keyword">new</span> <span class="d-type">KeyAdapter</span>() {
-    <span class="d-annotation">@Override</span>
-    <span class="d-keyword">public void</span> <span class="d-method">keyPressed</span>(<span class="d-type">KeyEvent</span> <span class="d-field">e</span>) {
-        <span class="d-keyword">if</span> (<span class="d-field">e</span>.<span class="d-method">getKeyCode</span>() == <span class="d-type">KeyEvent</span>.<span class="d-field">VK_ENTER</span>) {
-            <span class="d-field">btnVender</span>.<span class="d-method">doClick</span>();
-        }
-    }
-});
+                <div class="code-line">
+                    <div class="code-fragment">                <span class="d-keyword">if</span> (<span class="d-field">e</span>.<span class="d-method">getKeyCode</span>() == <span class="d-type">KeyEvent</span>.<span class="d-field">VK_ENTER</span>) {</div>
+                    <p class="code-note">Si la tecla presionada es <code>Enter</code>, entra aquí.</p>
                 </div>
-                <details>
-                    <summary><strong>¿Qué hace <code>doClick()</code>?</strong></summary>
-                    <p><code>doClick()</code> simula un clic en el botón de forma programática. Si presionamos Enter en el campo de precio, el programa entiende que queremos que se ejecute la misma acción que si le diéramos clic al botón de vender. Esta técnica evita tener que repetir todo el código de la venta.</p>
-                </details>
-            </div>
+                <div class="code-line">
+                    <div class="code-fragment">                    <span class="d-field">btnVender</span>.<span class="d-method">doClick</span>();</div>
+                    <p class="code-note">Dispara el clic del botón Vender automáticamente, como un "clic fantasma".</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">                }</div>
+                    <p class="code-note">Cierra el <code>if</code>.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">            }</div>
+                    <p class="code-note">Cierra el método <code>keyPressed</code>.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        });</div>
+                    <p class="code-note">Cierra el listener de teclado.</p>
+                </div>
 
-            <div class="step-sub">
-                <h5>5.6 Evento de ratón: <code>MouseAdapter</code> para efecto hover</h5>
-                <p>Cambiar el color de fondo del botón "Vender Boleto" cuando el mouse pase por encima. Esto hace que la aplicación parezca más interactiva y moderna.</p>
-                <div class="code-fragment">
-<span class="d-field">btnVender</span>.<span class="d-method">addMouseListener</span>(<span class="d-keyword">new</span> <span class="d-type">MouseAdapter</span>() {
-    <span class="d-annotation">@Override</span>
-    <span class="d-keyword">public void</span> <span class="d-method">mouseEntered</span>(<span class="d-type">MouseEvent</span> <span class="d-field">e</span>) {
-        <span class="d-field">btnVender</span>.<span class="d-method">setBackground</span>(<span class="d-type">Color</span>.<span class="d-field">CYAN</span>);
-    }
-    <span class="d-annotation">@Override</span>
-    <span class="d-keyword">public void</span> <span class="d-method">mouseExited</span>(<span class="d-type">MouseEvent</span> <span class="d-field">e</span>) {
-        <span class="d-field">btnVender</span>.<span class="d-method">setBackground</span>(<span class="d-keyword">null</span>); <span class="d-comment">// Restaurar color por defecto</span>
-    }
-});
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-field">btnVender</span>.<span class="d-method">addMouseListener</span>(<span class="d-keyword">new</span> <span class="d-type">MouseAdapter</span>() {</div>
+                    <p class="code-note">Agrega un sensor de ratón al botón Vender.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">            <span class="d-annotation">@Override</span></div>
+                    <p class="code-note">Avisa que reemplazamos el método <code>mouseEntered</code>.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">            <span class="d-keyword">public void</span> <span class="d-method">mouseEntered</span>(<span class="d-type">MouseEvent</span> <span class="d-field">e</span>) {</div>
+                    <p class="code-note">Se ejecuta cuando el puntero ENTRA al botón.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">                <span class="d-field">btnVender</span>.<span class="d-method">setBackground</span>(<span class="d-type">Color</span>.<span class="d-field">CYAN</span>);</div>
+                    <p class="code-note">Pinta el fondo del botón de color cian.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">            }</div>
+                    <p class="code-note">Cierra <code>mouseEntered</code>.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">            <span class="d-annotation">@Override</span></div>
+                    <p class="code-note">Avisa que reemplazamos el método <code>mouseExited</code>.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">            <span class="d-keyword">public void</span> <span class="d-method">mouseExited</span>(<span class="d-type">MouseEvent</span> <span class="d-field">e</span>) {</div>
+                    <p class="code-note">Se ejecuta cuando el puntero SALE del botón.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">                <span class="d-field">btnVender</span>.<span class="d-method">setBackground</span>(<span class="d-keyword">null</span>);</div>
+                    <p class="code-note">Devuelve el botón a su color original (fondo nulo).</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">            }</div>
+                    <p class="code-note">Cierra <code>mouseExited</code>.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        });</div>
+                    <p class="code-note">Cierra el listener de ratón.</p>
                 </div>
             </div>
         </div>
@@ -614,56 +988,60 @@
             <h2><i class="fa-regular fa-play mr-2" style="color: var(--accent-blue);"></i> Paso 6: Crear la Clase <code>Main</code> y Ejecutar</h2>
 
             <div class="step-sub">
-                <h5>6.1 Crear la clase <code>Main</code> en el lugar correcto</h5>
+                <h5>6.1 Crear la clase <code>Main</code></h5>
                 <ol style="list-style-type: decimal; padding-left: 1.5rem;">
-                    <li>Haz clic derecho sobre <code class="font-mono text-sm">src</code> → <em>New → Java Class</em>. <strong>No</strong> la crees dentro de <code>modelo</code>, <code>servicio</code> o <code>vista</code>.</li>
-                    <li>Nombre: <code class="font-mono text-sm">Main</code> (O puedes ponerle <code>App</code> o <code>AplicacionTaquilla</code>).</li>
+                    <li>Haz clic derecho directamente sobre <code class="font-mono text-sm">src</code> → <em>New → Java Class</em>.</li>
+                    <li>Nombre: <code class="font-mono text-sm">Main</code>.</li>
                 </ol>
-                <div class="error-box">
-                    <strong><i class="fa-regular fa-circle-exclamation mr-1"></i> ¿Dónde va la clase Main?</strong>
-                    <p><strong>No debe ir dentro de los paquetes <code>modelo</code>, <code>vista</code> ni <code>servicio</code>.</strong><br>
-                    Porque cada paquete tiene una responsabilidad específica:
-                    <ul>
-                        <li><code>modelo</code> = Datos.</li>
-                        <li><code>servicio</code> = Reglas de negocio.</li>
-                        <li><code>vista</code> = Interfaz gráfica.</li>
-                    </ul>
-                    La clase <code>Main</code> es el punto de entrada de la aplicación. Su única tarea es <strong>inicializar</strong> el programa y mostrar la ventana al usuario. <br>
-                    Lo más limpio es ponerla <strong>justo dentro de la carpeta <code>src</code></strong> (que se verá como el paquete por defecto), o crear un paquete llamado <code>app</code> o <code>main</code> al mismo nivel que los otros tres.</p>
-                </div>
             </div>
 
             <div class="step-sub">
-                <h5>6.2 Escribir el método <code>main</code> con <code>SwingUtilities.invokeLater</code></h5>
-                <div class="code-fragment">
-<span class="d-keyword">package</span> taquilla; <span class="d-comment">// opcional, si creaste un paquete en la raíz llamado 'taquilla'.</span>
-
-<span class="d-keyword">import</span> vista.<span class="d-type">FormTaquilla</span>;
-<span class="d-keyword">import</span> javax.swing.<span class="d-type">SwingUtilities</span>;
-
-<span class="d-keyword">public class</span> <span class="d-type">Main</span> {
-    <span class="d-keyword">public static void</span> <span class="d-method">main</span>(<span class="d-type">String</span>[] <span class="d-field">args</span>) {
-        <span class="d-type">SwingUtilities</span>.<span class="d-method">invokeLater</span>(() -> {
-            <span class="d-type">FormTaquilla</span> <span class="d-field">ventana</span> = <span class="d-keyword">new</span> <span class="d-type">FormTaquilla</span>();
-            <span class="d-field">ventana</span>.<span class="d-method">setVisible</span>(<span class="d-keyword">true</span>);
-        });
-    }
-}
+                <h5>6.2 Escribir el método <code>main</code></h5>
+                <div class="code-line">
+                    <div class="code-fragment"><span class="d-keyword">import</span> vista.<span class="d-type">FormTaquilla</span>;</div>
+                    <p class="code-note">Trae la ventana <code>FormTaquilla</code> para poder crearla.</p>
                 </div>
-                <details>
-                    <summary><strong>¿Por qué usar <code>SwingUtilities.invokeLater</code>?</strong></summary>
-                    <p>Para asegurar que la creación y manipulación de la GUI se realice en el <span class="glossary" tabindex="0" data-tooltip="Event Dispatch Thread: hilo especial de Swing que maneja todos los eventos y redibujado.">EDT</span> (Event Dispatch Thread). Si no lo usáramos, la interfaz gráfica podría aparecer a medias, congelarse o tener errores de concurrencia. Es el estándar de "buenas prácticas" en Swing.</p>
-                </details>
+                <div class="code-line">
+                    <div class="code-fragment"><span class="d-keyword">import</span> javax.swing.<span class="d-type">SwingUtilities</span>;</div>
+                    <p class="code-note">Trae <code>SwingUtilities</code> para lanzar la ventana de forma segura.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment"><span class="d-keyword">public class</span> <span class="d-type">Main</span> {</div>
+                    <p class="code-note">Clase principal que contiene el punto de entrada del programa.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    <span class="d-keyword">public static void</span> <span class="d-method">main</span>(<span class="d-type">String</span>[] <span class="d-field">args</span>) {</div>
+                    <p class="code-note">Método <code>main</code>: aquí comienza a ejecutarse todo el programa.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        <span class="d-type">SwingUtilities</span>.<span class="d-method">invokeLater</span>(() -> {</div>
+                    <p class="code-note">Envía la creación de la ventana al hilo especial de Swing (EDT) para que la interfaz cargue sin congelarse.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">            <span class="d-type">FormTaquilla</span> <span class="d-field">ventana</span> = <span class="d-keyword">new</span> <span class="d-type">FormTaquilla</span>();</div>
+                    <p class="code-note">Crea la ventana (esto dispara el constructor con todos los eventos).</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">            <span class="d-field">ventana</span>.<span class="d-method">setVisible</span>(<span class="d-keyword">true</span>);</div>
+                    <p class="code-note">Hace visible la ventana en pantalla.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">        });</div>
+                    <p class="code-note">Cierra el <code>invokeLater</code>.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">    }</div>
+                    <p class="code-note">Cierra el método <code>main</code>.</p>
+                </div>
+                <div class="code-line">
+                    <div class="code-fragment">}</div>
+                    <p class="code-note">Cierra la clase <code>Main</code>.</p>
+                </div>
             </div>
 
             <div class="step-sub">
                 <h5>6.3 Ejecutar la aplicación</h5>
-                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
-                    <li>Abrir <code class="font-mono text-sm">Main.java</code>.</li>
-                    <li>Hacer clic en el triángulo verde junto al <code class="font-mono text-sm">main</code>.</li>
-                    <li>Seleccionar <em>Run 'Main.main()'</em>.</li>
-                </ol>
-                <p>Prueba la aplicación: ingresa datos, presiona Enter en el campo de precio, verifica el cambio de color del botón, etc.</p>
+                <p>Haz clic en el triángulo verde junto a la línea del <code class="font-mono text-sm">main</code> y selecciona <em>Run 'Main.main()'</em>. ¡Tu aplicación está lista!</p>
             </div>
         </div>
 
