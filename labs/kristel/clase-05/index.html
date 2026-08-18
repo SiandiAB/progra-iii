@@ -157,35 +157,6 @@
         }
         .float-btn:hover { transform: scale(1.05); background: var(--border-panel); }
 
-        details { margin-top: 1.2rem; }
-        details summary { cursor: pointer; font-weight: 700; color: var(--text-main); }
-        details summary:hover { color: var(--accent-blue); }
-
-        .glossary {
-            text-decoration: underline;
-            text-decoration-style: dotted;
-            text-underline-offset: 0.2em;
-            cursor: help;
-            position: relative;
-        }
-        .glossary:hover::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: calc(100% + 8px);
-            left: 50%;
-            transform: translateX(-50%);
-            background: #2b2b2b;
-            color: #a9b7c6;
-            padding: 0.4rem 0.8rem;
-            border-radius: 0.4rem;
-            font-size: 0.8rem;
-            font-weight: 400;
-            white-space: nowrap;
-            z-index: 100;
-            pointer-events: none;
-            border: 1px solid #555555;
-        }
-
         @media (max-width: 768px) {
             .container { padding: 1rem; }
             .glass-panel { padding: 1rem; }
@@ -202,182 +173,267 @@
 
     <div class="container">
 
-        <!-- PORTADA -->
         <div class="glass-panel text-center" style="border-top: 6px solid var(--una-red);">
             <div class="flex justify-center mb-4">
                 <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png" alt="Logo UNA" class="h-20 object-contain"
                      onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png';">
             </div>
             <h2 class="text-3xl font-extrabold">Laboratorio 4</h2>
-            <p class="text-xl" style="color: var(--una-red); font-weight: 700;">Sistema Interactivo de Registro de Productos con Eventos</p>
-            <p class="text-sm" style="color: var(--text-muted);">Programación III — Semana 5: Aplicaciones Dirigidas por Eventos</p>
+            <p class="text-xl" style="color: var(--una-red); font-weight: 700;">Sistema de Gestión de Vuelos, Reservas y Servicios Especiales: AeroUNA</p>
+            <p class="text-sm" style="color: var(--text-muted);">Programación III — Semana 5: Aplicaciones Dirigidas por Eventos &amp; Arquitectura Integrada</p>
             <div class="flex flex-wrap justify-center gap-3 mt-3">
-                <span class="badge badge-red">KeyAdapter &amp; e.consume()</span>
-                <span class="badge badge-blue">FocusAdapter &amp; Validación</span>
-                <span class="badge badge-green">MouseAdapter &amp; Hover</span>
-                <span class="badge badge-purple">WindowAdapter &amp; Cierre</span>
-                <span class="badge badge-gold">Patrón de Delegación</span>
+                <span class="badge badge-red">Herencia &amp; Genéricos &lt;K&gt;</span>
+                <span class="badge badge-blue">KeyAdapter &amp; e.consume()</span>
+                <span class="badge badge-green">FocusAdapter &amp; MouseAdapter</span>
+                <span class="badge badge-purple">Streams, Optional &amp; Lambdas</span>
+                <span class="badge badge-gold">GUI Form &amp; EDT</span>
             </div>
             <div class="mt-4 text-sm" style="color: var(--text-muted);">
-                <i class="fa-regular fa-clock mr-1"></i> Duración estimada: 1 hora 15 minutos &nbsp;·&nbsp;
+                <i class="fa-regular fa-clock mr-1"></i> Duración estimada: 1 hora 30 minutos &nbsp;·&nbsp;
                 <i class="fa-regular fa-user mr-1"></i> Trabajo Individual
             </div>
         </div>
 
-        <!-- INTRODUCCIÓN -->
         <div class="glass-panel" style="border-left: 4px solid var(--una-gold);">
             <h2><i class="fa-regular fa-compass mr-2" style="color: var(--una-gold);"></i> Introducción al Reto Individual</h2>
             <p>
-                En la primera parte de la sesión construimos juntos un sistema aplicando el <strong>ciclo de eventos</strong>, el <strong>modelo de delegación</strong> y las <strong>clases adaptadoras</strong> de Swing.
+                En la sesión de hoy construimos en conjunto un sistema robusto aplicando <strong>Herencia Polimórfica</strong>, <strong>Clases e Interfaces Genéricas</strong>, <strong>Streams</strong>, <strong>Optional</strong>, <strong>Lambdas</strong>, <strong>Switch Expressions</strong> y <strong>Control de Eventos con GUI Form de Swing</strong>.
             </p>
             <p>
-                Ahora pondrás a prueba tus conocimientos de forma individual creando un <strong>Sistema de Registro de Productos de Cafetería</strong>. Siguiendo exactamente la misma arquitectura y los patrones vistos en el live coding, deberás construir el modelo, el servicio y la interfaz gráfica que valide entradas del teclado, detecte el foco, proporcione retroalimentación visual al mouse e intercepte el cierre de la ventana.
+                Ahora deberás demostrar tu autonomía aplicando exactamente los mismos principios arquitectónicos en un nuevo dominio: <strong>AeroUNA (Sistema de Control de Vuelos y Reservas de Pasajes)</strong>. Construirás una solución por capas que gestione vuelos comerciales regulares y vuelos chárter privados, permitiendo la reserva de asientos con control de aforo, validaciones de teclado en tiempo real, búsqueda segura y promociones dinámicas.
+            </p>
+            <p>
+                <strong>No partas de cero:</strong> este laboratorio replica <strong>exactamente la misma estructura</strong> que construiste en el NovaCinema. Tus paquetes y la mayor parte del código son idénticos: solo cambia el dominio y los datos de los métodos. Usa la tabla de equivalencias del siguiente panel.
             </p>
 
             <div class="highlight-box">
-                <strong><i class="fa-regular fa-lightbulb mr-1"></i> Objetivo: </strong>
-                Demostrar dominio práctico en:
+                <strong><i class="fa-regular fa-lightbulb mr-1"></i> Objetivos Técnicos Obligatorios:</strong>
             </div>
             <ul>
-                <li>Validar restricciones de teclado con <code class="font-mono text-sm">KeyListener / KeyAdapter</code> y el método <code class="font-mono text-sm">e.consume()</code>.</li>
-                <li>Manejar eventos de foco con <code class="font-mono text-sm">FocusListener / FocusAdapter</code> para alertas visuales de campos requeridos.</li>
-                <li>Generar interactividad visual de mouse con <code class="font-mono text-sm">MouseListener / MouseAdapter</code> (efecto hover).</li>
-                <li>Interceptar el evento de sistema de salida con <code class="font-mono text-sm">WindowListener / WindowAdapter</code> y confirmar con <code class="font-mono text-sm">JOptionPane</code>.</li>
-                <li>Mantener la separación estricta entre <strong>Modelo</strong>, <strong>Servicio</strong> y <strong>Vista</strong>.</li>
+                <li>Diseñar una jerarquía de modelo desacoplada utilizando una <strong>interfaz genérica</strong> (<code class="font-mono text-sm">Identificable&lt;K&gt;</code>) y una <strong>clase abstracta genérica</strong> (<code class="font-mono text-sm">ServicioVuelo&lt;K&gt;</code>).</li>
+                <li>Implementar el cálculo polimórfico de tarifas de pasajes mediante <strong>Switch Expressions</strong> con recargos según el tipo de clase (<code class="font-mono text-sm">TipoClase</code>) y uso de <strong>Wrapper Classes</strong> (<code class="font-mono text-sm">Integer, Double</code>).</li>
+                <li>Reutilizar la capa de lógica mediante un <strong>servicio genérico</strong> (<code class="font-mono text-sm">Repositorio&lt;T&gt;</code>) con operaciones de <code class="font-mono text-sm">Streams</code> y <code class="font-mono text-sm">Optional&lt;T&gt;</code>.</li>
+                <li>Inyectar estrategias de descuento al vuelo utilizando una <strong>interfaz funcional</strong> (<code class="font-mono text-sm">@FunctionalInterface PromocionVuelo</code>) y <strong>expresiones Lambda</strong>.</li>
+                <li>Construir la vista con <strong>GUI Form de IntelliJ</strong>, validando entradas numéricas con <code class="font-mono text-sm">KeyAdapter (e.consume())</code>, pérdida de foco con <code class="font-mono text-sm">FocusAdapter</code>, interactividad con <code class="font-mono text-sm">MouseAdapter</code> y cierre seguro con <code class="font-mono text-sm">WindowAdapter</code>.</li>
             </ul>
         </div>
 
-        <!-- PASO 1: ESTRUCTURA -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
+            <h2><i class="fa-regular fa-clone mr-2" style="color: var(--accent-green);"></i> La Regla de Oro: Replica tu Livecoding (NovaCinema → AeroUNA)</h2>
+            <p>
+                Abre tu proyecto del gestor de cine y <strong>replica la estructura completa</strong>. Solo cambian los nombres de las clases, los atributos y los datos del dominio. Usa esta tabla de equivalencias para saber qué clase del cine corresponde a cuál del laboratorio:
+            </p>
+
+            <div class="overflow-x-auto" style="margin: 1rem 0;">
+                <table style="width:100%; border-collapse: collapse; font-size: 0.95rem; color: var(--text-muted);">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--border-panel); text-align: left; color: var(--text-main);">
+                            <th style="padding: 0.5rem 0.6rem;">En el Livecoding (NovaCinema)</th>
+                            <th style="padding: 0.5rem 0.6rem;">En tu Laboratorio (AeroUNA)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">ElementoComercial&lt;K&gt;</code> (clase abstracta)</td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">ServicioVuelo&lt;K&gt;</code> (clase abstracta)</td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">FuncionPelicula</code> (películas)</td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">VueloComercial</code> (vuelos regulares)</td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">ProductoDulceria</code> (dulcería)</td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">VueloCharter</code> (vuelos privados)</td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">TipoFormato</code> (DOS_D, TRES_D, IMAX, VIP)</td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">TipoClase</code> (ECONOMICA, EJECUTIVA, PRIMERA_CLASE)</td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">TipoProducto</code> (SNACK, BEBIDA, COMBO)</td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">TipoCharter</code> (TURISMO, EMPRESARIAL, MEDICO)</td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">Promocion.aplicar(Double)</code></td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">PromocionVuelo.aplicarDescuento(Double)</code></td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">Identificable&lt;K&gt;</code> con <code class="font-mono text-xs">getNombre()</code></td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">Identificable&lt;K&gt;</code> con <code class="font-mono text-xs">getDestino()</code></td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">Filtro&lt;T&gt;</code> y <code class="font-mono text-xs">Repositorio&lt;T&gt;</code></td><td style="padding: 0.4rem 0.6rem;">Iguales</td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">VentanaCine</code></td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">VentanaVuelos</code></td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">Main</code></td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">Main</code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
             <h2><i class="fa-regular fa-folder-open mr-2" style="color: var(--accent-blue);"></i> Paso 1: Configurar el Repositorio y Paquetes</h2>
 
             <div class="step-sub">
                 <h5>1.1 Crear el repositorio en GitHub y clonarlo</h5>
-                <p>Crea en GitHub un repositorio para el laboratorio, clónalo en tu computadora con GitHub Desktop y ábrelo en IntelliJ IDEA asegurando la carpeta <code class="font-mono text-sm">src</code> como <strong>Sources Root</strong>.</p>
+                <p>Crea en GitHub un repositorio público llamado <code class="font-mono text-sm">Laboratorio4-AeroUNA</code>, clónalo en tu computadora con GitHub Desktop y ábrelo en IntelliJ IDEA asegurando la carpeta <code class="font-mono text-sm">src</code> como <strong>Sources Root</strong>.</p>
             </div>
 
             <div class="step-sub">
-                <h5>1.2 Estructura de paquetes requerida</h5>
-                <p>Dentro de <code class="font-mono text-sm">src</code> crea la siguiente estructura:</p>
+                <h5>1.2 Estructura modular de paquetes requerida</h5>
+                <p>Igual que en el livecoding, crea los paquetes directamente dentro de <code class="font-mono text-sm">src</code>:</p>
                 <div class="code-fragment">
 src/
-  ├── <span class="d-field">modelo</span>/      <span class="d-comment">// Clase Producto</span>
-  ├── <span class="d-field">servicio</span>/    <span class="d-comment">// Clase InventarioServicio</span>
-  ├── <span class="d-field">vista</span>/       <span class="d-comment">// Clase VentanaProducto</span>
-  └── <span class="d-type">Main.java</span>    <span class="d-comment">// Lanzador seguro en EDT</span>
+├── <span class="d-field">modelo</span>/     <span class="d-comment">// Identificable&lt;K&gt;, ServicioVuelo&lt;K&gt;, VueloComercial, VueloCharter, Enums, PromocionVuelo</span>
+├── <span class="d-field">servicio</span>/   <span class="d-comment">// Filtro&lt;T&gt;, Repositorio&lt;T&gt;</span>
+├── <span class="d-field">vista</span>/      <span class="d-comment">// VentanaVuelos.form, VentanaVuelos.java</span>
+└── <span class="d-type">Main.java</span>   <span class="d-comment">// Lanzador seguro en Event Dispatch Thread (EDT)</span>
                 </div>
             </div>
         </div>
 
-        <!-- PASO 2: MODELO -->
         <div class="glass-panel" style="border-left: 4px solid var(--accent-purple);">
-            <h2><i class="fa-regular fa-id-card mr-2" style="color: var(--accent-purple);"></i> Paso 2: Crear el Modelo <code>Producto.java</code></h2>
+            <h2><i class="fa-regular fa-id-card mr-2" style="color: var(--accent-purple);"></i> Paso 2: Construir el Modelo Polimórfico y Genérico</h2>
 
             <div class="step-sub">
-                <h5>2.1 Requisitos de la clase</h5>
-                <p>En el paquete <code class="font-mono text-sm">modelo</code>, crea la clase <code class="font-mono text-sm">Producto</code> con los siguientes miembros:</p>
+                <h5>2.1 Enums de Categoría y Contratos Funcionales</h5>
+                <p>En el paquete <code class="font-mono text-sm">modelo</code>, crea:</p>
                 <ul>
-                    <li>Atributos privados: <code class="font-mono text-sm">private String codigo</code>, <code class="font-mono text-sm">private String nombre</code>, <code class="font-mono text-sm">private double precio</code>, <code class="font-mono text-sm">private int stock</code>.</li>
-                    <li>Constructor completo que inicialice todos los atributos.</li>
-                    <li>Métodos Getters y Setters para cada atributo.</li>
-                    <li>Sobrescritura del método <code class="font-mono text-sm">toString()</code> devolviendo una cadena con el formato: <br><code class="font-mono text-xs">[COD] Nombre - $Precio (Stock: N)</code>.</li>
+                    <li><code class="font-mono text-sm">TipoClase.java</code>: Enum con valores <code class="font-mono text-sm">ECONOMICA, EJECUTIVA, PRIMERA_CLASE</code>.</li>
+                    <li><code class="font-mono text-sm">TipoCharter.java</code>: Enum con valores <code class="font-mono text-sm">TURISMO, EMPRESARIAL, MEDICO</code>.</li>
+                    <li><code class="font-mono text-sm">PromocionVuelo.java</code>: Interfaz con anotación <code class="font-mono text-sm">@FunctionalInterface</code> y el método <code class="font-mono text-sm">Double aplicarDescuento(Double tarifaBase);</code>.</li>
+                    <li><code class="font-mono text-sm">Identificable&lt;K&gt;.java</code>: Interfaz genérica con los métodos <code class="font-mono text-sm">String getCodigo()</code>, <code class="font-mono text-sm">String getDestino()</code>, <code class="font-mono text-sm">K getCategoria()</code>, <code class="font-mono text-sm">Double calcularPrecio()</code> y <code class="font-mono text-sm">String getDetalle()</code>.</li>
+                </ul>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.2 Superclase Abstracta Genérica: <code>ServicioVuelo&lt;K&gt;.java</code></h5>
+                <ul>
+                    <li>Declara <code class="font-mono text-sm">public abstract class ServicioVuelo&lt;K&gt; implements Identificable&lt;K&gt;</code>.</li>
+                    <li>Atributos protegidos: <code class="font-mono text-sm">protected String codigo</code>, <code class="font-mono text-sm">protected String destino</code>, <code class="font-mono text-sm">protected K categoria</code>, <code class="font-mono text-sm">protected Double tarifaBase</code>.</li>
+                    <li>Constructor completo para inicializar los atributos y sus respectivos Getters.</li>
+                </ul>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.3 Subclases Concretas: <code>VueloComercial</code> y <code>VueloCharter</code></h5>
+                <ul>
+                    <li>
+                        <strong><code>VueloComercial.java</code>:</strong> Hereda de <code class="font-mono text-sm">ServicioVuelo&lt;TipoClase&gt;</code>. Contiene <code class="font-mono text-sm">Integer capacidadAsientos</code>, <code class="font-mono text-sm">Integer asientosOcupados</code> y el getter <code class="font-mono text-sm">getAsientosDisponibles()</code> (capacidad − ocupados), igual que <code class="font-mono text-sm">FuncionPelicula</code>.
+                        <br>Implementa <code class="font-mono text-sm">public boolean reservarAsientos(int cantidad)</code> que verifique disponibilidad antes de sumar a los ocupados.
+                        <br>Sobrescribe <code class="font-mono text-sm">calcularPrecio()</code> utilizando un <strong>Switch Expression</strong>:
+                        <div class="code-fragment">
+<span class="d-keyword">double</span> recargo = <span class="d-keyword">switch</span> (<span class="d-keyword">this</span>.<span class="d-field">categoria</span>) {
+    <span class="d-keyword">case</span> ECONOMICA     -> <span class="d-number">0.0</span>;
+    <span class="d-keyword">case</span> EJECUTIVA     -> <span class="d-number">25000.0</span>;
+    <span class="d-keyword">case</span> PRIMERA_CLASE -> <span class="d-number">60000.0</span>;
+};
+<span class="d-keyword">return</span> <span class="d-keyword">this</span>.<span class="d-field">tarifaBase</span> + recargo;
+                        </div>
+                        <br>Sobrescribe también <code class="font-mono text-sm">getDetalle()</code> para mostrar el vuelo en la consola:
+                        <div class="code-fragment">
+<span class="d-keyword">@Override</span>
+<span class="d-keyword">public</span> String <span class="d-method">getDetalle</span>() {
+    <span class="d-keyword">return</span> String.<span class="d-method">format</span>(<span class="d-string">"[VUELO COMERCIAL] %s -&gt; %s | Clase: %s | Asientos: %d/%d disponibles | Tarifa: ₡%.2f"</span>,
+            <span class="d-field">codigo</span>, <span class="d-field">destino</span>, <span class="d-field">categoria</span>,
+            getAsientosDisponibles(), <span class="d-field">capacidadAsientos</span>, <span class="d-method">calcularPrecio</span>());
+}
+                        </div>
+                        <p>Ejemplo de salida esperada:</p>
+                        <div class="code-fragment"><span class="d-comment">[VUELO COMERCIAL] AV-101 -&gt; Madrid | Clase: EJECUTIVA | Asientos: 180/200 disponibles | Tarifa: ₡95.000,00</span></div>
+                    </li>
+                    <li>
+                        <strong><code>VueloCharter.java</code>:</strong> Hereda de <code class="font-mono text-sm">ServicioVuelo&lt;TipoCharter&gt;</code>. Contiene <code class="font-mono text-sm">Integer duracionHoras</code> y <code class="font-mono text-sm">Boolean incluyeTripulacionVIP</code>.
+                        <br>Sobrescribe <code class="font-mono text-sm">calcularPrecio()</code> sumando un costo fijo de ₡80,000 si incluye tripulación VIP.
+                        <br>Sobrescribe también <code class="font-mono text-sm">getDetalle()</code>:
+                        <div class="code-fragment">
+<span class="d-keyword">@Override</span>
+<span class="d-keyword">public</span> String <span class="d-method">getDetalle</span>() {
+    <span class="d-keyword">return</span> String.<span class="d-method">format</span>(<span class="d-string">"[VUELO CHÁRTER] %s -&gt; %s | Tipo: %s | Duración: %d horas | Tripulación VIP: %s | Tarifa: ₡%.2f"</span>,
+            <span class="d-field">codigo</span>, <span class="d-field">destino</span>, <span class="d-field">categoria</span>, <span class="d-field">duracionHoras</span>,
+            (<span class="d-field">incluyeTripulacionVIP</span> ? <span class="d-string">"Sí"</span> : <span class="d-string">"No"</span>), <span class="d-method">calcularPrecio</span>());
+}
+                        </div>
+                        <p>Ejemplo de salida esperada:</p>
+                        <div class="code-fragment"><span class="d-comment">[VUELO CHÁRTER] CH-202 -&gt; Isla del Coco | Tipo: MEDICO | Duración: 5 horas | Tripulación VIP: Sí | Tarifa: ₡380.000,00</span></div>
+                    </li>
                 </ul>
             </div>
         </div>
 
-        <!-- PASO 3: SERVICIO -->
         <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
-            <h2><i class="fa-regular fa-cubes mr-2" style="color: var(--accent-green);"></i> Paso 3: Crear el Servicio <code>InventarioServicio.java</code></h2>
+            <h2><i class="fa-regular fa-cubes mr-2" style="color: var(--accent-green);"></i> Paso 3: Capa de Servicio Genérico con Streams y Optional</h2>
 
             <div class="step-sub">
-                <h5>3.1 Requisitos del servicio</h5>
-                <p>En el paquete <code class="font-mono text-sm">servicio</code>, crea la clase <code class="font-mono text-sm">InventarioServicio</code>:</p>
+                <h5>3.1 Interfaz Funcional y Repositorio Genérico</h5>
+                <p>En el paquete <code class="font-mono text-sm">servicio</code>, crea:</p>
                 <ul>
-                    <li>Atributo privado: <code class="font-mono text-sm">private List&lt;Producto&gt; listaProductos = new ArrayList&lt;&gt;();</code>.</li>
-                    <li>Método <code class="font-mono text-sm">public void registrarProducto(Producto p)</code> que valide que el código no esté repetido (usando Streams o bucle) y lo agregue a la lista. Si está repetido, lanzar <code class="font-mono text-sm">IllegalArgumentException("El código ya existe")</code>.</li>
-                    <li>Método <code class="font-mono text-sm">public List&lt;Producto&gt; getProductos()</code> que retorne una copia de la lista.</li>
-                    <li>Método <code class="font-mono text-sm">public int getTotalStock()</code> que calcule la sumatoria de stock de todos los productos registrados.</li>
+                    <li><code class="font-mono text-sm">Filtro&lt;T&gt;.java</code>: Interfaz con anotación <code class="font-mono text-sm">@FunctionalInterface</code> y el método <code class="font-mono text-sm">boolean test(T item);</code>.</li>
+                    <li>
+                        <code class="font-mono text-sm">Repositorio&lt;T&gt;.java</code>: Clase genérica con:
+                        <ul class="mt-2">
+                            <li><code class="font-mono text-sm">private final List&lt;T&gt; items = new ArrayList&lt;&gt;();</code></li>
+                            <li><code class="font-mono text-sm">public void agregar(T item)</code></li>
+                            <li><code class="font-mono text-sm">public List&lt;T&gt; obtenerTodos()</code> (retorna copia defensiva)</li>
+                            <li><code class="font-mono text-sm">public List&lt;T&gt; filtrar(Filtro&lt;T&gt; criterio)</code> usando <code class="font-mono text-sm">this.items.stream().filter(criterio::test).collect(Collectors.toList())</code></li>
+                            <li><code class="font-mono text-sm">public Optional&lt;T&gt; buscar(Filtro&lt;T&gt; criterio)</code> usando <code class="font-mono text-sm">this.items.stream().filter(criterio::test).findFirst()</code></li>
+                            <li><code class="font-mono text-sm">public List&lt;T&gt; ordenar(Comparator&lt;T&gt; comparador)</code> procesado con Streams.</li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
         </div>
 
-        <!-- PASO 4: VISTA -->
         <div class="glass-panel" style="border-left: 4px solid var(--una-red);">
-            <h2><i class="fa-regular fa-window-maximize mr-2" style="color: var(--una-red);"></i> Paso 4: Construir la Interfaz y Eventos en <code>VentanaProducto.java</code></h2>
-
-            <p>En el paquete <code class="font-mono text-sm">vista</code>, crea <code class="font-mono text-sm">VentanaProducto extends JFrame</code>.</p>
+            <h2><i class="fa-regular fa-window-maximize mr-2" style="color: var(--una-red);"></i> Paso 4: GUI Form y Control Integral de Eventos</h2>
 
             <div class="step-sub">
-                <h5>4.1 Componentes de la interfaz</h5>
+                <h5>4.1 Formulario con IntelliJ GUI Designer (<code>VentanaVuelos.form</code>)</h5>
+                <p>Diseña un formulario visual en <code class="font-mono text-sm">vista.VentanaVuelos</code> (el equivalente a tu <code class="font-mono text-sm">VentanaCine</code>) que contenga:</p>
                 <ul>
-                    <li>Cajas de texto: <code class="font-mono text-sm">txtCodigo</code>, <code class="font-mono text-sm">txtNombre</code>, <code class="font-mono text-sm">txtPrecio</code>, <code class="font-mono text-sm">txtStock</code>.</li>
-                    <li>Etiqueta de estado/contador: <code class="font-mono text-sm">lblContadorCodigo</code> (para mostrar ej: <em>"4/4 dígitos"</em>).</li>
-                    <li>Etiqueta de resumen inferior: <code class="font-mono text-sm">lblResumenInventario</code>.</li>
-                    <li>Botones: <code class="font-mono text-sm">btnRegistrar</code>, <code class="font-mono text-sm">btnLimpiar</code>.</li>
+                    <li>Campos de texto: <code class="font-mono text-sm">txtCodigo</code>, <code class="font-mono text-sm">txtDestino</code>, <code class="font-mono text-sm">txtCapacidad</code>, <code class="font-mono text-sm">txtTarifaBase</code>.</li>
+                    <li>ComboBox tipado: <code class="font-mono text-sm">cmbTipoClase</code> (cargado con los valores de <code class="font-mono text-sm">TipoClase</code> reutilizando tu método genérico <code class="font-mono text-sm">poblarComboEnum</code> del livecoding).</li>
+                    <li>Botones de acción: <code class="font-mono text-sm">btnRegistrarVuelo</code>, <code class="font-mono text-sm">btnReservarAsiento</code>, <code class="font-mono text-sm">btnFiltrarPremium</code>, <code class="font-mono text-sm">btnBuscarCodigo</code>, <code class="font-mono text-sm">btnPromoMillon</code>.</li>
+                    <li>Área de salida: <code class="font-mono text-sm">txaConsolaVuelos</code> (dentro de un <code class="font-mono text-sm">JScrollPane</code>).</li>
                 </ul>
             </div>
 
             <div class="step-sub">
-                <h5>4.2 Requisitos Obligatorios de Eventos a Implementar:</h5>
+                <h5>4.2 Requisitos Obligatorios de Eventos a Programar:</h5>
                 <ol style="list-style-type: decimal; padding-left: 1.5rem;">
                     <li>
-                        <strong>Validación de Teclado con <code>KeyAdapter</code> en <code>txtCodigo</code>:</strong>
-                        <br>Debe admitir únicamente dígitos y un máximo estricto de 4 caracteres. Usar <code class="font-mono text-xs">e.consume()</code> si se presiona un caracter no numérico o si la longitud supera 4. En <code class="font-mono text-xs">keyReleased</code>, actualizar <code class="font-mono text-xs">lblContadorCodigo</code>.
+                        <strong>Validación de Hardware con <code>KeyAdapter</code> y <code>e.consume()</code>:</strong>
+                        <br>En <code class="font-mono text-xs">txtCapacidad</code>, bloquear la escritura de cualquier carácter que no sea un dígito numérico entero o la tecla de retroceso.
                     </li>
                     <li>
-                        <strong>Validación de Teclado con <code>KeyAdapter</code> en <code>txtStock</code>:</strong>
-                        <br>Debe admitir únicamente dígitos numéricos enteros usando <code class="font-mono text-xs">Character.isDigit()</code> y <code class="font-mono text-xs">e.consume()</code>.
+                        <strong>Validación de Foco con <code>FocusAdapter</code>:</strong>
+                        <br>En <code class="font-mono text-xs">txtTarifaBase</code>, interceptar <code class="font-mono text-xs">focusLost</code>. Si el contenido no puede ser parseado a <code class="font-mono text-xs">Double</code>, pintar el fondo de la caja en color rojo/rosado suave (<code class="font-mono text-xs">new Color(255, 220, 220)</code>); si es correcto, restablecer a blanco.
                     </li>
                     <li>
-                        <strong>Validación de Foco con <code>FocusAdapter</code> en <code>txtPrecio</code>:</strong>
-                        <br>En <code class="font-mono text-xs">focusLost</code>, verificar si lo ingresado es un número decimal válido (<code class="font-mono text-xs">Double.parseDouble</code>). Si falla o está vacío, pintar el fondo de la caja en color rojo claro (<code class="font-mono text-xs">new Color(255, 220, 220)</code>); si es válido, restaurar a blanco.
+                        <strong>Efecto Hover con <code>MouseAdapter</code>:</strong>
+                        <br>En <code class="font-mono text-xs">btnRegistrarVuelo</code>, cambiar el cursor a <code class="font-mono text-xs">Cursor.HAND_CURSOR</code> al entrar (<code class="font-mono text-xs">mouseEntered</code>).
                     </li>
                     <li>
-                        <strong>Efecto Hover con <code>MouseAdapter</code> en <code>btnRegistrar</code>:</strong>
-                        <br>En <code class="font-mono text-xs">mouseEntered</code>, cambiar el fondo del botón a verde y el cursor a <code class="font-mono text-xs">Cursor.HAND_CURSOR</code>. En <code class="font-mono text-xs">mouseExited</code>, restaurar los colores por defecto.
+                        <strong>Registro de Vuelo (<code>ActionListener</code> con Lambda):</strong>
+                        <br>Parsear los datos con Wrappers (<code class="font-mono text-xs">Integer.parseInt</code>, <code class="font-mono text-xs">Double.parseDouble</code>), crear el objeto <code class="font-mono text-xs">VueloComercial</code>, guardarlo en el <code class="font-mono text-xs">Repositorio&lt;VueloComercial&gt;</code> y actualizar el visor mostrando el <code class="font-mono text-xs">getDetalle()</code> de cada vuelo en <code class="font-mono text-xs">txaConsolaVuelos</code> (igual que tu método <code class="font-mono text-xs">actualizarCartelera</code> del livecoding).
                     </li>
                     <li>
-                        <strong>Evento del Botón Registrar (<code>ActionListener</code> con Lambda):</strong>
-                        <br>Extraer los textos, validar que no existan campos vacíos, llamar a <code class="font-mono text-xs">servicio.registrarProducto(...)</code>, mostrar mensaje con <code class="font-mono text-xs">JOptionPane.showMessageDialog</code> y actualizar el resumen de inventario.
+                        <strong>Venta de Boletos y Control de Aforo:</strong>
+                        <br>Al presionar <code class="font-mono text-xs">btnReservarAsiento</code>, pedir el código del vuelo mediante <code class="font-mono text-xs">JOptionPane.showInputDialog</code>. Buscar el vuelo con <code class="font-mono text-xs">repo.buscar(...)</code>; si existe, solicitar la cantidad de boletos a comprar y ejecutar <code class="font-mono text-xs">vuelo.reservarAsientos(cant)</code> actualizando los asientos disponibles.
                     </li>
                     <li>
-                        <strong>Interceptación de Salida con <code>WindowAdapter</code> en la ventana:</strong>
-                        <br>Configurar <code class="font-mono text-xs">setDefaultCloseOperation(DO_NOTHING_ON_CLOSE)</code>. En <code class="font-mono text-xs">windowClosing</code>, preguntar con <code class="font-mono text-xs">JOptionPane.showConfirmDialog</code>: <em>"¿Está seguro de que desea salir del sistema?"</em>. Cerrar con <code class="font-mono text-xs">dispose()</code> solo si responde afirmativamente.
+                        <strong>Filtrado Declarativo con Streams:</strong>
+                        <br>Al presionar <code class="font-mono text-xs">btnFiltrarPremium</code>, mostrar en el área de texto únicamente los vuelos de clase <code class="font-mono text-xs">EJECUTIVA</code> o <code class="font-mono text-xs">PRIMERA_CLASE</code>.
+                    </li>
+                    <li>
+                        <strong>Búsqueda Segura con <code>Optional&lt;T&gt;</code>:</strong>
+                        <br>Al presionar <code class="font-mono text-xs">btnBuscarCodigo</code>, buscar el vuelo y manejar el resultado con <code class="font-mono text-xs">.ifPresentOrElse()</code>, mostrando una alerta de éxito o de ausencia de datos.
+                    </li>
+                    <li>
+                        <strong>Estrategia Dinámica con Lambda:</strong>
+                        <br>Al presionar <code class="font-mono text-xs">btnPromoMillon</code>, aplicar una promoción del 15% de descuento sobre todos los vuelos usando la interfaz funcional <code class="font-mono text-xs">PromocionVuelo (tarifa -> tarifa * 0.85)</code> y listar los precios con rebaja.
+                    </li>
+                    <li>
+                        <strong>Interceptación de Salida con <code>WindowAdapter</code>:</strong>
+                        <br>Configurar <code class="font-mono text-xs">setDefaultCloseOperation(DO_NOTHING_ON_CLOSE)</code>. En <code class="font-mono text-xs">windowClosing</code>, confirmar con <code class="font-mono text-xs">JOptionPane.showConfirmDialog</code> antes de liberar los recursos con <code class="font-mono text-xs">dispose()</code>.
                     </li>
                 </ol>
             </div>
         </div>
 
-        <!-- PASO 5: MAIN -->
         <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
             <h2><i class="fa-regular fa-play mr-2" style="color: var(--accent-blue);"></i> Paso 5: Punto de Entrada <code>Main.java</code></h2>
             <div class="step-sub">
-                <h5>5.1 Inicialización segura</h5>
-                <p>En <code class="font-mono text-sm">Main</code>, instanciar <code class="font-mono text-sm">InventarioServicio</code>, inyectarlo a <code class="font-mono text-sm">VentanaProducto</code> y desplegarla usando <code class="font-mono text-sm">SwingUtilities.invokeLater(() -> { ... })</code>.</p>
+                <h5>5.1 Despacho en el Event Dispatch Thread (EDT)</h5>
+                <p>En <code class="font-mono text-sm">Main.java</code> (en la raíz de <code class="font-mono text-sm">src</code>, sin paquete, igual que el livecoding), configura el Look and Feel del sistema operativo y lanza la ventana dentro de <code class="font-mono text-sm">SwingUtilities.invokeLater(() -> { ... })</code> para garantizar seguridad concurrente en los componentes de Swing.</p>
             </div>
         </div>
 
-        <!-- PREGUNTAS DE REFLEXIÓN -->
-        <div class="glass-panel" style="border-left: 4px solid var(--una-gold);">
-            <h2><i class="fa-regular fa-brain mr-2" style="color: var(--una-gold);"></i> Preguntas de Reflexión</h2>
-            <ol style="list-style-type: decimal; padding-left: 1.5rem; color: var(--text-muted);">
-                <li>¿Por qué es necesario usar <code class="font-mono text-sm">e.consume()</code> en lugar de simplemente no hacer nada dentro del <code class="font-mono text-sm">keyTyped</code>?</li>
-                <li>¿Qué diferencia técnica existe entre una clase que implementa <code class="font-mono text-sm">KeyListener</code> directamente y una que extiende de <code class="font-mono text-sm">KeyAdapter</code>?</li>
-                <li>¿Por qué debemos establecer <code class="font-mono text-sm">DO_NOTHING_ON_CLOSE</code> al interceptar el cierre de una ventana con <code class="font-mono text-sm">WindowListener</code>?</li>
-                <li>Si un cálculo tomara 10 segundos, ¿por qué NO debemos programarlo directamente dentro del <code class="font-mono text-sm">actionPerformed</code> de un botón?</li>
-            </ol>
-        </div>
-
-        <!-- ENTREGA -->
         <div class="glass-panel" style="border-left: 4px solid var(--una-red); background: rgba(200,16,46,0.04);">
             <h2><i class="fa-regular fa-circle-check mr-2" style="color: var(--una-red);"></i> Entrega del Laboratorio</h2>
             <ol style="list-style-type: decimal; padding-left: 1.5rem; color: var(--text-muted);">
-                <li>Haz commit en GitHub Desktop con el mensaje: <code class="font-mono text-sm">feat: laboratorio 4 — aplicaciones dirigidas por eventos</code> y sube con <em>Push origin</em>.</li>
-                <li>Sube al aula virtual el enlace de tu repositorio de GitHub, capturas de pantalla probando las validaciones y el archivo con las respuestas a las preguntas de reflexión.</li>
+                <li>Realiza commit en GitHub Desktop con el mensaje: <code class="font-mono text-sm">feat: laboratorio 4 — sistema integral de vuelos aerouna</code> y sube los cambios con <em>Push origin</em>.</li>
+                <li>Sube al aula virtual el enlace de tu repositorio de GitHub junto con capturas de pantalla de la aplicación ejecutándose (demostrando la validación de hardware, la reserva de asientos y el filtrado por Stream) y el archivo con las respuestas a las preguntas de reflexión.</li>
             </ol>
         </div>
 
-        <!-- PIE DE PÁGINA -->
         <div class="text-center text-xs" style="color: var(--text-muted); padding: 2rem 0 1rem 0; border-top: 1px solid var(--border-panel);">
             <p>Laboratorio 4 — Programación III &bull; Universidad Nacional &bull; 2026</p>
             <p class="mt-1">Elaborado por: Kristel Duarte Pérez</p>

@@ -1068,76 +1068,43 @@ panelPrincipal.<span class="darcula-func">addKeyListener</span>(<span class="dar
             </div>
         </div>
 
-        <!-- ==================== SLIDE 14: EVENTOS Y EL PATRÓN MVC ==================== -->
-        <div class="slide">
-            <div class="w-full max-w-[92%] mx-auto relative z-10">
-                <i class="fa-solid fa-shapes bg-icon text-[350px] -right-10 opacity-5" style="color: var(--una-red, #c41e3a);"></i>
-                <div class="text-center mb-4">
-                    <h2 class="text-5xl font-bold mb-2">Eventos y la Arquitectura de Software</h2>
-                    <p class="text-xl" style="color: var(--text-muted, #6c757d);">Conectando la gestión de eventos con el Proyecto #1 sin código espagueti.</p>
-                </div>
-
-                <div class="glass-panel p-6 border-t-4 max-w-5xl mx-auto" style="border-color: var(--una-red, #c41e3a);">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-center">
-                        <div class="p-4 bg-blue-50 rounded-xl border border-blue-200">
-                            <i class="fa-regular fa-window-maximize text-3xl text-blue-600 mb-2"></i>
-                            <h4 class="font-bold text-gray-900 mb-1">1. Vista (GUI)</h4>
-                            <p class="text-xs text-gray-600">Captura el <code class="font-mono text-xs">ActionEvent</code> o <code class="font-mono text-xs">KeyEvent</code>, extrae los textos de los campos y <strong>no hace cálculos matemáticos</strong>.</p>
-                        </div>
-
-                        <div class="p-4 bg-purple-50 rounded-xl border border-purple-200">
-                            <i class="fa-solid fa-arrow-right-arrow-left text-3xl text-purple-600 mb-2"></i>
-                            <h4 class="font-bold text-gray-900 mb-1">2. Controlador</h4>
-                            <p class="text-xs text-gray-600">Recibe la llamada del Listener, valida las reglas del negocio y llama a los métodos del modelo para guardar o consultar.</p>
-                        </div>
-
-                        <div class="p-4 bg-green-50 rounded-xl border border-green-200">
-                            <i class="fa-solid fa-database text-3xl text-green-600 mb-2"></i>
-                            <h4 class="font-bold text-gray-900 mb-1">3. Modelo</h4>
-                            <p class="text-xs text-gray-600">Guarda los objetos en las listas en memoria (<code class="font-mono text-xs">ArrayList</code>) y dispara eventos de negocio si el estado cambia.</p>
-                        </div>
-                    </div>
-
-                    <div class="mt-5 p-3 bg-red-50 rounded-xl border border-red-200 text-xs text-red-900 flex items-start gap-3">
-                        <i class="fa-solid fa-circle-exclamation text-lg text-red-600 shrink-0 mt-0.5"></i>
-                        <span><strong>Recordatorio para el Proyecto #1:</strong> En las revisiones se penaliza duramente poner sentencias <code class="font-mono">new ArrayList<>()</code> o cálculos financieros dentro de los métodos <code class="font-mono">actionPerformed</code> de la Vista. Los Listeners solo son <em>disparadores</em> que delegan el trabajo.</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- ==================== SLIDE 15: LABORATORIO ==================== -->
         <div class="slide">
             <div class="text-center w-full max-w-5xl relative z-10">
-                <i class="fa-solid fa-flask-vial bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-green, #10b981);"></i>
+                <i class="fa-solid fa-film bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-green, #10b981);"></i>
 
                 <div class="glass-panel inline-block px-8 py-4 rounded-full mb-8 border-2" style="border-color: var(--accent-green, #10b981);">
-                    <h2 class="text-5xl font-bold text-green-700">¡Hora del Laboratorio #4!</h2>
+                    <h2 class="text-5xl font-bold text-green-700">¡Hora del Livecoding Integrador!</h2>
                 </div>
 
                 <div class="glass-panel p-8 max-w-4xl mx-auto border-t-8 text-left shadow-2xl" style="border-color: var(--accent-green, #10b981);">
                     <h3 class="text-3xl font-bold mb-3 flex items-center gap-3 text-green-800">
-                        <i class="fa-solid fa-laptop-code"></i>
-                        Poniendo los Eventos en Práctica: Sistema de Cafetería
+                        <i class="fa-solid fa-clapperboard"></i>
+                        Sistema de Cartelera & Taquilla: NovaCinema
                     </h3>
                     <p class="text-base leading-relaxed mb-6 text-gray-700">
-                        Llevaremos a código real la gestión de eventos, validaciones y retroalimentación visual integrando Modelo, Servicio y Vista:
+                        Construiremos en vivo una aplicación por capas integrando todos los conceptos clave vistos hasta hoy con GUI Form:
                     </p>
                     
                     <div class="space-y-4 text-sm text-gray-800">
                         <div class="flex items-start gap-4 bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm">
                             <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold shrink-0">1</div>
-                            <p class="pt-1"><strong>Validación y Contadores con KeyAdapter:</strong> Filtro de solo dígitos numéricos y control de longitud máxima mediante <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">e.consume()</code> con actualización de estado en tiempo real.</p>
+                            <p class="pt-1"><strong>Modelo Polimórfico y Wrappers:</strong> Herencia con clase abstracta <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">ElementoCartelera</code>, subclases (<code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">FuncionPelicula</code> y <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">EventoEspecial</code>) y cálculo de tarifas con <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">Switch Expressions (->)</code>.</p>
                         </div>
                         
                         <div class="flex items-start gap-4 bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm">
                             <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold shrink-0">2</div>
-                            <p class="pt-1"><strong>Alertas con FocusAdapter y Hover con MouseAdapter:</strong> Validación de formato decimal al perder el foco con cambios de color y efectos interactivos sobre botones de acción.</p>
+                            <p class="pt-1"><strong>Servicio Genérico, Streams & Optional:</strong> Repositorio desacoplado <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">Repositorio&lt;T&gt;</code> para filtrado declarativo con <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">.filter()</code>, ordenamiento con <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">Comparator</code> y búsquedas seguras con <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">Optional&lt;T&gt;</code>.</p>
                         </div>
                         
                         <div class="flex items-start gap-4 bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm">
                             <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold shrink-0">3</div>
-                            <p class="pt-1"><strong>Delegación y WindowAdapter:</strong> Registro desacoplado mediante <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">ActionListener</code> e interceptación controlada del cierre con <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">DO_NOTHING_ON_CLOSE</code> y <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">JOptionPane</code>.</p>
+                            <p class="pt-1"><strong>Estrategias con Lambdas e Interfaces:</strong> Inyección dinámica de descuentos implementando la interfaz funcional <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">@FunctionalInterface Promocion</code> mediante expresiones lambda.</p>
+                        </div>
+
+                        <div class="flex items-start gap-4 bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm">
+                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold shrink-0">4</div>
+                            <p class="pt-1"><strong>GUI Form y Eventos Swing:</strong> Enlace visual con el diseñador de IntelliJ, validación de hardware en tiempo real con <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">KeyAdapter (e.consume())</code> y despacho seguro en el hilo <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">EDT</code>.</p>
                         </div>
                     </div>
                 </div>
