@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 5a — Taquilla de Cine (GUI + Eventos)</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --bg-panel: #ffffff;
+            --bg-terminal: #2b2b2b;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-panel: #e2e8f0;
+            --una-red: #c8102e;
+            --una-gold: #d4ac0d;
+            --accent-blue: #2563eb;
+            --accent-green: #16a34a;
+            --accent-purple: #7c3aed;
+            --accent-peach: #ea580c;
+        }
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --bg-panel: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-panel: #334155;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .glass-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .glass-panel h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.75rem; }
+        .glass-panel h3 { font-size: 1.3rem; font-weight: 700; margin: 1.2rem 0 0.6rem 0; }
+        .glass-panel h4 { font-size: 1.1rem; font-weight: 700; margin: 1rem 0 0.4rem 0; }
+        .glass-panel p { color: var(--text-muted); margin-bottom: 0.75rem; }
+        .glass-panel ul, .glass-panel ol { color: var(--text-muted); padding-left: 1.5rem; margin-bottom: 0.75rem; }
+        .glass-panel li { margin-bottom: 0.3rem; }
+
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .badge-red { background: rgba(200,16,46,0.12); color: var(--una-red); }
+        .badge-blue { background: rgba(37,99,235,0.12); color: var(--accent-blue); }
+        .badge-green { background: rgba(22,163,74,0.12); color: var(--accent-green); }
+        .badge-purple { background: rgba(124,58,237,0.12); color: var(--accent-purple); }
+        .badge-gold { background: rgba(212,172,13,0.12); color: var(--una-gold); }
+
+        .code-fragment {
+            background: #2b2b2b;
+            border-radius: 0.6rem;
+            padding: 1rem 1.2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            color: #a9b7c6;
+            margin: 0.5rem 0;
+            border: 1px solid #323232;
+            display: block;
+            white-space: pre;
+            overflow-x: auto;
+            width: 100%;
+            line-height: 1.5;
+        }
+
+        .d-comment { color: #808080; font-style: italic; }
+        .d-keyword { color: #cc7832; font-weight: bold; }
+        .d-string { color: #6a8759; }
+        .d-number { color: #6897bb; }
+        .d-annotation { color: #bbb529; }
+        .d-method { color: #ffc66d; }
+        .d-field { color: #9876aa; }
+        .d-type { color: #a9b7c6; font-weight: bold; }
+
+        .step-sub {
+            border-left: 3px solid var(--accent-blue);
+            padding-left: 1rem;
+            margin: 1.2rem 0;
+        }
+        .step-sub h5 {
+            font-weight: 800;
+            font-size: 1rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.2rem;
+        }
+        .step-sub p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+        }
+
+        .highlight-box {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--una-gold);
+            background: rgba(212,172,13,0.06);
+            margin: 0.75rem 0;
+        }
+        .highlight-box strong { color: var(--una-gold); }
+
+        .error-box {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--una-red);
+            background: rgba(200,16,46,0.06);
+            margin: 0.75rem 0;
+        }
+        .error-box strong { color: var(--una-red); }
+
+        .float-btn {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 9999px;
+            padding: 0.65rem 1rem;
+            font-size: 1rem;
+            color: var(--text-main);
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transition: transform 0.15s, background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .float-btn:hover { transform: scale(1.05); background: var(--border-panel); }
+
+        details {
+            margin-top: 1.2rem;
+        }
+        details summary {
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        details summary:hover { color: var(--accent-blue); }
+
+        .glossary {
+            text-decoration: underline;
+            text-decoration-style: dotted;
+            text-underline-offset: 0.2em;
+            cursor: help;
+            position: relative;
+        }
+        .glossary:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2b2b2b;
+            color: #a9b7c6;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.4rem;
+            font-size: 0.8rem;
+            font-weight: 400;
+            white-space: nowrap;
+            z-index: 100;
+            pointer-events: none;
+            border: 1px solid #555555;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .glass-panel { padding: 1rem; }
+            .glass-panel h2 { font-size: 1.4rem; }
+            .code-fragment { font-size: 0.7rem; padding: 0.4rem 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar modo claro/oscuro">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+
+    <div class="container">
+
+        <!-- PORTADA -->
+        <div class="glass-panel text-center" style="border-top: 6px solid var(--una-red);">
+            <div class="flex justify-center mb-4">
+                <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png" alt="Logo UNA" class="h-20 object-contain"
+                     onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png';">
+            </div>
+            <h2 class="text-3xl font-extrabold">Laboratorio 5a — Taquilla de Cine</h2>
+            <p class="text-xl" style="color: var(--una-red); font-weight: 700;">Arquitectura de 3 Capas y Eventos GUI</p>
+            <p class="text-sm" style="color: var(--text-muted);">Programación III — Semana 5: Aplicaciones Dirigidas por Eventos (Práctica Guiada)</p>
+            <div class="flex flex-wrap justify-center gap-3 mt-3">
+                <span class="badge badge-red">IntelliJ GUI Designer</span>
+                <span class="badge badge-blue">Modelo-Vista-Servicio</span>
+                <span class="badge badge-green">ArrayList</span>
+                <span class="badge badge-purple">ActionListener</span>
+                <span class="badge badge-gold">KeyAdapter &amp; MouseAdapter</span>
+            </div>
+            <div class="mt-4 text-sm" style="color: var(--text-muted);">
+                <i class="fa-regular fa-clock mr-1"></i> Duración estimada: 1 hora &nbsp;·&nbsp;
+                <i class="fa-regular fa-user mr-1"></i> Individual / Parejas
+            </div>
+        </div>
+
+        <!-- INTRODUCCIÓN -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-gold);">
+            <h2><i class="fa-regular fa-compass mr-2" style="color: var(--una-gold);"></i> Introducción</h2>
+            <p>
+                En este laboratorio construiremos una <strong>aplicación de escritorio para una taquilla de cine</strong> usando Java Swing. 
+                Aplicaremos la <strong>arquitectura de 3 capas</strong> (Modelo, Servicio, Vista) y utilizaremos <strong>eventos</strong> para 
+                manejar las interacciones del usuario: clics en botones, teclado (Enter) y ratón (hover). 
+            </p>
+            <p>
+                Trabajaremos con <strong>IntelliJ IDEA y su GUI Designer</strong> para crear el formulario visualmente, 
+                y aprenderemos a cargar imágenes desde el <strong>classpath</strong>.
+            </p>
+            <div class="highlight-box">
+                <strong><i class="fa-regular fa-lightbulb mr-1"></i> Objetivo: </strong>
+                Al finalizar, serás capaz de:
+            </div>
+            <ul>
+                <li>Diseñar una interfaz gráfica usando el GUI Designer de IntelliJ.</li>
+                <li>Implementar la separación de responsabilidades en 3 capas.</li>
+                <li>Manejar eventos de acción (<code class="font-mono text-sm">ActionListener</code>), teclado (<code class="font-mono text-sm">KeyAdapter</code>) y ratón (<code class="font-mono text-sm">MouseAdapter</code>).</li>
+                <li>Validar entradas del usuario con <code class="font-mono text-sm">try-catch</code> y <code class="font-mono text-sm">JOptionPane</code>.</li>
+                <li>Cargar imágenes desde el classpath para mostrar logos.</li>
+            </ul>
+        </div>
+
+        <!-- PASO 1 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+            <h2><i class="fa-regular fa-folder-open mr-2" style="color: var(--accent-blue);"></i> Paso 1: Crear el Proyecto y Estructura de Paquetes</h2>
+
+            <div class="step-sub">
+                <h5>1.1 Crear un nuevo proyecto Java en IntelliJ</h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Abrir IntelliJ IDEA y seleccionar <em>New Project</em>.</li>
+                    <li>Elegir <strong>Java</strong> con el JDK instalado (versión 11 o superior).</li>
+                    <li>Nombre del proyecto: <code class="font-mono text-sm">TaquillaCine</code>.</li>
+                    <li>Crear el proyecto.</li>
+                </ol>
+            </div>
+
+            <div class="step-sub">
+                <h5>1.2 Crear la carpeta <code>src</code> y marcarla como Sources Root</h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>En el panel de proyecto, hacer clic derecho sobre la carpeta raíz del proyecto.</li>
+                    <li>Seleccionar <em>New → Directory</em> y escribir <code class="font-mono text-sm">src</code>.</li>
+                    <li>Hacer clic derecho sobre <code class="font-mono text-sm">src</code> → <em>Mark Directory as → Sources Root</em>.</li>
+                </ol>
+                <div class="highlight-box">
+                    <i class="fa-regular fa-circle-info mr-1"></i> La carpeta <code class="font-mono text-sm">src</code> quedará de color azul, indicando que es la raíz del código fuente.
+                </div>
+                <details>
+                    <summary><strong>¿Por qué "Sources Root"?</strong></summary>
+                    <p>Al marcar la carpeta como <em>Sources Root</em>, estamos diciendo a IntelliJ: "Aquí empieza mi código Java". El IDE usará esta carpeta como punto de partida para buscar clases, lo que permite que los nombres de los paquetes se resuelvan correctamente.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>1.3 Crear los paquetes <code>modelo</code>, <code>servicio</code> y <code>vista</code></h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Hacer clic derecho sobre <code class="font-mono text-sm">src</code> → <em>New → Package</em>.</li>
+                    <li>Escribir <code class="font-mono text-sm">modelo</code> y presionar Enter.</li>
+                    <li>Repetir para crear <code class="font-mono text-sm">servicio</code> y <code class="font-mono text-sm">vista</code>.</li>
+                </ol>
+                <div class="error-box">
+                    <strong><i class="fa-regular fa-circle-exclamation mr-1"></i> ¡Atención! ¿Carpeta (Directory) o Paquete (Package)?</strong>
+                    <p>Esta es la confusión más común: como los paquetes se ven como carpetas en el explorador de archivos, muchas veces intentamos hacer clic en <em>New → Directory</em>. <br>
+                    <strong>Regla de oro:</strong> Si estás creando una carpeta <strong>dentro de <code>src</code></strong> (que es azul), <strong>siempre debes usar <em>New → Package</em></strong>. Java necesita que se definan como paquetes para poder organizar las clases. La opción <em>Directory</em> se usa para carpetas que no contienen código Java (por ejemplo, las imágenes y archivos de configuración que veremos en el siguiente paso).</p>
+                </div>
+                <details>
+                    <summary><strong>¿Por qué separamos en paquetes?</strong></summary>
+                    <p>Para mantener la <strong>arquitectura de 3 capas</strong>: los datos (modelo), la lógica de negocio (servicio) y la interfaz de usuario (vista). Esto evita el código espagueti y facilita el mantenimiento.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>1.4 Crear la carpeta <code>resources</code> para imágenes</h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Hacer clic derecho sobre la raíz del proyecto → <em>New → Directory</em> → <code class="font-mono text-sm">resources</code>. <strong>Aquí sí usamos Directory.</strong></li>
+                    <li>Hacer clic derecho sobre <code class="font-mono text-sm">resources</code> → <em>Mark Directory as → Resources Root</em>.</li>
+                    <li>Dentro de <code class="font-mono text-sm">resources</code>, crear la carpeta <code class="font-mono text-sm">img</code>.</li>
+                </ol>
+                <p>Descargar una imagen de logo de cine (o usar la de la UNA) y colocarla dentro de <code class="font-mono text-sm">resources/img/</code> con el nombre <code class="font-mono text-sm">logo.png</code>.</p>
+                <details>
+                    <summary><strong>¿Por qué en resources usamos Directory?</strong></summary>
+                    <p>La carpeta <code class="font-mono text-sm">resources</code> contiene archivos estáticos (imágenes, textos, configuraciones). No son clases de Java, por lo tanto no necesitan ser tratados como paquetes. Aquí, la opción <em>Directory</em> es la correcta para no confundir al compilador.</p>
+                </details>
+            </div>
+        </div>
+
+        <!-- PASO 2: MODELO -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-purple);">
+            <h2><i class="fa-regular fa-cube mr-2" style="color: var(--accent-purple);"></i> Paso 2: Crear la Capa de Modelo (<code>Boleto.java</code>)</h2>
+
+            <div class="step-sub">
+                <h5>2.1 Crear la clase <code>Boleto</code> en el paquete <code>modelo</code></h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Clic derecho sobre <code class="font-mono text-sm">modelo</code> → <em>New → Java Class</em>.</li>
+                    <li>Escribir <code class="font-mono text-sm">Boleto</code> y presionar Enter.</li>
+                </ol>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.2 Escribir el código de la clase</h5>
+                <div class="code-fragment">
+<span class="d-comment">// Paquete modelo</span>
+<span class="d-keyword">package</span> modelo;
+
+<span class="d-comment">// Clase que representa un boleto de cine</span>
+<span class="d-keyword">public class</span> <span class="d-type">Boleto</span> {
+    <span class="d-keyword">private</span> <span class="d-type">String</span> <span class="d-field">pelicula</span>;
+    <span class="d-keyword">private</span> <span class="d-type">String</span> <span class="d-field">sala</span>;
+    <span class="d-keyword">private</span> <span class="d-type">double</span> <span class="d-field">precio</span>;
+
+    <span class="d-comment">// Constructor</span>
+    <span class="d-keyword">public</span> <span class="d-method">Boleto</span>(<span class="d-type">String</span> <span class="d-field">pelicula</span>, <span class="d-type">String</span> <span class="d-field">sala</span>, <span class="d-type">double</span> <span class="d-field">precio</span>) {
+        <span class="d-keyword">this</span>.<span class="d-field">pelicula</span> = <span class="d-field">pelicula</span>;
+        <span class="d-keyword">this</span>.<span class="d-field">sala</span> = <span class="d-field">sala</span>;
+        <span class="d-keyword">this</span>.<span class="d-field">precio</span> = <span class="d-field">precio</span>;
+    }
+
+    <span class="d-comment">// Getters</span>
+    <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">getPelicula</span>() { <span class="d-keyword">return</span> <span class="d-field">pelicula</span>; }
+    <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">getSala</span>()     { <span class="d-keyword">return</span> <span class="d-field">sala</span>; }
+    <span class="d-keyword">public</span> <span class="d-type">double</span> <span class="d-method">getPrecio</span>()   { <span class="d-keyword">return</span> <span class="d-field">precio</span>; }
+
+    <span class="d-annotation">@Override</span>
+    <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">toString</span>() {
+        <span class="d-keyword">return</span> <span class="d-field">pelicula</span> + <span class="d-string">" - Sala "</span> + <span class="d-field">sala</span> + <span class="d-string">" - ¢"</span> + <span class="d-field">precio</span>;
+    }
+}
+                </div>
+                <details>
+                    <summary><strong>¿Qué contiene la clase <code>Boleto</code>?</strong></summary>
+                    <p>Es un <span class="glossary" tabindex="0" data-tooltip="Plain Old Java Object: clase simple con atributos privados, constructor y getters.">POJO</span> que representa los datos de un boleto. No tiene lógica de negocio, solo almacena información.</p>
+                </details>
+            </div>
+        </div>
+
+        <!-- PASO 3: SERVICIO -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
+            <h2><i class="fa-regular fa-gears mr-2" style="color: var(--accent-green);"></i> Paso 3: Crear la Capa de Servicio (<code>TaquillaService.java</code>)</h2>
+
+            <div class="step-sub">
+                <h5>3.1 Crear la clase <code>TaquillaService</code> en el paquete <code>servicio</code></h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Clic derecho sobre <code class="font-mono text-sm">servicio</code> → <em>New → Java Class</em>.</li>
+                    <li>Escribir <code class="font-mono text-sm">TaquillaService</code>.</li>
+                </ol>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.2 Implementar la lógica de negocio</h5>
+                <div class="code-fragment">
+<span class="d-keyword">package</span> servicio;
+
+<span class="d-keyword">import</span> modelo.<span class="d-type">Boleto</span>;
+<span class="d-keyword">import</span> java.util.<span class="d-type">ArrayList</span>;
+
+<span class="d-keyword">public class</span> <span class="d-type">TaquillaService</span> {
+    <span class="d-keyword">private</span> <span class="d-type">ArrayList</span>&lt;<span class="d-type">Boleto</span>&gt; <span class="d-field">boletos</span>;
+
+    <span class="d-keyword">public</span> <span class="d-method">TaquillaService</span>() {
+        <span class="d-field">boletos</span> = <span class="d-keyword">new</span> <span class="d-type">ArrayList</span>&lt;&gt;();
+    }
+
+    <span class="d-comment">// Agregar boleto a la lista</span>
+    <span class="d-keyword">public void</span> <span class="d-method">venderBoleto</span>(<span class="d-type">Boleto</span> <span class="d-field">boleto</span>) {
+        <span class="d-field">boletos</span>.<span class="d-method">add</span>(<span class="d-field">boleto</span>);
+    }
+
+    <span class="d-comment">// Calcular el total de ingresos</span>
+    <span class="d-keyword">public double</span> <span class="d-method">calcularTotal</span>() {
+        <span class="d-type">double</span> <span class="d-field">total</span> = <span class="d-number">0</span>;
+        <span class="d-keyword">for</span> (<span class="d-type">Boleto</span> <span class="d-field">b</span> : <span class="d-field">boletos</span>) {
+            <span class="d-field">total</span> += <span class="d-field">b</span>.<span class="d-method">getPrecio</span>();
+        }
+        <span class="d-keyword">return</span> <span class="d-field">total</span>;
+    }
+
+    <span class="d-comment">// Obtener la cantidad de boletos vendidos</span>
+    <span class="d-keyword">public int</span> <span class="d-method">contarBoletos</span>() {
+        <span class="d-keyword">return</span> <span class="d-field">boletos</span>.<span class="d-method">size</span>();
+    }
+}
+                </div>
+                <details>
+                    <summary><strong>¿Qué hace <code>TaquillaService</code>?</strong></summary>
+                    <p>Esta clase gestiona la colección de boletos en un <code class="font-mono text-sm">ArrayList</code>. Proporciona métodos para agregar boletos, calcular el total de ingresos y contar cuántos boletos se han vendido. Es la <strong>lógica de negocio</strong>.</p>
+                </details>
+            </div>
+        </div>
+
+        <!-- PASO 4: VISTA (GUI Designer) -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-red);">
+            <h2><i class="fa-regular fa-window-maximize mr-2" style="color: var(--una-red);"></i> Paso 4: Crear la Vista con IntelliJ GUI Designer</h2>
+
+            <div class="step-sub">
+                <h5>4.1 Crear un GUI Form</h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Clic derecho sobre el paquete <code class="font-mono text-sm">vista</code> → <em>New → GUI Form</em>.</li>
+                    <li>Nombre: <code class="font-mono text-sm">FormTaquilla</code>.</li>
+                    <li>Aceptar. Se crearán dos archivos: <code class="font-mono text-sm">FormTaquilla.form</code> y <code class="font-mono text-sm">FormTaquilla.java</code>.</li>
+                </ol>
+                <div class="highlight-box">
+                    <i class="fa-regular fa-circle-info mr-1"></i> <strong>Acoplamiento:</strong> El archivo <code class="font-mono text-sm">.form</code> contiene el diseño en XML, y el <code class="font-mono text-sm">.java</code> contiene el código de la clase. IntelliJ inyecta el código de creación en tiempo de compilación.
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>4.2 Diseñar el formulario</h5>
+                <p>En la pestaña de diseño (Design), arrastra los siguientes componentes desde la paleta:</p>
+                <ul>
+                    <li><strong>JPanel</strong> como contenedor principal (puedes usar el que viene por defecto).</li>
+                    <li><strong>JLabel</strong> para el título: "Taquilla de Cine".</li>
+                    <li><strong>JLabel</strong> para el logo: coloca un <code class="font-mono text-sm">JLabel</code> y en la propiedad <code class="font-mono text-sm">icon</code> selecciona <em>Classpath</em> y elige la imagen <code class="font-mono text-sm">logo.png</code>.</li>
+                    <li><strong>JLabel</strong> y <strong>JTextField</strong> para "Película": <code class="font-mono text-sm">txtPelicula</code>.</li>
+                    <li><strong>JLabel</strong> y <strong>JTextField</strong> para "Sala": <code class="font-mono text-sm">txtSala</code>.</li>
+                    <li><strong>JLabel</strong> y <strong>JTextField</strong> para "Precio": <code class="font-mono text-sm">txtPrecio</code>.</li>
+                    <li><strong>JButton</strong> "Vender Boleto": <code class="font-mono text-sm">btnVender</code>.</li>
+                    <li><strong>JButton</strong> "Mostrar Total": <code class="font-mono text-sm">btnTotal</code>.</li>
+                    <li><strong>JButton</strong> "Limpiar Campos": <code class="font-mono text-sm">btnLimpiar</code>.</li>
+                    <li><strong>JLabel</strong> para mostrar mensajes o totales: <code class="font-mono text-sm">lblMensaje</code>.</li>
+                </ul>
+                <p>Organiza los componentes con un <code class="font-mono text-sm">GridLayout</code> o <code class="font-mono text-sm">BorderLayout</code> según prefieras. Asegúrate de asignar nombres a las variables (field name) usando <strong>notación húngara</strong>.</p>
+                <details>
+                    <summary><strong>¿Cómo asignar nombres a los componentes y qué es la notación húngara?</strong></summary>
+                    <p>Selecciona el componente en el diseño, ve al Inspector de propiedades y en <code class="font-mono text-sm">field name</code> escribe el nombre de la variable.<br>
+                    Usamos <strong>notación húngara</strong> (poner un prefijo al nombre) para identificar rápidamente el tipo de componente en el código:
+                    <ul>
+                        <li><strong>txt</strong> para JTextField (ej: <code>txtPelicula</code>)</li>
+                        <li><strong>btn</strong> para JButton (ej: <code>btnVender</code>)</li>
+                        <li><strong>lbl</strong> para JLabel (ej: <code>lblMensaje</code>)</li>
+                    </ul>
+                    Esto hará que el código sea mucho más fácil de leer.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>4.3 Configurar la ventana</h5>
+                <p>En el código <code class="font-mono text-sm">FormTaquilla.java</code>, agrega el siguiente constructor y configuración:</p>
+                <div class="code-fragment">
+<span class="d-keyword">public</span> <span class="d-method">FormTaquilla</span>() {
+    <span class="d-comment">// Inicializa los componentes del formulario (generado por IntelliJ)</span>
+    <span class="d-method">$$$setupUI$$$</span>();
+    <span class="d-comment">// Configuración de la ventana</span>
+    <span class="d-method">setTitle</span>(<span class="d-string">"Taquilla de Cine"</span>);
+    <span class="d-method">setSize</span>(<span class="d-number">500</span>, <span class="d-number">400</span>);
+    <span class="d-method">setDefaultCloseOperation</span>(<span class="d-type">JFrame</span>.<span class="d-field">EXIT_ON_CLOSE</span>);
+    <span class="d-method">setLocationRelativeTo</span>(<span class="d-keyword">null</span>);
+    <span class="d-method">setContentPane</span>(<span class="d-field">panelPrincipal</span>); <span class="d-comment">// panelPrincipal es el JPanel principal del formulario</span>
+}
+                </div>
+                <p><strong>Nota:</strong> El método <code class="font-mono text-sm">$$$setupUI$$$()</code> es generado automáticamente por IntelliJ; no lo modifiques. El panel principal se llama <code class="font-mono text-sm">panelPrincipal</code> por defecto, pero puedes cambiarle el nombre en el Inspector.</p>
+            </div>
+        </div>
+
+        <!-- PASO 5: EVENTOS -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-peach);">
+            <h2><i class="fa-regular fa-bolt mr-2" style="color: var(--accent-peach);"></i> Paso 5: Conectar los Eventos</h2>
+
+            <p>Ahora vamos a darle funcionalidad a los botones y campos. Trabajaremos en el archivo <code class="font-mono text-sm">FormTaquilla.java</code>.</p>
+
+            <div class="step-sub">
+                <h5>5.1 Declarar el servicio como atributo</h5>
+                <div class="code-fragment">
+<span class="d-keyword">private</span> <span class="d-type">TaquillaService</span> <span class="d-field">servicio</span>;
+                </div>
+                <p>En el constructor, instanciar el servicio:</p>
+                <div class="code-fragment">
+<span class="d-field">servicio</span> = <span class="d-keyword">new</span> <span class="d-type">TaquillaService</span>();
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.2 Evento de clic en "Vender Boleto" (<code>ActionListener</code>)</h5>
+                <p>Usaremos una expresión lambda para el <code class="font-mono text-sm">ActionListener</code>.</p>
+                <div class="code-fragment">
+<span class="d-field">btnVender</span>.<span class="d-method">addActionListener</span>(<span class="d-field">e</span> -> {
+    <span class="d-keyword">try</span> {
+        <span class="d-type">String</span> <span class="d-field">pelicula</span> = <span class="d-field">txtPelicula</span>.<span class="d-method">getText</span>().<span class="d-method">trim</span>();
+        <span class="d-type">String</span> <span class="d-field">sala</span>     = <span class="d-field">txtSala</span>.<span class="d-method">getText</span>().<span class="d-method">trim</span>();
+        <span class="d-type">String</span> <span class="d-field">precioStr</span> = <span class="d-field">txtPrecio</span>.<span class="d-method">getText</span>().<span class="d-method">trim</span>();
+
+        <span class="d-comment">// Validar campos vacíos</span>
+        <span class="d-keyword">if</span> (<span class="d-field">pelicula</span>.<span class="d-method">isEmpty</span>() || <span class="d-field">sala</span>.<span class="d-method">isEmpty</span>() || <span class="d-field">precioStr</span>.<span class="d-method">isEmpty</span>()) {
+            <span class="d-type">JOptionPane</span>.<span class="d-method">showMessageDialog</span>(<span class="d-keyword">this</span>, <span class="d-string">"Todos los campos son obligatorios."</span>, <span class="d-string">"Error"</span>, <span class="d-type">JOptionPane</span>.<span class="d-field">WARNING_MESSAGE</span>);
+            <span class="d-keyword">return</span>;
+        }
+
+        <span class="d-comment">// Convertir precio</span>
+        <span class="d-type">double</span> <span class="d-field">precio</span> = <span class="d-type">Double</span>.<span class="d-method">parseDouble</span>(<span class="d-field">precioStr</span>);
+        <span class="d-keyword">if</span> (<span class="d-field">precio</span> <= <span class="d-number">0</span>) {
+            <span class="d-type">JOptionPane</span>.<span class="d-method">showMessageDialog</span>(<span class="d-keyword">this</span>, <span class="d-string">"El precio debe ser mayor que 0."</span>, <span class="d-string">"Error"</span>, <span class="d-type">JOptionPane</span>.<span class="d-field">WARNING_MESSAGE</span>);
+            <span class="d-keyword">return</span>;
+        }
+
+        <span class="d-comment">// Crear boleto y registrarlo</span>
+        <span class="d-type">Boleto</span> <span class="d-field">boleto</span> = <span class="d-keyword">new</span> <span class="d-type">Boleto</span>(<span class="d-field">pelicula</span>, <span class="d-field">sala</span>, <span class="d-field">precio</span>);
+        <span class="d-field">servicio</span>.<span class="d-method">venderBoleto</span>(<span class="d-field">boleto</span>);
+
+        <span class="d-comment">// Mostrar mensaje de éxito</span>
+        <span class="d-type">JOptionPane</span>.<span class="d-method">showMessageDialog</span>(<span class="d-keyword">this</span>, <span class="d-string">"¡Boleto vendido!\n"</span> + <span class="d-field">boleto</span>.<span class="d-method">toString</span>(), <span class="d-string">"Éxito"</span>, <span class="d-type">JOptionPane</span>.<span class="d-field">INFORMATION_MESSAGE</span>);
+
+        <span class="d-comment">// Actualizar el contador en la interfaz (opcional)</span>
+        <span class="d-field">lblMensaje</span>.<span class="d-method">setText</span>(<span class="d-string">"Boletos vendidos: "</span> + <span class="d-field">servicio</span>.<span class="d-method">contarBoletos</span>());
+
+    } <span class="d-keyword">catch</span> (<span class="d-type">NumberFormatException</span> <span class="d-field">ex</span>) {
+        <span class="d-type">JOptionPane</span>.<span class="d-method">showMessageDialog</span>(<span class="d-keyword">this</span>, <span class="d-string">"El precio debe ser un número válido."</span>, <span class="d-string">"Error de Formato"</span>, <span class="d-type">JOptionPane</span>.<span class="d-field">ERROR_MESSAGE</span>);
+    }
+});
+                </div>
+                <details>
+                    <summary><strong>¿Qué hace el <code>try-catch</code>? ¿Por qué usar <code>JOptionPane</code>?</strong></summary>
+                    <p>El <code>try-catch</code> captura la excepción <code class="font-mono text-sm">NumberFormatException</code> si el usuario escribe un precio no numérico (letras o símbolos), evitando que la aplicación se estrelle.<br>
+                    Usamos <code class="font-mono text-sm">JOptionPane.showMessageDialog</code> en lugar de imprimir en la consola (<code>System.out</code>), porque el usuario está viendo la ventana de la aplicación y no tiene acceso a la consola del programador. ¡El mensaje debe aparecer en la pantalla!</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.3 Evento "Mostrar Total"</h5>
+                <div class="code-fragment">
+<span class="d-field">btnTotal</span>.<span class="d-method">addActionListener</span>(<span class="d-field">e</span> -> {
+    <span class="d-type">double</span> <span class="d-field">total</span> = <span class="d-field">servicio</span>.<span class="d-method">calcularTotal</span>();
+    <span class="d-type">JOptionPane</span>.<span class="d-method">showMessageDialog</span>(<span class="d-keyword">this</span>, <span class="d-string">"Total de ingresos: ¢"</span> + <span class="d-field">total</span>, <span class="d-string">"Resumen"</span>, <span class="d-type">JOptionPane</span>.<span class="d-field">INFORMATION_MESSAGE</span>);
+});
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.4 Evento "Limpiar Campos"</h5>
+                <div class="code-fragment">
+<span class="d-field">btnLimpiar</span>.<span class="d-method">addActionListener</span>(<span class="d-field">e</span> -> {
+    <span class="d-field">txtPelicula</span>.<span class="d-method">setText</span>(<span class="d-string">""</span>);
+    <span class="d-field">txtSala</span>.<span class="d-method">setText</span>(<span class="d-string">""</span>);
+    <span class="d-field">txtPrecio</span>.<span class="d-method">setText</span>(<span class="d-string">""</span>);
+    <span class="d-field">lblMensaje</span>.<span class="d-method">setText</span>(<span class="d-string">"Campos limpiados"</span>);
+});
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.5 Evento de teclado: <code>KeyAdapter</code> para presionar Enter</h5>
+                <p>Agregaremos un <code class="font-mono text-sm">KeyAdapter</code> al campo de precio para que al presionar Enter se dispare el botón "Vender Boleto". Esto mejora la experiencia del usuario al permitirle trabajar solo con el teclado.</p>
+                <div class="code-fragment">
+<span class="d-field">txtPrecio</span>.<span class="d-method">addKeyListener</span>(<span class="d-keyword">new</span> <span class="d-type">KeyAdapter</span>() {
+    <span class="d-annotation">@Override</span>
+    <span class="d-keyword">public void</span> <span class="d-method">keyPressed</span>(<span class="d-type">KeyEvent</span> <span class="d-field">e</span>) {
+        <span class="d-keyword">if</span> (<span class="d-field">e</span>.<span class="d-method">getKeyCode</span>() == <span class="d-type">KeyEvent</span>.<span class="d-field">VK_ENTER</span>) {
+            <span class="d-field">btnVender</span>.<span class="d-method">doClick</span>();
+        }
+    }
+});
+                </div>
+                <details>
+                    <summary><strong>¿Qué hace <code>doClick()</code>?</strong></summary>
+                    <p><code>doClick()</code> simula un clic en el botón de forma programática. Si presionamos Enter en el campo de precio, el programa entiende que queremos que se ejecute la misma acción que si le diéramos clic al botón de vender. Esta técnica evita tener que repetir todo el código de la venta.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.6 Evento de ratón: <code>MouseAdapter</code> para efecto hover</h5>
+                <p>Cambiar el color de fondo del botón "Vender Boleto" cuando el mouse pase por encima. Esto hace que la aplicación parezca más interactiva y moderna.</p>
+                <div class="code-fragment">
+<span class="d-field">btnVender</span>.<span class="d-method">addMouseListener</span>(<span class="d-keyword">new</span> <span class="d-type">MouseAdapter</span>() {
+    <span class="d-annotation">@Override</span>
+    <span class="d-keyword">public void</span> <span class="d-method">mouseEntered</span>(<span class="d-type">MouseEvent</span> <span class="d-field">e</span>) {
+        <span class="d-field">btnVender</span>.<span class="d-method">setBackground</span>(<span class="d-type">Color</span>.<span class="d-field">CYAN</span>);
+    }
+    <span class="d-annotation">@Override</span>
+    <span class="d-keyword">public void</span> <span class="d-method">mouseExited</span>(<span class="d-type">MouseEvent</span> <span class="d-field">e</span>) {
+        <span class="d-field">btnVender</span>.<span class="d-method">setBackground</span>(<span class="d-keyword">null</span>); <span class="d-comment">// Restaurar color por defecto</span>
+    }
+});
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 6: MAIN -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+            <h2><i class="fa-regular fa-play mr-2" style="color: var(--accent-blue);"></i> Paso 6: Crear la Clase <code>Main</code> y Ejecutar</h2>
+
+            <div class="step-sub">
+                <h5>6.1 Crear la clase <code>Main</code> en el lugar correcto</h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Haz clic derecho sobre <code class="font-mono text-sm">src</code> → <em>New → Java Class</em>. <strong>No</strong> la crees dentro de <code>modelo</code>, <code>servicio</code> o <code>vista</code>.</li>
+                    <li>Nombre: <code class="font-mono text-sm">Main</code> (O puedes ponerle <code>App</code> o <code>AplicacionTaquilla</code>).</li>
+                </ol>
+                <div class="error-box">
+                    <strong><i class="fa-regular fa-circle-exclamation mr-1"></i> ¿Dónde va la clase Main?</strong>
+                    <p><strong>No debe ir dentro de los paquetes <code>modelo</code>, <code>vista</code> ni <code>servicio</code>.</strong><br>
+                    Porque cada paquete tiene una responsabilidad específica:
+                    <ul>
+                        <li><code>modelo</code> = Datos.</li>
+                        <li><code>servicio</code> = Reglas de negocio.</li>
+                        <li><code>vista</code> = Interfaz gráfica.</li>
+                    </ul>
+                    La clase <code>Main</code> es el punto de entrada de la aplicación. Su única tarea es <strong>inicializar</strong> el programa y mostrar la ventana al usuario. <br>
+                    Lo más limpio es ponerla <strong>justo dentro de la carpeta <code>src</code></strong> (que se verá como el paquete por defecto), o crear un paquete llamado <code>app</code> o <code>main</code> al mismo nivel que los otros tres.</p>
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>6.2 Escribir el método <code>main</code> con <code>SwingUtilities.invokeLater</code></h5>
+                <div class="code-fragment">
+<span class="d-keyword">package</span> taquilla; <span class="d-comment">// opcional, si creaste un paquete en la raíz llamado 'taquilla'.</span>
+
+<span class="d-keyword">import</span> vista.<span class="d-type">FormTaquilla</span>;
+<span class="d-keyword">import</span> javax.swing.<span class="d-type">SwingUtilities</span>;
+
+<span class="d-keyword">public class</span> <span class="d-type">Main</span> {
+    <span class="d-keyword">public static void</span> <span class="d-method">main</span>(<span class="d-type">String</span>[] <span class="d-field">args</span>) {
+        <span class="d-type">SwingUtilities</span>.<span class="d-method">invokeLater</span>(() -> {
+            <span class="d-type">FormTaquilla</span> <span class="d-field">ventana</span> = <span class="d-keyword">new</span> <span class="d-type">FormTaquilla</span>();
+            <span class="d-field">ventana</span>.<span class="d-method">setVisible</span>(<span class="d-keyword">true</span>);
+        });
+    }
+}
+                </div>
+                <details>
+                    <summary><strong>¿Por qué usar <code>SwingUtilities.invokeLater</code>?</strong></summary>
+                    <p>Para asegurar que la creación y manipulación de la GUI se realice en el <span class="glossary" tabindex="0" data-tooltip="Event Dispatch Thread: hilo especial de Swing que maneja todos los eventos y redibujado.">EDT</span> (Event Dispatch Thread). Si no lo usáramos, la interfaz gráfica podría aparecer a medias, congelarse o tener errores de concurrencia. Es el estándar de "buenas prácticas" en Swing.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>6.3 Ejecutar la aplicación</h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Abrir <code class="font-mono text-sm">Main.java</code>.</li>
+                    <li>Hacer clic en el triángulo verde junto al <code class="font-mono text-sm">main</code>.</li>
+                    <li>Seleccionar <em>Run 'Main.main()'</em>.</li>
+                </ol>
+                <p>Prueba la aplicación: ingresa datos, presiona Enter en el campo de precio, verifica el cambio de color del botón, etc.</p>
+            </div>
+        </div>
+
+        <!-- REFLEXIÓN -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-gold);">
+            <h2><i class="fa-regular fa-brain mr-2" style="color: var(--una-gold);"></i> Preguntas de Reflexión</h2>
+            <ol style="list-style-type: decimal; padding-left: 1.5rem; color: var(--text-muted);">
+                <li>¿Cómo se logra la separación de capas en este laboratorio? ¿Qué clase pertenece a cada capa?</li>
+                <li>¿Cuál es la diferencia entre un evento de hardware (teclado) y un pseudoevento (<code class="font-mono text-sm">ActionEvent</code>)?</li>
+                <li>¿Qué sucede si el usuario escribe letras en el campo de precio? ¿Cómo se maneja?</li>
+                <li>¿Por qué es importante usar <code class="font-mono text-sm">SwingUtilities.invokeLater</code>?</li>
+                <li>¿Cómo se podría extender la aplicación para que los boletos se guarden en un archivo?</li>
+            </ol>
+        </div>
+
+        <!-- ENTREGA -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-red); background: rgba(200,16,46,0.04);">
+            <h2><i class="fa-regular fa-circle-check mr-2" style="color: var(--una-red);"></i> Entrega</h2>
+            <ul>
+                <li>Subir el código a un repositorio GitHub con mensaje de commit: <code class="font-mono text-sm">feat: laboratorio taquilla de cine semana 5</code>.</li>
+                <li>Incluir captura de pantalla de la ventana funcionando con un boleto registrado.</li>
+                <li>Responder las preguntas de reflexión en un archivo <code class="font-mono text-sm">REFLEXION.md</code>.</li>
+            </ul>
+        </div>
+
+        <div class="text-center text-xs" style="color: var(--text-muted); padding: 2rem 0 1rem 0; border-top: 1px solid var(--border-panel);">
+            <p>Laboratorio 5a — Taquilla de Cine &bull; Programación III &bull; Universidad Nacional &bull; 2026</p>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', next);
+            const icon = document.getElementById('theme-icon');
+            icon.className = next === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+        }
+    </script>
+</body>
+</html>
