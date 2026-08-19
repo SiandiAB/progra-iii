@@ -359,7 +359,7 @@ btnDescargar.<span class="darcula-func">addActionListener</span>(e -> {
                 <i class="fa-solid fa-diagram-project bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-blue, #1e88e5);"></i>
                 <div class="text-center mb-4">
                     <h2 class="text-5xl font-bold mb-2">El Modelo de Delegación de Eventos</h2>
-                    <p class="text-xl" style="color: var(--text-muted, #6c757d);">La Santísima Trinidad de los Eventos en Java: Source, Event Object y Listener.</p>
+                    <p class="text-xl" style="color: var(--text-muted, #6c757d);">Source, Event Object y Listener</p>
                 </div>
 
                 <div class="glass-panel p-6 border-t-4 max-w-5xl mx-auto" style="border-color: var(--accent-blue, #1e88e5);">
@@ -1089,22 +1089,22 @@ panelPrincipal.<span class="darcula-func">addKeyListener</span>(<span class="dar
                     <div class="space-y-4 text-sm text-gray-800">
                         <div class="flex items-start gap-4 bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm">
                             <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold shrink-0">1</div>
-                            <p class="pt-1"><strong>Modelo Polimórfico y Wrappers:</strong> Herencia con clase abstracta <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">ElementoCartelera</code>, subclases (<code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">FuncionPelicula</code> y <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">EventoEspecial</code>) y cálculo de tarifas con <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">Switch Expressions (->)</code>.</p>
+                            <p class="pt-1"><strong>Modelo Polimórfico y Switch Expressions:</strong> Herencia con clase abstracta genérica <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">ElementoComercial&lt;K&gt;</code>, subclases <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">FuncionPelicula</code> y <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">ProductoDulceria</code> con cálculo polimórfico de tarifas mediante <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">Switch Expressions (->)</code>.</p>
                         </div>
                         
                         <div class="flex items-start gap-4 bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm">
                             <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold shrink-0">2</div>
-                            <p class="pt-1"><strong>Servicio Genérico, Streams & Optional:</strong> Repositorio desacoplado <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">Repositorio&lt;T&gt;</code> para filtrado declarativo con <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">.filter()</code>, ordenamiento con <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">Comparator</code> y búsquedas seguras con <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">Optional&lt;T&gt;</code>.</p>
+                            <p class="pt-1"><strong>Arquitectura por Capas: Servicio y Repositorio:</strong> <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">CineServicio</code> encapsula la lógica de negocio sobre <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">Repositorio&lt;T extends Identificable&lt;?&gt;&gt;</code> con <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">agregar</code>, <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">obtenerTodos</code> y búsqueda segura <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">buscarPorCodigo</code> que devuelve <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">Optional&lt;T&gt;</code>.</p>
                         </div>
                         
                         <div class="flex items-start gap-4 bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm">
                             <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold shrink-0">3</div>
-                            <p class="pt-1"><strong>Estrategias con Lambdas e Interfaces:</strong> Inyección dinámica de descuentos implementando la interfaz funcional <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">@FunctionalInterface Promocion</code> mediante expresiones lambda.</p>
+                            <p class="pt-1"><strong>GUI Form con JTabbedPane y Eventos:</strong> Enlace visual en IntelliJ con dos pestañas (Cartelera/Taquilla y Dulcería), <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">ActionListener</code> con lambdas y actualización de las áreas de texto con <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">getDetalle()</code>.</p>
                         </div>
 
                         <div class="flex items-start gap-4 bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm">
                             <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold shrink-0">4</div>
-                            <p class="pt-1"><strong>GUI Form y Eventos Swing:</strong> Enlace visual con el diseñador de IntelliJ, validación de hardware en tiempo real con <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">KeyAdapter (e.consume())</code> y despacho seguro en el hilo <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">EDT</code>.</p>
+                            <p class="pt-1"><strong>Promociones desde el Servicio y Despacho en el EDT:</strong> Descuentos aplicados en la capa de servicio (<code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">aplicarDescuentoPelicula</code>, <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">aplicarDescuentoDulceria</code>) y arranque seguro con <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">SwingUtilities.invokeLater</code> en el hilo <code class="font-mono text-xs bg-gray-800 text-white px-1.5 py-0.5 rounded">EDT</code>.</p>
                         </div>
                     </div>
                 </div>
