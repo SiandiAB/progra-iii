@@ -87,7 +87,7 @@
             border-radius: 0.6rem;
             padding: 1rem 1.2rem;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 1.05rem;
+            font-size: 1.15rem;
             color: #a9b7c6;
             margin: 0.5rem 0;
             border: 1px solid #323232;
@@ -98,9 +98,9 @@
             line-height: 1.5;
         }
 
-        code.text-sm { font-size: 1.05rem; }
-        code.text-xs { font-size: 0.95rem; }
-        code:not([class*="text-"]) { font-size: 1.1rem; }
+        code.text-sm { font-size: 1.15rem; }
+        code.text-xs { font-size: 1.05rem; }
+        code:not([class*="text-"]) { font-size: 1.15rem; }
 
         .d-comment { color: #808080; font-style: italic; }
         .d-keyword { color: #cc7832; font-weight: bold; }
@@ -137,6 +137,15 @@
         }
         .highlight-box strong { color: var(--una-gold); }
 
+        .error-box {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--una-red);
+            background: rgba(200,16,46,0.06);
+            margin: 0.75rem 0;
+        }
+        .error-box strong { color: var(--una-red); }
+
         .float-btn {
             position: fixed;
             bottom: 1.5rem;
@@ -157,11 +166,50 @@
         }
         .float-btn:hover { transform: scale(1.05); background: var(--border-panel); }
 
+        details {
+            margin-top: 1.2rem;
+            background: rgba(0,0,0,0.02);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-panel);
+        }
+        details summary {
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        details summary:hover { color: var(--accent-blue); }
+
+        .glossary {
+            text-decoration: underline;
+            text-decoration-style: dotted;
+            text-underline-offset: 0.2em;
+            cursor: help;
+            position: relative;
+        }
+        .glossary:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2b2b2b;
+            color: #a9b7c6;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.4rem;
+            font-size: 0.8rem;
+            font-weight: 400;
+            white-space: nowrap;
+            z-index: 100;
+            pointer-events: none;
+            border: 1px solid #555555;
+        }
+
         @media (max-width: 768px) {
             .container { padding: 1rem; }
             .glass-panel { padding: 1rem; }
             .glass-panel h2 { font-size: 1.4rem; }
-            .code-fragment { font-size: 0.8rem; padding: 0.4rem 0.8rem; }
+            .code-fragment { font-size: 0.95rem; padding: 0.4rem 0.8rem; }
         }
     </style>
 </head>
@@ -173,297 +221,2047 @@
 
     <div class="container">
 
+        <!-- PORTADA -->
         <div class="glass-panel text-center" style="border-top: 6px solid var(--una-red);">
             <div class="flex justify-center mb-4">
                 <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png" alt="Logo UNA" class="h-20 object-contain"
                      onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png';">
             </div>
             <h2 class="text-3xl font-extrabold">Laboratorio 5</h2>
-            <p class="text-xl" style="color: var(--una-red); font-weight: 700;">Sistema de Gestión de Vuelos, Reservas y Servicios Especiales: AeroUNA</p>
-            <p class="text-sm" style="color: var(--text-muted);">Programación III — Semana 5-6: Aplicaciones Dirigidas por Eventos &amp; Arquitectura Integrada</p>
+            <p class="text-xl" style="color: var(--una-red); font-weight: 700;">Sistema de Gestión de Flota Vehicular con JavaFX</p>
+            <p class="text-sm" style="color: var(--text-muted);">Programación III — Semana 6: JavaFX · Maven · Scene Builder · MVC · POO · Colecciones · Genéricos · CRUD</p>
             <div class="flex flex-wrap justify-center gap-3 mt-3">
-                <span class="badge badge-red">Herencia &amp; Genéricos &lt;K&gt;</span>
-                <span class="badge badge-blue">Switch Expressions</span>
-                <span class="badge badge-green">Servicio por Capas &amp; Repositorio Genérico</span>
-                <span class="badge badge-purple">Optional&lt;T&gt; &amp; Búsqueda Segura</span>
-                <span class="badge badge-gold">GUI Form, JTabbedPane &amp; EDT</span>
+                <span class="badge badge-red">JavaFX 26</span>
+                <span class="badge badge-blue">Maven + JDK 25</span>
+                <span class="badge badge-green">Scene Builder &amp; FXML</span>
+                <span class="badge badge-purple">MVC · POO</span>
+                <span class="badge badge-gold">Colecciones &amp; Genéricos</span>
             </div>
             <div class="mt-4 text-sm" style="color: var(--text-muted);">
-                <i class="fa-regular fa-clock mr-1"></i> Duración estimada: 1 hora 30 minutos &nbsp;·&nbsp;
+                <i class="fa-regular fa-clock mr-1"></i> Duración estimada: 2 horas &nbsp;·&nbsp;
                 <i class="fa-regular fa-user mr-1"></i> Trabajo Individual
             </div>
         </div>
 
+        <!-- INTRODUCCIÓN -->
         <div class="glass-panel" style="border-left: 4px solid var(--una-gold);">
-            <h2><i class="fa-regular fa-compass mr-2" style="color: var(--una-gold);"></i> Introducción al Reto Individual</h2>
+            <h2><i class="fa-regular fa-compass mr-2" style="color: var(--una-gold);"></i> Introducción</h2>
             <p>
-                En la sesión de hoy construimos en conjunto un sistema robusto aplicando <strong>Herencia Polimórfica</strong>, <strong>Clases e Interfaces Genéricas</strong>, <strong>Switch Expressions</strong>, <strong>Optional</strong>, una <strong>arquitectura por capas (servicio + repositorio)</strong> y <strong>Control de Eventos con GUI Form de Swing</strong>.
+                En laboratorios anteriores construimos aplicaciones Java con programación orientada a objetos y luego dimos el salto a las
+                interfaces gráficas con <strong>Swing</strong>. En este laboratorio avanzamos un paso más: desarrollaremos una <strong>aplicación de escritorio más estructurada</strong>
+                utilizando <strong>JavaFX</strong>, la tecnología moderna de interfaces de escritorio de Java.
             </p>
             <p>
-                Ahora deberás demostrar tu autonomía aplicando exactamente los mismos principios arquitectónicos en un nuevo dominio: <strong>AeroUNA (Sistema de Control de Vuelos y Reservas de Pasajes)</strong>. Construirás una solución por capas que gestione vuelos comerciales regulares y vuelos chárter privados, permitiendo la reserva de asientos con control de aforo, búsqueda segura por código y promociones aplicadas desde la capa de servicio.
+                El proyecto consiste en un sistema para <strong>gestionar una flota vehicular</strong> formada por distintos tipos de vehículos:
+            </p>
+            <div class="code-fragment">
+Vehículo
+├── Vehículo de combustión
+├── Vehículo eléctrico
+└── Vehículo pesado
+            </div>
+            <p>
+                El sistema permitirá operaciones como <strong>registrar, consultar, editar y eliminar vehículos</strong> (CRUD), así como reglas de negocio propias:
+                <strong>iniciar rutas, finalizar rutas, gestionar mantenimiento y cargar mercancía</strong>.
             </p>
             <p>
-                <strong>No partas de cero:</strong> este laboratorio replica <strong>exactamente la misma estructura</strong> que construiste en el NovaCinema. Tus paquetes y la mayor parte del código son idénticos: solo cambia el dominio y los datos de los métodos. Usa la tabla de equivalencias del siguiente panel.
+                Antes de construir la interfaz gráfica, desarrollaremos primero el <strong>modelo del sistema</strong>. Este orden no es accidental: seguiremos la arquitectura
+                <strong>MVC</strong> (Model - View - Controller):
             </p>
+            <div class="code-fragment">
+  MODEL
+    ↓
+CONTROLLER
+    ↓
+  VIEW
+            </div>
 
             <div class="highlight-box">
-                <strong><i class="fa-regular fa-lightbulb mr-1"></i> Objetivos Técnicos Obligatorios:</strong>
+                <strong><i class="fa-regular fa-lightbulb mr-1"></i> Importante:</strong> este laboratorio se realiza <strong>de forma individual</strong> y cubre
+                el <strong>Model</strong> completo, los <strong>recursos</strong> (CSS + imágenes) y la <strong>configuración</strong> del proyecto.
+                La construcción del <strong>Controller</strong> y de la <strong>View</strong> (con Scene Builder) se realizará posteriormente junto con la profesora durante la clase.
+            </div>
+
+            <div class="highlight-box">
+                <strong><i class="fa-regular fa-list mr-1"></i> Objetivos del laboratorio:</strong>
             </div>
             <ul>
-                <li>Diseñar una jerarquía de modelo desacoplada utilizando una <strong>interfaz genérica</strong> (<code class="font-mono text-sm">Identificable&lt;K&gt;</code>) y una <strong>clase abstracta genérica</strong> (<code class="font-mono text-sm">ServicioVuelo&lt;K&gt;</code>).</li>
-                <li>Implementar el cálculo polimórfico de tarifas de pasajes mediante <strong>Switch Expressions</strong> según el tipo de clase (<code class="font-mono text-sm">TipoClase</code>) o el tipo de chárter (<code class="font-mono text-sm">TipoCharter</code>).</li>
-                <li>Reutilizar la capa de lógica mediante un <strong>repositorio genérico acotado</strong> (<code class="font-mono text-sm">Repositorio&lt;T extends Identificable&lt;?&gt;&gt;</code>) con búsqueda segura mediante <code class="font-mono text-sm">Optional&lt;T&gt;</code>.</li>
-                <li>Encapsular las operaciones de negocio (registro, reserva, promociones) en una <strong>capa de servicio</strong> (<code class="font-mono text-sm">AeroServicio</code>), igual que <code class="font-mono text-sm">CineServicio</code> en el livecoding.</li>
-                <li>Construir la vista con <strong>GUI Form de IntelliJ</strong> usando <strong>JTabbedPane</strong> (una pestaña por tipo de vuelo), <code class="font-mono text-sm">ActionListener</code> con lambdas y despacho seguro en el <code class="font-mono text-sm">EDT</code>.</li>
+                <li>Configurar un proyecto JavaFX utilizando IntelliJ IDEA, Maven y JDK 25.</li>
+                <li>Comprender la función de JavaFX dentro de una aplicación de escritorio.</li>
+                <li>Comprender la función de Scene Builder y del formato FXML.</li>
+                <li>Organizar correctamente el código Java (<code class="font-mono text-sm">src/main/java</code>) y los recursos (<code class="font-mono text-sm">src/main/resources</code>).</li>
+                <li>Aplicar <strong>herencia</strong> (jerarquía de vehículos), <strong>abstracción</strong>, <strong>polimorfismo</strong> y <strong>sobrescritura</strong>.</li>
+                <li>Crear e implementar <strong>interfaces</strong> y utilizar <strong>enumeraciones</strong> (enum).</li>
+                <li>Aplicar <strong>encapsulamiento</strong> y trabajar con <strong>colecciones</strong> (List, ArrayList, Queue, LinkedList).</li>
+                <li>Utilizar <strong>clases genéricas con límites</strong> (<code class="font-mono text-sm">ColaMantenimiento&lt;T extends Vehiculo&gt;</code>).</li>
+                <li>Implementar las operaciones básicas de un <strong>CRUD</strong> en memoria.</li>
+                <li>Separar las <strong>reglas de negocio</strong> de la futura interfaz gráfica.</li>
+                <li>Preparar los <strong>recursos</strong>: crear la hoja de estilos CSS y descargar los <strong>iconos</strong> de la interfaz.</li>
+                <li>Configurar IntelliJ para trabajar con <strong>Scene Builder</strong>.</li>
             </ul>
-        </div>
 
-        <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
-            <h2><i class="fa-regular fa-clone mr-2" style="color: var(--accent-green);"></i> Replica el laboratorio hecho en clase</h2>
-            <p>
-                Abre tu proyecto del gestor de cine y <strong>replica la estructura completa</strong>. Solo cambian los nombres de las clases, los atributos y los datos del dominio. Usa esta tabla de equivalencias para saber qué clase del cine corresponde a cuál del laboratorio:
-            </p>
-
+            <div class="highlight-box">
+                <strong><i class="fa-regular fa-table mr-1"></i> Conceptos de Programación III utilizados en este laboratorio:</strong>
+            </div>
             <div class="overflow-x-auto" style="margin: 1rem 0;">
                 <table style="width:100%; border-collapse: collapse; font-size: 0.95rem; color: var(--text-muted);">
                     <thead>
                         <tr style="border-bottom: 2px solid var(--border-panel); text-align: left; color: var(--text-main);">
-                            <th style="padding: 0.5rem 0.6rem;">En el Livecoding (NovaCinema)</th>
-                            <th style="padding: 0.5rem 0.6rem;">En tu Laboratorio (AeroUNA)</th>
+                            <th style="padding: 0.5rem 0.6rem;">Concepto</th>
+                            <th style="padding: 0.5rem 0.6rem;">Aplicación en la flotilla</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">ElementoComercial&lt;K&gt;</code> (clase abstracta)</td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">ServicioVuelo&lt;K&gt;</code> (clase abstracta)</td></tr>
-                        <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">FuncionPelicula</code> (películas)</td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">VueloComercial</code> (vuelos regulares)</td></tr>
-                        <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">ProductoDulceria</code> (dulcería)</td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">VueloCharter</code> (vuelos privados)</td></tr>
-                        <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">TipoFormato</code> (DOS_D, TRES_D, IMAX, VIP)</td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">TipoClase</code> (ECONOMICA, EJECUTIVA, PRIMERA_CLASE)</td></tr>
-                        <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">TipoProducto</code> (SNACK, BEBIDA, COMBO)</td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">TipoCharter</code> (TURISMO, EMPRESARIAL, MEDICO)</td></tr>
-                        <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">Identificable&lt;K&gt;</code> con <code class="font-mono text-xs">getNombre()</code></td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">Identificable&lt;K&gt;</code> con <code class="font-mono text-xs">getDestino()</code></td></tr>
-                        <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">CineServicio</code> (capa de servicio)</td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">AeroServicio</code> (capa de servicio)</td></tr>
-                        <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">Repositorio&lt;T extends Identificable&lt;?&gt;&gt;</code></td><td style="padding: 0.4rem 0.6rem;"><strong>Igual</strong></td></tr>
-                        <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">VentanaCine</code> (JTabbedPane: Cartelera + Dulcería)</td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">VentanaVuelos</code> (JTabbedPane: Comerciales + Chárter)</td></tr>
-                        <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">Main</code></td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">Main</code></td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;">Encapsulamiento</td><td style="padding: 0.4rem 0.6rem;">Atributos y getters de los vehículos</td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;">Herencia</td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">VehiculoCombustion extends Vehiculo</code></td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;">Herencia multinivel</td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">VehiculoPesado extends VehiculoCombustion</code></td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;">Abstracción</td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">Vehiculo</code> es una clase abstracta</td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;">Polimorfismo</td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">iniciarRuta()</code>, <code class="font-mono text-xs">getTipo()</code>, <code class="font-mono text-xs">evaluarEstadoGeneral()</code></td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;">Sobrescritura</td><td style="padding: 0.4rem 0.6rem;">Anotación <code class="font-mono text-xs">@Override</code></td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;">Interfaces</td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">Mantenible</code></td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;">Enum</td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">EstadoVehiculo</code>, <code class="font-mono text-xs">TipoCarga</code>, <code class="font-mono text-xs">TipoVehiculo</code></td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;">Colecciones</td><td style="padding: 0.4rem 0.6rem;">List, ArrayList, Queue, LinkedList</td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;">Genéricos</td><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">ColaMantenimiento&lt;T extends Vehiculo&gt;</code></td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;">Excepciones</td><td style="padding: 0.4rem 0.6rem;">IllegalArgumentException, IllegalStateException</td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;">Lambdas</td><td style="padding: 0.4rem 0.6rem;">removeIf(), anyMatch()</td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;">Streams</td><td style="padding: 0.4rem 0.6rem;">Validación de placas duplicadas</td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;">CRUD</td><td style="padding: 0.4rem 0.6rem;">Crear, leer, actualizar y eliminar vehículos</td></tr>
+                        <tr><td style="padding: 0.4rem 0.6rem;">MVC</td><td style="padding: 0.4rem 0.6rem;">Separación Model - Controller - View</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
+        <!-- PASO 1 -->
         <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
-            <h2><i class="fa-regular fa-folder-open mr-2" style="color: var(--accent-blue);"></i> Paso 1: Configurar el Repositorio y Paquetes</h2>
+            <h2><i class="fa-regular fa-screwdriver-wrench mr-2" style="color: var(--accent-blue);"></i> Paso 1: Herramientas Necesarias</h2>
 
             <div class="step-sub">
-                <h5>1.1 Crear el repositorio en GitHub y clonarlo</h5>
-                <p>Crea en GitHub un repositorio público llamado <code class="font-mono text-sm">Laboratorio4-AeroUNA</code>, clónalo en tu computadora con GitHub Desktop y ábrelo en IntelliJ IDEA asegurando la carpeta <code class="font-mono text-sm">src</code> como <strong>Sources Root</strong>.</p>
-            </div>
-
-            <div class="step-sub">
-                <h5>1.2 Estructura modular de paquetes requerida</h5>
-                <p>Igual que en el livecoding, crea los paquetes directamente dentro de <code class="font-mono text-sm">src</code>:</p>
+                <h5>1.1 Verificar que tengas instalado lo siguiente</h5>
+                <ul>
+                    <li><strong>JDK 25</strong> — el kit de desarrollo de Java.</li>
+                    <li><strong>IntelliJ IDEA</strong> — el IDE donde programaremos.</li>
+                    <li><strong>Maven</strong> — el administrador de dependencias (viene integrado en IntelliJ).</li>
+                    <li><strong>JavaFX</strong> — la librería de interfaces gráficas (se descarga automáticamente vía Maven).</li>
+                    <li><strong>Gluon Scene Builder</strong> — la herramienta visual para diseñar las ventanas.</li>
+                </ul>
+                <p>En nuestro proyecto utilizaremos las siguientes versiones:</p>
                 <div class="code-fragment">
-src/
-├── <span class="d-field">modelo</span>/     <span class="d-comment">// Identificable&lt;K&gt;, ServicioVuelo&lt;K&gt;, VueloComercial, VueloCharter, Enums</span>
-├── <span class="d-field">servicio</span>/   <span class="d-comment">// Repositorio&lt;T extends Identificable&lt;?&gt;&gt;, AeroServicio</span>
-├── <span class="d-field">vista</span>/      <span class="d-comment">// VentanaVuelos.form, VentanaVuelos.java</span>
-└── <span class="d-type">Main.java</span>   <span class="d-comment">// Lanzador seguro en Event Dispatch Thread (EDT)</span>
+<span class="d-type">JDK</span>             <span class="d-number">25</span>
+<span class="d-type">JavaFX</span>          <span class="d-number">26</span>
+<span class="d-type">Scene Builder</span>   <span class="d-number">26</span>
                 </div>
             </div>
-        </div>
-
-        <div class="glass-panel" style="border-left: 4px solid var(--accent-purple);">
-            <h2><i class="fa-regular fa-id-card mr-2" style="color: var(--accent-purple);"></i> Paso 2: Construir el Modelo Polimórfico y Genérico</h2>
 
             <div class="step-sub">
-                <h5>2.1 Enums de Categoría y Contrato Genérico</h5>
-                <p>En el paquete <code class="font-mono text-sm">modelo</code>, crea:</p>
-                <ul>
-                    <li><code class="font-mono text-sm">TipoClase.java</code>: Enum con valores <code class="font-mono text-sm">ECONOMICA, EJECUTIVA, PRIMERA_CLASE</code> (equivale a <code class="font-mono text-sm">TipoFormato</code>).</li>
-                    <li><code class="font-mono text-sm">TipoCharter.java</code>: Enum con valores <code class="font-mono text-sm">TURISMO, EMPRESARIAL, MEDICO</code> (equivale a <code class="font-mono text-sm">TipoProducto</code>).</li>
-                    <li><code class="font-mono text-sm">Identificable&lt;K&gt;.java</code>: Interfaz genérica con los métodos <code class="font-mono text-sm">String getCodigo()</code>, <code class="font-mono text-sm">String getDestino()</code>, <code class="font-mono text-sm">K getCategoria()</code>, <code class="font-mono text-sm">double calcularPrecio()</code> y <code class="font-mono text-sm">String getDetalle()</code>.</li>
-                </ul>
+                <h5>1.2 ¿Qué es JavaFX?</h5>
+                <p>
+                    JavaFX es una tecnología para desarrollar <strong>interfaces gráficas de escritorio</strong> en Java.
+                    Nos proporciona componentes como <code class="font-mono text-sm">Label</code>, <code class="font-mono text-sm">Button</code>,
+                    <code class="font-mono text-sm">TextField</code>, <code class="font-mono text-sm">ComboBox</code>, <code class="font-mono text-sm">TableView</code>,
+                    <code class="font-mono text-sm">ImageView</code> y <code class="font-mono text-sm">Alert</code>; y contenedores como
+                    <code class="font-mono text-sm">VBox</code>, <code class="font-mono text-sm">HBox</code>, <code class="font-mono text-sm">GridPane</code>,
+                    <code class="font-mono text-sm">AnchorPane</code> y <code class="font-mono text-sm">BorderPane</code>.
+                </p>
+                <p>
+                    A diferencia de Swing, JavaFX permite separar con bastante claridad la <strong>lógica Java</strong>, el <strong>diseño de la interfaz</strong> y los <strong>estilos</strong>,
+                    utilizando tres tipos de archivo:
+                </p>
+                <div class="code-fragment">
+<span class="d-type">.java</span>  <span class="d-comment">// la lógica del programa</span>
+<span class="d-type">.fxml</span>  <span class="d-comment">// la descripción de la interfaz (XML)</span>
+<span class="d-type">.css</span>   <span class="d-comment">// los estilos visuales (colores, fuentes, tamaños)</span>
+                </div>
+                <details>
+                    <summary><strong>¿Por qué JavaFX y no Swing?</strong></summary>
+                    <p>JavaFX es el sucesor moderno de Swing: permite separar el diseño visual (FXML + CSS) del código Java, tiene estilos mucho más flexibles y se integra con herramientas como Scene Builder para arrastrar y soltar componentes. Ambos sirven para lo mismo (GUI), pero JavaFX facilita el trabajo en equipo y el mantenimiento gracias a la separación Model - View - Controller.</p>
+                </details>
             </div>
 
             <div class="step-sub">
-                <h5>2.2 Superclase Abstracta Genérica: <code>ServicioVuelo&lt;K&gt;.java</code></h5>
-                <ul>
-                    <li>Declara <code class="font-mono text-sm">public abstract class ServicioVuelo&lt;K&gt; implements Identificable&lt;K&gt;</code>.</li>
-                    <li>Atributos protegidos: <code class="font-mono text-sm">protected String codigo</code>, <code class="font-mono text-sm">protected String destino</code>, <code class="font-mono text-sm">protected K categoria</code>, <code class="font-mono text-sm">protected double tarifaBase</code>.</li>
-                    <li>Constructor completo para inicializar los atributos y sus respectivos Getters.</li>
-                </ul>
+                <h5>1.3 ¿Qué es FXML?</h5>
+                <p>
+                    <span class="glossary" tabindex="0" data-tooltip="Formato XML que describe la interfaz gráfica de una aplicación JavaFX: los contenedores, los componentes y sus propiedades.">FXML</span> es un archivo que describe la interfaz gráfica utilizando XML. Por ejemplo, una ventana puede contener:
+                </p>
+                <div class="code-fragment">
+VBox
+ ├── Label
+ ├── TextField
+ └── Button
+                </div>
+                <p>Esa estructura puede almacenarse dentro de un archivo llamado <code class="font-mono text-sm">flotaView.fxml</code>. Esto nos evita crear manualmente toda la interfaz desde Java.</p>
             </div>
 
             <div class="step-sub">
-                <h5>2.3 Subclases Concretas: <code>VueloComercial</code> y <code>VueloCharter</code></h5>
-                <ul>
-                    <li>
-                        <strong><code>VueloComercial.java</code>:</strong> Hereda de <code class="font-mono text-sm">ServicioVuelo&lt;TipoClase&gt;</code>. Contiene <code class="font-mono text-sm">int capacidadAsientos</code>, <code class="font-mono text-sm">int asientosOcupados</code> y el getter <code class="font-mono text-sm">getAsientosDisponibles()</code> (capacidad − ocupados), igual que <code class="font-mono text-sm">FuncionPelicula</code>.
-                        <br>Implementa <code class="font-mono text-sm">public boolean reservarAsientos(int cantidad)</code> que verifique disponibilidad antes de sumar a los ocupados (espejo de <code class="font-mono text-sm">venderBoletos</code>).
-                        <br>Sobrescribe <code class="font-mono text-sm">calcularPrecio()</code> utilizando un <strong>Switch Expression</strong>:
-                        <div class="code-fragment">
-<span class="d-keyword">@Override</span>
-<span class="d-keyword">public</span> <span class="d-keyword">double</span> <span class="d-method">calcularPrecio</span>() {
-    <span class="d-keyword">return</span> <span class="d-keyword">switch</span> (<span class="d-field">categoria</span>) {
-        <span class="d-keyword">case</span> ECONOMICA     -> <span class="d-field">tarifaBase</span>;
-        <span class="d-keyword">case</span> EJECUTIVA     -> <span class="d-field">tarifaBase</span> + <span class="d-number">25000</span>;
-        <span class="d-keyword">case</span> PRIMERA_CLASE -> <span class="d-field">tarifaBase</span> + <span class="d-number">60000</span>;
-    };
-}
-                        </div>
-                        <br>Sobrescribe también <code class="font-mono text-sm">getDetalle()</code> para mostrar el vuelo en la consola:
-                        <div class="code-fragment">
-<span class="d-keyword">@Override</span>
-<span class="d-keyword">public</span> String <span class="d-method">getDetalle</span>() {
-    <span class="d-keyword">return</span> String.<span class="d-method">format</span>(<span class="d-string">"Código: %s\n Vuelo: %s\n Clase: %s\n Asientos: %d / %d\n Precio: ₡%.2f"</span>,
-            <span class="d-field">codigo</span>, <span class="d-field">destino</span>, <span class="d-field">categoria</span>,
-            getAsientosDisponibles(), <span class="d-field">capacidadAsientos</span>, <span class="d-method">calcularPrecio</span>());
-}
-                        </div>
-                        <p>Ejemplo de salida esperada:</p>
-                        <div class="code-fragment"><span class="d-comment">Código: AV-101
- Vuelo: Madrid
- Clase: EJECUTIVA
- Asientos: 180 / 200
- Precio: ₡95000.00</span></div>
-                    </li>
-                    <li>
-                        <strong><code>VueloCharter.java</code>:</strong> Hereda de <code class="font-mono text-sm">ServicioVuelo&lt;TipoCharter&gt;</code>. Contiene <code class="font-mono text-sm">int duracionHoras</code> y <code class="font-mono text-sm">boolean incluyeTripulacionVIP</code>.
-                        <br>Sobrescribe <code class="font-mono text-sm">calcularPrecio()</code> sumando un costo fijo de ₡80,000 si incluye tripulación VIP (espejo de <code class="font-mono text-sm">ProductoDulceria</code>):
-                        <div class="code-fragment">
-<span class="d-keyword">@Override</span>
-<span class="d-keyword">public</span> <span class="d-keyword">double</span> <span class="d-method">calcularPrecio</span>() {
-    <span class="d-keyword">if</span> (<span class="d-field">incluyeTripulacionVIP</span>) {
-        <span class="d-keyword">return</span> <span class="d-field">tarifaBase</span> + <span class="d-number">80000</span>;
-    }
-    <span class="d-keyword">return</span> <span class="d-field">tarifaBase</span>;
-}
-                        </div>
-                        <br>Sobrescribe también <code class="font-mono text-sm">getDetalle()</code>:
-                        <div class="code-fragment">
-<span class="d-keyword">@Override</span>
-<span class="d-keyword">public</span> String <span class="d-method">getDetalle</span>() {
-    <span class="d-keyword">return</span> String.<span class="d-method">format</span>(<span class="d-string">"Código: %s\n Chárter: %s\n Tipo: %s\n Duración: %d horas\n Tripulación VIP: %s\n Precio: ₡%.2f"</span>,
-            <span class="d-field">codigo</span>, <span class="d-field">destino</span>, <span class="d-field">categoria</span>, <span class="d-field">duracionHoras</span>,
-            (<span class="d-field">incluyeTripulacionVIP</span> ? <span class="d-string">"Sí"</span> : <span class="d-string">"No"</span>), <span class="d-method">calcularPrecio</span>());
-}
-                        </div>
-                        <p>Ejemplo de salida esperada:</p>
-                        <div class="code-fragment"><span class="d-comment">Código: CH-202
- Chárter: Isla del Coco
- Tipo: MEDICO
- Duración: 5 horas
- Tripulación VIP: Sí
- Precio: ₡380000.00</span></div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
-            <h2><i class="fa-regular fa-cubes mr-2" style="color: var(--accent-green);"></i> Paso 3: Capa de Servicio Genérico con Optional</h2>
-
-            <div class="step-sub">
-                <h5>3.1 Repositorio Genérico Acotado: <code>Repositorio&lt;T extends Identificable&lt;?&gt;&gt;.java</code></h5>
-                <p>En el paquete <code class="font-mono text-sm">servicio</code>, copia tal cual tu <code class="font-mono text-sm">Repositorio</code> del livecoding (no cambia nada):</p>
-                <ul>
-                    <li>Declara <code class="font-mono text-sm">public class Repositorio&lt;T extends Identificable&lt;?&gt;&gt;</code> (el genérico acotado exige que todo elemento sea identificable por código).</li>
-                    <li><code class="font-mono text-sm">private List&lt;T&gt; items = new ArrayList&lt;&gt;();</code></li>
-                    <li><code class="font-mono text-sm">public void agregar(T item)</code></li>
-                    <li><code class="font-mono text-sm">public List&lt;T&gt; obtenerTodos()</code></li>
-                    <li><code class="font-mono text-sm">public Optional&lt;T&gt; buscarPorCodigo(String codigo)</code>: recorre la lista comparando con <code class="font-mono text-sm">item.getCodigo().equalsIgnoreCase(codigo)</code> y devuelve <code class="font-mono text-sm">Optional.of(item)</code> o <code class="font-mono text-sm">Optional.empty()</code> (búsqueda segura).</li>
-                </ul>
-            </div>
-
-            <div class="step-sub">
-                <h5>3.2 Capa de Servicio de Negocio: <code>AeroServicio.java</code></h5>
-                <p>Igual que <code class="font-mono text-sm">CineServicio</code> en el livecoding, crea <code class="font-mono text-sm">AeroServicio</code> para encapsular la lógica y desacoplar la vista del repositorio:</p>
-                <ul>
-                    <li>Dos repositorios privados: <code class="font-mono text-sm">Repositorio&lt;VueloComercial&gt; repoVuelos</code> y <code class="font-mono text-sm">Repositorio&lt;VueloCharter&gt; repoCharters</code>.</li>
-                    <li>Para vuelos: <code class="font-mono text-sm">registrarVuelo(VueloComercial)</code>, <code class="font-mono text-sm">obtenerVuelos()</code>, <code class="font-mono text-sm">buscarVuelo(String codigo)</code> (devuelve <code class="font-mono text-sm">Optional&lt;VueloComercial&gt;</code>).</li>
-                    <li><code class="font-mono text-sm">venderBoletos(String codigo, int cantidad)</code>: busca el vuelo; si no existe devuelve <code class="font-mono text-sm">null</code>; si no hay aforo devuelve <code class="font-mono text-sm">null</code>; si la reserva es exitosa devuelve <code class="font-mono text-sm">vuelo.calcularPrecio() * cantidad</code>.</li>
-                    <li><code class="font-mono text-sm">aplicarDescuentoVuelo(VueloComercial vuelo)</code>: devuelve <code class="font-mono text-sm">vuelo.calcularPrecio() * 0.85</code> (promoción del 15%).</li>
-                    <li>Equivalentes para chárter: <code class="font-mono text-sm">registrarCharter(...)</code>, <code class="font-mono text-sm">obtenerCharters()</code>, <code class="font-mono text-sm">buscarCharter(...)</code> y <code class="font-mono text-sm">aplicarDescuentoCharter(...)</code>.</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="glass-panel" style="border-left: 4px solid var(--una-red);">
-            <h2><i class="fa-regular fa-window-maximize mr-2" style="color: var(--una-red);"></i> Paso 4: GUI Form con JTabbedPane y Control de Eventos</h2>
-
-            <div class="step-sub">
-                <h5>4.1 Formulario con IntelliJ GUI Designer (<code>VentanaVuelos.form</code>)</h5>
-                <p>Diseña un formulario visual en <code class="font-mono text-sm">vista.VentanaVuelos</code> (el equivalente a tu <code class="font-mono text-sm">VentanaCine</code>) con un <code class="font-mono text-sm">JTabbedPane</code> y <strong>dos pestañas</strong>, igual que en el livecoding:</p>
-                <ul>
-                    <li>
-                        <strong>Pestaña 1 — "Vuelos Comerciales":</strong>
-                        <ul class="mt-2">
-                            <li>Campos de texto: <code class="font-mono text-sm">txtCodigo</code>, <code class="font-mono text-sm">txtDestino</code>, <code class="font-mono text-sm">txtCapacidad</code>, <code class="font-mono text-sm">txtTarifa</code>.</li>
-                            <li>ComboBox tipado: <code class="font-mono text-sm">cbxTipoClase</code> (cargado con <code class="font-mono text-sm">new DefaultComboBoxModel&lt;&gt;(TipoClase.values())</code>, igual que <code class="font-mono text-sm">cbxFormato</code>).</li>
-                            <li>Botones: <code class="font-mono text-sm">btnRegistrarVuelo</code>, <code class="font-mono text-sm">btnVenderBoleto</code>, <code class="font-mono text-sm">btnMostrarVuelos</code>, <code class="font-mono text-sm">btnPromoMillon</code>.</li>
-                            <li>Área de salida: <code class="font-mono text-sm">txaVuelos</code> (dentro de un <code class="font-mono text-sm">JScrollPane</code>).</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <strong>Pestaña 2 — "Vuelos Chárter":</strong>
-                        <ul class="mt-2">
-                            <li>Campos de texto: <code class="font-mono text-sm">txtCodCharter</code>, <code class="font-mono text-sm">txtDestCharter</code>, <code class="font-mono text-sm">txtDuracionCharter</code>, <code class="font-mono text-sm">txtTarifaCharter</code>.</li>
-                            <li>ComboBox tipado: <code class="font-mono text-sm">cbxTipoCharter</code> (cargado con <code class="font-mono text-sm">TipoCharter.values()</code>).</li>
-                            <li>Botones: <code class="font-mono text-sm">btnRegistrarCharter</code>, <code class="font-mono text-sm">btnMostrarCharters</code>, <code class="font-mono text-sm">btnPromoCharter</code>.</li>
-                            <li>Área de salida: <code class="font-mono text-sm">txaCharters</code> (dentro de un <code class="font-mono text-sm">JScrollPane</code>).</li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="step-sub">
-                <h5>4.2 Requisitos Obligatorios de Eventos a Programar (<code>ActionListener</code> con Lambdas):</h5>
-                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
-                    <li>
-                        <strong>Registro de Vuelo (<code>btnRegistrarVuelo</code>):</strong>
-                        <br>Dentro de un <code class="font-mono text-xs">try/catch</code> por <code class="font-mono text-xs">NumberFormatException</code>, parsear los campos (<code class="font-mono text-xs">Integer.parseInt</code>, <code class="font-mono text-xs">Double.parseDouble</code>), crear el <code class="font-mono text-xs">VueloComercial</code>, llamar a <code class="font-mono text-xs">aeroServicio.registrarVuelo(...)</code>, actualizar la consola y limpiar los campos.
-                    </li>
-                    <li>
-                        <strong>Venta de Boletos y Control de Aforo (<code>btnVenderBoleto</code>):</strong>
-                        <br>Pedir el código con <code class="font-mono text-xs">JOptionPane.showInputDialog</code> y buscar con <code class="font-mono text-xs">aeroServicio.buscarVuelo(...)</code>. Si <code class="font-mono text-xs">Optional.isEmpty()</code>, mostrar advertencia. Si existe, pedir la cantidad y usar <code class="font-mono text-xs">aeroServicio.venderBoletos(...)</code>: si devuelve <code class="font-mono text-xs">null</code> avisar que no se pudo realizar; si no, mostrar el total con <code class="font-mono text-xs">String.format</code> y actualizar la consola.
-                    </li>
-                    <li>
-                        <strong>Mostrar Vuelos (<code>btnMostrarVuelos</code>):</strong>
-                        <br>Refrescar <code class="font-mono text-xs">txaVuelos</code> con el encabezado <code class="font-mono text-xs">"════════════ VUELOS AEROUNA ════════════"</code> y el <code class="font-mono text-xs">getDetalle()</code> de cada vuelo (igual que tu método <code class="font-mono text-xs">actualizarCartelera</code>).
-                    </li>
-                    <li>
-                        <strong>Promoción Millón (<code>btnPromoMillon</code>):</strong>
-                        <br>Recorrer <code class="font-mono text-xs">aeroServicio.obtenerVuelos()</code> mostrando precio normal, <code class="font-mono text-xs">aeroServicio.aplicarDescuentoVuelo(...)</code> y el ahorro (igual que <code class="font-mono text-xs">btnPromoEstudiante</code>).
-                    </li>
-                    <li>
-                        <strong>Registro de Chárter (<code>btnRegistrarCharter</code>):</strong>
-                        <br>Mismo patrón del punto 1 con <code class="font-mono text-xs">VueloCharter</code> y <code class="font-mono text-xs">aeroServicio.registrarCharter(...)</code>.
-                    </li>
-                    <li>
-                        <strong>Mostrar Chárter (<code>btnMostrarCharters</code>):</strong>
-                        <br>Refrescar <code class="font-mono text-xs">txaCharters</code> con el <code class="font-mono text-xs">getDetalle()</code> de cada chárter.
-                    </li>
-                    <li>
-                        <strong>Promoción Chárter (<code>btnPromoCharter</code>):</strong>
-                        <br>Listar precios con <code class="font-mono text-xs">aeroServicio.aplicarDescuentoCharter(...)</code> (igual que <code class="font-mono text-xs">btnPromoDulceria</code>).
-                    </li>
-                </ol>
-                <p style="margin-top: 0.75rem;">
-                    <i class="fa-regular fa-lightbulb mr-1"></i> En el constructor carga los ComboBox con <code class="font-mono text-xs">setModel(new DefaultComboBoxModel&lt;&gt;(TipoClase.values()))</code> y usa <code class="font-mono text-xs">(TipoClase) cbxTipoClase.getSelectedItem()</code> al registrar, tal como hiciste con <code class="font-mono text-xs">cbxFormato</code>.
+                <h5>1.4 ¿Qué es Scene Builder?</h5>
+                <p>
+                    <span class="glossary" tabindex="0" data-tooltip="Herramienta visual gratuita de Gluon que permite diseñar ventanas JavaFX arrastrando y soltando componentes, generando el archivo FXML automáticamente.">Scene Builder</span> es una herramienta visual para crear archivos FXML.
+                    En lugar de programar:
+                </p>
+                <div class="code-fragment">
+<span class="d-type">Button</span> <span class="d-field">boton</span> = <span class="d-keyword">new</span> <span class="d-type">Button</span>(<span class="d-string">"Registrar"</span>);
+                </div>
+                <p>podemos abrir Scene Builder y <strong>arrastrar visualmente</strong> un botón. La relación será:</p>
+                <div class="code-fragment">
+SCENE BUILDER
+      ↓
+crea/modifica
+      ↓
+     FXML
+      ↓
+    JavaFX
+      ↓
+  Controller
+                </div>
+                <p>
+                    <strong>Scene Builder no reemplaza Java.</strong> Scene Builder diseña principalmente la <strong>View</strong>;
+                    el comportamiento sigue programándose en Java (en el Controller).
                 </p>
             </div>
         </div>
 
-        <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
-            <h2><i class="fa-regular fa-play mr-2" style="color: var(--accent-blue);"></i> Paso 5: Punto de Entrada <code>Main.java</code></h2>
+        <!-- PASO 2 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
+            <h2><i class="fa-regular fa-download mr-2" style="color: var(--accent-green);"></i> Paso 2: Descargar e Instalar Scene Builder</h2>
+
             <div class="step-sub">
-                <h5>5.1 Despacho en el Event Dispatch Thread (EDT)</h5>
-                <p>En <code class="font-mono text-sm">Main.java</code> (en la raíz de <code class="font-mono text-sm">src</code>, sin paquete, igual que el livecoding), configura el Look and Feel del sistema operativo y lanza la ventana dentro de <code class="font-mono text-sm">SwingUtilities.invokeLater(() -> { ... })</code> para garantizar seguridad concurrente en los componentes de Swing. En <code class="font-mono text-sm">VentanaVuelos</code> usa <code class="font-mono text-sm">setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)</code>, como en el livecoding.</p>
+                <h5>2.1 Descargar desde el sitio oficial</h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Ingresa al sitio oficial de <strong>Gluon Scene Builder</strong>: <a href="https://gluonhq.com/products/scene-builder/#download" target="_blank">https://gluonhq.com/products/scene-builder/#download</a>.</li>
+                    <li>Descarga la versión compatible con tu sistema operativo (en Windows, el instalador <code class="font-mono text-sm">.exe</code>).</li>
+                    <li>Realiza la instalación normalmente (siguiente, siguiente, instalar) CUIDADO: REVISAR Y RECORDAR DONDE SE DECIDE INSTALARLO.</li>
+                </ol>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.2 Comprobar que abre correctamente</h5>
+                <p>
+                    Una vez instalado, abre <strong>Gluon Scene Builder</strong>. Deberías encontrar opciones como <code class="font-mono text-sm">Empty</code>,
+                    <code class="font-mono text-sm">Basic Application</code> y <code class="font-mono text-sm">Complex Application</code>.
+                </p>
+                <div class="highlight-box">
+                    <i class="fa-regular fa-circle-info mr-1"></i> <strong>Por ahora solo necesitamos comprobar que abre correctamente.</strong>
+                    No diseñaremos todavía la interfaz: la View se construirá junto con la profesora. Si la ventana se abrió sin errores, ¡ya tenemos lo que necesitamos!
+                </div>
             </div>
         </div>
 
+        <!-- PASO 3 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-purple);">
+            <h2><i class="fa-regular fa-folder-open mr-2" style="color: var(--accent-purple);"></i> Paso 3: Crear el Proyecto JavaFX en IntelliJ</h2>
+
+            <div class="step-sub">
+                <h5>3.1 Nuevo proyecto</h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Abre IntelliJ IDEA.</li>
+                    <li>Ve a <em>File → New → Project</em>.</li>
+                    <li>En el panel izquierdo, selecciona <strong>JavaFX</strong> (si no aparece, selecciona la plantilla dentro de <em>Generators</em>).</li>
+                    <li>En <strong>Build system</strong> selecciona <strong>Maven</strong>.</li>
+                    <li>En <strong>SDK</strong> configura <strong>JDK 25</strong>.</li>
+                </ol>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.2 Nombre del proyecto y paquete</h5>
+                <ul>
+                    <li><strong>Name:</strong> <code class="font-mono text-sm">Laboratorio05</code></li>
+                    <li><strong>Group:</strong> <code class="font-mono text-sm">lab</code></li>
+                    <li><strong>Artifact:</strong> <code class="font-mono text-sm">flotavehicular</code></li>
+                    <li><strong>Paquete base:</strong> <code class="font-mono text-sm">lab.flotavehicular</code></li>
+                </ul>
+                <div class="highlight-box">
+                    <i class="fa-regular fa-circle-info mr-1"></i> <strong>Recuerda:</strong> el paquete <code class="font-mono text-sm">lab.flotavehicular</code> es la <strong>raíz</strong> de todas nuestras clases. Todo lo que creemos irá dentro de él (o en subpaquetes suyos).
+                </div>
+                <details>
+                    <summary><strong>¿Qué es un paquete en Java?</strong></summary>
+                    <p>Un paquete es una carpeta lógica que agrupa clases relacionadas. Se declara con la palabra clave <code class="font-mono text-sm">package</code> al inicio de cada archivo. Organiza el proyecto en módulos y evita conflictos de nombres. Aquí el paquete raíz será <code class="font-mono text-sm">lab.flotavehicular</code>.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.3 Librerías Adicionales</h5>
+                <ul>
+                    <li>Seleccione todas las opciones exceptuando  <code class="font-mono text-sm">FXGL</code>.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- PASO 4 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+            <h2><i class="fa-regular fa-diagram-project mr-2" style="color: var(--accent-blue);"></i> Paso 4: Conocer la Estructura Maven</h2>
+
+            <div class="step-sub">
+                <h5>4.1 La estructura que genera IntelliJ</h5>
+                <p>Un proyecto Maven tendrá esta estructura general:</p>
+                <div class="code-fragment">
+Laboratorio05/
+│
+├── pom.xml
+│
+└── src/
+    └── main/
+        ├── java/
+        │       
+        └── resources/
+                </div>
+                <p>Estas dos carpetas tienen <strong>funciones diferentes</strong>, y es importante comprenderlas porque organizaremos todo nuestro proyecto alrededor de ellas.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>4.2 <code>src/main/java</code> — el código Java</h5>
+                <p>Aquí vive el <strong>código fuente</strong> Java. Por ejemplo:</p>
+                <div class="code-fragment">
+<span class="d-type">Vehiculo.java</span>
+<span class="d-type">Flota.java</span>
+<span class="d-type">Main.java</span>
+<span class="d-type">FlotaController.java</span>  <span class="d-comment">// se creará en clase</span>
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>4.3 <code>src/main/resources</code> — los recursos</h5>
+                <p>
+                    Aquí viven recursos que utiliza la aplicación pero que <strong>no son clases Java</strong>. Por ejemplo:
+                    los archivos <code class="font-mono text-sm">.fxml</code> (vistas), las hojas de estilo <code class="font-mono text-sm">.css</code> y las
+                    <strong>imágenes</strong> e <strong>iconos</strong>.
+                </p>
+                <div class="highlight-box">
+                    <i class="fa-regular fa-circle-info mr-1"></i> <strong>¿Por qué separar código y recursos?</strong> Porque así la interfaz (FXML), los estilos (CSS) y las imágenes se pueden editar sin tocar el código Java, y Maven los empaqueta junto a las clases al compilar. Más adelante tendremos algo como:
+                </div>
+                <div class="code-fragment">
+resources/
+└── lab/
+    └── flotavehicular/
+        ├── assets/
+        │   ├── css/
+        │   │   └── style.css
+        │   └── images/
+        └── view/
+            └── flotaView.fxml
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 5 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-purple);">
+            <h2><i class="fa-regular fa-file-code mr-2" style="color: var(--accent-purple);"></i> Paso 5: Revisar el <code>pom.xml</code></h2>
+
+            <div class="step-sub">
+                <h5>5.1 ¿Para qué sirve el pom.xml?</h5>
+                <p>
+                    Maven utiliza <code class="font-mono text-sm">pom.xml</code> para conocer la <strong>versión de Java</strong>, las <strong>librerías</strong> (dependencias),
+                    los <strong>plugins</strong> y la <strong>versión de JavaFX</strong>. Abre el archivo <code class="font-mono text-sm">pom.xml</code> que generó IntelliJ y revísalo.
+                </p>
+                <p>Busca el <strong>plugin <code class="font-mono text-sm">maven-compiler-plugin</code></strong> que generó IntelliJ. Este plugin es el que le indica a Maven <strong>con qué versión de Java compilar</strong> el proyecto (en nuestro caso, <strong>Java 25</strong>). En el pom suele venir <strong>comentado</strong> (como en tu proyecto):</p>
+                <div class="code-fragment">
+<span class="d-comment">&lt;!--  &lt;plugin&gt;</span>
+                &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+                &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+                &lt;version&gt;<span class="d-number">3.13.0</span>&lt;/version&gt;
+                &lt;configuration&gt;
+                    &lt;source&gt;<span class="d-number">25</span>&lt;/source&gt;
+                    &lt;target&gt;<span class="d-number">25</span>&lt;/target&gt;
+                &lt;/configuration&gt;
+<span class="d-comment">            &lt;/plugin&gt; --&gt;</span>
+                </div>
+                <details>
+                    <summary><strong>¿Qué hace el maven-compiler-plugin?</strong></summary>
+                    <p>Le dice a Maven <strong>con qué versión de Java debe compilar</strong> el proyecto. Aquí <code class="font-mono text-sm">&lt;source&gt;25&lt;/source&gt;</code> y <code class="font-mono text-sm">&lt;target&gt;25&lt;/target&gt;</code> indican que compilamos <strong>para Java 25</strong> (el mismo JDK 25 que configuramos en el Paso 3). Está <strong>comentado</strong> porque IntelliJ compila por su cuenta, pero es útil conocerlo. Además, en la sección <code class="font-mono text-sm">&lt;properties&gt;</code> del mismo pom se definen otras configuraciones del proyecto, como la <strong>codificación UTF-8</strong> de los archivos.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.2 Las dependencias de JavaFX</h5>
+                <p>Dentro de <code class="font-mono text-sm">&lt;dependencies&gt;</code> verificamos que existan estas <strong>cuatro dependencias de JavaFX</strong>, todas en la versión <strong>26.0.2</strong>:</p>
+                <div class="code-fragment">
+<span class="d-keyword">&lt;dependency&gt;</span>
+            &lt;groupId&gt;org.openjfx&lt;/groupId&gt;
+            &lt;artifactId&gt;javafx-controls&lt;/artifactId&gt;
+            &lt;version&gt;<span class="d-number">26.0.2</span>&lt;/version&gt;
+<span class="d-keyword">&lt;/dependency&gt;</span>
+<span class="d-keyword">        &lt;dependency&gt;</span>
+            &lt;groupId&gt;org.openjfx&lt;/groupId&gt;
+            &lt;artifactId&gt;javafx-fxml&lt;/artifactId&gt;
+            &lt;version&gt;<span class="d-number">26.0.2</span>&lt;/version&gt;
+<span class="d-keyword">        &lt;/dependency&gt;</span>
+<span class="d-keyword">        &lt;dependency&gt;</span>
+            &lt;groupId&gt;org.openjfx&lt;/groupId&gt;
+            &lt;artifactId&gt;javafx-web&lt;/artifactId&gt;
+            &lt;version&gt;<span class="d-number">26.0.2</span>&lt;/version&gt;
+<span class="d-keyword">        &lt;/dependency&gt;</span>
+<span class="d-keyword">        &lt;dependency&gt;</span>
+            &lt;groupId&gt;org.openjfx&lt;/groupId&gt;
+            &lt;artifactId&gt;javafx-swing&lt;/artifactId&gt;
+            &lt;version&gt;<span class="d-number">26.0.2</span>&lt;/version&gt;
+<span class="d-keyword">        &lt;/dependency&gt;</span>
+                </div>
+                <details>
+                    <summary><strong>¿Para qué sirve javafx-controls?</strong></summary>
+                    <p>Contiene los <strong>componentes gráficos</strong>: Button, Label, TextField, ComboBox, TableView, Alert, etc. Es la librería visual de JavaFX y la usaremos para construir la interfaz.</p>
+                </details>
+                <details>
+                    <summary><strong>¿Para qué sirve javafx-fxml?</strong></summary>
+                    <p>Permite utilizar <code class="font-mono text-sm">FXMLLoader</code>, la anotación <code class="font-mono text-sm">@FXML</code> y los archivos <code class="font-mono text-sm">.fxml</code>. Los necesitaremos al aplicar MVC.</p>
+                </details>
+                <details>
+                    <summary><strong>¿Y javafx-web y javafx-swing?</strong></summary>
+                    <p>Son módulos <strong>opcionales</strong> que la plantilla de IntelliJ incluye por defecto: <code class="font-mono text-sm">javafx-web</code> permite mostrar contenido web/HTML dentro de la aplicación y <code class="font-mono text-sm">javafx-swing</code> sirve para integrar componentes de Swing en JavaFX. <strong>Nuestra aplicación no los utiliza</strong>, pero quedan declarados en el pom por si algún día se necesitan.</p>
+                </details>
+                <p>
+                    Observa que la versión <code class="font-mono text-sm">26.0.2</code> aparece <strong>directamente en cada dependencia</strong>.
+                    Las dos primeras (<code class="font-mono text-sm">controls</code> y <code class="font-mono text-sm">fxml</code>) son las esenciales para nuestro proyecto;
+                    las otras dos vienen incluidas por la plantilla.
+                </p>
+            </div>
+        </div>
+
+        <!-- PASO 6 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
+            <h2><i class="fa-regular fa-rotate mr-2" style="color: var(--accent-green);"></i> Paso 6: Recargar Maven</h2>
+
+            <div class="step-sub">
+                <h5>6.1 Reload All Maven Projects</h5>
+                <p>
+                    Cada vez que modifiques dependencias del <code class="font-mono text-sm">pom.xml</code>, Maven debe <strong>volver a cargarlas</strong>.
+                    En IntelliJ, abre el panel <strong>Maven</strong> (en el costado derecho) y haz clic en
+                    <em>Reload All Maven Projects</em>. También puede aparecer un icono de actualización junto al <code class="font-mono text-sm">pom.xml</code>.
+                </p>
+                <details>
+                    <summary><strong>¿Qué hace Maven exactamente?</strong></summary>
+                    <p>Maven es una herramienta que administra <strong>dependencias, compilación, plugins y versiones</strong>. Por ejemplo, no necesitamos descargar manualmente los <code class="font-mono text-sm">.jar</code> de JavaFX: Maven busca las dependencias declaradas en el <code class="font-mono text-sm">pom.xml</code> y las descarga automáticamente.</p>
+                </details>
+                <div class="highlight-box">
+                    <i class="fa-regular fa-circle-info mr-1"></i> <strong>Espera a que Maven termine de descargar</strong> antes de continuar (verás una barra de progreso o "Indexing..." en la esquina inferior).
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 7 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-red);">
+            <h2><i class="fa-regular fa-trash-can mr-2" style="color: var(--una-red);"></i> Paso 7: Limpiar los Archivos de Ejemplo</h2>
+
+            <div class="step-sub">
+                <h5>7.1 Eliminar el código demostrativo</h5>
+                <p>
+                    Al crear un proyecto JavaFX, IntelliJ genera archivos de <strong>ejemplo</strong> que no corresponden a nuestra aplicación. Elimina:
+                </p>
+                <ul>
+                    <li><code class="font-mono text-sm">HelloApplication.java</code></li>
+                    <li><code class="font-mono text-sm">HelloController.java</code></li>
+                    <li><code class="font-mono text-sm">hello-view.fxml</code></li>
+                </ul>
+                <div class="error-box">
+                    <i class="fa-regular fa-triangle-exclamation mr-1"></i> <strong>No elimines:</strong>
+                    <code class="font-mono text-sm">pom.xml</code>, <code class="font-mono text-sm">src/main/java</code>, <code class="font-mono text-sm">src/main/resources</code>
+                    y, si el proyecto lo generó, <code class="font-mono text-sm">module-info.java</code> tampoco lo eliminamos (lo usaremos en el Paso 9).
+                </div>
+                <p>
+                    Si IntelliJ creó un paquete con un nombre diferente al que vamos a utilizar, reorganízalo antes de continuar
+                    (haz clic derecho sobre el paquete y usa <em>Refactor → Rename</em> hasta dejarlo como <code class="font-mono text-sm">lab.flotavehicular</code>).
+                </p>
+            </div>
+        </div>
+
+        <!-- PASO 8 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+            <h2><i class="fa-regular fa-folder-tree mr-2" style="color: var(--accent-blue);"></i> Paso 8: Crear los Paquetes</h2>
+
+            <div class="step-sub">
+                <h5>8.1 Crear el paquete <code>model</code></h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Haz <strong>clic derecho</strong> sobre <code class="font-mono text-sm">src/main/java</code> (o sobre el paquete <code class="font-mono text-sm">lab.flotavehicular</code>).</li>
+                    <li>Selecciona <em>New → Package</em>.</li>
+                    <li>Escribe <code class="font-mono text-sm">model</code> y presiona Enter.</li>
+                </ol>
+                <p>Este paquete almacenará toda la <strong>lógica de datos</strong> del sistema: los vehículos, la flota y la cola de mantenimiento.</p>
+            </div>
+
+            <div class="step-sub">
+                <h5>8.2 Crear el paquete <code>controller</code></h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Haz <strong>clic derecho</strong> sobre el paquete <code class="font-mono text-sm">lab.flotavehicular</code>.</li>
+                    <li>Selecciona <em>New → Package</em>.</li>
+                    <li>Escribe <code class="font-mono text-sm">controller</code> y presiona Enter.</li>
+                </ol>
+                <p>
+                    Este paquete <strong>quedará vacío por ahora</strong>: recibirá la clase <code class="font-mono text-sm">FlotaController</code>
+                    cuando construyamos la interfaz junto con la profesora. Lo creamos ahora para tener lista la estructura completa.
+                </p>
+            </div>
+
+            <div class="step-sub">
+                <h5>8.3 La estructura del código hasta ahora</h5>
+                <div class="code-fragment">
+src/main/java/
+└── lab/
+    └── flotavehicular/
+        ├── <span class="d-field">model</span>/      <span class="d-comment">// aquí irá toda la lógica de datos</span>
+        ├── <span class="d-field">controller</span>/  <span class="d-comment">// vacío por ahora (en clase)</span>
+        └── <span class="d-type">Main.java</span>     <span class="d-comment">// el punto de inicio (lo creamos al final)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 9 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-purple);">
+            <h2><i class="fa-regular fa-cubes mr-2" style="color: var(--accent-purple);"></i> Paso 9: Preparar <code>module-info.java</code></h2>
+
+            <div class="step-sub">
+                <h5>9.1 ¿Qué es un módulo?</h5>
+                <p>
+                    Los proyectos Java modernos pueden utilizar el <strong>sistema de módulos</strong> (JPMS). Un archivo <code class="font-mono text-sm">module-info.java</code>
+                    declara qué librerías necesita nuestra aplicación (<code class="font-mono text-sm">requires</code>), qué paquetes expone (<code class="font-mono text-sm">exports</code>)
+                    y qué paquetes abre para reflexión (<code class="font-mono text-sm">opens</code>).
+                </p>
+                <p>Si IntelliJ no lo creó automáticamente, crea el archivo <code class="font-mono text-sm">module-info.java</code> en <code class="font-mono text-sm">src/main/java</code> con este contenido:</p>
+                <div class="code-fragment">
+<span class="d-keyword">module</span> lab.flotavehicular {
+
+    <span class="d-comment">// Módulos de JavaFX incluidos en el proyecto</span>
+    <span class="d-keyword">requires</span> javafx.controls;
+    <span class="d-keyword">requires</span> javafx.fxml;
+    <span class="d-keyword">requires</span> javafx.web;
+
+    <span class="d-comment">// Librerías adicionales seleccionadas al crear el proyecto (Paso 3.3)</span>
+    <span class="d-keyword">requires</span> org.controlsfx.controls;
+    <span class="d-keyword">requires</span> com.dlsc.formsfx;
+    <span class="d-keyword">requires</span> net.synedra.validatorfx;
+    <span class="d-keyword">requires</span> org.kordamp.ikonli.javafx;
+    <span class="d-keyword">requires</span> org.kordamp.bootstrapfx.core;
+    <span class="d-keyword">requires</span> eu.hansolo.tilesfx;
+
+    <span class="d-comment">// Abre el paquete del controller para que JavaFX (FXML) acceda por reflexión</span>
+    <span class="d-keyword">opens</span> lab.flotavehicular.controller <span class="d-keyword">to</span> javafx.fxml;
+
+    <span class="d-comment">// Paquetes que exponemos al exterior</span>
+    <span class="d-keyword">exports</span> lab.flotavehicular;
+    <span class="d-keyword">exports</span> lab.flotavehicular.model;
+}
+                </div>
+                <details>
+                    <summary><strong>¿Qué significa <code>requires</code>?</strong></summary>
+                    <p>Declara los módulos que necesita nuestra aplicación. Aquí tenemos los <strong>tres de JavaFX</strong> (<code class="font-mono text-sm">javafx.controls</code> para los componentes gráficos, <code class="font-mono text-sm">javafx.fxml</code> para leer los archivos FXML y <code class="font-mono text-sm">javafx.web</code> para contenido web) y las <strong>librerías adicionales</strong> (Controlsfx, Formsfx, ValidatorFX, Ikonli, BootstrapFX y TilesFX) que IntelliJ agregó automáticamente porque las seleccionamos en el Paso 3.3.</p>
+                </details>
+                <details>
+                    <summary><strong>¿Qué significa <code>exports</code>?</strong></summary>
+                    <p>Permite que otro módulo acceda a las clases públicas de un paquete. Exportamos <code class="font-mono text-sm">lab.flotavehicular</code> (donde vive <code class="font-mono text-sm">Main</code>) y <code class="font-mono text-sm">lab.flotavehicular.model</code>.</p>
+                </details>
+                <details>
+                    <summary><strong>¿Por qué usamos <code>opens</code>?</strong></summary>
+                    <p>JavaFX utiliza <span class="glossary" tabindex="0" data-tooltip="Mecanismo de Java que permite inspeccionar y manipular las clases en tiempo de ejecución, aunque sean privadas.">reflexión</span> para conectar el FXML con el Controller. Por eso necesitaremos <code class="font-mono text-sm">opens lab.flotavehicular.controller to javafx.fxml;</code>. Sin esta instrucción podríamos obtener errores como <code class="font-mono text-sm">IllegalAccessException</code> cuando <code class="font-mono text-sm">FXMLLoader</code> intente crear el Controller.</p>
+                </details>
+                <div class="highlight-box">
+                    <i class="fa-regular fa-circle-info mr-1"></i> <strong>Posible aviso (warning):</strong> como el paquete <code class="font-mono text-sm">controller</code> aún está vacío, IntelliJ podría mostrar un aviso
+                    del estilo <em>"package lab.flotavehicular.controller is empty"</em>. <strong>Es normal y esperado</strong>: el aviso desaparecerá cuando agreguemos la clase <code class="font-mono text-sm">FlotaController</code> en clase. No es un error.
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 10 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
+            <h2><i class="fa-regular fa-layer-group mr-2" style="color: var(--accent-green);"></i> Paso 10: Crear el Paquete <code>model</code></h2>
+
+            <div class="step-sub">
+                <h5>10.1 Las clases que vamos a crear</h5>
+                <p>En <code class="font-mono text-sm">lab.flotavehicular.model</code> crearemos, en este orden:</p>
+                <div class="code-fragment">
+<span class="d-type">EstadoVehiculo.java</span>       <span class="d-comment">// enum: DISPONIBLE, EN_RUTA, TALLER</span>
+<span class="d-type">TipoVehiculo.java</span>         <span class="d-comment">// enum: COMBUSTION, ELECTRICO, PESADO</span>
+<span class="d-type">TipoCarga.java</span>            <span class="d-comment">// enum: NORMAL, PELIGROSA, REFRIGERADA</span>
+<span class="d-type">Mantenible.java</span>           <span class="d-comment">// interfaz: contrato de evaluación</span>
+<span class="d-type">Vehiculo.java</span>             <span class="d-comment">// clase abstracta (padre de todos)</span>
+<span class="d-type">VehiculoCombustion.java</span>   <span class="d-comment">// extiende Vehiculo</span>
+<span class="d-type">VehiculoElectrico.java</span>    <span class="d-comment">// extiende Vehiculo</span>
+<span class="d-type">VehiculoPesado.java</span>       <span class="d-comment">// extiende VehiculoCombustion</span>
+<span class="d-type">Flota.java</span>                <span class="d-comment">// CRUD de vehículos</span>
+<span class="d-type">ColaMantenimiento.java</span>    <span class="d-comment">// clase genérica con Queue</span>
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>10.2 La jerarquía de herencia</h5>
+                <p>Antes de programar, observa la relación entre las clases. Esta es la <strong>columna vertebral</strong> de todo el laboratorio:</p>
+                <div class="code-fragment">
+                    <span class="d-type">Vehiculo</span>              <span class="d-comment">// abstracta, implementa Mantenible</span>
+                  /          \
+                 /            \
+<span class="d-type">VehiculoCombustion</span>         <span class="d-type">VehiculoElectrico</span>
+        |
+        |
+<span class="d-type">VehiculoPesado</span>
+                </div>
+                <p>
+                    <code class="font-mono text-sm">Vehiculo</code> es la raíz (abstracta). De ella heredan <code class="font-mono text-sm">VehiculoCombustion</code> y
+                    <code class="font-mono text-sm">VehiculoElectrico</code>. A su vez, <code class="font-mono text-sm">VehiculoPesado</code> hereda de
+                    <code class="font-mono text-sm">VehiculoCombustion</code> (herencia de varios niveles o <strong>multinivel</strong>).
+                </p>
+            </div>
+        </div>
+
+        <!-- PASO 11 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+            <h2><i class="fa-regular fa-signal mr-2" style="color: var(--accent-blue);"></i> Paso 11: Crear <code>EstadoVehiculo</code> (enum)</h2>
+
+            <div class="step-sub">
+                <h5>11.1 Crear el archivo</h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Haz <strong>clic derecho</strong> sobre el paquete <code class="font-mono text-sm">model</code>.</li>
+                    <li>Selecciona <em>New → Java Class</em>.</li>
+                    <li>Escribe <code class="font-mono text-sm">EstadoVehiculo</code> y presiona Enter.</li>
+                    <li>En el campo <strong>Kind</strong> selecciona <strong>Enum</strong>.</li>
+                </ol>
+                <div class="code-fragment">
+<span class="d-comment">// Indica que esta clase vive dentro del paquete lab.flotavehicular.model</span>
+<span class="d-keyword">package</span> lab.flotavehicular.model;
+
+<span class="d-comment">// enum: los tres estados posibles de un vehículo</span>
+<span class="d-keyword">public enum</span> <span class="d-type">EstadoVehiculo</span> {
+    DISPONIBLE, EN_RUTA, TALLER
+}
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>11.2 ¿Por qué usar enum en lugar de String?</h5>
+                <p>
+                    Podríamos almacenar <code class="font-mono text-sm">String estado;</code> y escribir <code class="font-mono text-sm">"Disponible"</code>,
+                    <code class="font-mono text-sm">"En Ruta"</code> o <code class="font-mono text-sm">"Taller"</code>... pero eso permitiría errores como:
+                </p>
+                <div class="code-fragment">
+<span class="d-string">"DISPOINBLE"</span>   <span class="d-comment">// error de tipeo</span>
+<span class="d-string">"taler"</span>          <span class="d-comment">// error de tipeo</span>
+<span class="d-string">"ruta"</span>           <span class="d-comment">// inconsistente con "En Ruta"</span>
+                </div>
+                <p>
+                    El <strong>enum limita los valores posibles</strong>: el compilador garantiza que un estado solo pueda ser
+                    <code class="font-mono text-sm">DISPONIBLE</code>, <code class="font-mono text-sm">EN_RUTA</code> o <code class="font-mono text-sm">TALLER</code>.
+                    Nada más. Así eliminamos toda una familia de errores.
+                </p>
+            </div>
+        </div>
+
+        <!-- PASO 12 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+            <h2><i class="fa-regular fa-truck-fast mr-2" style="color: var(--accent-blue);"></i> Paso 12: Crear <code>TipoVehiculo</code> (enum)</h2>
+
+            <div class="step-sub">
+                <h5>12.1 Crear el archivo</h5>
+                <p>
+                    Repite el proceso: <em>New → Java Class</em> con <strong>Kind = Enum</strong> y nombre <code class="font-mono text-sm">TipoVehiculo</code>.
+                </p>
+                <div class="code-fragment">
+<span class="d-comment">// Indica que esta clase vive dentro del paquete lab.flotavehicular.model</span>
+<span class="d-keyword">package</span> lab.flotavehicular.model;
+
+<span class="d-comment">// enum: los tres tipos de vehículo que maneja la flota</span>
+<span class="d-keyword">public enum</span> <span class="d-type">TipoVehiculo</span> {
+    COMBUSTION, ELECTRICO, PESADO
+}
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>12.2 ¿Para qué sirve?</h5>
+                <p>
+                    Nos evita llenar el programa con cadenas como <code class="font-mono text-sm">"Combustión"</code>, <code class="font-mono text-sm">"Eléctrico"</code> o
+                    <code class="font-mono text-sm">"Pesado"</code>. Cada vehículo devolverá su tipo mediante <code class="font-mono text-sm">getTipo()</code>,
+                    y posteriormente facilitará utilizar un <code class="font-mono text-sm">switch (tipo)</code> en el Controller para decidir qué hacer según el tipo de vehículo.
+                </p>
+            </div>
+        </div>
+
+        <!-- PASO 13 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+            <h2><i class="fa-regular fa-boxes-stacked mr-2" style="color: var(--accent-blue);"></i> Paso 13: Crear <code>TipoCarga</code> (enum)</h2>
+
+            <div class="step-sub">
+                <h5>13.1 Crear el archivo</h5>
+                <p>
+                    <em>New → Java Class</em> con <strong>Kind = Enum</strong> y nombre <code class="font-mono text-sm">TipoCarga</code>.
+                </p>
+                <div class="code-fragment">
+<span class="d-comment">// Indica que esta clase vive dentro del paquete lab.flotavehicular.model</span>
+<span class="d-keyword">package</span> lab.flotavehicular.model;
+
+<span class="d-comment">// enum: los tipos de carga que puede transportar un vehículo pesado</span>
+<span class="d-keyword">public enum</span> <span class="d-type">TipoCarga</span> {
+    NORMAL, PELIGROSA, REFRIGERADA
+}
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>13.2 ¿Quién lo utiliza?</h5>
+                <p>
+                    Este enum será utilizado <strong>exclusivamente</strong> por la clase <code class="font-mono text-sm">VehiculoPesado</code>,
+                    que es la única que transporta mercancía. El eléctrico y el de combustión no lo necesitan.
+                </p>
+            </div>
+        </div>
+
+        <!-- PASO 14 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-purple);">
+            <h2><i class="fa-regular fa-handshake mr-2" style="color: var(--accent-purple);"></i> Paso 14: Crear la Interfaz <code>Mantenible</code></h2>
+
+            <div class="step-sub">
+                <h5>14.1 Crear el archivo</h5>
+                <p>
+                    <em>New → Java Class</em> con <strong>Kind = Interface</strong> y nombre <code class="font-mono text-sm">Mantenible</code>.
+                </p>
+                <div class="code-fragment">
+<span class="d-comment">// Indica que esta clase vive dentro del paquete lab.flotavehicular.model</span>
+<span class="d-keyword">package</span> lab.flotavehicular.model;
+
+<span class="d-comment">// Interfaz: define un CONTRATO, no la implementación</span>
+<span class="d-keyword">public interface</span> <span class="d-type">Mantenible</span> {
+
+    <span class="d-comment">// Todo vehículo que implemente esto DEBE saber evaluar su estado</span>
+    <span class="d-type">String</span> <span class="d-method">evaluarEstadoGeneral</span>();
+}
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>14.2 ¿Qué representa una interfaz?</h5>
+                <p>
+                    Una interfaz define un <strong>contrato</strong>. En este caso: <em>"todo objeto mantenible debe saber evaluar su estado general"</em>.
+                    No especificamos <strong>cómo</strong> se hace: eso dependerá de cada tipo de vehículo.
+                </p>
+                <p>
+                    La clase <code class="font-mono text-sm">Vehiculo</code> implementará esta interfaz, y cada subclase concreta
+                    (combustión, eléctrico, pesado) sobrescribirá <code class="font-mono text-sm">evaluarEstadoGeneral()</code> con su propia lógica.
+                </p>
+            </div>
+        </div>
+
+        <!-- PASO 15 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-red);">
+            <h2><i class="fa-regular fa-car mr-2" style="color: var(--una-red);"></i> Paso 15: Crear la Clase Abstracta <code>Vehiculo</code></h2>
+
+            <div class="step-sub">
+                <h5>15.1 Crear el archivo</h5>
+                <p>
+                    <em>New → Java Class</em> con <strong>Kind = Class</strong> y nombre <code class="font-mono text-sm">Vehiculo</code>.
+                    Escribiremos la palabra <code class="font-mono text-sm">abstract</code> manualmente.
+                </p>
+                <div class="code-fragment">
+<span class="d-comment">// Paquete al que pertenece la clase</span>
+<span class="d-keyword">package</span> lab.flotavehicular.model;
+
+<span class="d-comment">// Clase abstracta: NO se puede instanciar con 'new'. Implementa la interfaz Mantenible</span>
+<span class="d-keyword">public abstract class</span> <span class="d-type">Vehiculo</span> <span class="d-keyword">implements</span> <span class="d-type">Mantenible</span> {
+                </div>
+                <details>
+                    <summary><strong>¿Por qué Vehiculo es abstract?</strong></summary>
+                    <p>Porque en nuestro sistema no tiene sentido crear <code class="font-mono text-sm">new Vehiculo(...)</code>: un vehículo debe ser de algún tipo específico (combustión, eléctrico o pesado). Además, la clase abstracta <strong>obliga</strong> a las clases hijas a definir ciertos comportamientos.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>15.2 Declarar los atributos protegidos</h5>
+                <div class="code-fragment">
+    <span class="d-comment">// 'protected': visible para las subclases (herencia), no para cualquiera</span>
+    <span class="d-keyword">protected</span> <span class="d-type">String</span> <span class="d-field">placa</span>;
+
+    <span class="d-comment">// Marca del vehículo (ej. Toyota, Volvo)</span>
+    <span class="d-keyword">protected</span> <span class="d-type">String</span> <span class="d-field">marca</span>;
+
+    <span class="d-comment">// Kilometraje acumulado</span>
+    <span class="d-keyword">protected</span> <span class="d-keyword">int</span> <span class="d-field">kilometraje</span>;
+
+    <span class="d-comment">// Estado actual del vehículo (enum)</span>
+    <span class="d-keyword">protected</span> <span class="d-type">EstadoVehiculo</span> <span class="d-field">estado</span>;
+                </div>
+                <details>
+                    <summary><strong>¿Por qué 'protected' y no 'private'?</strong></summary>
+                    <p><code class="font-mono text-sm">protected</code> es un nivel intermedio de acceso: el atributo es visible para la propia clase <strong>y para sus subclases</strong>. Como las subclases (por ejemplo <code class="font-mono text-sm">VehiculoPesado</code>) necesitan modificar <code class="font-mono text-sm">kilometraje</code> directamente, usamos <code class="font-mono text-sm">protected</code>.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>15.3 Escribir el constructor</h5>
+                <div class="code-fragment">
+    <span class="d-comment">// Constructor: recibe los datos básicos y asigna el estado inicial DISPONIBLE</span>
+    <span class="d-keyword">public</span> <span class="d-method">Vehiculo</span>(<span class="d-type">String</span> <span class="d-field">placa</span>, <span class="d-type">String</span> <span class="d-field">marca</span>, <span class="d-keyword">int</span> <span class="d-field">kilometraje</span>) {
+        <span class="d-keyword">this</span>.<span class="d-field">placa</span> = <span class="d-field">placa</span>;
+        <span class="d-keyword">this</span>.<span class="d-field">marca</span> = <span class="d-field">marca</span>;
+        <span class="d-keyword">this</span>.<span class="d-field">kilometraje</span> = <span class="d-field">kilometraje</span>;
+        <span class="d-comment">// Todo vehículo nace DISPONIBLE (no está en ruta ni en taller)</span>
+        <span class="d-keyword">this</span>.<span class="d-field">estado</span> = <span class="d-type">EstadoVehiculo</span>.<span class="d-field">DISPONIBLE</span>;
+    }
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>15.4 Métodos abstractos y <code>finalizarRuta()</code></h5>
+                <p>
+                    Declaramos dos <strong>métodos abstractos</strong> (sin cuerpo: cada subclase dirá cómo los implementa) y un método concreto
+                    <code class="font-mono text-sm">finalizarRuta()</code> que <strong>es común a todos</strong>:
+                </p>
+                <div class="code-fragment">
+    <span class="d-comment">// Método abstracto: cada tipo de vehículo se mueve distinto (polimorfismo)</span>
+    <span class="d-keyword">public abstract</span> <span class="d-keyword">void</span> <span class="d-method">iniciarRuta</span>();
+
+    <span class="d-comment">// Método concreto: finalizar la ruta es igual para todos los vehículos</span>
+    <span class="d-keyword">public void</span> <span class="d-method">finalizarRuta</span>() {
+
+        <span class="d-comment">// Regla de negocio: solo se puede finalizar si está EN_RUTA</span>
+        <span class="d-keyword">if</span> (<span class="d-field">estado</span> != <span class="d-type">EstadoVehiculo</span>.<span class="d-field">EN_RUTA</span>) {
+            <span class="d-keyword">throw new</span> <span class="d-type">IllegalStateException</span>(
+                <span class="d-string">"El vehículo ["</span> + <span class="d-field">placa</span> + <span class="d-string">"] no se encuentra en ruta."</span>
+            );
+        }
+
+        <span class="d-comment">// Regresa a DISPONIBLE</span>
+        <span class="d-field">estado</span> = <span class="d-type">EstadoVehiculo</span>.<span class="d-field">DISPONIBLE</span>;
+    }
+
+    <span class="d-comment">// Método abstracto: cada subclase devuelve su propio tipo</span>
+    <span class="d-keyword">public abstract</span> <span class="d-type">TipoVehiculo</span> <span class="d-method">getTipo</span>();
+                </div>
+                <details>
+                    <summary><strong>¿Qué es un método abstracto?</strong></summary>
+                    <p>Es un método declarado <strong>sin cuerpo</strong> (termina en <code class="font-mono text-sm">;</code>). Solo dice <em>"esto debe existir"</em>. Toda subclase concreta está <strong>obligada</strong> a implementarlo. Es la base del polimorfismo: cada vehículo define su propia versión de <code class="font-mono text-sm">iniciarRuta()</code>.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>15.5 Getters, setter y <code>toString()</code></h5>
+                <p>
+                    Como los atributos son <code class="font-mono text-sm">protected</code>, la vista (el futuro Controller) necesita métodos
+                    <strong>públicos</strong> para leerlos. Agrupamos todos los getters, el setter y el <code class="font-mono text-sm">toString()</code>:
+                </p>
+                <div class="code-fragment">
+    <span class="d-comment">// Getter público: permite leer la placa desde fuera de la clase</span>
+    <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">getPlaca</span>()        { <span class="d-keyword">return</span> <span class="d-field">placa</span>; }
+
+    <span class="d-comment">// Getter público: permite leer la marca</span>
+    <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">getMarca</span>()        { <span class="d-keyword">return</span> <span class="d-field">marca</span>; }
+
+    <span class="d-comment">// Getter público: permite leer el kilometraje</span>
+    <span class="d-keyword">public</span> <span class="d-keyword">int</span> <span class="d-method">getKilometraje</span>()   { <span class="d-keyword">return</span> <span class="d-field">kilometraje</span>; }
+
+    <span class="d-comment">// Getter público: permite leer el estado actual</span>
+    <span class="d-keyword">public</span> <span class="d-type">EstadoVehiculo</span> <span class="d-method">getEstado</span>() { <span class="d-keyword">return</span> <span class="d-field">estado</span>; }
+
+    <span class="d-comment">// Setter público: permite cambiar el estado (lo usará la cola de mantenimiento)</span>
+    <span class="d-keyword">public void</span> <span class="d-method">setEstado</span>(<span class="d-type">EstadoVehiculo</span> <span class="d-field">estado</span>) { <span class="d-keyword">this</span>.<span class="d-field">estado</span> = <span class="d-field">estado</span>; }
+
+    <span class="d-comment">// Sobrescritura: así se mostrará el vehículo en la futura lista (ListView)</span>
+    <span class="d-annotation">@Override</span>
+    <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">toString</span>() {
+        <span class="d-keyword">return</span> <span class="d-field">marca</span> + <span class="d-string">" ["</span> + <span class="d-field">placa</span> + <span class="d-string">"]"</span>;
+    }
+}
+                </div>
+                <details>
+                    <summary><strong>¿Qué hace la anotación @Override?</strong></summary>
+                    <p>Le indica al compilador que estamos <strong>sobrescribiendo</strong> un método que ya existe en la superclase (<code class="font-mono text-sm">Object</code>). Es opcional pero recomendada: si nos equivocamos en la firma, el compilador nos avisa con un error.</p>
+                </details>
+                <details>
+                    <summary><strong>¿Por qué el toString() tiene ese formato?</strong></summary>
+                    <p>Cuando la interfaz muestre la lista de vehículos, cada elemento llamará automáticamente a <code class="font-mono text-sm">toString()</code>. Con el formato <code class="font-mono text-sm">"marca [placa]"</code> veremos, por ejemplo, <code class="font-mono text-sm">"Volvo [PES-003]"</code> en lugar de una dirección de memoria ilegible.</p>
+                </details>
+            </div>
+        </div>
+
+        <!-- PASO 16 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
+            <h2><i class="fa-regular fa-gas-pump mr-2" style="color: var(--accent-green);"></i> Paso 16: Crear <code>VehiculoCombustion</code></h2>
+
+            <div class="step-sub">
+                <h5>16.1 Crear el archivo</h5>
+                <p>
+                    <em>New → Java Class</em> (Kind = Class) con nombre <code class="font-mono text-sm">VehiculoCombustion</code>.
+                    Aquí aparece por primera vez <code class="font-mono text-sm">extends Vehiculo</code> (herencia).
+                </p>
+            </div>
+
+            <div class="step-sub">
+                <h5>16.2 Atributos y constructor</h5>
+                <div class="code-fragment">
+<span class="d-keyword">package</span> lab.flotavehicular.model;
+
+<span class="d-comment">// 'extends Vehiculo': hereda todo lo del padre (placa, marca, km, estado)</span>
+<span class="d-keyword">public class</span> <span class="d-type">VehiculoCombustion</span> <span class="d-keyword">extends</span> <span class="d-type">Vehiculo</span> {
+
+    <span class="d-comment">// Porcentaje de combustible (0.0 a 100.0). Es privado: solo esta clase lo toca</span>
+    <span class="d-keyword">private</span> <span class="d-keyword">double</span> <span class="d-field">nivelCombustible</span>;
+
+    <span class="d-comment">// Constructor: recibe los datos del padre (super) + el nivel de combustible</span>
+    <span class="d-keyword">public</span> <span class="d-method">VehiculoCombustion</span>(
+            <span class="d-type">String</span> <span class="d-field">placa</span>,
+            <span class="d-type">String</span> <span class="d-field">marca</span>,
+            <span class="d-keyword">int</span> <span class="d-field">kilometraje</span>,
+            <span class="d-keyword">double</span> <span class="d-field">nivelCombustible</span>) {
+
+        <span class="d-comment">// super(...) llama al constructor de la clase padre (Vehiculo)</span>
+        <span class="d-keyword">super</span>(<span class="d-field">placa</span>, <span class="d-field">marca</span>, <span class="d-field">kilometraje</span>);
+
+        <span class="d-comment">// El atributo propio se inicializa aquí</span>
+        <span class="d-keyword">this</span>.<span class="d-field">nivelCombustible</span> = <span class="d-field">nivelCombustible</span>;
+    }
+                </div>
+                <details>
+                    <summary><strong>¿Qué hace <code>super(...)</code>?</strong></summary>
+                    <p><code class="font-mono text-sm">super(placa, marca, kilometraje)</code> llama al <strong>constructor de la clase padre</strong> (<code class="font-mono text-sm">Vehiculo</code>) para que inicialice los atributos heredados. Luego esta clase solo se encarga de su propio atributo (<code class="font-mono text-sm">nivelCombustible</code>).</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>16.3 Getter</h5>
+                <div class="code-fragment">
+    <span class="d-comment">// Getter público: la vista necesita el nivel de combustible para la barra de progreso</span>
+    <span class="d-keyword">public</span> <span class="d-keyword">double</span> <span class="d-method">getNivelCombustible</span>() { <span class="d-keyword">return</span> <span class="d-field">nivelCombustible</span>; }
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>16.4 Métodos obligatorios (polimorfismo y sobrescritura)</h5>
+                <p>
+                    Aquí implementamos los tres métodos obligatorios: <code class="font-mono text-sm">iniciarRuta()</code> (abstracto del padre),
+                    <code class="font-mono text-sm">getTipo()</code> (abstracto del padre) y <code class="font-mono text-sm">evaluarEstadoGeneral()</code> (de la interfaz Mantenible).
+                    Cada uno lleva <code class="font-mono text-sm">@Override</code> porque estamos <strong>sobrescribiendo</strong>:
+                </p>
+                <div class="code-fragment">
+    <span class="d-annotation">@Override</span>
+    <span class="d-comment">// Sobrescritura: cómo inicia ruta un vehículo de combustión</span>
+    <span class="d-keyword">public void</span> <span class="d-method">iniciarRuta</span>() {
+
+        <span class="d-comment">// Regla 1: si está en el taller, no puede salir</span>
+        <span class="d-keyword">if</span> (<span class="d-field">estado</span> == <span class="d-type">EstadoVehiculo</span>.<span class="d-field">TALLER</span>) {
+            <span class="d-keyword">throw new</span> <span class="d-type">IllegalStateException</span>(
+                <span class="d-string">"El vehículo ["</span> + <span class="d-field">placa</span> + <span class="d-string">"] está en el taller. No puede salir."</span>
+            );
+        }
+
+        <span class="d-comment">// Regla 2: si ya está en ruta, no puede iniciar otra</span>
+        <span class="d-keyword">if</span> (<span class="d-field">estado</span> == <span class="d-type">EstadoVehiculo</span>.<span class="d-field">EN_RUTA</span>) {
+            <span class="d-keyword">throw new</span> <span class="d-type">IllegalStateException</span>(
+                <span class="d-string">"El vehículo ["</span> + <span class="d-field">placa</span> + <span class="d-string">"] ya se encuentra en ruta."</span>
+            );
+        }
+
+        <span class="d-comment">// Regla 3: no puede salir con menos de 10% de combustible</span>
+        <span class="d-keyword">if</span> (<span class="d-field">nivelCombustible</span> < <span class="d-number">10</span>) {
+            <span class="d-keyword">throw new</span> <span class="d-type">IllegalStateException</span>(
+                <span class="d-string">"Combustible insuficiente. Debe ir a la gasolinera."</span>
+            );
+        }
+
+        <span class="d-comment">// Lógica propia: consume 10% y avanza 50 km</span>
+        <span class="d-field">nivelCombustible</span> -= <span class="d-number">10</span>;
+        <span class="d-field">kilometraje</span> += <span class="d-number">50</span>;
+        <span class="d-field">estado</span> = <span class="d-type">EstadoVehiculo</span>.<span class="d-field">EN_RUTA</span>;
+    }
+
+    <span class="d-annotation">@Override</span>
+    <span class="d-comment">// Sobrescritura: este vehículo es de tipo COMBUSTION</span>
+    <span class="d-keyword">public</span> <span class="d-type">TipoVehiculo</span> <span class="d-method">getTipo</span>() {
+        <span class="d-keyword">return</span> <span class="d-type">TipoVehiculo</span>.<span class="d-field">COMBUSTION</span>;
+    }
+
+    <span class="d-annotation">@Override</span>
+    <span class="d-comment">// Sobrescritura (interfaz Mantenible): evalúa el estado según el combustible</span>
+    <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">evaluarEstadoGeneral</span>() {
+        <span class="d-comment">// Operador ternario: si hay menos de 15% avisa; si no, todo bien</span>
+        <span class="d-keyword">return</span> <span class="d-field">nivelCombustible</span> < <span class="d-number">15</span>
+                ? <span class="d-string">"Requiere ir a la gasolinera"</span>
+                : <span class="d-string">"Niveles óptimos"</span>;
+    }
+}
+                </div>
+                <details>
+                    <summary><strong>¿Qué hace el operador ternario <code>condición ? a : b</code>?</strong></summary>
+                    <p>Es un <code class="font-mono text-sm">if/else</code> resumido en una línea: si <code class="font-mono text-sm">nivelCombustible &lt; 15</code> es verdadero devuelve <code class="font-mono text-sm">"Requiere ir a la gasolinera"</code>; en caso contrario devuelve <code class="font-mono text-sm">"Niveles óptimos"</code>.</p>
+                </details>
+                <details>
+                    <summary><strong>¿Por qué lanzar excepciones?</strong></summary>
+                    <p>Estas son <strong>reglas de negocio</strong>: el sistema no debe permitir acciones inválidas (salir del taller, doble ruta, sin combustible). Lanzar <code class="font-mono text-sm">IllegalStateException</code> detiene la operación y le avisa al llamador con un mensaje claro. El Controller mostrará ese mensaje en un <code class="font-mono text-sm">Alert</code> en clase.</p>
+                </details>
+            </div>
+        </div>
+
+        <!-- PASO 17 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-purple);">
+            <h2><i class="fa-regular fa-bolt mr-2" style="color: var(--accent-purple);"></i> Paso 17: Crear <code>VehiculoElectrico</code></h2>
+
+            <div class="step-sub">
+                <h5>17.1 Crear el archivo</h5>
+                <p>
+                    <em>New → Java Class</em> (Kind = Class) con nombre <code class="font-mono text-sm">VehiculoElectrico</code>.
+                    Esta clase también hereda de <code class="font-mono text-sm">Vehiculo</code> pero con una lógica diferente.
+                </p>
+            </div>
+
+            <div class="step-sub">
+                <h5>17.2 Atributos y constructor</h5>
+                <div class="code-fragment">
+<span class="d-keyword">package</span> lab.flotavehicular.model;
+
+<span class="d-comment">// También hereda de Vehiculo, pero su "combustible" es la batería</span>
+<span class="d-keyword">public class</span> <span class="d-type">VehiculoElectrico</span> <span class="d-keyword">extends</span> <span class="d-type">Vehiculo</span> {
+
+    <span class="d-comment">// Porcentaje de batería (0.0 a 100.0)</span>
+    <span class="d-keyword">private</span> <span class="d-keyword">double</span> <span class="d-field">porcentajeBateria</span>;
+
+    <span class="d-comment">// Cuántas veces se ha cargado la batería</span>
+    <span class="d-keyword">private</span> <span class="d-keyword">int</span> <span class="d-field">ciclosDeCarga</span>;
+
+    <span class="d-comment">// Constructor completo: datos del padre (super) + batería + ciclos de carga</span>
+    <span class="d-keyword">public</span> <span class="d-method">VehiculoElectrico</span>(<span class="d-type">String</span> <span class="d-field">placa</span>, <span class="d-type">String</span> <span class="d-field">marca</span>, <span class="d-keyword">int</span> <span class="d-field">kilometraje</span>, <span class="d-keyword">double</span> <span class="d-field">porcentajeBateria</span>, <span class="d-keyword">int</span> <span class="d-field">ciclosDeCarga</span>) {
+        <span class="d-comment">// Envía placa, marca y km al padre (Vehiculo)</span>
+        <span class="d-keyword">super</span>(<span class="d-field">placa</span>, <span class="d-field">marca</span>, <span class="d-field">kilometraje</span>);
+
+        <span class="d-keyword">this</span>.<span class="d-field">porcentajeBateria</span> = <span class="d-field">porcentajeBateria</span>;
+        <span class="d-keyword">this</span>.<span class="d-field">ciclosDeCarga</span> = <span class="d-field">ciclosDeCarga</span>;
+    }
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>17.3 Getter</h5>
+                <div class="code-fragment">
+    <span class="d-comment">// Getter que la vista (el controlador) va a necesitar para la barra de progreso</span>
+    <span class="d-keyword">public</span> <span class="d-keyword">double</span> <span class="d-method">getPorcentajeBateria</span>() {
+        <span class="d-keyword">return</span> <span class="d-field">porcentajeBateria</span>;
+    }
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>17.4 Métodos obligatorios (polimorfismo)</h5>
+                <p>
+                    Misma estructura que <code class="font-mono text-sm">VehiculoCombustion</code>, pero con las reglas de un <strong>vehículo eléctrico</strong>.
+                    Nota cómo cambia la lógica: aquí validamos la <strong>batería</strong> en vez del combustible:
+                </p>
+                <div class="code-fragment">
+    <span class="d-annotation">@Override</span>
+    <span class="d-comment">// Sobrescritura: cómo inicia ruta un vehículo eléctrico</span>
+    <span class="d-keyword">public void</span> <span class="d-method">iniciarRuta</span>() {
+
+        <span class="d-comment">// Regla 1: no puede iniciar una ruta si ya está en ruta</span>
+        <span class="d-keyword">if</span> (<span class="d-field">estado</span> == <span class="d-type">EstadoVehiculo</span>.<span class="d-field">EN_RUTA</span>) {
+            <span class="d-keyword">throw new</span> <span class="d-type">IllegalStateException</span>(
+                <span class="d-string">"El vehículo ["</span> + <span class="d-field">placa</span> + <span class="d-string">"] ya se encuentra en ruta."</span>
+            );
+        }
+
+        <span class="d-comment">// Regla 2: si está en el taller, no puede salir</span>
+        <span class="d-keyword">if</span> (<span class="d-keyword">this</span>.<span class="d-field">estado</span> == <span class="d-type">EstadoVehiculo</span>.<span class="d-field">TALLER</span>) {
+            <span class="d-keyword">throw new</span> <span class="d-type">IllegalStateException</span>(
+                <span class="d-string">"El vehículo ["</span> + <span class="d-field">placa</span> + <span class="d-string">"] está en el taller. No puede salir."</span>
+            );
+        }
+
+        <span class="d-comment">// Regla 3: no puede salir con menos de 15% de batería</span>
+        <span class="d-keyword">if</span> (<span class="d-keyword">this</span>.<span class="d-field">porcentajeBateria</span> < <span class="d-number">15.0</span>) {
+            <span class="d-keyword">throw new</span> <span class="d-type">IllegalStateException</span>(
+                <span class="d-string">"Batería insuficiente ("</span> + <span class="d-field">porcentajeBateria</span> + <span class="d-string">"%). Conecte al cargador."</span>
+            );
+        }
+
+        <span class="d-comment">// Lógica propia: consume 15% de batería y avanza 50 km</span>
+        <span class="d-keyword">this</span>.<span class="d-field">porcentajeBateria</span> -= <span class="d-number">15.0</span>;
+        <span class="d-keyword">this</span>.<span class="d-field">kilometraje</span> += <span class="d-number">50</span>;
+        <span class="d-keyword">this</span>.<span class="d-field">estado</span> = <span class="d-type">EstadoVehiculo</span>.<span class="d-field">EN_RUTA</span>;
+    }
+
+    <span class="d-annotation">@Override</span>
+    <span class="d-comment">// Sobrescritura: este vehículo es de tipo ELECTRICO</span>
+    <span class="d-keyword">public</span> <span class="d-type">TipoVehiculo</span> <span class="d-method">getTipo</span>() {
+        <span class="d-keyword">return</span> <span class="d-type">TipoVehiculo</span>.<span class="d-field">ELECTRICO</span>;
+    }
+
+    <span class="d-annotation">@Override</span>
+    <span class="d-comment">// Sobrescritura (interfaz Mantenible): evalúa el estado de la batería</span>
+    <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">evaluarEstadoGeneral</span>() {
+
+        <span class="d-comment">// Un eléctrico con muchos ciclos de carga tiene la batería degradada</span>
+        <span class="d-keyword">if</span> (<span class="d-field">ciclosDeCarga</span> > <span class="d-number">1000</span>) {
+            <span class="d-keyword">return</span> <span class="d-string">"Alerta: Batería muy degradada, requiere reemplazo"</span>;
+        }
+
+        <span class="d-comment">// Si no, revisamos el porcentaje actual</span>
+        <span class="d-keyword">else if</span> (<span class="d-field">porcentajeBateria</span> < <span class="d-number">20</span>) {
+            <span class="d-keyword">return</span> <span class="d-string">"Requiere conexión a estación de carga"</span>;
+        }
+
+        <span class="d-comment">// Si está por encima del 20%, todo bien</span>
+        <span class="d-keyword">else</span> {
+            <span class="d-keyword">return</span> <span class="d-string">"Batería y sistemas óptimos"</span>;
+        }
+    }
+}
+                </div>
+                <details>
+                    <summary><strong>¿Dónde se ve el polimorfismo aquí?</strong></summary>
+                    <p>Fíjate: <code class="font-mono text-sm">VehiculoCombustion</code> y <code class="font-mono text-sm">VehiculoElectrico</code> son dos objetos <strong>distintos</strong>, pero ambos son <code class="font-mono text-sm">Vehiculo</code>:
+                    <br><code class="font-mono text-sm">Vehiculo v1 = new VehiculoCombustion(...);</code><br>
+                    <code class="font-mono text-sm">Vehiculo v2 = new VehiculoElectrico(...);</code><br>
+                    Si escribimos <code class="font-mono text-sm">v1.iniciarRuta();</code> y <code class="font-mono text-sm">v2.iniciarRuta();</code>, Java ejecutará <strong>implementaciones diferentes</strong> según el tipo real del objeto. Eso es polimorfismo.</p>
+                </details>
+            </div>
+        </div>
+
+        <!-- PASO 18 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-red);">
+            <h2><i class="fa-regular fa-truck mr-2" style="color: var(--una-red);"></i> Paso 18: Crear <code>VehiculoPesado</code></h2>
+
+            <div class="step-sub">
+                <h5>18.1 Crear el archivo</h5>
+                <p>
+                    <em>New → Java Class</em> (Kind = Class) con nombre <code class="font-mono text-sm">VehiculoPesado</code>.
+                    Esta clase representa la <strong>herencia multinivel</strong>: hereda de <code class="font-mono text-sm">VehiculoCombustion</code>,
+                    que a su vez hereda de <code class="font-mono text-sm">Vehiculo</code>.
+                </p>
+                <div class="code-fragment">
+    <span class="d-type">Vehiculo</span>
+        ↑
+<span class="d-type">VehiculoCombustion</span>
+        ↑
+  <span class="d-type">VehiculoPesado</span>
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>18.2 Atributos y constructor</h5>
+                <div class="code-fragment">
+<span class="d-keyword">package</span> lab.flotavehicular.model;
+
+<span class="d-comment">// Herencia multinivel: pesado es una clase de combustión, que es un vehículo</span>
+<span class="d-keyword">public class</span> <span class="d-type">VehiculoPesado</span> <span class="d-keyword">extends</span> <span class="d-type">VehiculoCombustion</span> {
+
+    <span class="d-comment">// Cuántas toneladas puede transportar como máximo</span>
+    <span class="d-keyword">private</span> <span class="d-keyword">double</span> <span class="d-field">tonelajeMaximo</span>;
+
+    <span class="d-comment">// Toneladas cargadas actualmente (arranca en 0.0)</span>
+    <span class="d-keyword">private</span> <span class="d-keyword">double</span> <span class="d-field">cargaActual</span>;
+
+    <span class="d-comment">// Tipo de carga que transporta (enum)</span>
+    <span class="d-keyword">private</span> <span class="d-type">TipoCarga</span> <span class="d-field">tipoCarga</span>;
+
+    <span class="d-comment">// Constructor: recibe los datos del abuelo (super de Combustion) + los suyos</span>
+    <span class="d-keyword">public</span> <span class="d-method">VehiculoPesado</span>(
+            <span class="d-type">String</span> <span class="d-field">placa</span>,
+            <span class="d-type">String</span> <span class="d-field">marca</span>,
+            <span class="d-keyword">int</span> <span class="d-field">kilometraje</span>,
+            <span class="d-keyword">double</span> <span class="d-field">nivelCombustible</span>,
+            <span class="d-keyword">double</span> <span class="d-field">tonelajeMaximo</span>,
+            <span class="d-type">TipoCarga</span> <span class="d-field">tipoCarga</span>) {
+
+        <span class="d-comment">// Llama al constructor de VehiculoCombustion (que a su vez llama al de Vehiculo)</span>
+        <span class="d-keyword">super</span>(<span class="d-field">placa</span>, <span class="d-field">marca</span>, <span class="d-field">kilometraje</span>, <span class="d-field">nivelCombustible</span>);
+
+        <span class="d-keyword">this</span>.<span class="d-field">tonelajeMaximo</span> = <span class="d-field">tonelajeMaximo</span>;
+        <span class="d-keyword">this</span>.<span class="d-field">cargaActual</span> = <span class="d-number">0.0</span>;
+        <span class="d-keyword">this</span>.<span class="d-field">tipoCarga</span> = <span class="d-field">tipoCarga</span>;
+    }
+                </div>
+                <details>
+                    <summary><strong>¿Por qué el constructor recibe nivelCombustible si no lo declara?</strong></summary>
+                    <p>Porque <code class="font-mono text-sm">VehiculoPesado</code> <strong>hereda</strong> el atributo <code class="font-mono text-sm">nivelCombustible</code> de <code class="font-mono text-sm">VehiculoCombustion</code>. Al llamar a <code class="font-mono text-sm">super(placa, marca, kilometraje, nivelCombustible)</code> pasamos ese valor al constructor del padre, que es quien lo inicializa. El pesado no lo declara de nuevo: lo recibe y lo reenvía.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>18.3 Getters</h5>
+                <p>
+                    Esta clase tiene <strong>tres</strong> datos propios que la vista necesita leer. Como son simples consultas, los escribimos todos juntos.
+                    Cada uno <strong>devuelve el valor</strong> del atributo correspondiente sin modificarlo:
+                </p>
+                <div class="code-fragment">
+    <span class="d-comment">// Getter: cuántas toneladas soporta el camión como máximo</span>
+    <span class="d-keyword">public</span> <span class="d-keyword">double</span> <span class="d-method">getTonelajeMaximo</span>() {
+        <span class="d-keyword">return</span> <span class="d-field">tonelajeMaximo</span>;
+    }
+
+    <span class="d-comment">// Getter: cuántas toneladas lleva cargadas ahora mismo</span>
+    <span class="d-keyword">public</span> <span class="d-keyword">double</span> <span class="d-method">getCargaActual</span>() {
+        <span class="d-keyword">return</span> <span class="d-field">cargaActual</span>;
+    }
+
+    <span class="d-comment">// Getter: qué tipo de carga transporta (NORMAL, PELIGROSA o REFRIGERADA)</span>
+    <span class="d-keyword">public</span> <span class="d-type">TipoCarga</span> <span class="d-method">getTipoCarga</span>() {
+        <span class="d-keyword">return</span> <span class="d-field">tipoCarga</span>;
+    }
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>18.4 Métodos de negocio: <code>cargarMercancia</code>, <code>iniciarRuta</code> y <code>finalizarRuta</code></h5>
+                <p>
+                    Estos tres métodos contienen las <strong>reglas de negocio específicas del camión</strong>.
+                    Observa cómo se combinan la lógica propia con <code class="font-mono text-sm">super.iniciarRuta()</code> y <code class="font-mono text-sm">super.finalizarRuta()</code>
+                    para <strong>reutilizar</strong> el comportamiento del padre:
+                </p>
+                <div class="code-fragment">
+    <span class="d-comment">// Regla de negocio: cargar mercancía en el camión</span>
+    <span class="d-keyword">public void</span> <span class="d-method">cargarMercancia</span>(<span class="d-keyword">double</span> <span class="d-field">pesoEnToneladas</span>) {
+
+        <span class="d-comment">// No se puede cargar un peso negativo o cero</span>
+        <span class="d-keyword">if</span> (<span class="d-field">pesoEnToneladas</span> <= <span class="d-number">0</span>) {
+            <span class="d-keyword">throw new</span> <span class="d-type">IllegalArgumentException</span>(
+                <span class="d-string">"El peso de la mercancía debe ser mayor que cero."</span>
+            );
+        }
+
+        <span class="d-comment">// No se puede exceder el tonelaje máximo (sobrecarga)</span>
+        <span class="d-keyword">if</span> (<span class="d-field">pesoEnToneladas</span> > <span class="d-field">tonelajeMaximo</span>) {
+            <span class="d-keyword">throw new</span> <span class="d-type">IllegalArgumentException</span>(
+                <span class="d-string">"Sobrecarga: el camión solo soporta "</span> + <span class="d-field">tonelajeMaximo</span> + <span class="d-string">" toneladas."</span>
+            );
+        }
+
+        <span class="d-comment">// Si pasó las validaciones, se registra la carga</span>
+        <span class="d-keyword">this</span>.<span class="d-field">cargaActual</span> = <span class="d-field">pesoEnToneladas</span>;
+    }
+
+    <span class="d-annotation">@Override</span>
+    <span class="d-comment">// Sobrescritura: un camión NO puede salir vacío a ruta</span>
+    <span class="d-keyword">public void</span> <span class="d-method">iniciarRuta</span>() {
+
+        <span class="d-comment">// Regla propia del pesado: debe llevar carga</span>
+        <span class="d-keyword">if</span> (<span class="d-field">cargaActual</span> == <span class="d-number">0.0</span>) {
+            <span class="d-keyword">throw new</span> <span class="d-type">IllegalStateException</span>(
+                <span class="d-string">"El camión ["</span> + <span class="d-field">placa</span> + <span class="d-string">"] no puede salir a ruta vacío."</span>
+            );
+        }
+
+        <span class="d-comment">// Reutiliza TODA la validación y lógica del padre (combustible, estado...)</span>
+        <span class="d-keyword">super</span>.<span class="d-method">iniciarRuta</span>();
+
+        <span class="d-comment">// Y agrega su comportamiento particular: un camión pesado recorre más (150 km)</span>
+        <span class="d-keyword">this</span>.<span class="d-field">kilometraje</span> += <span class="d-number">150</span>;
+    }
+
+    <span class="d-annotation">@Override</span>
+    <span class="d-comment">// Sobrescritura: al finalizar la ruta se descarga el camión</span>
+    <span class="d-keyword">public void</span> <span class="d-method">finalizarRuta</span>() {
+
+        <span class="d-comment">// Reutiliza la lógica del padre (valida estado y vuelve a DISPONIBLE)</span>
+        <span class="d-keyword">super</span>.<span class="d-method">finalizarRuta</span>();
+
+        <span class="d-comment">// Y agrega su comportamiento particular: la carga se vacía</span>
+        <span class="d-keyword">this</span>.<span class="d-field">cargaActual</span> = <span class="d-number">0.0</span>;
+    }
+                </div>
+                <details>
+                    <summary><strong>¿Para qué sirve <code>super.iniciarRuta()</code>?</strong></summary>
+                    <p>Permite <strong>reutilizar el comportamiento del padre</strong> y luego agregar comportamiento particular. Sin esa línea, el camión no validaría el combustible ni cambiaría su estado correctamente. Con ella, primero se ejecuta todo lo del padre y <strong>después</strong> lo propio (los +150 km). Es la esencia de la sobrescritura responsable.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>18.5 Métodos sobrescritos: <code>getTipo</code> y <code>evaluarEstadoGeneral</code></h5>
+                <p>
+                    Por último, los dos métodos que identifican al camión. <code class="font-mono text-sm">evaluarEstadoGeneral()</code> es especial porque
+                    <strong>reutiliza el resultado del padre</strong> con <code class="font-mono text-sm">super.evaluarEstadoGeneral()</code> y le agrega una alerta extra:
+                </p>
+                <div class="code-fragment">
+    <span class="d-annotation">@Override</span>
+    <span class="d-comment">// Sobrescritura: este vehículo es de tipo PESADO</span>
+    <span class="d-keyword">public</span> <span class="d-type">TipoVehiculo</span> <span class="d-method">getTipo</span>() {
+        <span class="d-keyword">return</span> <span class="d-type">TipoVehiculo</span>.<span class="d-field">PESADO</span>;
+    }
+
+    <span class="d-annotation">@Override</span>
+    <span class="d-comment">// Sobrescritura (interfaz Mantenible): estado del camión, con alerta de ejes</span>
+    <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">evaluarEstadoGeneral</span>() {
+
+        <span class="d-comment">// Guarda primero el texto que devuelve el padre (nivel de combustible)</span>
+        <span class="d-type">String</span> <span class="d-field">estadoPadre</span> = <span class="d-keyword">super</span>.<span class="d-method">evaluarEstadoGeneral</span>();
+
+        <span class="d-comment">// Un camión con mucho kilometraje necesita revisión de ejes y frenos de aire</span>
+        <span class="d-keyword">if</span> (<span class="d-field">kilometraje</span> > <span class="d-number">150000</span>) {
+            <span class="d-keyword">return</span> <span class="d-field">estadoPadre</span>
+                    + <span class="d-string">" | Alerta: Requiere revisión de ejes y frenos de aire."</span>;
+        }
+
+        <span class="d-comment">// Si el kilometraje es normal, devolvemos solo lo que dijo el padre</span>
+        <span class="d-keyword">return</span> <span class="d-field">estadoPadre</span>;
+    }
+}
+                </div>
+                <details>
+                    <summary><strong>¿Por qué llamar a super.evaluarEstadoGeneral()?</strong></summary>
+                    <p>El camión <strong>también es</strong> un vehículo de combustión, así que primero pregunta al padre qué dice del combustible y luego agrega su propia alerta mecánica. Así evitamos repetir código: el padre evalúa el combustible, y el pesado solo añade lo que le corresponde.</p>
+                </details>
+            </div>
+        </div>
+
+        <!-- PASO 19 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
+            <h2><i class="fa-regular fa-database mr-2" style="color: var(--accent-green);"></i> Paso 19: Crear <code>Flota</code> (CRUD en memoria)</h2>
+
+            <div class="step-sub">
+                <h5>19.1 Crear el archivo</h5>
+                <p>
+                    <em>New → Java Class</em> (Kind = Class) con nombre <code class="font-mono text-sm">Flota</code>.
+                    Esta clase almacena todos los vehículos en una lista y ofrece las <strong>operaciones CRUD</strong>.
+                </p>
+            </div>
+
+            <div class="step-sub">
+                <h5>19.2 Atributo y constructor</h5>
+                <div class="code-fragment">
+<span class="d-keyword">package</span> lab.flotavehicular.model;
+
+<span class="d-comment">// Importamos las colecciones que vamos a usar</span>
+<span class="d-keyword">import</span> java.util.ArrayList;
+<span class="d-keyword">import</span> java.util.List;
+
+<span class="d-keyword">public class</span> <span class="d-type">Flota</span> {
+
+    <span class="d-comment">// La lista de vehículos. 'List' es la interfaz, 'ArrayList' la implementación</span>
+    <span class="d-keyword">private</span> <span class="d-type">List</span>&lt;<span class="d-type">Vehiculo</span>&gt; <span class="d-field">vehiculos</span>;
+
+    <span class="d-keyword">public</span> <span class="d-method">Flota</span>() {
+        <span class="d-comment">// Se inicializa como un ArrayList vacío</span>
+        <span class="d-keyword">this</span>.<span class="d-field">vehiculos</span> = <span class="d-keyword">new</span> <span class="d-type">ArrayList</span>&lt;&gt;();
+    }
+                </div>
+                <details>
+                    <summary><strong>¿Por qué List y no ArrayList directamente?</strong></summary>
+                    <p>Porque usamos el mismo principio de <strong>interfaz vs implementación</strong>: <code class="font-mono text-sm">List</code> es la interfaz (el "contrato") y <code class="font-mono text-sm">ArrayList</code> es la implementación concreta. Así podemos cambiar la implementación en el futuro (ej. a <code class="font-mono text-sm">LinkedList</code>) sin tocar el resto del código.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>19.3 CREATE + READ</h5>
+                <p>
+                    <code class="font-mono text-sm">agregarVehiculo</code> (Create) valida que la placa no esté duplicada usando un <strong>stream</strong> con <code class="font-mono text-sm">anyMatch</code>.
+                    <code class="font-mono text-sm">obtenerVehiculos</code> (Read) devuelve una copia de la lista para proteger los datos internos:
+                </p>
+                <div class="code-fragment">
+    <span class="d-comment">// CREATE: registra un vehículo nuevo en la flota</span>
+    <span class="d-keyword">public void</span> <span class="d-method">agregarVehiculo</span>(<span class="d-type">Vehiculo</span> <span class="d-field">vehiculo</span>) {
+
+        <span class="d-comment">// Stream + anyMatch + lambda: ¿ya existe algún vehículo con esa placa?</span>
+        <span class="d-keyword">boolean</span> <span class="d-field">existe</span> = <span class="d-field">vehiculos</span>.<span class="d-method">stream</span>()
+                .<span class="d-method">anyMatch</span>(<span class="d-field">v</span> ->
+                        <span class="d-field">v</span>.<span class="d-method">getPlaca</span>().<span class="d-method">equalsIgnoreCase</span>(
+                                <span class="d-field">vehiculo</span>.<span class="d-method">getPlaca</span>()
+                        )
+                );
+
+        <span class="d-comment">// Regla de negocio: las placas no pueden repetirse (sin importar mayúsculas)</span>
+        <span class="d-keyword">if</span> (<span class="d-field">existe</span>) {
+            <span class="d-keyword">throw new</span> <span class="d-type">IllegalArgumentException</span>(
+                <span class="d-string">"Ya existe un vehículo con esa placa."</span>
+            );
+        }
+
+        <span class="d-comment">// Si no existe, se agrega a la lista</span>
+        <span class="d-field">vehiculos</span>.<span class="d-method">add</span>(<span class="d-field">vehiculo</span>);
+    }
+
+    <span class="d-comment">// READ: devuelve una copia de la lista (para que nadie la modifique desde afuera)</span>
+    <span class="d-keyword">public</span> <span class="d-type">List</span>&lt;<span class="d-type">Vehiculo</span>&gt; <span class="d-method">obtenerVehiculos</span>() {
+        <span class="d-keyword">return new</span> <span class="d-type">ArrayList</span>&lt;&gt;(<span class="d-field">vehiculos</span>);
+    }
+                </div>
+                <details>
+                    <summary><strong>¿Qué hace <code>vehiculos.stream().anyMatch(...)</code>?</strong></summary>
+                    <p>Un <span class="glossary" tabindex="0" data-tooltip="Secuencia de operaciones sobre una colección que permite filtrar, transformar y evaluar sus elementos con funciones lambda.">stream</span> es una forma moderna de recorrer una colección. <code class="font-mono text-sm">anyMatch(lambda)</code> devuelve <code class="font-mono text-sm">true</code> si <strong>al menos un elemento</strong> cumple la condición. La lambda <code class="font-mono text-sm">v -&gt; v.getPlaca().equalsIgnoreCase(...)</code> dice: "¿existe un vehículo <code class="font-mono text-sm">v</code> cuya placa, ignorando mayúsculas, sea igual a la nueva?"</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>19.4 UPDATE + DELETE</h5>
+                <p>
+                    <code class="font-mono text-sm">actualizarVehiculo</code> (Update) recorre la lista buscando por placa y reemplaza el objeto en esa posición.
+                    <code class="font-mono text-sm">eliminarVehiculo</code> (Delete) usa <code class="font-mono text-sm">removeIf</code> con una lambda:
+                </p>
+                <div class="code-fragment">
+    <span class="d-comment">// UPDATE: reemplaza un vehículo existente por su versión actualizada</span>
+    <span class="d-keyword">public void</span> <span class="d-method">actualizarVehiculo</span>(<span class="d-type">Vehiculo</span> <span class="d-field">vehiculoActualizado</span>) {
+
+        <span class="d-comment">// Recorremos la lista con un índice</span>
+        <span class="d-keyword">for</span> (<span class="d-keyword">int</span> <span class="d-field">i</span> = <span class="d-number">0</span>; <span class="d-field">i</span> < <span class="d-field">vehiculos</span>.<span class="d-method">size</span>(); <span class="d-field">i</span>++) {
+
+            <span class="d-comment">// Si encontramos la placa (ignorando mayúsculas) ...</span>
+            <span class="d-keyword">if</span> (<span class="d-field">vehiculos</span>.<span class="d-method">get</span>(<span class="d-field">i</span>).<span class="d-method">getPlaca</span>()
+                    .<span class="d-method">equalsIgnoreCase</span>(<span class="d-field">vehiculoActualizado</span>.<span class="d-method">getPlaca</span>())) {
+
+                <span class="d-comment">// ... la reemplazamos por el objeto nuevo y terminamos</span>
+                <span class="d-field">vehiculos</span>.<span class="d-method">set</span>(<span class="d-field">i</span>, <span class="d-field">vehiculoActualizado</span>);
+                <span class="d-keyword">return</span>;
+            }
+        }
+
+        <span class="d-comment">// Si el ciclo termina sin encontrar la placa, es un error</span>
+        <span class="d-keyword">throw new</span> <span class="d-type">IllegalArgumentException</span>(
+            <span class="d-string">"No se encontró el vehículo."</span>
+        );
+    }
+
+    <span class="d-comment">// DELETE: elimina el vehículo con la placa indicada</span>
+    <span class="d-keyword">public void</span> <span class="d-method">eliminarVehiculo</span>(<span class="d-type">String</span> <span class="d-field">placa</span>) {
+
+        <span class="d-comment">// removeIf + lambda: elimina todos los que cumplan la condición</span>
+        <span class="d-keyword">boolean</span> <span class="d-field">eliminado</span> = <span class="d-field">vehiculos</span>.<span class="d-method">removeIf</span>(
+                <span class="d-field">vehiculo</span> ->
+                        <span class="d-field">vehiculo</span>.<span class="d-method">getPlaca</span>().<span class="d-method">equalsIgnoreCase</span>(<span class="d-field">placa</span>)
+        );
+
+        <span class="d-comment">// removeIf devuelve true si borró algo; si no, la placa no existía</span>
+        <span class="d-keyword">if</span> (!<span class="d-field">eliminado</span>) {
+            <span class="d-keyword">throw new</span> <span class="d-type">IllegalArgumentException</span>(
+                <span class="d-string">"No se encontró el vehículo."</span>
+            );
+        }
+    }
+}
+                </div>
+                <details>
+                    <summary><strong>¿Qué hace <code>removeIf(lambda)</code>?</strong></summary>
+                    <p>Recorre la lista y <strong>elimina todos los elementos</strong> para los que la lambda devuelve <code class="font-mono text-sm">true</code>. Devuelve <code class="font-mono text-sm">true</code> si eliminó al menos uno. Aquí la lambda dice: "elimina todo vehículo cuya placa sea igual a la recibida".</p>
+                </details>
+            </div>
+        </div>
+
+        <!-- PASO 20 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+            <h2><i class="fa-regular fa-clipboard-list mr-2" style="color: var(--accent-blue);"></i> Paso 20: Identificar el CRUD</h2>
+
+            <div class="step-sub">
+                <h5>20.1 Las cuatro operaciones fundamentales</h5>
+                <p>CRUD representa cuatro operaciones fundamentales sobre los datos:</p>
+                <div class="overflow-x-auto" style="margin: 1rem 0;">
+                    <table style="width:100%; border-collapse: collapse; font-size: 0.95rem; color: var(--text-muted);">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border-panel); text-align: left; color: var(--text-main);">
+                                <th style="padding: 0.5rem 0.6rem;">CRUD</th>
+                                <th style="padding: 0.5rem 0.6rem;">Operación en nuestra aplicación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td style="padding: 0.4rem 0.6rem;">Create</td><td style="padding: 0.4rem 0.6rem;">Registrar vehículo</td></tr>
+                            <tr><td style="padding: 0.4rem 0.6rem;">Read</td><td style="padding: 0.4rem 0.6rem;">Consultar / listar vehículos</td></tr>
+                            <tr><td style="padding: 0.4rem 0.6rem;">Update</td><td style="padding: 0.4rem 0.6rem;">Editar vehículo</td></tr>
+                            <tr><td style="padding: 0.4rem 0.6rem;">Delete</td><td style="padding: 0.4rem 0.6rem;">Eliminar vehículo</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>20.2 CRUD ≠ toda la lógica del sistema</h5>
+                <p>
+                    Es importante comprender que <strong>CRUD no representa toda la lógica del sistema</strong>. Operaciones como:
+                </p>
+                <ul>
+                    <li>Enviar un vehículo al taller</li>
+                    <li>Iniciar una ruta</li>
+                    <li>Cargar mercancía</li>
+                </ul>
+                <p>
+                    <strong>no son operaciones CRUD</strong>. Son <strong>reglas u operaciones propias del negocio</strong>, y por eso viven en los métodos de
+                    los vehículos (como <code class="font-mono text-sm">iniciarRuta()</code> o <code class="font-mono text-sm">cargarMercancia()</code>) y no en <code class="font-mono text-sm">Flota</code>.
+                </p>
+            </div>
+        </div>
+
+        <!-- PASO 21 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-purple);">
+            <h2><i class="fa-regular fa-clock mr-2" style="color: var(--accent-purple);"></i> Paso 21: Crear <code>ColaMantenimiento</code> (Genéricos + Queue)</h2>
+
+            <div class="step-sub">
+                <h5>21.1 Crear el archivo</h5>
+                <p>
+                    <em>New → Java Class</em> (Kind = Class) con nombre <code class="font-mono text-sm">ColaMantenimiento</code>.
+                    Esta clase utiliza <strong>genéricos con límite</strong> y la estructura de datos <strong>Queue</strong>.
+                </p>
+                <div class="code-fragment">
+<span class="d-keyword">package</span> lab.flotavehicular.model;
+
+<span class="d-comment">// Colecciones necesarias: LinkedList (implementa Queue), Queue (interfaz), etc.</span>
+<span class="d-keyword">import</span> java.util.LinkedList;
+<span class="d-keyword">import</span> java.util.Queue;
+<span class="d-keyword">import</span> java.util.List;
+<span class="d-keyword">import</span> java.util.ArrayList;
+
+<span class="d-comment">// &lt;T extends Vehiculo&gt; garantiza que esta cola es EXCLUSIVAMENTE para vehículos</span>
+<span class="d-keyword">public class</span> <span class="d-type">ColaMantenimiento</span>&lt;<span class="d-type">T</span> <span class="d-keyword">extends</span> <span class="d-type">Vehiculo</span>&gt; {
+
+    <span class="d-comment">// Usamos la interfaz Queue de Java Collections (FIFO)</span>
+    <span class="d-keyword">private</span> <span class="d-type">Queue</span>&lt;<span class="d-type">T</span>&gt; <span class="d-field">filaDeEspera</span>;
+
+    <span class="d-keyword">public</span> <span class="d-method">ColaMantenimiento</span>() {
+        <span class="d-comment">// LinkedList implementa la interfaz Queue (Primero en entrar, primero en salir)</span>
+        <span class="d-keyword">this</span>.<span class="d-field">filaDeEspera</span> = <span class="d-keyword">new</span> <span class="d-type">LinkedList</span>&lt;&gt;();
+    }
+                </div>
+                <details>
+                    <summary><strong>¿Qué significa <code>&lt;T extends Vehiculo&gt;</code>?</strong></summary>
+                    <p>Significa: <strong>T puede ser Vehiculo o cualquier clase hija de Vehiculo</strong>. Por ejemplo, <code class="font-mono text-sm">ColaMantenimiento&lt;Vehiculo&gt;</code> puede recibir VehiculoCombustion, VehiculoElectrico o VehiculoPesado. Pero <strong>no</strong> podría usarse <code class="font-mono text-sm">ColaMantenimiento&lt;String&gt;</code>, porque <code class="font-mono text-sm">String NO extends Vehiculo</code>.</p>
+                </details>
+                <details>
+                    <summary><strong>¿Por qué utilizamos Queue?</strong></summary>
+                    <p>Una cola utiliza normalmente <strong>FIFO</strong> (First In, First Out): el primero en entrar es el primero en salir. Si entran al taller <code class="font-mono text-sm">ABC-001</code>, <code class="font-mono text-sm">ELE-002</code> y <code class="font-mono text-sm">PES-003</code>, al atender sale <code class="font-mono text-sm">ABC-001</code>. Es justo lo que necesitamos para un taller de mantenimiento.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>21.2 Métodos de la cola: <code>encolar</code> y <code>atenderSiguiente</code></h5>
+                <div class="code-fragment">
+    <span class="d-comment">// Agregar un vehículo a la cola (offer agrega al final)</span>
+    <span class="d-keyword">public void</span> <span class="d-method">encolar</span>(<span class="d-type">T</span> <span class="d-field">vehiculo</span>) {
+
+        <span class="d-comment">// Regla: no se puede encolar un vehículo que ya está en mantenimiento</span>
+        <span class="d-keyword">if</span> (<span class="d-field">vehiculo</span>.<span class="d-method">getEstado</span>() == <span class="d-type">EstadoVehiculo</span>.<span class="d-field">TALLER</span>) {
+            <span class="d-keyword">throw new</span> <span class="d-type">IllegalStateException</span>(
+                <span class="d-string">"El vehículo ya se encuentra en mantenimiento."</span>
+            );
+        }
+
+        <span class="d-comment">// Regla: no se puede enviar a mantenimiento un vehículo que está en ruta</span>
+        <span class="d-keyword">if</span> (<span class="d-field">vehiculo</span>.<span class="d-method">getEstado</span>() == <span class="d-type">EstadoVehiculo</span>.<span class="d-field">EN_RUTA</span>) {
+            <span class="d-keyword">throw new</span> <span class="d-type">IllegalStateException</span>(
+                <span class="d-string">"No puede enviar a mantenimiento un vehículo que está en ruta."</span>
+            );
+        }
+
+        <span class="d-comment">// Cambia el estado a TALLER y lo agrega al final de la fila</span>
+        <span class="d-field">vehiculo</span>.<span class="d-method">setEstado</span>(<span class="d-type">EstadoVehiculo</span>.<span class="d-field">TALLER</span>);
+        <span class="d-field">filaDeEspera</span>.<span class="d-method">offer</span>(<span class="d-field">vehiculo</span>);
+    }
+
+    <span class="d-comment">// Atender al primer vehículo de la cola (poll lo quita del frente)</span>
+    <span class="d-keyword">public</span> <span class="d-type">T</span> <span class="d-method">atenderSiguiente</span>() {
+
+        <span class="d-comment">// Regla: no hay nada que atender si la cola está vacía</span>
+        <span class="d-keyword">if</span> (<span class="d-field">filaDeEspera</span>.<span class="d-method">isEmpty</span>()) {
+            <span class="d-keyword">throw new</span> <span class="d-type">IllegalStateException</span>(
+                <span class="d-string">"No hay vehículos en la cola de mantenimiento."</span>
+            );
+        }
+
+        <span class="d-comment">// poll() saca al primero (FIFO) y lo regresa como atendido</span>
+        <span class="d-type">T</span> <span class="d-field">vehiculoAtendido</span> = <span class="d-field">filaDeEspera</span>.<span class="d-method">poll</span>();
+
+        <span class="d-comment">// Al salir del taller queda DISPONIBLE para trabajar</span>
+        <span class="d-field">vehiculoAtendido</span>.<span class="d-method">setEstado</span>(<span class="d-type">EstadoVehiculo</span>.<span class="d-field">DISPONIBLE</span>);
+
+        <span class="d-keyword">return</span> <span class="d-field">vehiculoAtendido</span>;
+    }
+                </div>
+                <details>
+                    <summary><strong>¿Qué hacen <code>offer()</code> y <code>poll()</code>?</strong></summary>
+                    <p><code class="font-mono text-sm">offer()</code> <strong>agrega</strong> un elemento al final de la cola. <code class="font-mono text-sm">poll()</code> <strong>retira</strong> el elemento del frente (el primero que entró) y lo devuelve. Con esas dos operaciones implementamos el comportamiento FIFO.</p>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>21.3 Métodos utilitarios para la vista</h5>
+                <p>Estos métodos serán útiles cuando construyamos la interfaz gráfica (para saber cuántos vehículos esperan y mostrarlos):</p>
+                <div class="code-fragment">
+    <span class="d-comment">// ¿Está vacía la cola?</span>
+    <span class="d-keyword">public boolean</span> <span class="d-method">estaVacia</span>() {
+        <span class="d-keyword">return</span> <span class="d-field">filaDeEspera</span>.<span class="d-method">isEmpty</span>();
+    }
+
+    <span class="d-comment">// ¿Cuántos vehículos hay pendientes?</span>
+    <span class="d-keyword">public</span> <span class="d-keyword">int</span> <span class="d-method">cantidadPendientes</span>() {
+        <span class="d-keyword">return</span> <span class="d-field">filaDeEspera</span>.<span class="d-method">size</span>();
+    }
+
+    <span class="d-comment">// Devuelve una copia de la lista de pendientes (para mostrarla en la vista)</span>
+    <span class="d-keyword">public</span> <span class="d-type">List</span>&lt;<span class="d-type">T</span>&gt; <span class="d-method">obtenerListaPendientes</span>() {
+        <span class="d-keyword">return new</span> <span class="d-type">ArrayList</span>&lt;&gt;(<span class="d-field">filaDeEspera</span>);
+    }
+}
+                </div>
+                <details>
+                    <summary><strong>¿Cómo se relacionan Queue y LinkedList?</strong></summary>
+                    <p>Observa: <code class="font-mono text-sm">private Queue&lt;T&gt; filaDeEspera;</code> es la <strong>interfaz</strong>, pero construimos <code class="font-mono text-sm">new LinkedList&lt;&gt;()</code>, la <strong>implementación concreta</strong>. Esto funciona porque <code class="font-mono text-sm">LinkedList implementa Queue</code>. Es el mismo principio que usamos con <code class="font-mono text-sm">List&lt;Vehiculo&gt; vehiculos = new ArrayList&lt;&gt;()</code>.</p>
+                </details>
+            </div>
+        </div>
+
+        <!-- PASO 22 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
+            <h2><i class="fa-regular fa-circle-check mr-2" style="color: var(--accent-green);"></i> Paso 22: Estructura Final del Model</h2>
+
+            <div class="step-sub">
+                <h5>22.1 Verifica tu estructura</h5>
+                <p>Al terminar esta parte, tu <code class="font-mono text-sm">src/main/java</code> debe verse así:</p>
+                <div class="code-fragment">
+src/main/java/
+└── lab/
+    └── flotavehicular/
+        │
+        ├── <span class="d-field">model</span>/
+        │   ├── <span class="d-type">ColaMantenimiento.java</span>
+        │   ├── <span class="d-type">EstadoVehiculo.java</span>
+        │   ├── <span class="d-type">Flota.java</span>
+        │   ├── <span class="d-type">Mantenible.java</span>
+        │   ├── <span class="d-type">TipoCarga.java</span>
+        │   ├── <span class="d-type">TipoVehiculo.java</span>
+        │   ├── <span class="d-type">Vehiculo.java</span>
+        │   ├── <span class="d-type">VehiculoCombustion.java</span>
+        │   ├── <span class="d-type">VehiculoElectrico.java</span>
+        │   └── <span class="d-type">VehiculoPesado.java</span>
+        │
+        ├── <span class="d-field">controller</span>/   <span class="d-comment">// vacío por ahora (en clase)</span>
+        │
+        └── <span class="d-type">module-info.java</span>
+                </div>
+                <p>Si IntelliJ no marca errores en ninguno de los archivos del model, ¡el Model está listo!</p>
+            </div>
+        </div>
+
+        <!-- PASO 23 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+            <h2><i class="fa-regular fa-palette mr-2" style="color: var(--accent-blue);"></i> Paso 23: Crear los Recursos (CSS, imágenes y view)</h2>
+
+            <div class="step-sub">
+                <h5>23.1 Crear las carpetas de recursos</h5>
+                <p>
+                    Ahora crearemos la estructura de <code class="font-mono text-sm">src/main/resources</code>. Ahí vivirán la hoja de estilos, las imágenes y (más adelante) la vista FXML.
+                    Haz <strong>clic derecho</strong> sobre <code class="font-mono text-sm">src/main/resources</code> y crea las siguientes carpetas (New → Directory), en orden:
+                </p>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li><code class="font-mono text-sm">lab</code></li>
+                    <li>dentro de <code class="font-mono text-sm">lab</code> → <code class="font-mono text-sm">flotavehicular</code></li>
+                    <li>dentro de <code class="font-mono text-sm">flotavehicular</code> → <code class="font-mono text-sm">assets</code></li>
+                    <li>dentro de <code class="font-mono text-sm">assets</code> → <code class="font-mono text-sm">css</code></li>
+                    <li>dentro de <code class="font-mono text-sm">assets</code> → <code class="font-mono text-sm">images</code></li>
+                    <li>dentro de <code class="font-mono text-sm">flotavehicular</code> → <code class="font-mono text-sm">view</code></li>
+                </ol>
+                <p>La estructura final de recursos debe verse así:</p>
+                <div class="code-fragment">
+src/main/resources/
+└── lab/
+    └── flotavehicular/
+        ├── <span class="d-field">assets</span>/
+        │   ├── <span class="d-field">css</span>/
+        │   │   └── <span class="d-type">style.css</span>       <span class="d-comment">// lo creamos en el paso 23.3</span>
+        │   └── <span class="d-field">images</span>/
+        │       ├── flota.png          <span class="d-comment">// logo de la app</span>
+        │       ├── insertar.png       <span class="d-comment">// registrar vehículo</span>
+        │       ├── editar.png         <span class="d-comment">// editar vehículo</span>
+        │       ├── eliminar.png       <span class="d-comment">// eliminar vehículo</span>
+        │       ├── iniciar.png        <span class="d-comment">// iniciar ruta</span>
+        │       ├── detener.png        <span class="d-comment">// finalizar ruta</span>
+        │       ├── cargar.png         <span class="d-comment">// cargar mercancía</span>
+        │       ├── mantenimiento.png  <span class="d-comment">// enviar a mantenimiento</span>
+        │       └── atender.png        <span class="d-comment">// atender siguiente</span>
+        └── <span class="d-field">view</span>/               <span class="d-comment">// vacía por ahora (en clase)</span>
+            └── flotaView.fxml         <span class="d-comment">// se creará junto con la profesora</span>
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>23.2 Descargar los iconos (recomendado: Flaticon)</h5>
+                <p>
+                    Los botones de la futura interfaz tendrán <strong>iconos</strong>. Iremos a buscarlos a
+                    <a href="https://www.flaticon.com" target="_blank" rel="noopener"><strong>Flaticon</strong></a>, un sitio con miles de iconos gratuitos.
+                    Busca cada icono, descárgalo en formato <strong>PNG</strong> (512x512 es ideal) y guárdalo en la carpeta <code class="font-mono text-sm">assets/images</code>
+                    con el nombre exacto de la tabla:
+                </p>
+                <div class="overflow-x-auto" style="margin: 1rem 0;">
+                    <table style="width:100%; border-collapse: collapse; font-size: 0.95rem; color: var(--text-muted);">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border-panel); text-align: left; color: var(--text-main);">
+                                <th style="padding: 0.5rem 0.6rem;">Archivo</th>
+                                <th style="padding: 0.5rem 0.6rem;">¿Para qué se usará?</th>
+                                <th style="padding: 0.5rem 0.6rem;">Búsqueda sugerida en Flaticon</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">flota.png</code></td><td style="padding: 0.4rem 0.6rem;">Logo / encabezado de la aplicación</td><td style="padding: 0.4rem 0.6rem;">"fleet" o "truck fleet"</td></tr>
+                            <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">insertar.png</code></td><td style="padding: 0.4rem 0.6rem;">Botón "Registrar vehículo"</td><td style="padding: 0.4rem 0.6rem;">"add" o "plus"</td></tr>
+                            <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">editar.png</code></td><td style="padding: 0.4rem 0.6rem;">Botón "Editar vehículo"</td><td style="padding: 0.4rem 0.6rem;">"edit" o "pencil"</td></tr>
+                            <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">eliminar.png</code></td><td style="padding: 0.4rem 0.6rem;">Botón "Eliminar vehículo"</td><td style="padding: 0.4rem 0.6rem;">"delete" o "trash"</td></tr>
+                            <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">iniciar.png</code></td><td style="padding: 0.4rem 0.6rem;">Botón "Iniciar ruta"</td><td style="padding: 0.4rem 0.6rem;">"play button" o "semáforo verde"</td></tr>
+                            <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">detener.png</code></td><td style="padding: 0.4rem 0.6rem;">Botón "Finalizar ruta"</td><td style="padding: 0.4rem 0.6rem;">"stop button" o "semáforo rojo"</td></tr>
+                            <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">cargar.png</code></td><td style="padding: 0.4rem 0.6rem;">Botón "Cargar mercancía"</td><td style="padding: 0.4rem 0.6rem;">"box" o "carga"</td></tr>
+                            <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">mantenimiento.png</code></td><td style="padding: 0.4rem 0.6rem;">Botón "Enviar a mantenimiento"</td><td style="padding: 0.4rem 0.6rem;">"wrench" o "llave inglesa"</td></tr>
+                            <tr><td style="padding: 0.4rem 0.6rem;"><code class="font-mono text-xs">atender.png</code></td><td style="padding: 0.4rem 0.6rem;">Botón "Atender siguiente"</td><td style="padding: 0.4rem 0.6rem;">"check" o "mantenimiento completado"</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="highlight-box">
+                    <i class="fa-regular fa-circle-info mr-1"></i> <strong>Consejos para Flaticon:</strong>
+                    <ul style="margin-top: 0.4rem;">
+                        <li>Filtra por <strong>PNG</strong> y elige un tamaño de <strong>512 px</strong> para que se vean nítidos.</li>
+                        <li>Puedes elegir iconos en color o en un solo color.</li>
+                        <li>Después de descargar, <strong>arrastra</strong> cada archivo a la carpeta <code class="font-mono text-sm">images</code> en IntelliJ y <strong>renómbralo</strong> exactamente como indica la tabla.</li>
+                    </ul>
+                </div>
+                <div class="error-box">
+                    <i class="fa-regular fa-triangle-exclamation mr-1"></i> <strong>Ojo con los nombres:</strong> el nombre del archivo debe coincidir exactamente con el que usaremos en el código en clase
+                    (ej. <code class="font-mono text-sm">insertar.png</code>, no <code class="font-mono text-sm">insertar (1).png</code> ni <code class="font-mono text-sm">INSERTAR.png</code>). Si no, JavaFX no encontrará la imagen.
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>23.3 Crear la hoja de estilos <code>style.css</code></h5>
+                <p>
+                    En la carpeta <code class="font-mono text-sm">assets/css</code> crea un archivo nuevo llamado <code class="font-mono text-sm">style.css</code>
+                    (<em>New → File</em>). En JavaFX, los estilos usan propiedades con el prefijo <code class="font-mono text-sm">-fx-</code>.
+                    Lo escribiremos por secciones para entender cada bloque:
+                </p>
+
+                <h4 style="margin-top: 1rem;">a) Fondo y fuente general (.root)</h4>
+                <div class="code-fragment">
+<span class="d-comment">/* .root aplica a TODA la aplicación (es el contenedor raíz) */</span>
+.root {
+    -fx-font-family: "Segoe UI";    <span class="d-comment">/* tipo de letra global */</span>
+    -fx-background-color: #F4F7FA;  <span class="d-comment">/* color de fondo de la ventana */</span>
+}
+                </div>
+                <p><code class="font-mono text-sm">.root</code> es el selector especial que estiliza toda la aplicación: aquí definimos la fuente y el fondo general.</p>
+
+                <h4>b) Títulos</h4>
+                <div class="code-fragment">
+<span class="d-comment">/* Título principal de la ventana */</span>
+.titulo-principal {
+    -fx-font-size: 24px;        <span class="d-comment">/* tamaño de la letra */</span>
+    -fx-font-weight: bold;      <span class="d-comment">/* negrita */</span>
+    -fx-text-fill: #1F3A5F;     <span class="d-comment">/* color del texto (azul oscuro) */</span>
+}
+
+<span class="d-comment">/* Subtítulo (texto secundario) */</span>
+.subtitulo {
+    -fx-font-size: 14px;
+    -fx-text-fill: #5F6B7A;     <span class="d-comment">/* gris azulado */</span>
+}
+
+<span class="d-comment">/* Título de cada sección o tarjeta */</span>
+.titulo-seccion {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #234E70;
+}
+                </div>
+                <p>
+                    Los <strong>selectores por clase</strong> (<code class="font-mono text-sm">.titulo-principal</code>, <code class="font-mono text-sm">.subtitulo</code>, <code class="font-mono text-sm">.titulo-seccion</code>)
+                    se asignarán en Scene Builder a los <code class="font-mono text-sm">Label</code> correspondientes. Cada propiedad <code class="font-mono text-sm">-fx-...</code> equivale a
+                    una propiedad de estilo (tamaño, peso, color del texto).
+                </p>
+
+                <h4>c) Paneles o tarjetas (.tarjeta)</h4>
+                <div class="code-fragment">
+<span class="d-comment">/* Tarjeta: un panel blanco con bordes redondeados */</span>
+.tarjeta {
+    -fx-background-color: white;      <span class="d-comment">/* fondo blanco */</span>
+    -fx-background-radius: 12;        <span class="d-comment">/* esquinas redondeadas del fondo */</span>
+    -fx-border-radius: 12;            <span class="d-comment">/* esquinas redondeadas del borde */</span>
+    -fx-border-color: #D9E2EC;        <span class="d-comment">/* color del borde */</span>
+    -fx-padding: 18;                  <span class="d-comment">/* espacio interior alrededor del contenido */</span>
+}
+                </div>
+                <p>
+                    <code class="font-mono text-sm">-fx-background-radius</code> redondea el fondo y <code class="font-mono text-sm">-fx-border-radius</code> redondea el borde;
+                    <code class="font-mono text-sm">-fx-padding</code> es el espacio interno (que el contenido no "pegue" al borde).
+                </p>
+
+                <h4>d) Campos de texto y listas desplegables</h4>
+                <div class="code-fragment">
+<span class="d-comment">/* text-field (cajas de texto) y combo-box (listas) */</span>
+.text-field,
+.combo-box {
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: #C9D3DD;
+    -fx-background-color: white;
+}
+
+<span class="d-comment">/* Estado :focused = cuando el usuario hace clic en el campo */</span>
+.text-field:focused,
+.combo-box:focused {
+    -fx-border-color: #2F80ED;   <span class="d-comment">/* el borde se pone azul */</span>
+    -fx-border-width: 1.5;       <span class="d-comment">/* y un poco más grueso */</span>
+}
+                </div>
+                <p>
+                    La <strong>pseudo-clase</strong> <code class="font-mono text-sm">:focused</code> se activa cuando el campo está "enfocado"
+                    (el usuario hizo clic o presionó Tab para escribirlo). Aprovechamos eso para resaltar el campo activo con un borde azul.
+                </p>
+
+                <h4>e) Botones en general</h4>
+                <div class="code-fragment">
+<span class="d-comment">/* Estilos comunes a todos los botones */</span>
+.button {
+    -fx-background-radius: 7;   <span class="d-comment">/* esquinas redondeadas */</span>
+    -fx-cursor: hand;           <span class="d-comment">/* cursor de "manito" al pasar el mouse */</span>
+    -fx-font-weight: bold;      <span class="d-comment">/* texto en negrita */</span>
+    -fx-padding: 7 14 7 14;     <span class="d-comment">/* 7px arriba/abajo, 14px izquierda/derecha */</span>
+}
+                </div>
+                <p>
+                    Al estilizar el selector <code class="font-mono text-sm">.button</code>, TODOS los botones de la aplicación heredan estas propiedades.
+                    Después, cada botón específico agrega su color con su propia clase.
+                </p>
+
+                <h4>f) Botones del CRUD</h4>
+                <div class="code-fragment">
+<span class="d-comment">/* Registrar: azul */</span>
+.boton-registrar {
+    -fx-background-color: #2D9CDB;
+    -fx-text-fill: white;
+}
+
+<span class="d-comment">/* Editar: amarillo (texto oscuro para que se lea) */</span>
+.boton-editar {
+    -fx-background-color: #F2C94C;
+    -fx-text-fill: #333333;
+}
+
+<span class="d-comment">/* Eliminar: rojo */</span>
+.boton-eliminar {
+    -fx-background-color: #EB5757;
+    -fx-text-fill: white;
+}
+
+<span class="d-comment">/* Limpiar: gris claro */</span>
+.boton-limpiar {
+    -fx-background-color: #E0E6ED;
+    -fx-text-fill: #333333;
+}
+                </div>
+                <p>
+                    Cada clase (<code class="font-mono text-sm">.boton-registrar</code>, <code class="font-mono text-sm">.boton-editar</code>, etc.) define el
+                    <strong>color de fondo</strong> (<code class="font-mono text-sm">-fx-background-color</code>) y el <strong>color del texto</strong> (<code class="font-mono text-sm">-fx-text-fill</code>).
+                    En Scene Builder asignaremos una clase a cada botón.
+                </p>
+
+                <h4>g) Botones de operaciones</h4>
+                <div class="code-fragment">
+<span class="d-comment">/* Iniciar ruta: verde */</span>
+.boton-ruta {
+    -fx-background-color: #27AE60;
+    -fx-text-fill: white;
+}
+
+<span class="d-comment">/* Finalizar ruta: naranja */</span>
+.boton-finalizar {
+    -fx-background-color: #F2994A;
+    -fx-text-fill: white;
+}
+
+<span class="d-comment">/* Mantenimiento: morado */</span>
+.boton-mantenimiento {
+    -fx-background-color: #6C63FF;
+    -fx-text-fill: white;
+}
+                </div>
+                <p>Los colores "significan" algo: <strong>verde</strong> para acciones positivas (iniciar), <strong>naranja</strong> para detener/finalizar y <strong>morado</strong> para mantenimiento.</p>
+
+                <h4>h) Tabla (TableView)</h4>
+                <div class="code-fragment">
+<span class="d-comment">/* La tabla completa */</span>
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #D9E2EC;
+    -fx-border-radius: 8;
+}
+
+<span class="d-comment">/* La fila de encabezados (columna) */</span>
+.table-view .column-header {
+    -fx-background-color: #1F3A5F;   <span class="d-comment">/* fondo azul oscuro */</span>
+}
+
+<span class="d-comment">/* El texto dentro de cada encabezado */</span>
+.table-view .column-header .label {
+    -fx-text-fill: white;            <span class="d-comment">/* texto blanco */</span>
+    -fx-font-weight: bold;
+}
+                </div>
+                <p>
+                    Observa el selector combinado <code class="font-mono text-sm">.table-view .column-header .label</code>: significa
+                    "el <code class="font-mono text-sm">Label</code> que está <strong>dentro de</strong> un <code class="font-mono text-sm">column-header</code> que está <strong>dentro de</strong> un <code class="font-mono text-sm">table-view</code>".
+                    Así estilizamos solo los encabezados de la tabla y no las celdas.
+                </p>
+
+                <h4>i) Etiqueta de estado de mantenimiento</h4>
+                <div class="code-fragment">
+<span class="d-comment">/* Etiqueta que muestra cuántos vehículos están en mantenimiento */</span>
+.estado-mantenimiento {
+    -fx-background-color: #E8F1FA;   <span class="d-comment">/* fondo azul muy claro */</span>
+    -fx-background-radius: 8;
+    -fx-padding: 8 12 8 12;          <span class="d-comment">/* relleno interior */</span>
+    -fx-text-fill: #1F3A5F;          <span class="d-comment">/* texto azul oscuro */</span>
+    -fx-font-weight: bold;
+}
+                </div>
+                <p>Este bloque le da aspecto de "píldora" a la etiqueta que informará el estado del mantenimiento en la futura interfaz.</p>
+            </div>
+        </div>
+
+        <!-- PASO 24 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
+            <h2><i class="fa-regular fa-image mr-2" style="color: var(--accent-green);"></i> Paso 24: Crear el Punto de Entrada <code>Main.java</code></h2>
+
+            <div class="step-sub">
+                <h5>24.1 La clase que lanza la aplicación</h5>
+                <p>
+                    En el paquete <code class="font-mono text-sm">lab.flotavehicular</code> crea la clase <code class="font-mono text-sm">Main</code> (Kind = Class)
+                    que <strong>extiende <code class="font-mono text-sm">Application</code></strong> (la clase base de toda aplicación JavaFX):
+                </p>
+                <div class="code-fragment">
+<span class="d-keyword">package</span> lab.flotavehicular;
+
+<span class="d-comment">// Importaciones de JavaFX necesarias para lanzar la app</span>
+<span class="d-keyword">import</span> javafx.application.Application;
+<span class="d-keyword">import</span> javafx.fxml.FXMLLoader;
+<span class="d-keyword">import</span> javafx.scene.Scene;
+<span class="d-keyword">import</span> javafx.stage.Stage;
+
+<span class="d-keyword">import</span> java.io.IOException;
+
+<span class="d-comment">// Main hereda de Application: la clase base de toda app JavaFX</span>
+<span class="d-keyword">public class</span> <span class="d-type">Main</span> <span class="d-keyword">extends</span> <span class="d-type">Application</span> {
+
+    <span class="d-annotation">@Override</span>
+    <span class="d-comment">// start() es donde JavaFX "muestra" la ventana principal (el Stage)</span>
+    <span class="d-keyword">public void</span> <span class="d-method">start</span>(<span class="d-type">Stage</span> <span class="d-field">stage</span>) <span class="d-keyword">throws</span> <span class="d-type">IOException</span> {
+
+        <span class="d-comment">// FXMLLoader lee el archivo FXML (la vista). Aún NO existe, lo crearemos en clase</span>
+        <span class="d-type">FXMLLoader</span> <span class="d-field">loader</span> = <span class="d-keyword">new</span> <span class="d-type">FXMLLoader</span>(
+                <span class="d-type">Main</span>.<span class="d-keyword">class</span>.<span class="d-method">getResource</span>(<span class="d-string">"/lab/flotavehicular/view/flotaView.fxml"</span>)
+        );
+
+        <span class="d-comment">// La escena se construye cargando el FXML</span>
+        <span class="d-type">Scene</span> <span class="d-field">scene</span> = <span class="d-keyword">new</span> <span class="d-type">Scene</span>(<span class="d-field">loader</span>.<span class="d-method">load</span>());
+
+        <span class="d-comment">// Configura el título de la ventana</span>
+        <span class="d-field">stage</span>.<span class="d-method">setTitle</span>(<span class="d-string">"Gestión de Flota Vehicular"</span>);
+
+        <span class="d-comment">// Asigna la escena a la ventana y la muestra</span>
+        <span class="d-field">stage</span>.<span class="d-method">setScene</span>(<span class="d-field">scene</span>);
+        <span class="d-field">stage</span>.<span class="d-method">show</span>();
+    }
+
+    <span class="d-keyword">public static void</span> <span class="d-method">main</span>(<span class="d-type">String</span>[] <span class="d-field">args</span>) {
+        <span class="d-comment">// launch() arranca el ciclo de vida de JavaFX</span>
+        <span class="d-method">launch</span>(<span class="d-field">args</span>);
+    }
+}
+                </div>
+                <div class="error-box">
+                    <i class="fa-regular fa-triangle-exclamation mr-1"></i> <strong>No intentes ejecutarla todavía.</strong>
+                    Esta clase carga <code class="font-mono text-sm">flotaView.fxml</code>, que aún no existe (la crearemos en clase con Scene Builder).
+                    Si la ejecutas ahora, lanzará una excepción: <em>"Resource not found"</em>. Es el comportamiento esperado: <strong>Main está lista, pero le falta su vista</strong>.
+                </div>
+                <details>
+                    <summary><strong>¿Qué es Stage, Scene y FXMLLoader?</strong></summary>
+                    <p><strong>Stage</strong> es la ventana del sistema operativo. <strong>Scene</strong> es el contenido que va dentro de la ventana. <strong>FXMLLoader</strong> es la clase que lee un archivo <code class="font-mono text-sm">.fxml</code> y lo convierte en una escena real (creando todos los componentes y conectándolos con el Controller). Esta es la pieza que une View y Controller.</p>
+                </details>
+            </div>
+        </div>
+
+        <!-- PASO 25 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-peach);">
+            <h2><i class="fa-regular fa-gear mr-2" style="color: var(--accent-peach);"></i> Paso 25: Configurar IntelliJ con Scene Builder</h2>
+
+            <div class="step-sub">
+                <h5>25.1 Indicarle a IntelliJ dónde está Scene Builder</h5>
+                <p>Para poder abrir los archivos <code class="font-mono text-sm">.fxml</code> directamente con Scene Builder desde IntelliJ:</p>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Ve a <em>File → Settings</em> (en Windows) o <em>IntelliJ IDEA → Preferences</em> (en macOS).</li>
+                    <li>Navega a <em>Languages &amp; Frameworks → JavaFX</em>.</li>
+                    <li>En el campo <strong>Path to SceneBuilder</strong>, haz clic en el icono de carpeta y selecciona el ejecutable de <strong>Gluon Scene Builder</strong> instalado en el Paso 2.</li>
+                    <li>Haz clic en <strong>OK</strong>.</li>
+                </ol>
+                <p>
+                    Con esto, cuando en clase doble hagas <strong>clic en un archivo <code class="font-mono text-sm">.fxml</code></strong>, IntelliJ te preguntará si quieres abrirlo con Scene Builder,
+                    o podrás usar <em>Right click → Open In Scene Builder</em>.
+                </p>
+            </div>
+        </div>
+
+        <!-- PASO 26 -->
         <div class="glass-panel" style="border-left: 4px solid var(--una-red); background: rgba(200,16,46,0.04);">
-            <h2><i class="fa-regular fa-circle-check mr-2" style="color: var(--una-red);"></i> Entrega del Laboratorio</h2>
+            <h2><i class="fa-regular fa-circle-check mr-2" style="color: var(--una-red);"></i> Paso 26: Checkpoint antes de la interfaz (preparación para MVC)</h2>
+
+            <div class="step-sub">
+                <h5>26.1 Verifica tu avance</h5>
+                <p>Antes de continuar junto con la profesora, comprueba que cumpliste todo:</p>
+                <ul>
+                    <li>El proyecto utiliza <strong>JDK 25</strong>. ✔</li>
+                    <li><strong>Maven</strong> reconoce las dependencias (sin errores en el <code class="font-mono text-sm">pom.xml</code>). ✔</li>
+                    <li><strong>JavaFX</strong> está configurado (propiedades y dependencias). ✔</li>
+                    <li><strong>Scene Builder</strong> abre correctamente. ✔</li>
+                    <li>Los archivos de ejemplo <code class="font-mono text-sm">Hello...</code> fueron eliminados. ✔</li>
+                    <li>Existe el paquete <code class="font-mono text-sm">model</code>. ✔</li>
+                    <li>Existe el paquete <code class="font-mono text-sm">controller</code> (vacío). ✔</li>
+                    <li>Existe <code class="font-mono text-sm">src/main/resources</code> con <code class="font-mono text-sm">assets/css</code>, <code class="font-mono text-sm">assets/images</code> y <code class="font-mono text-sm">view</code>. ✔</li>
+                    <li>Todos los <strong>enums</strong> fueron creados. ✔</li>
+                    <li><code class="font-mono text-sm">Vehiculo</code> es <strong>abstracta</strong>. ✔</li>
+                    <li><code class="font-mono text-sm">Mantenible</code> es una <strong>interfaz</strong>. ✔</li>
+                    <li>Existen las <strong>tres clases concretas</strong> de vehículos. ✔</li>
+                    <li><code class="font-mono text-sm">Flota</code> implementa <strong>CRUD</strong>. ✔</li>
+                    <li><code class="font-mono text-sm">ColaMantenimiento</code> utiliza <strong>genéricos</strong> y <strong>Queue</strong>. ✔</li>
+                    <li><code class="font-mono text-sm">style.css</code> fue creado con los estilos. ✔</li>
+                    <li>Los <strong>iconos</strong> están en <code class="font-mono text-sm">assets/images</code>. ✔</li>
+                    <li><strong>No existe código JavaFX dentro del Model.</strong> ✔</li>
+                </ul>
+                <div class="highlight-box">
+                    <strong><i class="fa-regular fa-lightbulb mr-1"></i> Regla de oro:</strong> el <strong>Model NO debe conocer JavaFX</strong>. Dentro de <code class="font-mono text-sm">model</code>
+                    no debería aparecer: Button, Label, TextField, TableView, Alert, FXML, Stage, Scene ni View.
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>26.2 Mapa conceptual del sistema hasta ahora</h5>
+                <div class="code-fragment">
+                   <span class="d-type">VEHICULO</span>          <span class="d-comment">// abstracta, implementa Mantenible</span>
+                  abstract
+                     │
+            ┌────────┴────────┐
+            │                 │
+      <span class="d-type">COMBUSTIÓN</span>          <span class="d-type">ELÉCTRICO</span>
+            │
+          <span class="d-type">PESADO</span>
+
+<span class="d-type">Flota</span>
+  │
+  └── List&lt;Vehiculo&gt;
+         │
+         └── ArrayList
+
+<span class="d-type">ColaMantenimiento&lt;T extends Vehiculo&gt;</span>
+               │
+               └── Queue&lt;T&gt;
+                     │
+                     └── LinkedList&lt;T&gt;
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>26.3 ¿Qué viene después? (en clase)</h5>
+                <p>
+                    En la siguiente fase conectaremos todo mediante la arquitectura <strong>MVC</strong>. Hasta aquí ya tenemos el <strong>Model</strong> completo.
+                    Junto con la profesora construiremos la <strong>View</strong> (con Scene Builder) y el <strong>Controller</strong>:
+                </p>
+                <div class="code-fragment">
+              MVC
+
+<span class="d-type">MODEL</span>         <span class="d-type">CONTROLLER</span>        <span class="d-type">VIEW</span>
+  ✔              ↓              ↓
+realizado      en clase       en clase
+                </div>
+                <p>Durante esa etapa aprenderemos: <code class="font-mono text-sm">@FXML</code>, <code class="font-mono text-sm">fx:id</code>, <code class="font-mono text-sm">FXMLLoader</code>, TableView, TableColumn, ComboBox, Alert, <code class="font-mono text-sm">onAction</code>, listeners, CSS, imágenes, iconos y layouts.</p>
+            </div>
+        </div>
+
+        <!-- ENTREGA -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-red); background: rgba(200,16,46,0.04);">
+            <h2><i class="fa-regular fa-paper-plane mr-2" style="color: var(--una-red);"></i> Entrega del Laboratorio</h2>
             <ol style="list-style-type: decimal; padding-left: 1.5rem; color: var(--text-muted);">
-                <li>Realiza commit en GitHub Desktop con el mensaje: <code class="font-mono text-sm">feat: laboratorio 4 — sistema integral de vuelos aerouna</code> y sube los cambios con <em>Push origin</em>.</li>
-                <li>Sube al aula virtual el enlace de tu repositorio de GitHub junto con capturas de pantalla de la aplicación ejecutándose (demostrando el registro de vuelos, la reserva de asientos con control de aforo y las promociones) y el archivo con las respuestas a las preguntas de reflexión.</li>
+                <li>
+                    Sube el proyecto a GitHub (si aún no lo tienes enlazado): <em>VCS → Share Project on GitHub</em> o usa GitHub Desktop.
+                    Realiza un <strong>commit</strong> con el mensaje:
+                    <code class="font-mono text-sm">feat: laboratorio 5 — sistema de gestion de flota vehicular javafx</code>
+                    y haz <em>Push origin</em>.
+                </li>
+                <li>
+                    Sube al aula virtual el <strong>enlace de tu repositorio</strong>.
+                </li>
             </ol>
         </div>
 
