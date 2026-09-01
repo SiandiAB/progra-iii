@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio Autoguiado — Mini-Discord (MVC con JavaFX)</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --bg-panel: #ffffff;
+            --bg-terminal: #2b2b2b;
+            --text-main: #0f172a;
+            --text-muted: #334155;
+            --border-panel: #cbd5e1;
+            --una-red: #c8102e;
+            --una-gold: #b28900;
+            --accent-blue: #1d4ed8;
+            --accent-green: #15803d;
+            --accent-purple: #6d28d9;
+            --accent-peach: #c2410c;
+        }
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --bg-panel: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+            --border-panel: #334155;
+            --una-gold: #d4ac0d;
+            --accent-blue: #3b82f6;
+            --accent-green: #22c55e;
+            --accent-purple: #8b5cf6;
+            --accent-peach: #f97316;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .glass-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .glass-panel h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.75rem; }
+        .glass-panel h3 { font-size: 1.3rem; font-weight: 700; margin: 1.2rem 0 0.6rem 0; }
+        .glass-panel h4 { font-size: 1.1rem; font-weight: 700; margin: 1rem 0 0.4rem 0; }
+        .glass-panel p { color: var(--text-muted); margin-bottom: 0.75rem; }
+        .glass-panel p:not([class*="text-"]) { font-size: 1.15rem; }
+        .glass-panel ul, .glass-panel ol { color: var(--text-muted); padding-left: 1.5rem; margin-bottom: 0.75rem; }
+        .glass-panel li { margin-bottom: 0.3rem; font-size: 1.1rem; }
+
+        /* Etiquetas rediseñadas para alto contraste */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #ffffff;
+        }
+        .badge-red { background: var(--una-red); }
+        .badge-blue { background: var(--accent-blue); }
+        .badge-green { background: var(--accent-green); }
+        .badge-purple { background: var(--accent-purple); }
+        .badge-gold { background: var(--una-gold); }
+
+        /* Contenedor tipo archivo IntelliJ Darcula */
+        .darcula-editor {
+            background-color: #2b2b2b !important;
+            border: 1px solid #1a1a1a !important;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+            margin: 1rem 0;
+        }
+        .darcula-header {
+            background-color: #313335;
+            border-bottom: 1px solid #1a1a1a;
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .darcula-tab {
+            background: #2b2b2b;
+            color: #a9b7c6;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 2px 10px;
+            border-radius: 4px 4px 0 0;
+            border-top: 2px solid #4a88c7;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .darcula-code {
+            color: #a9b7c6;
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.5;
+            white-space: pre;
+            overflow-x: auto;
+            display: block;
+            padding: 1rem 1.2rem;
+            margin: 0;
+        }
+
+        /* Clases específicas de coloreado de sintaxis Darcula */
+        .d-comment { color: #808080; font-style: italic; }
+        .d-keyword { color: #cc7832; font-weight: bold; }
+        .d-string { color: #6a8759; }
+        .d-number { color: #6897bb; }
+        .d-annotation { color: #bbb529; }
+        .d-method { color: #ffc66d; }
+        .d-field { color: #9876aa; }
+        .d-type { color: #a9b7c6; font-weight: bold; }
+        .d-xml-tag { color: #e8bf6a; }
+        .d-xml-attr { color: #bababa; }
+        .d-xml-comment { color: #808080; font-style: italic; }
+
+        .step-sub {
+            border-left: 4px solid var(--accent-blue);
+            padding-left: 1.2rem;
+            margin: 1.5rem 0;
+        }
+        .step-sub h5 {
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.4rem;
+        }
+        .step-sub p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight-box {
+            padding: 1rem 1.2rem;
+            border-radius: 0.5rem;
+            border-left: 5px solid var(--una-gold);
+            background: #fffbef;
+            color: #423500;
+            margin: 1rem 0;
+            border-top: 1px solid #fce895;
+            border-right: 1px solid #fce895;
+            border-bottom: 1px solid #fce895;
+        }
+        [data-theme="dark"] .highlight-box {
+            background: #332900;
+            color: #fef08a;
+            border-color: #856600;
+        }
+        .highlight-box strong { color: var(--una-gold); font-weight: 800; }
+
+        .pregunta-box {
+            background: #f0fdf4;
+            border-left: 5px solid var(--accent-green);
+            padding: 1rem 1.2rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            border-top: 1px solid #bbf7d0;
+            border-right: 1px solid #bbf7d0;
+            border-bottom: 1px solid #bbf7d0;
+            color: #14532d;
+        }
+        [data-theme="dark"] .pregunta-box {
+            background: #052e16;
+            color: #86efac;
+            border-color: #166534;
+        }
+        .pregunta-box p { margin-bottom: 0.5rem; }
+
+        .float-btn {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50;
+            background: var(--bg-panel);
+            border: 2px solid var(--border-panel);
+            border-radius: 9999px;
+            padding: 0.65rem 1rem;
+            font-size: 1rem;
+            color: var(--text-main);
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            transition: transform 0.15s, background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .float-btn:hover { transform: scale(1.05); background: var(--border-panel); }
+
+        details {
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--bg-panel);
+            padding: 0.8rem 1.2rem;
+            border-radius: 0.5rem;
+            border: 2px solid var(--border-panel);
+        }
+        details summary {
+            cursor: pointer;
+            font-weight: 800;
+            color: var(--accent-blue);
+            font-size: 1.1rem;
+        }
+        details summary:hover { color: var(--accent-purple); }
+        
+        .code-explanation {
+            margin-top: 1rem;
+            font-size: 1.05rem;
+            border-top: 1px solid var(--border-panel);
+            padding-top: 1rem;
+        }
+        .code-explanation p { margin-bottom: 0.8rem; }
+        
+        .code-explanation code {
+            background: #2b2b2b;
+            color: #a9b7c6;
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.3rem;
+            font-family: 'JetBrains Mono', monospace;
+            border: 1px solid #1a1a1a;
+            font-size: 1rem;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* Estilos Diagrama de Archivos */
+        .diagram-node {
+            background: var(--bg-panel);
+            border: 2px solid var(--border-panel);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 10;
+        }
+        .diagram-arrow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+        }
+        .diagram-container {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .glass-panel { padding: 1rem; }
+            .glass-panel h2 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar modo claro/oscuro">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+
+    <div class="container">
+
+        <!-- PORTADA -->
+        <div class="glass-panel text-center" style="border-top: 6px solid var(--una-red);">
+            <div class="flex justify-center mb-4">
+                <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png" alt="Logo UNA" class="h-20 object-contain"
+                     onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png';">
+            </div>
+            <h2 class="text-3xl font-extrabold">Laboratorio Autoguiado</h2>
+            <p class="text-xl" style="color: var(--una-red); font-weight: 800;">Mini-Discord: Arquitectura MVC y N-Capas con JavaFX</p>
+            <p class="text-sm font-semibold mt-2" style="color: var(--text-muted);">Programación III — Universidad Nacional de Costa Rica · Sección Regional Central Occidente (SRCO)</p>
+            <div class="flex flex-wrap justify-center gap-3 mt-4">
+                <span class="badge badge-red">Java 21</span>
+                <span class="badge badge-blue">JavaFX 21.0.6</span>
+                <span class="badge badge-green">Maven + FXML</span>
+                <span class="badge badge-purple">Arquitectura MVC</span>
+                <span class="badge badge-gold">Patrón Observer</span>
+            </div>
+            <div class="mt-5 text-sm font-bold" style="color: var(--text-muted);">
+                <i class="fa-regular fa-clock mr-1"></i> Duración estimada: 2 horas &nbsp;·&nbsp;
+                <i class="fa-solid fa-user-graduate mr-1"></i> Práctica Académica
+            </div>
+        </div>
+
+        <!-- INTRODUCCIÓN -->
+        <div class="glass-panel" style="border-left: 5px solid var(--una-gold);">
+            <h2><i class="fa-solid fa-layer-group mr-2" style="color: var(--una-gold);"></i> Introducción al Laboratorio</h2>
+            <p>
+                En este laboratorio autoguiado, aprenderá paso a paso a construir la primera fase de una aplicación de mensajería (<strong>Mini-Discord</strong>). El objetivo principal es abandonar el código monolítico y estructurar el proyecto utilizando la <strong>Arquitectura de N-Capas</strong> y el <strong>Patrón MVC</strong>.
+            </p>
+            <p>
+                Se desarrollará una interfaz gráfica que se actualiza reactivamente mediante una <code class="font-mono text-sm">ObservableList</code> (Patrón Observer), aislando estrictamente la lógica de validación de mensajes en una capa de servicios independiente.
+            </p>
+            <div class="highlight-box">
+                <strong><i class="fa-solid fa-chalkboard-user mr-1"></i> Enfoque Pedagógico:</strong> Este manual está diseñado para guiarle desde la creación del proyecto en IntelliJ IDEA, estructurando correctamente los paquetes, hasta comprender cómo la Vista delega responsabilidades al Controlador y este a su vez interactúa con el Modelo.
+            </div>
+        </div>
+
+        <!-- PASO 1 -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-blue);">
+            <h2><i class="fa-solid fa-wrench mr-2" style="color: var(--accent-blue);"></i> Paso 1: Creación del Proyecto en IntelliJ IDEA</h2>
+
+            <div class="step-sub">
+                <h5>1.1 Configurar los parámetros iniciales del asistente</h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Abra IntelliJ IDEA y seleccione <strong>File &rarr; New &rarr; Project</strong>.</li>
+                    <li>En el panel izquierdo, seleccione <strong>JavaFX</strong>.</li>
+                    <li>En el selector de <strong>Build system</strong>, elija obligatoriamente <strong>Maven</strong>.</li>
+                    <li>En el campo <strong>JDK</strong>, asegúrese de tener seleccionado <strong>Java 21</strong> (o superior compatible).</li>
+                </ol>
+            </div>
+
+            <div class="step-sub">
+                <h5>1.2 Explicación de los campos de relleno (Artifact, Group y Package)</h5>
+                <p>Al configurar el proyecto, el asistente solicitará rellenar los identificadores clave:</p>
+                <ul>
+                    <li><strong>GroupId:</strong> <code class="font-mono text-sm">cr.ac.una.est</code> &rarr; Representa la organización. Define el espacio de nombres raíz para Maven.</li>
+                    <li><strong>ArtifactId:</strong> <code class="font-mono text-sm">minidiscord</code> &rarr; Es el nombre único de la aplicación.</li>
+                    <li><strong>Package name:</strong> <code class="font-mono text-sm">cr.ac.una.est.minidiscord</code> &rarr; La ruta lógica en disco dentro de la cual residirán todos los archivos de código fuente.</li>
+                </ul>
+                <div class="highlight-box">
+                    <i class="fa-solid fa-magnifying-glass mr-1"></i> <strong>Verificación de ubicación:</strong> Para comprobar que las carpetas se crearon correctamente, despliegue el árbol de directorios en el panel izquierdo de IntelliJ. Si contrae la carpeta <code class="font-mono text-sm">java</code> y el paquete raíz se oculta correctamente dentro de ella, la jerarquía es coherente.
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 2 -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-green);">
+            <h2><i class="fa-solid fa-code mr-2" style="color: var(--accent-green);"></i> Paso 2: Configuración del <code>pom.xml</code></h2>
+
+            <div class="step-sub">
+                <h5>2.1 Configuración de dependencias</h5>
+                <p>
+                    Abra el archivo <code class="font-mono text-sm">pom.xml</code> en la raíz del proyecto y asegúrese de que contenga la siguiente estructura adaptada a Java 21 y JavaFX 21.0.6:
+                </p>
+                
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <i class="fa-solid fa-code text-xs" style="color: #a9b7c6;"></i>
+                        <span class="text-xs font-mono" style="color: #a9b7c6;">pom.xml</span>
+                    </div>
+                    <pre class="darcula-code text-xs"><code><span class="d-xml-tag">&lt;?xml</span> <span class="d-xml-attr">version=</span><span class="d-string">"1.0"</span> <span class="d-xml-attr">encoding=</span><span class="d-string">"UTF-8"</span><span class="d-xml-tag">?&gt;</span>
+<span class="d-xml-tag">&lt;project</span> <span class="d-xml-attr">xmlns=</span><span class="d-string">"http://maven.apache.org/POM/4.0.0"</span>
+         <span class="d-xml-attr">xmlns:xsi=</span><span class="d-string">"http://www.w3.org/2001/XMLSchema-instance"</span>
+         <span class="d-xml-attr">xsi:schemaLocation=</span><span class="d-string">"http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span class="d-xml-tag">&gt;</span>
+    <span class="d-xml-tag">&lt;modelVersion&gt;</span>4.0.0<span class="d-xml-tag">&lt;/modelVersion&gt;</span>
+    <span class="d-xml-tag">&lt;groupId&gt;</span>cr.ac.una.est<span class="d-xml-tag">&lt;/groupId&gt;</span>
+    <span class="d-xml-tag">&lt;artifactId&gt;</span>minidiscord<span class="d-xml-tag">&lt;/artifactId&gt;</span>
+    <span class="d-xml-tag">&lt;version&gt;</span>1.0-SNAPSHOT<span class="d-xml-tag">&lt;/version&gt;</span>
+
+    <span class="d-xml-comment">&lt;!-- Definición de las librerías gráficas necesarias para compilar --&gt;</span>
+    <span class="d-xml-tag">&lt;dependencies&gt;</span>
+        <span class="d-xml-tag">&lt;dependency&gt;</span>
+            <span class="d-xml-tag">&lt;groupId&gt;</span>org.openjfx<span class="d-xml-tag">&lt;/groupId&gt;</span>
+            <span class="d-xml-tag">&lt;artifactId&gt;</span>javafx-controls<span class="d-xml-tag">&lt;/artifactId&gt;</span>
+            <span class="d-xml-tag">&lt;version&gt;</span>21.0.6<span class="d-xml-tag">&lt;/version&gt;</span>
+        <span class="d-xml-tag">&lt;/dependency&gt;</span>
+        <span class="d-xml-tag">&lt;dependency&gt;</span>
+            <span class="d-xml-tag">&lt;groupId&gt;</span>org.openjfx<span class="d-xml-tag">&lt;/groupId&gt;</span>
+            <span class="d-xml-tag">&lt;artifactId&gt;</span>javafx-fxml<span class="d-xml-tag">&lt;/artifactId&gt;</span>
+            <span class="d-xml-tag">&lt;version&gt;</span>21.0.6<span class="d-xml-tag">&lt;/version&gt;</span>
+        <span class="d-xml-tag">&lt;/dependency&gt;</span>
+    <span class="d-xml-tag">&lt;/dependencies&gt;</span>
+
+    <span class="d-xml-comment">&lt;!-- Configuración para forzar al compilador a utilizar Java 21 --&gt;</span>
+    <span class="d-xml-tag">&lt;build&gt;</span>
+        <span class="d-xml-tag">&lt;plugins&gt;</span>
+            <span class="d-xml-tag">&lt;plugin&gt;</span>
+                <span class="d-xml-tag">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="d-xml-tag">&lt;/groupId&gt;</span>
+                <span class="d-xml-tag">&lt;artifactId&gt;</span>maven-compiler-plugin<span class="d-xml-tag">&lt;/artifactId&gt;</span>
+                <span class="d-xml-tag">&lt;version&gt;</span>3.13.0<span class="d-xml-tag">&lt;/version&gt;</span>
+                <span class="d-xml-tag">&lt;configuration&gt;</span>
+                    <span class="d-xml-tag">&lt;source&gt;</span>21<span class="d-xml-tag">&lt;/source&gt;</span>
+                    <span class="d-xml-tag">&lt;target&gt;</span>21<span class="d-xml-tag">&lt;/target&gt;</span>
+                <span class="d-xml-tag">&lt;/configuration&gt;</span>
+            <span class="d-xml-tag">&lt;/plugin&gt;</span>
+        <span class="d-xml-tag">&lt;/plugins&gt;</span>
+    <span class="d-xml-tag">&lt;/build&gt;</span>
+<span class="d-xml-tag">&lt;/project&gt;</span></code></pre>
+                </div>
+                <details>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p><code><span class="d-keyword">&lt;dependencies&gt;</span></code>: Enlista los paquetes externos. Se incluyen <code><span class="d-string">javafx-controls</span></code> (botones, listas) y <code><span class="d-string">javafx-fxml</span></code> (procesador de interfaces visuales), indispensables para el entorno gráfico.</p>
+                        <p><code><span class="d-keyword">&lt;plugin&gt;</span></code>: Indica al compilador de Maven que debe utilizar estrictamente el JDK de Java en su versión 21 mediante las etiquetas <code><span class="d-keyword">&lt;source&gt;</span></code> y <code><span class="d-keyword">&lt;target&gt;</span></code>.</p>
+                    </div>
+                </details>
+            </div>
+            
+            <div class="step-sub">
+                <h5>2.2 Recargar Maven</h5>
+                 <p>Cada vez que modifique el <code class="font-mono text-sm">pom.xml</code>, haga clic en el icono flotante de actualización de Maven (una 'M' azul o símbolo de recarga) situado en la esquina superior derecha del editor. Si no aparece, haga clic derecho al archivo en el explorador de proyectos y seleccione <strong>Maven &rarr; Reload project</strong>.</p>
+            </div>
+        </div>
+
+        <!-- PASO 3 -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-purple);">
+            <h2><i class="fa-solid fa-sitemap mr-2" style="color: var(--accent-purple);"></i> Paso 3: Estructuración de Paquetes (N-Capas)</h2>
+
+            <div class="step-sub">
+                <h5>3.1 Limpieza de archivos y creación de la arquitectura</h5>
+                <p>
+                    Elimine las clases de ejemplo autogeneradas por IntelliJ. Luego, dentro de la ruta <code class="font-mono text-sm">src/main/java/cr/ac/una/est/minidiscord</code>, cree los subpaquetes organizativos haciendo clic derecho &rarr; <em>New &rarr; Package</em>. Es crucial respetar la diferencia entre la carpeta <code class="font-mono text-sm">java</code> (para el código lógico) y la carpeta <code class="font-mono text-sm">resources</code> (para el diseño visual FXML).
+                </p>
+                <p>La estructura final en su <strong>Project Explorer</strong> debe lucir exactamente así:</p>
+
+                <!-- ÁRBOL VISUAL CORREGIDO -->
+                <div class="darcula-editor mt-4 mb-4">
+                    <div class="darcula-header">
+                        <i class="fa-solid fa-folder-tree text-xs" style="color: #a9b7c6;"></i>
+                        <span class="text-xs font-mono" style="color: #a9b7c6;">Project Explorer (IntelliJ IDEA)</span>
+                    </div>
+                    <pre class="darcula-code text-xs"><code><span class="d-comment">▼ src</span>
+  <span class="d-comment">▼ main</span>
+    <span class="d-comment">▼ java</span>
+      <i class="fa-brands fa-java text-xs" style="color: #cc7832;"></i> module-info.java
+      <span class="d-comment">▼ cr.ac.una.est.minidiscord</span>
+        <span class="d-comment">▼ business</span>
+          <span class="d-comment">▼ model</span>
+            <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> Message.java
+            <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> User.java
+          <span class="d-comment">▼ service</span>
+            <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> ChatService.java
+        <span class="d-comment">▼ data</span>
+          <span class="d-comment">▼ dao</span>
+            <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> MessageDAO.java <span class="d-comment">(Opcional por hoy)</span>
+        <span class="d-comment">▼ presentation</span>
+          <span class="d-comment">▼ controller</span>
+            <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> ChatViewController.java
+        <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> App.java
+    <span class="d-comment">▼ resources</span>
+      <span class="d-comment">▼ cr.ac.una.est.minidiscord</span>
+        <span class="d-comment">▼ presentation</span>
+          <span class="d-comment">▼ view</span>
+            <i class="fa-solid fa-file-code text-xs" style="color: #e8bf6a;"></i> chat-view.fxml</code></pre>
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.2 Configuración del archivo <code>module-info.java</code></h5>
+                <p>
+                    JavaFX utiliza el sistema modular de Java (JPMS). Asegúrese de colocar este archivo <strong>en la raíz de la carpeta <code class="font-mono text-[11px]">java</code></strong>, fuera de los subpaquetes. Ajuste las directivas de acceso:
+                </p>
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2">
+                            <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> module-info.java
+                        </div>
+                    </div>
+                    <pre class="darcula-code text-xs"><code><span class="d-keyword">module</span> cr.ac.una.est.minidiscord {
+    <span class="d-comment">// Permite a la aplicación instanciar elementos gráficos de las librerías nativas</span>
+    <span class="d-keyword">requires</span> javafx.controls;
+    <span class="d-keyword">requires</span> javafx.fxml;
+
+    <span class="d-comment">// Autoriza al cargador FXML a acceder al controlador por reflexión para inyectar los @FXML</span>
+    <span class="d-keyword">opens</span> cr.ac.una.est.minidiscord.presentation.controller <span class="d-keyword">to</span> javafx.fxml;
+
+    <span class="d-comment">// Exporta los paquetes para que JavaFX y la JVM puedan ver e instanciar las clases públicas</span>
+    <span class="d-keyword">exports</span> cr.ac.una.est.minidiscord;
+    <span class="d-keyword">exports</span> cr.ac.una.est.minidiscord.presentation.controller;
+}</code></pre>
+                </div>
+                <details>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p><code><span class="d-keyword">requires</span> javafx.controls;</code>: Solicita acceso a los módulos internos de JavaFX. Sin esta línea, no se pueden usar elementos gráficos.</p>
+                        <p><code><span class="d-keyword">opens</span> ... <span class="d-keyword">to</span> javafx.fxml;</code>: Abre el paquete <code class="font-mono text-[10px]">presentation.controller</code> al motor FXML. JavaFX utiliza "Reflexión" para leer las etiquetas <code><span class="d-annotation">@FXML</span></code> e inyectar dinámicamente los componentes visuales en las variables de la clase.</p>
+                        <p><code><span class="d-keyword">exports</span> ...;</code>: A diferencia de <code>opens</code> (que da acceso a elementos privados), <code>exports</code> hace que las clases públicas del paquete sean visibles para otros módulos. Exportar el controlador es obligatorio para que el motor de JavaFX pueda instanciar la clase <code>ChatViewController</code> sin arrojar un error <code>IllegalAccessException</code>.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- PASO 4 -->
+        <div class="glass-panel" style="border-left: 5px solid var(--una-red);">
+            <h2><i class="fa-solid fa-briefcase mr-2" style="color: var(--una-red);"></i> Paso 4: Capa de Negocio (Model y Service)</h2>
+
+            <div class="step-sub">
+                <h5>4.1 Entidades del Modelo</h5>
+                <p>En el paquete <code>business.model</code>, cree la clase <code>User.java</code>:</p>
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2">
+                            <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> User.java
+                        </div>
+                    </div>
+                    <pre class="darcula-code text-xs"><code><span class="d-keyword">package</span> cr.ac.una.est.minidiscord.business.model;
+
+<span class="d-keyword">import</span> java.io.Serializable;
+
+<span class="d-comment">// Se implementa Serializable para poder convertir la instancia en bytes y almacenarla en disco a futuro.</span>
+<span class="d-keyword">public class</span> <span class="d-type">User</span> <span class="d-keyword">implements</span> <span class="d-type">Serializable</span> {
+    
+    <span class="d-comment">// La propiedad 'final' garantiza inmutabilidad: el username no cambiará tras ser instanciado.</span>
+    <span class="d-keyword">private final</span> <span class="d-type">String</span> <span class="d-field">username</span>;
+
+    <span class="d-keyword">public</span> <span class="d-method">User</span>(<span class="d-type">String</span> <span class="d-field">username</span>) {
+        <span class="d-keyword">this</span>.<span class="d-field">username</span> = <span class="d-field">username</span>;
+    }
+
+    <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">getUsername</span>() { <span class="d-keyword">return</span> <span class="d-field">username</span>; }
+}</code></pre>
+                </div>
+                <details>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p><code><span class="d-keyword">implements</span> <span class="d-type">Serializable</span></code>: Habilita la clase para ser convertida en bytes. Es indispensable para que en la próxima sesión podamos guardar los usuarios en un archivo del disco duro de forma automática mediante la Capa de Datos.</p>
+                        <p><code><span class="d-keyword">private final</span></code>: Se utiliza <code class="font-mono text-[10px]">final</code> para indicar que el nombre de usuario no puede ser modificado (inmutabilidad) una vez que el objeto ha nacido en la memoria.</p>
+                    </div>
+                </details>
+
+                <p class="mt-4">A continuación, cree la clase <code>Message.java</code> en el mismo paquete. Esta clase encapsula el texto del mensaje y al usuario responsable del mismo.</p>
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2">
+                            <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> Message.java
+                        </div>
+                    </div>
+                    <pre class="darcula-code text-xs"><code><span class="d-keyword">package</span> cr.ac.una.est.minidiscord.business.model;
+
+<span class="d-keyword">import</span> java.io.Serializable;
+
+<span class="d-comment">// Como Message contiene un atributo de tipo 'User', la clase 'User' también debió </span>
+<span class="d-comment">// implementar Serializable de manera obligatoria para evitar un colapso estructural.</span>
+<span class="d-keyword">public class</span> <span class="d-type">Message</span> <span class="d-keyword">implements</span> <span class="d-type">Serializable</span> {
+    <span class="d-keyword">private final</span> <span class="d-type">User</span> <span class="d-field">author</span>;
+    <span class="d-keyword">private final</span> <span class="d-type">String</span> <span class="d-field">content</span>;
+
+    <span class="d-keyword">public</span> <span class="d-method">Message</span>(<span class="d-type">User</span> <span class="d-field">author</span>, <span class="d-type">String</span> <span class="d-field">content</span>) {
+        <span class="d-keyword">this</span>.<span class="d-field">author</span> = <span class="d-field">author</span>;
+        <span class="d-keyword">this</span>.<span class="d-field">content</span> = <span class="d-field">content</span>;
+    }
+
+    <span class="d-comment">// Se sobrescribe el comportamiento natural para que la vista gráfica </span>
+    <span class="d-comment">// sepa exactamente qué formato usar al pintar este objeto en la lista.</span>
+    <span class="d-annotation">@Override</span>
+    <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">toString</span>() {
+        <span class="d-keyword">return</span> <span class="d-field">author</span>.getUsername() + <span class="d-string">": "</span> + <span class="d-field">content</span>;
+    }
+}</code></pre>
+                </div>
+                <details>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p><code><span class="d-annotation">@Override</span> <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">toString</span>()</code>: Se sobrescribe el comportamiento por defecto de la clase original <code>Object</code> de Java. Al enviar el objeto a la lista gráfica, este método instruye para que se imprima el nombre del autor seguido de dos puntos y el contenido del mensaje.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>4.2 Lógica de Negocio (Service)</h5>
+                <p>Cree la clase <code>ChatService.java</code> en el paquete <code>business.service</code>. Esta clase aísla las reglas de validación y de formato, garantizando que la Capa de Presentación se mantenga ligera e independiente.</p>
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2">
+                            <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> ChatService.java
+                        </div>
+                    </div>
+                    <pre class="darcula-code text-xs"><code><span class="d-keyword">package</span> cr.ac.una.est.minidiscord.business.service;
+
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.model.Message;
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.model.User;
+
+<span class="d-keyword">public class</span> <span class="d-type">ChatService</span> {
+    
+    <span class="d-keyword">public</span> <span class="d-type">Message</span> <span class="d-method">processMessage</span>(<span class="d-type">User</span> <span class="d-field">sender</span>, <span class="d-type">String</span> <span class="d-field">text</span>) {
+        
+        <span class="d-comment">// La validación de negocio rechaza textos vacíos lanzando una excepción lógica.</span>
+        <span class="d-comment">// La capa de negocio NUNCA debe invocar ni modificar componentes de la vista directamente.</span>
+        <span class="d-keyword">if</span> (<span class="d-field">text</span> == <span class="d-keyword">null</span> || <span class="d-field">text</span>.trim().isEmpty()) {
+            <span class="d-keyword">throw new</span> <span class="d-type">IllegalArgumentException</span>(<span class="d-string">"El mensaje no puede estar vacío."</span>);
+        }
+        
+        <span class="d-comment">// La regla de formato establece que los espacios sobrantes se eliminan al construir.</span>
+        <span class="d-keyword">return new</span> <span class="d-type">Message</span>(<span class="d-field">sender</span>, <span class="d-field">text</span>.trim());
+    }
+}</code></pre>
+                </div>
+                <details>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p><code><span class="d-keyword">throw new</span> <span class="d-type">IllegalArgumentException</span>(...)</code>: Si se detecta un texto vacío, el servicio no invoca una ventana visual de error (la capa de Negocio tiene terminantemente prohibido acceder a la interfaz gráfica). En su lugar, interrumpe el proceso lanzando una excepción lógica que el Controlador deberá capturar y gestionar adecuadamente.</p>
+                        <p><code><span class="d-field">text</span>.trim()</code>: Se aplica la regla de negocio que formatea el texto, removiendo los espacios en blanco accidentales al inicio y al final antes de empaquetarlo en el nuevo mensaje.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- PASO 5 -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-blue);">
+            <h2><i class="fa-solid fa-desktop mr-2" style="color: var(--accent-blue);"></i> Paso 5: Capa de Presentación (View y Controller)</h2>
+
+            <div class="step-sub">
+                <h5>5.1 El Diseño FXML (La Vista)</h5>
+                <p>Cree el archivo <code>chat-view.fxml</code> navegando estrictamente por la jerarquía de la carpeta de recursos: <code>src/main/resources/cr/ac/una/est/minidiscord/presentation/view/</code>.</p>
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2">
+                            <i class="fa-solid fa-file-code text-xs" style="color: #e8bf6a;"></i> chat-view.fxml
+                        </div>
+                    </div>
+                    <pre class="darcula-code text-xs"><code><span class="d-xml-tag">&lt;?xml</span> <span class="d-xml-attr">version=</span><span class="d-string">"1.0"</span> <span class="d-xml-attr">encoding=</span><span class="d-string">"UTF-8"</span><span class="d-xml-tag">?&gt;</span>
+
+<span class="d-xml-tag">&lt;?import</span> <span class="d-xml-attr">javafx.geometry.Insets</span><span class="d-xml-tag">?&gt;</span>
+<span class="d-xml-tag">&lt;?import</span> <span class="d-xml-attr">javafx.scene.control.*</span><span class="d-xml-tag">?&gt;</span>
+<span class="d-xml-tag">&lt;?import</span> <span class="d-xml-attr">javafx.scene.layout.*</span><span class="d-xml-tag">?&gt;</span>
+
+<span class="d-xml-comment">&lt;!-- VBox es el contenedor raíz. fx:controller enlaza este diseño visual con la clase Java responsable --&gt;</span>
+<span class="d-xml-tag">&lt;VBox</span> <span class="d-xml-attr">spacing=</span><span class="d-string">"10.0"</span> <span class="d-xml-attr">xmlns:fx=</span><span class="d-string">"http://javafx.com/fxml"</span> 
+      <span class="d-xml-attr">fx:controller=</span><span class="d-string">"cr.ac.una.est.minidiscord.presentation.controller.ChatViewController"</span><span class="d-xml-tag">&gt;</span>
+    <span class="d-xml-tag">&lt;padding&gt;</span>
+        <span class="d-xml-tag">&lt;Insets</span> <span class="d-xml-attr">bottom=</span><span class="d-string">"15.0"</span> <span class="d-xml-attr">left=</span><span class="d-string">"15.0"</span> <span class="d-xml-attr">right=</span><span class="d-string">"15.0"</span> <span class="d-xml-attr">top=</span><span class="d-string">"15.0"</span><span class="d-xml-tag">/&gt;</span>
+    <span class="d-xml-tag">&lt;/padding&gt;</span>
+    
+    <span class="d-xml-comment">&lt;!-- Atributo fx:id le otorga un nombre identificable para ser manipulado desde el controlador --&gt;</span>
+    <span class="d-xml-tag">&lt;ListView</span> <span class="d-xml-attr">fx:id=</span><span class="d-string">"messageListView"</span> <span class="d-xml-attr">VBox.vgrow=</span><span class="d-string">"ALWAYS"</span><span class="d-xml-tag">/&gt;</span>
+    
+    <span class="d-xml-tag">&lt;HBox</span> <span class="d-xml-attr">spacing=</span><span class="d-string">"10.0"</span><span class="d-xml-tag">&gt;</span>
+        <span class="d-xml-comment">&lt;!-- onAction delega el comportamiento a una estrategia definida en el archivo Java --&gt;</span>
+        <span class="d-xml-tag">&lt;TextField</span> <span class="d-xml-attr">fx:id=</span><span class="d-string">"messageInputField"</span> <span class="d-xml-attr">HBox.hgrow=</span><span class="d-string">"ALWAYS"</span> <span class="d-xml-attr">onAction=</span><span class="d-string">"#handleSendMessage"</span><span class="d-xml-tag">/&gt;</span>
+        <span class="d-xml-tag">&lt;Button</span> <span class="d-xml-attr">text=</span><span class="d-string">"Enviar"</span> <span class="d-xml-attr">onAction=</span><span class="d-string">"#handleSendMessage"</span><span class="d-xml-tag">/&gt;</span>
+    <span class="d-xml-tag">&lt;/HBox&gt;</span>
+<span class="d-xml-tag">&lt;/VBox&gt;</span></code></pre>
+                </div>
+                <details>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p><code><span class="d-xml-tag">&lt;VBox</span> <span class="d-xml-attr">fx:controller=</span><span class="d-string">"..."</span><span class="d-xml-tag">&gt;</span></code>: Establece el nodo raíz de la interfaz (un contenedor que apila verticalmente). El atributo <code><span class="d-xml-attr">fx:controller</span></code> enruta de forma absoluta todos los eventos al archivo Java correspondiente.</p>
+                        <p><code><span class="d-xml-tag">&lt;ListView</span> <span class="d-xml-attr">fx:id=</span><span class="d-string">"messageListView"</span><span class="d-xml-tag">/&gt;</span></code>: Componente visual que renderiza listas. Se le asigna un identificador único (<code class="font-mono text-[10px]">fx:id</code>) para ser inyectado y manipulado desde el controlador.</p>
+                        <p><code><span class="d-xml-attr">onAction=</span><span class="d-string">"#handleSendMessage"</span></code>: Declara qué método del controlador debe invocarse al presionar el botón o al dar "Enter" dentro de la caja de texto. Evidencia el Patrón Strategy, delegando el comportamiento a una función externa.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.2 El Controlador y el Patrón Observer</h5>
+                <p>Cree la clase <code>ChatViewController.java</code> en el paquete de código fuente <code>presentation.controller</code>. Aquí radica el núcleo de la coordinación: el controlador une los eventos visuales con la validación de la capa de servicios.</p>
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2">
+                            <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> ChatViewController.java
+                        </div>
+                    </div>
+                    <pre class="darcula-code text-xs"><code><span class="d-keyword">package</span> cr.ac.una.est.minidiscord.presentation.controller;
+
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.model.Message;
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.model.User;
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.service.ChatService;
+<span class="d-keyword">import</span> javafx.collections.FXCollections;
+<span class="d-keyword">import</span> javafx.collections.ObservableList;
+<span class="d-keyword">import</span> javafx.fxml.FXML;
+<span class="d-keyword">import</span> javafx.scene.control.ListView;
+<span class="d-keyword">import</span> javafx.scene.control.TextField;
+
+<span class="d-keyword">public class</span> <span class="d-type">ChatViewController</span> {
+
+    <span class="d-comment">// La anotación @FXML inyecta los elementos visuales creados en el archivo XML</span>
+    <span class="d-annotation">@FXML</span> <span class="d-keyword">private</span> <span class="d-type">ListView</span>&lt;<span class="d-type">String</span>&gt; <span class="d-field">messageListView</span>;
+    <span class="d-annotation">@FXML</span> <span class="d-keyword">private</span> <span class="d-type">TextField</span> <span class="d-field">messageInputField</span>;
+
+    <span class="d-comment">// Instancia de los servicios y creación de un usuario local en memoria</span>
+    <span class="d-keyword">private final</span> <span class="d-type">ChatService</span> <span class="d-field">chatService</span> = <span class="d-keyword">new</span> <span class="d-type">ChatService</span>();
+    <span class="d-keyword">private final</span> <span class="d-type">User</span> <span class="d-field">currentUser</span> = <span class="d-keyword">new</span> <span class="d-type">User</span>(<span class="d-string">"EstudianteUNA"</span>);
+    
+    <span class="d-comment">// Colección observable (Implementación nativa del Patrón Observer en JavaFX)</span>
+    <span class="d-keyword">private final</span> <span class="d-type">ObservableList</span>&lt;<span class="d-type">String</span>&gt; <span class="d-field">messages</span> = <span class="d-type">FXCollections</span>.observableArrayList();
+
+    <span class="d-annotation">@FXML</span>
+    <span class="d-keyword">public void</span> <span class="d-method">initialize</span>() {
+        <span class="d-comment">// Se suscribe formalmente la vista gráfica al modelo de datos observable</span>
+        <span class="d-field">messageListView</span>.setItems(<span class="d-field">messages</span>);
+    }
+
+    <span class="d-annotation">@FXML</span>
+    <span class="d-keyword">private void</span> <span class="d-method">handleSendMessage</span>() {
+        <span class="d-keyword">try</span> {
+            <span class="d-comment">// Delegación total de la lógica de validación a la capa de Negocio (Service)</span>
+            <span class="d-type">Message</span> <span class="d-field">nuevoMsg</span> = <span class="d-field">chatService</span>.processMessage(<span class="d-field">currentUser</span>, <span class="d-field">messageInputField</span>.getText());
+            
+            <span class="d-comment">// La colección notifica automáticamente a la ListView para repintarse en pantalla</span>
+            <span class="d-field">messages</span>.add(<span class="d-field">nuevoMsg</span>.toString());
+            <span class="d-field">messageInputField</span>.clear();
+            
+        } <span class="d-keyword">catch</span> (<span class="d-type">IllegalArgumentException</span> <span class="d-field">e</span>) {
+            <span class="d-comment">// Captura el rechazo del servicio e informa en consola (Futura implementación: Alerta Visual)</span>
+            <span class="d-type">System</span>.out.println(<span class="d-string">"Aviso de Validación: "</span> + <span class="d-field">e</span>.getMessage());
+        }
+    }
+}</code></pre>
+                </div>
+                <details>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p><code><span class="d-keyword">private final</span> <span class="d-type">ObservableList</span>&lt;<span class="d-type">String</span>&gt; <span class="d-field">messages</span></code>: A diferencia de un <code class="font-mono text-[10px]">ArrayList</code> convencional de Java, esta colección especializada notifica inmediatamente cualquier inserción, eliminación o actualización a todos sus observadores (en este caso, el componente gráfico <code>ListView</code>).</p>
+                        <p><code><span class="d-field">messageListView</span>.setItems(<span class="d-field">messages</span>);</code>: Dentro del método de inicialización, se vincula formalmente el componente de Interfaz de Usuario con los datos en memoria, estableciendo la suscripción del Patrón Observer.</p>
+                        <p><code><span class="d-keyword">try</span> { ... } <span class="d-keyword">catch</span> (<span class="d-type">IllegalArgumentException</span> <span class="d-field">e</span>)</code>: El controlador intenta que la capa de negocio construya el mensaje. Si el servicio detecta un error de regla (como enviar espacios en blanco) y lanza la excepción, el bloque <code class="font-mono text-[10px]">catch</code> la captura y evita el colapso repentino de la aplicación gráfica.</p>
+                    </div>
+                </details>
+            </div>
+            <div class="pregunta-box mt-4">
+                <p><i class="fa-solid fa-circle-info mr-2 text-green-700"></i><strong>Comentario Analítico:</strong></p>
+                <p class="text-sm">Preste especial atención a que el método <code class="font-mono text-[10px]">handleSendMessage</code> no contiene validaciones de cadenas vacías ni utiliza operadores condicionales. Su función es estrictamente recolectar el texto de la pantalla, transportarlo hacia el <code class="font-mono text-[10px]">ChatService</code> y administrar la respuesta. Esta limpieza asegura un alto grado de cohesión estructural y facilita futuras pruebas de validación.</p>
+            </div>
+        </div>
+
+        <!-- PASO 6 -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-peach);">
+            <h2><i class="fa-solid fa-rocket mr-2" style="color: var(--accent-peach);"></i> Paso 6: Lanzador Principal (<code>App.java</code>)</h2>
+
+            <div class="step-sub">
+                <h5>6.1 Clase de arranque</h5>
+                <p>Finalmente, cree la clase <code class="font-mono text-sm">App</code> en la raíz del paquete principal (<code class="font-mono text-sm">cr.ac.una.est.minidiscord</code>) para ensamblar y desplegar el entorno gráfico en la pantalla del sistema operativo.</p>
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2">
+                            <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> App.java
+                        </div>
+                    </div>
+                    <pre class="darcula-code text-xs"><code><span class="d-keyword">package</span> cr.ac.una.est.minidiscord;
+
+<span class="d-keyword">import</span> javafx.application.Application;
+<span class="d-keyword">import</span> javafx.fxml.FXMLLoader;
+<span class="d-keyword">import</span> javafx.scene.Scene;
+<span class="d-keyword">import</span> javafx.stage.Stage;
+<span class="d-keyword">import</span> java.io.IOException;
+
+<span class="d-comment">// Extender de Application indica a la JVM que esta clase arranca el entorno gráfico nativo</span>
+<span class="d-keyword">public class</span> <span class="d-type">App</span> <span class="d-keyword">extends</span> <span class="d-type">Application</span> {
+    
+    <span class="d-annotation">@Override</span>
+    <span class="d-keyword">public void</span> <span class="d-method">start</span>(<span class="d-type">Stage</span> <span class="d-field">stage</span>) <span class="d-keyword">throws</span> <span class="d-type">IOException</span> {
+        <span class="d-comment">// FXMLLoader es el encargado de leer el XML e inyectarlo en memoria</span>
+        <span class="d-type">FXMLLoader</span> <span class="d-field">fxmlLoader</span> = <span class="d-keyword">new</span> <span class="d-type">FXMLLoader</span>(<span class="d-type">App</span>.<span class="d-keyword">class</span>.getResource(<span class="d-string">"/cr/ac/una/est/minidiscord/presentation/view/chat-view.fxml"</span>));
+        
+        <span class="d-comment">// Se coloca la estructura compilada dentro de un lienzo o "Escena" general</span>
+        <span class="d-type">Scene</span> <span class="d-field">scene</span> = <span class="d-keyword">new</span> <span class="d-type">Scene</span>(<span class="d-field">fxmlLoader</span>.load(), <span class="d-number">600</span>, <span class="d-number">400</span>);
+        
+        <span class="d-comment">// Stage representa el marco físico de la ventana brindado por el Sistema Operativo</span>
+        <span class="d-field">stage</span>.setTitle(<span class="d-string">"Mini-Discord UNA"</span>);
+        <span class="d-field">stage</span>.setScene(<span class="d-field">scene</span>);
+        <span class="d-field">stage</span>.show();
+    }
+
+    <span class="d-keyword">public static void</span> <span class="d-method">main</span>(<span class="d-type">String</span>[] <span class="d-field">args</span>) {
+        launch();
+    }
+}</code></pre>
+                </div>
+                <details>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p><code><span class="d-keyword">extends</span> <span class="d-type">Application</span></code>: Requisito fundamental para que la máquina virtual de Java reconozca la clase como un contenedor especializado de JavaFX y asigne los procesos de renderizado de interfaz gráfica correspondientes.</p>
+                        <p><code><span class="d-type">FXMLLoader</span> <span class="d-field">fxmlLoader</span> = <span class="d-keyword">new</span> <span class="d-type">FXMLLoader</span>(...)</code>: Define la ubicación estática del archivo FXML dentro de la carpeta <code class="font-mono text-[10px]">resources</code> e inicializa el proceso de inyección hacia el controlador.</p>
+                        <p><code><span class="d-field">stage</span>.setScene(<span class="d-field">scene</span>);</code>: Se introduce la escena completa (ya cargada y compilada en memoria) dentro de la ventana proporcionada por el sistema operativo (<code class="font-mono text-[10px]">Stage</code>) para presentarla visualmente al usuario.</p>
+                    </div>
+                </details>
+            </div>
+            
+            <div class="highlight-box mt-4">
+                <strong><i class="fa-solid fa-play mr-1"></i> ¡Ejecución del Laboratorio!</strong> Proceda a compilar y ejecutar la clase <code class="font-mono text-sm">App</code>. Intente enviar mensajes vacíos y mensajes con texto para comprobar el correcto funcionamiento de las reglas de negocio aisladas en el servicio. Observe que la lista visual se actualiza automáticamente gracias a su naturaleza observable.
+            </div>
+        </div>
+
+        <!-- PASO 7: DIAGRAMA DE COMUNICACIÓN -->
+        <div class="glass-panel" style="border-left: 5px solid var(--una-gold);">
+            <h2><i class="fa-solid fa-diagram-project mr-2" style="color: var(--una-gold);"></i> Paso 7: Diagrama de Comunicación (MVC + N-Capas)</h2>
+            <p>
+                A continuación se ilustra cómo interactúan todos los archivos que acaba de crear. Este esquema representa el flujo real de datos, el aislamiento de responsabilidades y la comunicación en tiempo real mediante el patrón Observer.
+            </p>
+
+            <div class="diagram-container mt-6 mb-4">
+                <div class="flex flex-col md:flex-row justify-between items-stretch gap-6 bg-gray-50 dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+                    
+                    <!-- Capa de Presentación -->
+                    <div class="diagram-node flex-1 flex flex-col justify-between" style="border-top: 4px solid var(--accent-blue);">
+                        <h4 class="font-bold text-blue-600 dark:text-blue-400 mb-3"><i class="fa-solid fa-desktop mr-1"></i> 1. Presentación (View/Controller)</h4>
+                        <div class="space-y-3 flex-grow">
+                            <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-2 rounded text-xs font-mono">
+                                <i class="fa-solid fa-file-code text-yellow-500 mr-1"></i> chat-view.fxml<br>
+                                <span class="text-[10px] text-gray-500 dark:text-gray-400">Captura clics (onAction)</span>
+                            </div>
+                            <div class="flex justify-center text-gray-400"><i class="fa-solid fa-arrows-up-down"></i></div>
+                            <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-2 rounded text-xs font-mono">
+                                <i class="fa-brands fa-java text-orange-500 mr-1"></i> ChatViewController.java<br>
+                                <span class="text-[10px] text-gray-500 dark:text-gray-400">Escucha y delega</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flechas Presentación <-> Negocio -->
+                    <div class="diagram-arrow hidden md:flex">
+                        <span class="text-[10px] text-blue-500 font-bold mb-1">Delega texto</span>
+                        <i class="fa-solid fa-arrow-right-long text-blue-500"></i>
+                        <i class="fa-solid fa-arrow-left-long text-green-500 mt-2"></i>
+                        <span class="text-[10px] text-green-500 font-bold mt-1">Devuelve objeto</span>
+                    </div>
+
+                    <!-- Capa de Negocio -->
+                    <div class="diagram-node flex-1 flex flex-col justify-center" style="border-top: 4px solid var(--accent-green);">
+                        <h4 class="font-bold text-green-600 dark:text-green-400 mb-3"><i class="fa-solid fa-gears mr-1"></i> 2. Negocio (Service)</h4>
+                        <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-3 rounded text-xs font-mono mb-2">
+                            <i class="fa-brands fa-java text-orange-500 mr-1"></i> ChatService.java<br>
+                            <span class="text-[10px] text-gray-500 dark:text-gray-400">Evalúa reglas y valida vacíos</span>
+                        </div>
+                    </div>
+
+                    <!-- Flechas Negocio -> Modelo -->
+                    <div class="diagram-arrow hidden md:flex">
+                        <span class="text-[10px] text-purple-500 font-bold mb-1">Instancia</span>
+                        <i class="fa-solid fa-arrow-right-long text-purple-500"></i>
+                    </div>
+
+                    <!-- Capa de Datos/Modelo -->
+                    <div class="diagram-node flex-1 flex flex-col justify-between" style="border-top: 4px solid var(--accent-purple);">
+                        <h4 class="font-bold text-purple-600 dark:text-purple-400 mb-3"><i class="fa-solid fa-cube mr-1"></i> 3. Datos (Model/DAO)</h4>
+                        <div class="space-y-3 flex-grow">
+                            <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-2 rounded text-xs font-mono">
+                                <i class="fa-brands fa-java text-orange-500 mr-1"></i> User.java<br>
+                                <span class="text-[10px] text-gray-500 dark:text-gray-400">Entidad inmutable</span>
+                            </div>
+                            <div class="flex justify-center text-gray-400"><i class="fa-solid fa-link"></i></div>
+                            <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-2 rounded text-xs font-mono">
+                                <i class="fa-brands fa-java text-orange-500 mr-1"></i> Message.java<br>
+                                <span class="text-[10px] text-gray-500 dark:text-gray-400">Empaqueta (DTO + Serializable)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Explicación del Observer -->
+                <div class="mt-6 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 p-4 rounded-xl text-center">
+                    <h5 class="font-bold text-yellow-700 dark:text-yellow-500 mb-2"><i class="fa-solid fa-bolt mr-1"></i> ¿Dónde ocurre la magia reactiva?</h5>
+                    <p class="text-sm text-gray-700 dark:text-gray-300">
+                        Una vez que <code class="font-mono text-xs">ChatService</code> devuelve el <code class="font-mono text-xs">Message</code> construido, el <code class="font-mono text-xs">ChatViewController</code> simplemente lo inyecta en la <code class="font-mono text-xs">ObservableList</code>. Gracias al <strong>Patrón Observer</strong>, la colección notifica internamente al archivo <code class="font-mono text-xs">chat-view.fxml</code> y la lista se repinta en pantalla sin necesidad de métodos gráficos adicionales.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center text-xs font-bold mt-10 mb-4" style="color: var(--text-muted); border-top: 1px solid var(--border-panel); padding-top: 2rem;">
+            <p>Laboratorio Autoguiado &bull; Programación III &bull; Universidad Nacional &bull; 2026</p>
+        </div>
+
+    </div>
+
+    <!-- ========== MODAL: GLOSARIO FLOTANTE ========== -->
+    <div class="modal-backdrop glosario-modal" id="modal-glosario">
+        <div class="modal-content max-w-lg">
+            <button class="close-modal" onclick="closeModal('modal-glosario')">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-2xl font-bold mb-4 text-center" style="color: var(--accent-blue);">
+                <i class="fa-solid fa-book-open mr-2"></i> Glosario de Términos Clave
+            </h3>
+            <ul class="text-sm space-y-3">
+                <li><strong>MVC:</strong> Modelo-Vista-Controlador. Patrón arquitectónico que separa datos, interfaz y lógica de control.</li>
+                <li><strong>DAO (Data Access Object):</strong> Objeto que encapsula el acceso a la fuente de datos (archivo, base de datos).</li>
+                <li><strong>DTO (Data Transfer Object):</strong> Objeto simple que transporta datos entre capas sin exponer la lógica interna.</li>
+                <li><strong>Serialización:</strong> Proceso de convertir un objeto en una secuencia de bytes para almacenarlo de forma persistente.</li>
+                <li><strong>Observer:</strong> Patrón que permite que un objeto notifique a otros de forma desvinculada sobre cambios en su estado.</li>
+                <li><strong>Strategy:</strong> Patrón que permite seleccionar un algoritmo o respuesta en tiempo de ejecución.</li>
+                <li><strong>Composite:</strong> Patrón que trata objetos individuales y estructuras jerárquicas (árboles) de manera uniforme.</li>
+                <li><strong>N-Layers:</strong> División lógica del código en paquetes según su responsabilidad dentro de un mismo programa.</li>
+                <li><strong>N-Tiers:</strong> División física de la aplicación ejecutándose en diferentes equipos de cómputo en una red.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', next);
+            const icon = document.getElementById('theme-icon');
+            icon.className = next === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+        }
+
+        /* Funciones básicas para el Modal */
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+    </script>
+</body>
+</html>

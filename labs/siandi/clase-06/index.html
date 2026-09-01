@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio Autoguiado — Validador de Registro de Usuarios con JavaFX</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --bg-panel: #ffffff;
+            --bg-terminal: #2b2b2b;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-panel: #e2e8f0;
+            --una-red: #c8102e;
+            --una-gold: #d4ac0d;
+            --accent-blue: #2563eb;
+            --accent-green: #16a34a;
+            --accent-purple: #7c3aed;
+            --accent-peach: #ea580c;
+        }
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --bg-panel: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-panel: #334155;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .glass-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .glass-panel h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.75rem; }
+        .glass-panel h3 { font-size: 1.3rem; font-weight: 700; margin: 1.2rem 0 0.6rem 0; }
+        .glass-panel h4 { font-size: 1.1rem; font-weight: 700; margin: 1rem 0 0.4rem 0; }
+        .glass-panel h2 code { font-size: 1.4rem; }
+        .glass-panel p { color: var(--text-muted); margin-bottom: 0.75rem; }
+        .glass-panel p:not([class*="text-"]) { font-size: 1.15rem; }
+        .glass-panel ul, .glass-panel ol { color: var(--text-muted); padding-left: 1.5rem; margin-bottom: 0.75rem; }
+        .glass-panel li { margin-bottom: 0.3rem; font-size: 1.1rem; }
+
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .badge-red { background: rgba(200,16,46,0.12); color: var(--una-red); }
+        .badge-blue { background: rgba(37,99,235,0.12); color: var(--accent-blue); }
+        .badge-green { background: rgba(22,163,74,0.12); color: var(--accent-green); }
+        .badge-purple { background: rgba(124,58,237,0.12); color: var(--accent-purple); }
+        .badge-gold { background: rgba(212,172,13,0.12); color: var(--una-gold); }
+
+        /* Estilo Principal Darcula */
+        .code-fragment {
+            background: #2b2b2b;
+            border-radius: 0.6rem;
+            padding: 1rem 1.2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.15rem;
+            color: #a9b7c6;
+            margin: 0.5rem 0;
+            border: 1px solid #323232;
+            display: block;
+            white-space: pre;
+            overflow-x: auto;
+            width: 100%;
+            line-height: 1.5;
+        }
+
+        code.text-sm { font-size: 1.15rem; }
+        code.text-xs { font-size: 1.05rem; }
+
+        .d-comment { color: #808080; font-style: italic; }
+        .d-keyword { color: #cc7832; font-weight: bold; }
+        .d-string { color: #6a8759; }
+        .d-number { color: #6897bb; }
+        .d-annotation { color: #bbb529; }
+        .d-method { color: #ffc66d; }
+        .d-field { color: #9876aa; }
+        .d-type { color: #a9b7c6; font-weight: bold; }
+
+        .step-sub {
+            border-left: 3px solid var(--accent-blue);
+            padding-left: 1rem;
+            margin: 1.2rem 0;
+        }
+        .step-sub h5 {
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.2rem;
+        }
+        .step-sub p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+        }
+
+        .highlight-box {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--una-gold);
+            background: rgba(212,172,13,0.06);
+            margin: 0.75rem 0;
+        }
+        .highlight-box strong { color: var(--una-gold); }
+
+        .error-box {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--una-red);
+            background: rgba(200,16,46,0.06);
+            margin: 0.75rem 0;
+        }
+        .error-box strong { color: var(--una-red); }
+
+        .float-btn {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 9999px;
+            padding: 0.65rem 1rem;
+            font-size: 1rem;
+            color: var(--text-main);
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transition: transform 0.15s, background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .float-btn:hover { transform: scale(1.05); background: var(--border-panel); }
+
+        details {
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
+            background: rgba(0,0,0,0.02);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-panel);
+        }
+        details summary {
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+        details summary:hover { color: var(--accent-purple); }
+        
+        .code-explanation {
+            margin-top: 1rem;
+            font-size: 1.05rem;
+        }
+        .code-explanation p {
+            margin-bottom: 0.8rem;
+        }
+        
+        /* Tema Darcula para el código en las explicaciones */
+        .code-explanation code {
+            background: #2b2b2b;
+            color: #a9b7c6;
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.3rem;
+            font-family: 'JetBrains Mono', monospace;
+            border: 1px solid #323232;
+            font-size: 1rem;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .glossary {
+            text-decoration: underline;
+            text-decoration-style: dotted;
+            text-underline-offset: 0.2em;
+            cursor: help;
+            position: relative;
+        }
+        .glossary:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2b2b2b;
+            color: #a9b7c6;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.4rem;
+            font-size: 0.8rem;
+            font-weight: 400;
+            white-space: nowrap;
+            z-index: 100;
+            pointer-events: none;
+            border: 1px solid #555555;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .glass-panel { padding: 1rem; }
+            .glass-panel h2 { font-size: 1.4rem; }
+            .code-fragment { font-size: 0.95rem; padding: 0.4rem 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar modo claro/oscuro">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+
+    <div class="container">
+
+        <!-- PORTADA -->
+        <div class="glass-panel text-center" style="border-top: 6px solid var(--una-red);">
+            <div class="flex justify-center mb-4">
+                <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png" alt="Logo UNA" class="h-20 object-contain"
+                     onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png';">
+            </div>
+            <h2 class="text-3xl font-extrabold">Laboratorio Autoguiado</h2>
+            <p class="text-xl" style="color: var(--una-red); font-weight: 700;">Sistema Validador de Registro de Usuarios con JavaFX</p>
+            <p class="text-sm" style="color: var(--text-muted);">Programación III — Universidad Nacional de Costa Rica · Sección Regional Central Occidente (SRCO)</p>
+            <div class="flex flex-wrap justify-center gap-3 mt-3">
+                <span class="badge badge-red">Java 21</span>
+                <span class="badge badge-blue">JavaFX 21.0.6</span>
+                <span class="badge badge-green">Maven + FXML</span>
+                <span class="badge badge-purple">Arquitectura de 3 Capas</span>
+                <span class="badge badge-gold">Regex &amp; UI Binding</span>
+            </div>
+            <div class="mt-4 text-sm" style="color: var(--text-muted);">
+                <i class="fa-regular fa-clock mr-1"></i> Duración estimada: 2 horas &nbsp;·&nbsp;
+                <i class="fa-regular fa-user mr-1"></i> Trabajo Individual / Práctica Académica
+            </div>
+        </div>
+
+        <!-- INTRODUCCIÓN -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-gold);">
+            <h2><i class="fa-regular fa-compass mr-2" style="color: var(--una-gold);"></i> Introducción al Laboratorio</h2>
+            <p>
+                En este laboratorio autoguiado aprenderás paso a paso a construir una aplicación completa de escritorio en Java utilizando <strong>JavaFX</strong>, 
+                <strong>Maven</strong> y la <strong>Arquitectura de 3 Capas</strong> (Presentación, Negocio y Entidades). El proyecto consiste en un sistema inteligente de 
+                <strong>validación de registro de usuarios</strong> que evalúa en tiempo real la fortaleza de una contraseña utilizando expresiones regulares (<code class="font-mono text-sm">Pattern</code>), 
+                actualiza dinámicamente una barra de progreso y permite alternar la visibilidad de los caracteres escritos.
+            </p>
+            <div class="highlight-box">
+                <strong><i class="fa-regular fa-lightbulb mr-1"></i> Enfoque Pedagógico:</strong> Este manual está diseñado para guiarte desde la creación de cero del proyecto en IntelliJ IDEA 
+                hasta la estructuración de paquetes, la escritura de código limpio y la comprensión profunda de cómo la capa de Presentación se comunica con la capa de Negocio.
+            </div>
+        </div>
+
+        <!-- PASO 1 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+            <h2><i class="fa-regular fa-screwdriver-wrench mr-2" style="color: var(--accent-blue);"></i> Paso 1: Creación del Proyecto en IntelliJ IDEA</h2>
+
+            <div class="step-sub">
+                <h5>1.1 Configurar los parámetros iniciales del asistente</h5>
+                <ol style="list-style-type: decimal; padding-left: 1.5rem;">
+                    <li>Abre IntelliJ IDEA y selecciona <strong>File → New → Project</strong>.</li>
+                    <li>En el panel izquierdo, selecciona <strong>JavaFX</strong>. Si no aparece directamente, búscalo en los generadores o selecciona tipo Maven con arquetipo JavaFX.</li>
+                    <li>En el selector de <strong>Build system</strong>, elige obligatoriamente <strong>Maven</strong>.</li>
+                    <li>En el campo <strong>JDK</strong>, asegúrate de tener seleccionado <strong>Java 21</strong> (o superior compatible).</li>
+                </ol>
+            </div>
+
+            <div class="step-sub">
+                <h5>1.2 Explicación de los campos de relleno (Artifact, Group y Package)</h5>
+                <p>Al configurar el proyecto, el asistente te pedirá rellenar identificadores clave de Maven y Java:</p>
+                <ul>
+                    <li><strong>GroupId:</strong> <code class="font-mono text-sm">cr.ac.una.est</code> &rarr; Representa la organización o dominio invertido (en este caso, Universidad Nacional, Estudiantes). Define el espacio de nombres raíz para Maven.</li>
+                    <li><strong>ArtifactId:</strong> <code class="font-mono text-sm">registrousuariosfx</code> &rarr; Es el nombre único que tendrá tu archivo empaquetado (<code class="font-mono text-sm">.jar</code>) y la carpeta principal del proyecto compilado.</li>
+                    <li><strong>Package name / Paquete Base:</strong> <code class="font-mono text-sm">cr.ac.una.est.registrousuariosfx</code> &rarr; La ruta lógica en disco dentro de la cual residirán todos tus archivos de código fuente Java.</li>
+                </ul>
+                <div class="highlight-box">
+                    <i class="fa-regular fa-circle-info mr-1"></i> <strong>Verificación de ubicación:</strong> Para comprobar que tus carpetas se crearon bien, despliega el árbol de directorios en el panel izquierdo de IntelliJ (<code class="font-mono text-sm">Project</code>). Si cierras la carpeta <code class="font-mono text-sm">java</code> y el paquete raíz se oculta correctamente dentro de ella, significa que la jerarquía es coherente. Si un archivo queda "flotando" fuera de la estructura de carpetas al contraerla, no está bien ubicado.
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 2 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
+            <h2><i class="fa-regular fa-file-code mr-2" style="color: var(--accent-green);"></i> Paso 2: Configuración del <code>pom.xml</code></h2>
+
+            <div class="step-sub">
+                <h5>2.1 ¿Para qué sirve el pom.xml?</h5>
+                <p>
+                    El archivo <code class="font-mono text-sm">pom.xml</code> (Project Object Model) es el corazón de Maven. En él se especifican las dependencias externas que tu proyecto necesita 
+                    (como los módulos de JavaFX) y los plugins de compilación, evitando que tengas que descargar archivos <code class="font-mono text-sm">.jar</code> manualmente de internet.
+                </p>
+                <p>Abre tu archivo <code class="font-mono text-sm">pom.xml</code> en la raíz del proyecto y asegúrate de que contenga la siguiente estructura adaptada a Java 21 y JavaFX 21.0.6:</p>
+                
+                <div class="code-fragment">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+    &lt;groupId&gt;cr.ac.una.est&lt;/groupId&gt;
+    &lt;artifactId&gt;registrousuariosfx&lt;/artifactId&gt;
+    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+    &lt;name&gt;RegistroUsuariosFX&lt;/name&gt;
+
+    &lt;properties&gt;
+        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+        &lt;junit.version&gt;5.12.1&lt;/junit.version&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.openjfx&lt;/groupId&gt;
+            &lt;artifactId&gt;javafx-controls&lt;/artifactId&gt;
+            &lt;version&gt;21.0.6&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.openjfx&lt;/groupId&gt;
+            &lt;artifactId&gt;javafx-fxml&lt;/artifactId&gt;
+            &lt;version&gt;21.0.6&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.junit.jupiter&lt;/groupId&gt;
+            &lt;artifactId&gt;junit-jupiter-api&lt;/artifactId&gt;
+            &lt;version&gt;${junit.version}&lt;/version&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+                &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+                &lt;version&gt;3.13.0&lt;/version&gt;
+                &lt;configuration&gt;
+                    &lt;source&gt;21&lt;/source&gt;
+                    &lt;target&gt;21&lt;/target&gt;
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+&lt;/project&gt;
+                </div>
+                <details>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p><code><span class="d-keyword">&lt;project&gt;</span></code> y <code><span class="d-keyword">&lt;modelVersion&gt;</span></code>: Es la etiqueta raíz que envuelve todo el archivo. El modelo 4.0.0 es el estándar actual de Maven.</p>
+                        <p><code><span class="d-keyword">&lt;groupId&gt;</span></code>, <code><span class="d-keyword">&lt;artifactId&gt;</span></code>, <code><span class="d-keyword">&lt;version&gt;</span></code>: Son las "coordenadas" de tu proyecto. Definen quién eres, cómo se llama tu proyecto y en qué etapa está (SNAPSHOT = desarrollo activo).</p>
+                        <p><code><span class="d-keyword">&lt;properties&gt;</span></code>: Bloque de variables globales. Aquí le indicamos a Maven que todo el texto usará UTF-8 (para soportar tildes y eñes).</p>
+                        <p><code><span class="d-keyword">&lt;dependencies&gt;</span></code>: Aquí enlistamos los "paquetes externos" que necesitamos. Las dependencias <code><span class="d-string">javafx-controls</span></code> (botones, barras) y <code><span class="d-string">javafx-fxml</span></code> (leer el diseño visual) son indispensables para JavaFX. Maven las descargará automáticamente.</p>
+                        <p><code><span class="d-keyword">&lt;build&gt;</span></code> y <code><span class="d-keyword">&lt;plugins&gt;</span></code>: Configuran cómo se va a compilar el proyecto. Le indicamos explícitamente a Java (con <code><span class="d-keyword">&lt;source&gt;</span></code> y <code><span class="d-keyword">&lt;target&gt;</span></code>) que utilice estrictamente la versión 21.</p>
+                    </div>
+                </details>
+            </div>
+            
+            <div class="step-sub">
+                <h5>2.2 Recargar Maven</h5>
+                <p>Cada vez que modifiques el <code class="font-mono text-sm">pom.xml</code>, aparecerá un icono flotante con el logotipo de Maven (un pequeño elefante o símbolo de actualización) en la esquina superior derecha del editor, o en la pestaña lateral <strong>Maven</strong>. Haz clic en <strong>Reload All Maven Projects</strong> para descargar e indexar las librerías.</p>
+            </div>
+        </div>
+
+        <!-- PASO 3 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-purple);">
+            <h2><i class="fa-regular fa-folder-tree mr-2" style="color: var(--accent-purple);"></i> Paso 3: Estructuración de Paquetes (Arquitectura de 3 Capas)</h2>
+
+            <div class="step-sub">
+                <h5>3.1 Limpieza de archivos por defecto y creación de paquetes</h5>
+                <p>
+                    Los asistentes de IntelliJ suelen crear clases de ejemplo (como <code class="font-mono text-sm">HelloApplication</code>). Elimínalas para mantener el espacio de trabajo limpio. 
+                    Luego, dentro de la ruta <code class="font-mono text-sm">src/main/java/cr/ac/una/est/registrousuariosfx</code>, crea los siguientes subpaquetes haciendo clic derecho &rarr; <em>New &rarr; Package</em>. Cada uno representará una capa física de nuestra arquitectura:
+                </p>
+                <ul>
+                    <li><code class="font-mono text-sm">model</code> &rarr; <strong>Capa de Entidades / Datos:</strong> Almacenará las clases que representan los objetos del dominio y estructuras de datos puros (ej. <code class="font-mono text-sm">Usuario.java</code>).</li>
+                    <li><code class="font-mono text-sm">service</code> &rarr; <strong>Capa de Negocio:</strong> Contendrá la lógica y reglas algorítmicas de la aplicación, como la evaluación de contraseñas y uso de expresiones regulares (ej. <code class="font-mono text-sm">RegistroService.java</code>).</li>
+                    <li><code class="font-mono text-sm">view</code> &rarr; <strong>Capa de Presentación:</strong> Agrupará las interfaces gráficas y los controladores Java que interactúan directamente con la pantalla (ej. <code class="font-mono text-sm">RegistroFXVista.java</code>).</li>
+                </ul>
+                <div class="error-box">
+                    <i class="fa-regular fa-triangle-exclamation mr-1"></i> <strong>¿Cómo saber si el paquete está bien ubicado?</strong> Si contraes (cierras) la carpeta <code class="font-mono text-sm">registrousuariosfx</code> en el panel lateral y los paquetes <code class="font-mono text-sm">model</code>, <code class="font-mono text-sm">service</code> y <code class="font-mono text-sm">view</code> desaparecen de la vista por estar anidados dentro de ella, sabrás que están correctamente estructurados como subdirectorios lógicos.
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.2 Configuración del archivo <code>module-info.java</code></h5>
+                <p>
+                    JavaFX utiliza el sistema modular de Java (JPMS). En la raíz de <code class="font-mono text-sm">src/main/java/cr/ac/una/est/registrousuariosfx</code>, verifica o crea el archivo <code class="font-mono text-sm">module-info.java</code>:
+                </p>
+                <div class="code-fragment">
+<span class="d-keyword">module</span> cr.ac.una.est.registrousuariosfx {
+    <span class="d-keyword">requires</span> javafx.controls;
+    <span class="d-keyword">requires</span> javafx.fxml;
+
+    <span class="d-comment">// Permite que el cargador FXML acceda por reflexión al controlador de la vista</span>
+    <span class="d-keyword">opens</span> cr.ac.una.est.registrousuariosfx.view <span class="d-keyword">to</span> javafx.fxml;
+
+    <span class="d-keyword">exports</span> cr.ac.una.est.registrousuariosfx;
+    <span class="d-keyword">exports</span> cr.ac.una.est.registrousuariosfx.model;
+    <span class="d-keyword">exports</span> cr.ac.una.est.registrousuariosfx.service;
+    <span class="d-keyword">exports</span> cr.ac.una.est.registrousuariosfx.view;
+}
+                </div>
+                <details>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p><code><span class="d-keyword">module</span> cr.ac.una.est...</code>: Esta línea le dice a Java: <i>"Este proyecto es un módulo independiente y este es su nombre oficial"</i>.</p>
+                        <p><code><span class="d-keyword">requires</span> javafx.controls;</code> y <code><span class="d-keyword">requires</span> javafx.fxml;</code>: Declaramos explícitamente de qué otros módulos dependemos. Sin esto, Java bloqueará por seguridad nuestro intento de usar botones o cargar el FXML.</p>
+                        <p><code><span class="d-keyword">opens</span> cr.ac...view <span class="d-keyword">to</span> javafx.fxml;</code>: ¡Esta línea es vital! JavaFX necesita usar una técnica llamada <strong>Reflexión</strong> para leer tu archivo FXML y conectarlo con tu controlador Java. Con <code><span class="d-keyword">opens</span></code> abrimos una "puerta de seguridad" exclusivamente para que el motor de JavaFX pueda "ver" nuestro paquete de la vista.</p>
+                        <p><code><span class="d-keyword">exports</span> ...</code>: Al revés que requires, aquí le decimos al sistema modular de Java cuáles de nuestros paquetes están disponibles para ser ejecutados desde el exterior al arrancar.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- PASO 4 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-red);">
+            <h2><i class="fa-regular fa-file-lines mr-2" style="color: var(--una-red);"></i> Paso 4: Capa de Entidades (Model) y Capa de Negocio (Service)</h2>
+
+            <div class="step-sub">
+                <h5>4.1 Creando la clase <code>Usuario.java</code> (Capa de Entidades)</h5>
+                <p>Esta clase representa la entidad pura de usuario. No sabe nada de contraseñas visuales, solo almacena datos. Créala dentro de tu paquete <code>model</code>:</p>
+                <div class="code-fragment">
+<span class="d-keyword">package</span> cr.ac.una.est.registrousuariosfx.model;
+
+<span class="d-keyword">public class</span> <span class="d-type">Usuario</span> {
+    <span class="d-keyword">private</span> <span class="d-type">String</span> <span class="d-field">contrasena</span>;
+    <span class="d-keyword">private</span> <span class="d-keyword">int</span> <span class="d-field">nivelSeguridad</span>;
+
+    <span class="d-keyword">public</span> <span class="d-method">Usuario</span>(<span class="d-type">String</span> <span class="d-field">contrasena</span>, <span class="d-keyword">int</span> <span class="d-field">nivelSeguridad</span>) {
+        <span class="d-keyword">this</span>.<span class="d-field">contrasena</span> = <span class="d-field">contrasena</span>;
+        <span class="d-keyword">this</span>.<span class="d-field">nivelSeguridad</span> = <span class="d-field">nivelSeguridad</span>;
+    }
+
+    <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">getContrasena</span>() { <span class="d-keyword">return</span> <span class="d-field">contrasena</span>; }
+    <span class="d-keyword">public void</span> <span class="d-method">setContrasena</span>(<span class="d-type">String</span> <span class="d-field">contrasena</span>) { <span class="d-keyword">this</span>.<span class="d-field">contrasena</span> = <span class="d-field">contrasena</span>; }
+    
+    <span class="d-keyword">public int</span> <span class="d-method">getNivelSeguridad</span>() { <span class="d-keyword">return</span> <span class="d-field">nivelSeguridad</span>; }
+    <span class="d-keyword">public void</span> <span class="d-keyword">setNivelSeguridad</span>(<span class="d-keyword">int</span> <span class="d-field">nivelSeguridad</span>) { <span class="d-keyword">this</span>.<span class="d-field">nivelSeguridad</span> = <span class="d-field">nivelSeguridad</span>; }
+}
+                </div>
+                <details>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p><code><span class="d-keyword">package</span> cr.ac...model;</code>: Declara formalmente a qué carpeta lógica pertenece este archivo.</p>
+                        <p><code><span class="d-keyword">public class</span> <span class="d-type">Usuario</span></code>: Define el "molde" o plantilla. A partir de aquí se crearán los objetos usuario en memoria.</p>
+                        <p><code><span class="d-keyword">private</span> <span class="d-type">String</span> <span class="d-field">contrasena</span>;</code> y <code><span class="d-keyword">private</span> <span class="d-keyword">int</span> <span class="d-field">nivelSeguridad</span>;</code>: Son los atributos del molde. Utilizamos <code><span class="d-keyword">private</span></code> por el principio de <strong>Encapsulamiento</strong>: evitamos que otra clase modifique estos valores directamente sin permiso.</p>
+                        <p><code><span class="d-keyword">public</span> <span class="d-method">Usuario</span>(<span class="d-type">String</span> <span class="d-field">contrasena</span>, <span class="d-keyword">int</span> <span class="d-field">nivelSeguridad</span>)</code>: Es el <strong>Constructor</strong>. Se ejecuta obligatoriamente en el instante en que alguien escribe <code><span class="d-keyword">new</span> <span class="d-type">Usuario</span>(...)</code> para inyectarle los valores iniciales al objeto en el momento de su nacimiento.</p>
+                        <p><code><span class="d-keyword">this</span>.<span class="d-field">contrasena</span> = <span class="d-field">contrasena</span>;</code>: La palabra reservada <code><span class="d-keyword">this</span></code> hace referencia a "los atributos de esta clase". Como el parámetro se llama igual, usamos <code><span class="d-keyword">this</span></code> para diferenciarlos.</p>
+                        <p><code>get...</code> y <code>set...</code>: Dado que los atributos son privados, creamos métodos públicos para consultarlos (Getters) o modificarlos (Setters) de forma controlada.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>4.2 Creando la clase <code>RegistroService.java</code> (Capa de Negocio)</h5>
+                <p>Crea este archivo dentro de tu paquete <code>service</code>. Contiene la lógica algorítmica para evaluar contraseñas utilizando Expresiones Regulares (<code class="font-mono text-sm">Regex</code>). Fíjate que aquí no hay botones ni etiquetas visuales; esta clase solo recibe strings, aplica reglas matemáticas o de negocio y devuelve resultados.</p>
+                <div class="code-fragment">
+<span class="d-keyword">package</span> cr.ac.una.est.registrousuariosfx.service;
+
+<span class="d-keyword">import</span> cr.ac.una.est.registrousuariosfx.model.Usuario;
+<span class="d-keyword">import</span> java.util.regex.Pattern;
+
+<span class="d-keyword">public class</span> <span class="d-type">RegistroService</span> {
+    <span class="d-keyword">private static final</span> <span class="d-type">Pattern</span> <span class="d-field">TIENE_MAYUSCULA</span> = Pattern.compile(<span class="d-string">".*[A-Z].*"</span>);
+    <span class="d-keyword">private static final</span> <span class="d-type">Pattern</span> <span class="d-field">TIENE_MINUSCULA</span> = Pattern.compile(<span class="d-string">".*[a-z].*"</span>);
+    <span class="d-keyword">private static final</span> <span class="d-type">Pattern</span> <span class="d-field">TIENE_NUMERO</span> = Pattern.compile(<span class="d-string">".*[0-9].*"</span>);
+    <span class="d-keyword">private static final</span> <span class="d-type">Pattern</span> <span class="d-field">TIENE_CARACTER_ESPECIAL</span> = Pattern.compile(<span class="d-string">".*[^a-zA-Z0-9].*"</span>);
+
+    <span class="d-keyword">public</span> <span class="d-type">Usuario</span> <span class="d-method">evaluarFortaleza</span>(<span class="d-type">String</span> <span class="d-field">contrasena</span>) {
+        <span class="d-keyword">int</span> <span class="d-field">puntos</span> = <span class="d-number">0</span>;
+        <span class="d-keyword">if</span> (<span class="d-field">contrasena</span> != <span class="d-keyword">null</span> && !<span class="d-field">contrasena</span>.isEmpty()) {
+            <span class="d-keyword">if</span> (<span class="d-field">contrasena</span>.length() &gt;= <span class="d-number">8</span>) <span class="d-field">puntos</span>++;
+            <span class="d-keyword">if</span> (<span class="d-field">TIENE_MAYUSCULA</span>.matcher(<span class="d-field">contrasena</span>).matches()) <span class="d-field">puntos</span>++;
+            <span class="d-keyword">if</span> (<span class="d-field">TIENE_MINUSCULA</span>.matcher(<span class="d-field">contrasena</span>).matches()) <span class="d-field">puntos</span>++;
+            <span class="d-keyword">if</span> (<span class="d-field">TIENE_NUMERO</span>.matcher(<span class="d-field">contrasena</span>).matches()) <span class="d-field">puntos</span>++;
+            <span class="d-keyword">if</span> (<span class="d-field">TIENE_CARACTER_ESPECIAL</span>.matcher(<span class="d-field">contrasena</span>).matches()) <span class="d-field">puntos</span>++;
+        }
+        <span class="d-keyword">return new</span> <span class="d-type">Usuario</span>(<span class="d-field">contrasena</span>, <span class="d-field">puntos</span>);
+    }
+
+    <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">obtenerDescripcionNivel</span>(<span class="d-keyword">int</span> <span class="d-field">nivelSeguridad</span>) {
+        <span class="d-keyword">switch</span> (<span class="d-field">nivelSeguridad</span>) {
+            <span class="d-keyword">case</span> <span class="d-number">0</span>: <span class="d-keyword">case</span> <span class="d-number">1</span>: <span class="d-keyword">return</span> <span class="d-string">"Muy débil"</span>;
+            <span class="d-keyword">case</span> <span class="d-number">2</span>: <span class="d-keyword">return</span> <span class="d-string">"Débil"</span>;
+            <span class="d-keyword">case</span> <span class="d-number">3</span>: <span class="d-keyword">return</span> <span class="d-string">"Media"</span>;
+            <span class="d-keyword">case</span> <span class="d-number">4</span>: <span class="d-keyword">return</span> <span class="d-string">"Fuerte"</span>;
+            <span class="d-keyword">case</span> <span class="d-number">5</span>: <span class="d-keyword">return</span> <span class="d-string">"Muy fuerte"</span>;
+            <span class="d-keyword">default</span>: <span class="d-keyword">return</span> <span class="d-string">"Desconocido"</span>;
+        }
+    }
+
+    <span class="d-keyword">public boolean</span> <span class="d-method">confirmarCoincidencia</span>(<span class="d-type">String</span> <span class="d-field">contrasena</span>, <span class="d-type">String</span> <span class="d-field">confirmacion</span>) {
+        <span class="d-keyword">if</span> (<span class="d-field">contrasena</span> == <span class="d-keyword">null</span> || <span class="d-field">confirmacion</span> == <span class="d-keyword">null</span>) <span class="d-keyword">return false</span>;
+        <span class="d-keyword">return</span> <span class="d-field">contrasena</span>.equals(<span class="d-field">confirmacion</span>);
+    }
+}
+                </div>
+                <details open>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p><code><span class="d-keyword">private static final</span> <span class="d-type">Pattern</span> <span class="d-field">TIENE_MAYUSCULA</span> = Pattern.compile(<span class="d-string">".*[A-Z].*"</span>);</code>: Las expresiones regulares (regex) son fórmulas de texto para buscar patrones. Aquí le decimos a Java: <i>"Busca cualquier cosa (.*), luego una letra de la A a la Z en mayúscula, y luego cualquier cosa (.*)"</i>. Lo declaramos <code><span class="d-keyword">static</span></code> (se guarda en memoria una sola vez) y <code><span class="d-keyword">final</span></code> (no puede modificarse). <code><span class="d-type">Pattern</span>.compile</code> traduce esa fórmula a lenguaje máquina.</p>
+                        
+                        <p><code><span class="d-keyword">public</span> <span class="d-type">Usuario</span> <span class="d-method">evaluarFortaleza</span>(<span class="d-type">String</span> <span class="d-field">contrasena</span>)</code>: Este método recibe una cadena de texto y promete devolver un objeto completo de tipo <code><span class="d-type">Usuario</span></code> como respuesta.</p>
+                        
+                        <p><code><span class="d-keyword">int</span> <span class="d-field">puntos</span> = <span class="d-number">0</span>;</code>: Iniciamos un contador local en cero. Este contador sumará un máximo de 5 puntos.</p>
+                        
+                        <p><code><span class="d-keyword">if</span> (<span class="d-field">contrasena</span> != <span class="d-keyword">null</span> && !<span class="d-field">contrasena</span>.isEmpty())</code>: Si el texto es "nulo" o está vacío, nos saltamos toda la evaluación para evitar un colapso.</p>
+                        
+                        <p><code><span class="d-keyword">if</span> (<span class="d-field">contrasena</span>.length() &gt;= <span class="d-number">8</span>) <span class="d-field">puntos</span>++;</code>: Valida la longitud. Si tiene 8 o más caracteres, suma un punto.</p>
+                        
+                        <p><code><span class="d-field">TIENE_MAYUSCULA</span>.matcher(<span class="d-field">contrasena</span>).matches()</code>: Enfrentamos el patrón contra la contraseña. <code>.matcher()</code> analiza el texto y <code>.matches()</code> responde <code><span class="d-keyword">true</span></code> si lo encontró o <code><span class="d-keyword">false</span></code> si no. Lo mismo ocurre para caracteres especiales (donde <code><span class="d-string">[^a-zA-Z0-9]</span></code> significa "lo que NO sea letra o número").</p>
+                        
+                        <div class="highlight-box" style="margin-left: 0;">
+                            <strong>Nota Pedagógica de Arquitectura:</strong><br>
+                            <code><span class="d-keyword">return new</span> <span class="d-type">Usuario</span>(<span class="d-field">contrasena</span>, <span class="d-field">puntos</span>);</code><br>
+                            Una duda muy común aquí es: <i>"¿Por qué usamos <code><span class="d-keyword">new</span> <span class="d-type">Usuario</span></code>? ¿Eso no sobreescribe un usuario que ya existía?"</i>. <br>
+                            La respuesta es <strong>No</strong>. En este laboratorio no tenemos una base de datos ni una lista global donde "guardemos" al usuario. Lo que estamos haciendo aquí es usar la clase <code><span class="d-type">Usuario</span></code> como un simple contenedor (un DTO o Data Transfer Object). Estamos creando un objeto <strong>nuevo y temporal</strong> en la memoria RAM que empaqueta dos datos: la contraseña y su calificación. 
+                            Cada vez que la persona teclea una letra nueva, el programa desecha el cálculo anterior, vuelve a evaluar de cero, crea una nueva "caja" con la nueva nota, y se la entrega a la vista para que actualice la barra de colores. ¡El objeto viaja, informa y luego se descarta de la memoria!
+                        </div>
+
+                        <p><code><span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">obtenerDescripcionNivel</span>(<span class="d-keyword">int</span> <span class="d-field">nivelSeguridad</span>)</code>: Un traductor. Recibe el número del 0 al 5, y usando <code><span class="d-keyword">switch</span></code> retorna una palabra en español que la vista pueda imprimir en pantalla.</p>
+
+                        <p><code><span class="d-keyword">public boolean</span> <span class="d-method">confirmarCoincidencia</span>(<span class="d-type">String</span> <span class="d-field">contrasena</span>, <span class="d-type">String</span> <span class="d-field">confirmacion</span>)</code>: Usa el método oficial de Java <code>.equals()</code> para verificar que ambas cadenas sean exactamente iguales carácter por carácter.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- PASO 5 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+            <h2><i class="fa-regular fa-window-maximize mr-2" style="color: var(--accent-blue);"></i> Paso 5: Capa de Presentación (View y FXML)</h2>
+
+            <div class="step-sub">
+                <h5>5.1 La separación dentro de la Capa de Presentación</h5>
+                <p>
+                    En la arquitectura de 3 capas, la <strong>Capa de Presentación</strong> se encarga exclusivamente de la interfaz de usuario. En JavaFX, esta capa suele dividirse físicamente en dos archivos para mayor limpieza: la <strong>Vista</strong> (el archivo FXML) que define la disposición visual usando XML, y el <strong>Controlador</strong> (la clase Java en el paquete <code class="font-mono text-sm">view</code>) que enlaza los componentes y maneja los eventos del usuario (clics, escritura). Toda la validación matemática se delega a la Capa de Negocio (<code class="font-mono text-sm">RegistroService</code>).
+                </p>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.2 Creando el archivo visual <code>registro-view.fxml</code></h5>
+                <p>Debes crear este archivo haciendo clic derecho exactamente en <code>src/main/resources/cr/ac/una/est/registrousuariosfx/</code> &rarr; <em>New &rarr; File</em>, (asegúrate de que esté en la carpeta <code class="font-mono text-sm">resources</code> y no dentro de <code class="font-mono text-sm">java</code>), o directamente utilizando la herramienta visual <strong>Scene Builder</strong>.</p>
+                <div class="code-fragment">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;?import javafx.scene.control.*?&gt;
+&lt;?import javafx.scene.layout.*?&gt;
+
+&lt;AnchorPane prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cr.ac.una.est.registrousuariosfx.view.RegistroFXVista"&gt;
+    &lt;children&gt;
+        &lt;Label layoutX="35.0" layoutY="20.0" style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Validador de Registro de Usuario" /&gt;
+        
+        &lt;Label layoutX="35.0" layoutY="60.0" text="Contraseña:" /&gt;
+        &lt;PasswordField fx:id="txtContrasena" layoutX="35.0" layoutY="80.0" prefHeight="26.0" prefWidth="250.0" /&gt;
+        &lt;TextField fx:id="txtContrasenaVisible" layoutX="35.0" layoutY="80.0" managed="false" prefHeight="26.0" prefWidth="250.0" visible="false" /&gt;
+        
+        &lt;CheckBox fx:id="chkMostrar" layoutX="35.0" layoutY="115.0" mnemonicParsing="false" text="Mostrar contraseña" /&gt;
+        
+        &lt;Label fx:id="lblFortaleza" layoutX="35.0" layoutY="150.0" text="Fortaleza:  " /&gt;
+        &lt;ProgressBar fx:id="barraFortaleza" layoutX="35.0" layoutY="170.0" prefWidth="330.0" progress="0.0" /&gt;
+        
+        &lt;Label layoutX="35.0" layoutY="210.0" text="Confirmar contraseña:" /&gt;
+        &lt;PasswordField fx:id="txtConfirmarContrasena" layoutX="35.0" layoutY="230.0" prefWidth="250.0" /&gt;
+        
+        &lt;Button fx:id="btnRegistrar" layoutX="35.0" layoutY="283.0" onAction="#onRegistrarButtonClick" text="Registrar" /&gt;
+        &lt;Label fx:id="lblResultado" layoutX="35.0" layoutY="330.0" text="" /&gt;
+    &lt;/children&gt;
+&lt;/AnchorPane&gt;
+                </div>
+                <details>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p><code><span class="d-keyword">&lt;?xml... ?&gt;</span></code> y <code><span class="d-keyword">&lt;?import... ?&gt;</span></code>: Etiquetas iniciales necesarias para que la máquina sepa que estamos usando el lenguaje XML y para "importar" de la librería de JavaFX los controles visuales.</p>
+                        <p><code><span class="d-keyword">&lt;AnchorPane</span> prefHeight="400" ... fx:controller="cr.ac...view.RegistroFXVista"<span class="d-keyword">&gt;</span></code>: <code><span class="d-type">AnchorPane</span></code> es el lienzo principal que permite ubicar elementos usando coordenadas X e Y. El atributo clave es <code><span class="d-field">fx:controller</span></code>, el cual enlaza mágicamente este diseño visual con la clase Java responsable de la lógica.</p>
+                        <p><code><span class="d-keyword">&lt;children&gt;</span></code>: Etiqueta estructural. Indica que todos los botones y textos que van adentro son "hijos" del lienzo principal.</p>
+                        <p><code><span class="d-keyword">&lt;PasswordField</span> fx:id="txtContrasena" layoutX="35.0" layoutY="80.0" <span class="d-keyword">/&gt;</span></code>: Dibuja una caja de texto que oculta los caracteres con puntitos. El atributo <code><span class="d-field">fx:id</span></code> es su "número de cédula": gracias a ese ID, el controlador Java podrá encontrar esta caja específica.</p>
+                        <p><code><span class="d-keyword">&lt;TextField</span> fx:id="txtContrasenaVisible" ... managed="false" visible="false" <span class="d-keyword">/&gt;</span></code>: Dibuja una caja de texto normal. La colocamos exactamente encima de la otra, pero le ponemos <code><span class="d-field">visible="false"</span></code> (invisible) y <code><span class="d-field">managed="false"</span></code> (el sistema ignora su espacio). Esto es un "truco": cuando el usuario marque la casilla "Mostrar contraseña", haremos invisible el PasswordField y haremos visible este TextField.</p>
+                        <p><code><span class="d-keyword">&lt;Button</span> fx:id="btnRegistrar" ... onAction="#onRegistrarButtonClick" text="Registrar" <span class="d-keyword">/&gt;</span></code>: Crea el botón final. El atributo <code><span class="d-field">onAction</span></code> le dice a la interfaz: <i>"Cuando te hagan clic, busca inmediatamente en el controlador Java un método que se llame 'onRegistrarButtonClick' y ejecútalo"</i>.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>5.3 Creando el controlador de UI <code>RegistroFXVista.java</code> (en el paquete <code>view</code>)</h5>
+                <p>Crea este archivo en <code>src/main/java/cr/ac/una/est/registrousuariosfx/view/</code>. Esta clase es el "cerebro de la ventana". Recoge los clics del FXML, extrae la información, y le pide ayuda al Servicio (Capa de Negocio) para tomar decisiones:</p>
+                <div class="code-fragment">
+<span class="d-keyword">package</span> cr.ac.una.est.registrousuariosfx.view;
+
+<span class="d-keyword">import</span> cr.ac.una.est.registrousuariosfx.model.Usuario;
+<span class="d-keyword">import</span> cr.ac.una.est.registrousuariosfx.service.RegistroService;
+<span class="d-keyword">import</span> javafx.fxml.FXML;
+<span class="d-keyword">import</span> javafx.scene.control.*;
+
+<span class="d-keyword">public class</span> <span class="d-type">RegistroFXVista</span> {
+    @FXML <span class="d-keyword">private</span> <span class="d-type">PasswordField</span> <span class="d-field">txtContrasena</span>;
+    @FXML <span class="d-keyword">private</span> <span class="d-type">TextField</span> <span class="d-field">txtContrasenaVisible</span>;
+    @FXML <span class="d-keyword">private</span> <span class="d-type">CheckBox</span> <span class="d-field">chkMostrar</span>;
+    @FXML <span class="d-keyword">private</span> <span class="d-type">PasswordField</span> <span class="d-field">txtConfirmarContrasena</span>;
+    @FXML <span class="d-keyword">private</span> <span class="d-type">Button</span> <span class="d-field">btnRegistrar</span>;
+    @FXML <span class="d-keyword">private</span> <span class="d-type">Label</span> <span class="d-field">lblFortaleza</span>;
+    @FXML <span class="d-keyword">private</span> <span class="d-type">ProgressBar</span> <span class="d-field">barraFortaleza</span>;
+    @FXML <span class="d-keyword">private</span> <span class="d-type">Label</span> <span class="d-field">lblResultado</span>;
+
+    <span class="d-comment">// La capa de presentación se comunica con la capa de negocio instanciando el servicio</span>
+    <span class="d-keyword">private final</span> <span class="d-type">RegistroService</span> <span class="d-field">registroService</span> = <span class="d-keyword">new</span> <span class="d-type">RegistroService</span>();
+
+    @FXML
+    <span class="d-keyword">public void</span> <span class="d-method">initialize</span>() {
+        <span class="d-field">txtContrasenaVisible</span>.textProperty().bindBidirectional(<span class="d-field">txtContrasena</span>.textProperty());
+        <span class="d-field">chkMostrar</span>.setOnAction(<span class="d-field">event</span> -&gt; {
+            <span class="d-keyword">boolean</span> <span class="d-field">mostrar</span> = <span class="d-field">chkMostrar</span>.isSelected();
+            <span class="d-field">txtContrasenaVisible</span>.setVisible(<span class="d-field">mostrar</span>);
+            <span class="d-field">txtContrasenaVisible</span>.setManaged(<span class="d-field">mostrar</span>);
+            <span class="d-field">txtContrasena</span>.setVisible(!<span class="d-field">mostrar</span>);
+            <span class="d-field">txtContrasena</span>.setManaged(!<span class="d-field">mostrar</span>);
+        });
+
+        <span class="d-field">txtContrasena</span>.textProperty().addListener((<span class="d-field">observable</span>, <span class="d-field">valorAnterior</span>, <span class="d-field">valorNuevo</span>) -&gt; {
+            <span class="d-type">Usuario</span> <span class="d-field">evaluacion</span> = <span class="d-field">registroService</span>.evaluarFortaleza(<span class="d-field">valorNuevo</span>);
+            <span class="d-field">lblFortaleza</span>.setText(<span class="d-string">"Fortaleza: "</span> + <span class="d-field">registroService</span>.obtenerDescripcionNivel(<span class="d-field">evaluacion</span>.getNivelSeguridad()));
+            <span class="d-field">barraFortaleza</span>.setProgress(<span class="d-field">evaluacion</span>.getNivelSeguridad() / <span class="d-number">5.0</span>);
+        });
+    }
+
+    @FXML
+    <span class="d-keyword">protected void</span> <span class="d-method">onRegistrarButtonClick</span>() {
+        <span class="d-type">String</span> <span class="d-field">contrasena</span> = <span class="d-field">txtContrasena</span>.getText();
+        <span class="d-type">String</span> <span class="d-field">confirmacion</span> = <span class="d-field">txtConfirmarContrasena</span>.getText();
+
+        <span class="d-keyword">if</span> (<span class="d-field">contrasena</span>.isBlank() || <span class="d-field">confirmacion</span>.isBlank()) {
+            <span class="d-field">lblResultado</span>.setText(<span class="d-string">"Error: Todos los campos son obligatorios."</span>);
+            <span class="d-field">lblResultado</span>.setStyle(<span class="d-string">"-fx-text-fill: red;"</span>);
+            <span class="d-keyword">return</span>;
+        }
+
+        <span class="d-keyword">if</span> (!<span class="d-field">registroService</span>.confirmarCoincidencia(<span class="d-field">contrasena</span>, <span class="d-field">confirmacion</span>)) {
+            <span class="d-field">lblResultado</span>.setText(<span class="d-string">"Error: Las contraseñas no coinciden."</span>);
+            <span class="d-field">lblResultado</span>.setStyle(<span class="d-string">"-fx-text-fill: crimson;"</span>);
+            <span class="d-keyword">return</span>;
+        }
+
+        <span class="d-type">Usuario</span> <span class="d-field">usuario</span> = <span class="d-field">registroService</span>.evaluarFortaleza(<span class="d-field">contrasena</span>);
+        <span class="d-keyword">if</span> (<span class="d-field">usuario</span>.getNivelSeguridad() &lt; <span class="d-number">3</span>) {
+            <span class="d-field">lblResultado</span>.setText(<span class="d-string">"Coincide, pero es demasiado débil."</span>);
+            <span class="d-field">lblResultado</span>.setStyle(<span class="d-string">"-fx-text-fill: darkorange;"</span>);
+            <span class="d-keyword">return</span>;
+        }
+
+        <span class="d-field">lblResultado</span>.setText(<span class="d-string">"Registro exitoso!"</span>);
+        <span class="d-field">lblResultado</span>.setStyle(<span class="d-string">"-fx-text-fill: green;"</span>);
+    }
+}
+                </div>
+                <details>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p><code><span class="d-annotation">@FXML</span> <span class="d-keyword">private</span> <span class="d-type">PasswordField</span> <span class="d-field">txtContrasena</span>;</code>: La anotación <code><span class="d-annotation">@FXML</span></code> vincula cada variable Java con un elemento visual en tu archivo FXML (buscando coincidencia con el <code><span class="d-field">fx:id</span></code>). JavaFX inicializa esto por ti, por eso no llevan un <code><span class="d-keyword">new</span></code> al lado.</p>
+                        
+                        <p><code><span class="d-keyword">private final</span> <span class="d-type">RegistroService</span> <span class="d-field">registroService</span> = <span class="d-keyword">new</span> <span class="d-type">RegistroService</span>();</code>: Regla de oro de 3 capas. La Vista no hace cálculos matemáticos. La Vista instancia al servicio y le delega el trabajo pesado.</p>
+                        
+                        <p><code><span class="d-keyword">public void</span> <span class="d-method">initialize</span>()</code>: Es un método especial en JavaFX que se dispara de forma automática apenas la ventana termina de cargar los gráficos. Lo usamos para preparar los eventos interactivos.</p>
+                        
+                        <p><code><span class="d-field">txtContrasenaVisible</span>.textProperty().bindBidirectional(<span class="d-field">txtContrasena</span>.textProperty());</code>: Función poderosa de <i>Binding Bidireccional</i>. Sincroniza ambas cajas. Lo que teclees en la oculta aparecerá en la visible, y viceversa.</p>
+                        
+                        <p><code><span class="d-field">chkMostrar</span>.setOnAction(<span class="d-field">event</span> -&gt; { ... });</code>: Asignamos un "escuchador". Cuando el CheckBox reciba un clic, lee si está marcado (<code><span class="d-keyword">true</span></code> o <code><span class="d-keyword">false</span></code>) y enciende/apaga la caja visible e invisible alterando <code>.setVisible()</code> y <code>.setManaged()</code>.</p>
+                        
+                        <p><code><span class="d-field">txtContrasena</span>.textProperty().addListener((<span class="d-field">observable</span>, <span class="d-field">valorAnterior</span>, <span class="d-field">valorNuevo</span>) -&gt; { ... });</code>: Este es el motor en tiempo real. Le "pegamos una oreja" a la caja de texto. Cada vez que el usuario presiona una tecla o borra algo, se activa. Nos interesan las letras que acaban de entrar, representadas en la variable <code><span class="d-field">valorNuevo</span></code>.</p>
+                        
+                        <p><code><span class="d-type">Usuario</span> <span class="d-field">evaluacion</span> = <span class="d-field">registroService</span>.evaluarFortaleza(<span class="d-field">valorNuevo</span>);</code>: Inmediatamente le pasamos ese nuevo texto al Servicio para que lo califique.</p>
+                        
+                        <p><code><span class="d-field">lblFortaleza</span>.setText(...);</code> y <code><span class="d-field">barraFortaleza</span>.setProgress(<span class="d-field">evaluacion</span>.getNivelSeguridad() / <span class="d-number">5.0</span>);</code>: Actualizamos el texto de pantalla con el nombre de la fortaleza. Luego, llenamos la barra. Como la barra de JavaFX solo acepta valores de 0.0 a 1.0 (0% a 100%), dividimos los puntos sobre 5.0 para obtener la fracción correcta.</p>
+                        
+                        <p><code><span class="d-keyword">protected void</span> <span class="d-method">onRegistrarButtonClick</span>()</code>: Este es el código vinculado al clic del botón "Registrar".</p>
+                        
+                        <p><code><span class="d-keyword">if</span> (<span class="d-field">contrasena</span>.isBlank() || <span class="d-field">confirmacion</span>.isBlank()) { ... <span class="d-keyword">return</span>; }</code>: Si las cajas están en blanco, lanza un error rojo y ejecuta un <code><span class="d-keyword">return</span></code> temprano. El <code><span class="d-keyword">return</span></code> hace que el método aborte ahí mismo, evitando anidar demasiados <code><span class="d-keyword">else if</span></code>.</p>
+                        
+                        <p><code><span class="d-keyword">if</span> (!<span class="d-field">registroService</span>.confirmarCoincidencia(...))</code>: Le pide al servicio validar usando <code>.equals()</code> si son diferentes. Si no coinciden, aborta con otro texto rojo.</p>
+                        
+                        <p>Si pasó los filtros, se vuelve a calcular la fortaleza. Si la nota es menor a 3, tiramos una alerta naranja. Si también superó esto, modificamos el texto y lo pintamos de verde con <code>setStyle(<span class="d-string">"-fx-text-fill: green;"</span>)</code>.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- PASO 6 -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
+            <h2><i class="fa-regular fa-rocket mr-2" style="color: var(--accent-green);"></i> Paso 6: Lanzador Principal (<code>RegistroApp.java</code>)</h2>
+
+            <div class="step-sub">
+                <h5>6.1 Creando la clase de arranque</h5>
+                <p>En la raíz del paquete <code class="font-mono text-sm">cr.ac.una.est.registrousuariosfx</code>, crea la clase <code class="font-mono text-sm">RegistroApp</code> que extiende <code class="font-mono text-sm">Application</code>. Esta es la llave de ignición del proyecto:</p>
+                <div class="code-fragment">
+<span class="d-keyword">package</span> cr.ac.una.est.registrousuariosfx;
+
+<span class="d-keyword">import</span> javafx.application.Application;
+<span class="d-keyword">import</span> javafx.fxml.FXMLLoader;
+<span class="d-keyword">import</span> javafx.scene.Scene;
+<span class="d-keyword">import</span> javafx.stage.Stage;
+<span class="d-keyword">import</span> java.io.IOException;
+
+<span class="d-keyword">public class</span> <span class="d-type">RegistroApp</span> <span class="d-keyword">extends</span> <span class="d-type">Application</span> {
+    @Override
+    <span class="d-keyword">public void</span> <span class="d-method">start</span>(<span class="d-type">Stage</span> <span class="d-field">stage</span>) <span class="d-keyword">throws</span> IOException {
+        <span class="d-type">FXMLLoader</span> <span class="d-field">fxmlLoader</span> = <span class="d-keyword">new</span> <span class="d-type">FXMLLoader</span>(<span class="d-type">RegistroApp</span>.<span class="d-keyword">class</span>.getResource(<span class="d-string">"/cr/ac/una/est/registrousuariosfx/registro-view.fxml"</span>));
+        <span class="d-type">Scene</span> <span class="d-field">scene</span> = <span class="d-keyword">new</span> <span class="d-type">Scene</span>(<span class="d-field">fxmlLoader</span>.load());
+        <span class="d-field">stage</span>.setTitle(<span class="d-string">"Sistema UNA - Registro"</span>);
+        <span class="d-field">stage</span>.setScene(<span class="d-field">scene</span>);
+        <span class="d-field">stage</span>.show();
+    }
+
+    <span class="d-keyword">public static void</span> <span class="d-method">main</span>(<span class="d-type">String</span>[] <span class="d-field">args</span>) {
+        launch();
+    }
+}
+                </div>
+                <details>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p><code><span class="d-keyword">public class</span> <span class="d-type">RegistroApp</span> <span class="d-keyword">extends</span> <span class="d-type">Application</span></code>: Para que Java entienda que este programa es una aplicación visual de JavaFX y no un programa normal de consola, es absolutamente obligatorio hacer que la clase herede de <code><span class="d-type">Application</span></code>.</p>
+                        
+                        <p><code><span class="d-annotation">@Override</span> <span class="d-keyword">public void</span> <span class="d-method">start</span>(<span class="d-type">Stage</span> <span class="d-field">stage</span>)</code>: Al heredar, estamos obligados a sobrescribir este método. Es la "puerta de entrada" del mundo gráfico. La variable <code><span class="d-field">stage</span></code> (Escenario) es el marco principal de la ventana que nos otorga el Sistema Operativo (la que tiene la X para cerrar, etc).</p>
+                        
+                        <p><code><span class="d-type">FXMLLoader</span> <span class="d-field">fxmlLoader</span> = <span class="d-keyword">new</span> <span class="d-type">FXMLLoader</span>(...)</code>: Creamos un "Cargador". Le pasamos la ruta estática donde se ubica nuestro dibujo XML. El cargador se encargará de leer el archivo, crear los botones en memoria e inyectarlos en la clase Controlador.</p>
+                        
+                        <p><code><span class="d-type">Scene</span> <span class="d-field">scene</span> = <span class="d-keyword">new</span> <span class="d-type">Scene</span>(<span class="d-field">fxmlLoader</span>.load());</code>: Un <code><span class="d-type">Stage</span></code> (Marco) no puede mostrar los botones directamente. Necesita de una <code><span class="d-type">Scene</span></code> (Escena). Aquí llamamos al <code>.load()</code> para compilar la vista y meterla dentro de una escena.</p>
+                        
+                        <p><code><span class="d-field">stage</span>.setTitle(...)</code>: Cambia el texto que aparecerá en la barra superior de la ventana.</p>
+                        
+                        <p><code><span class="d-field">stage</span>.setScene(<span class="d-field">scene</span>);</code> y <code><span class="d-field">stage</span>.show();</code>: Finalmente, colocamos la escena o lienzo dentro de la ventana de Windows/Mac, y ordenamos que la ventana se haga visible en la pantalla.</p>
+
+                        <p><code><span class="d-keyword">public static void</span> <span class="d-method">main</span>(<span class="d-type">String</span>[] <span class="d-field">args</span>) { launch(); }</code>: Este es el método <code><span class="d-method">main</span></code> de toda la vida de Java. La única línea que lleva adentro es <code>launch()</code>, un método heredado que arranca los motores internos de gráficos y termina llamando automáticamente al método <code><span class="d-method">start</span></code>.</p>
+                    </div>
+                </details>
+                <div class="highlight-box mt-4">
+                    <strong><i class="fa-regular fa-circle-check mr-1"></i> ¡Listo para ejecutar!</strong> Haz clic en el botón verde de ejecución (Run) al lado del método <code class="font-mono text-sm">main</code> en <code class="font-mono text-sm">RegistroApp</code> y tu sistema gráfico de validación de contraseñas se desplegará exitosamente.
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center text-xs" style="color: var(--text-muted); padding: 2rem 0 1rem 0; border-top: 1px solid var(--border-panel);">
+            <p>Laboratorio Autoguiado &bull; Programación III &bull; Universidad Nacional &bull; 2026</p>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', next);
+            const icon = document.getElementById('theme-icon');
+            icon.className = next === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+        }
+    </script>
+</body>
+</html>
