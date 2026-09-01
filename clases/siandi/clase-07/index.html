@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 7 — Programación III</title>
+    
+    <link rel="icon" type="image/svg+xml" href="../../../assets/img/favicon.svg">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Dependencias externas -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    
+    <!-- Recursos compartidos del proyecto -->
+    <link rel="stylesheet" href="../../../assets/css/presentacion.css">
+    <script src="../../../assets/js/curso-info.js"></script>
+    
+    <!-- Estilos específicos y Tooltips interactivos -->
+    <style>
+        .keyword {
+            position: relative;
+            cursor: help;
+        }
+        .keyword::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e1e2e;
+            color: #cdd6f4;
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-family: 'Nunito', sans-serif;
+            white-space: normal;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            z-index: 999;
+            max-width: 260px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+            line-height: 1.4;
+        }
+        .keyword:hover::after,
+        .keyword:focus::after {
+            opacity: 1;
+        }
+
+        /* IntelliJ Darcula Theme Spec */
+        .darcula-editor {
+            background-color: #2b2b2b !important;
+            border: 1px solid #3c3f41 !important;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+        .darcula-header {
+            background-color: #313335;
+            border-bottom: 1px solid #3c3f41;
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .darcula-tab {
+            background: #2b2b2b;
+            color: #a9b7c6;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 2px 10px;
+            border-radius: 4px 4px 0 0;
+            border-top: 2px solid #4a88c7;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .darcula-code {
+            color: #a9b7c6;
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.5;
+        }
+        .jk-keyword { color: #cc7832; font-weight: bold; }
+        .jk-annot { color: #bbb529; }
+        .jk-type { color: #a9b7c6; }
+        .jk-method { color: #ffc66d; }
+        .jk-string { color: #6a8759; }
+        .jk-number { color: #6897bb; }
+        .jk-comment { color: #808080; font-style: italic; }
+        .jk-xml-tag { color: #e8bf6a; }
+        .jk-xml-attr { color: #bababa; }
+
+        /* Estilo para tarjetas de pregunta */
+        .pregunta-box {
+            background: #fef9e7;
+            border-left: 6px solid #f1c40f;
+            padding: 12px 18px;
+            border-radius: 12px;
+            margin-top: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .pregunta-box p {
+            margin-bottom: 4px;
+        }
+        .pregunta-box .respuesta {
+            font-size: 0.85rem;
+            color: #2c3e50;
+            background: #ecf0f1;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 4px;
+        }
+
+        /* Glosario flotante */
+        .glosario-btn {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            z-index: 999;
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 54px;
+            height: 54px;
+            font-size: 1.6rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .glosario-btn:hover {
+            transform: scale(1.08);
+        }
+        .glosario-modal .modal-content {
+            max-width: 600px;
+        }
+        .glosario-modal .modal-content ul {
+            list-style: none;
+            padding: 0;
+        }
+        .glosario-modal .modal-content li {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+        .glosario-modal .modal-content li strong {
+            color: var(--accent-blue);
+        }
+
+        /* Estilos para tabla comparativa */
+        .tabla-compare {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            margin: 8px 0;
+        }
+        .tabla-compare th {
+            background: #2b2b2b;
+            color: #cdd6f4;
+            padding: 8px 10px;
+            text-align: left;
+        }
+        .tabla-compare td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .tabla-compare tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Botón de tema claro/oscuro -->
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar Modo">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+
+    <!-- Botón de descarga offline -->
+    <button class="float-btn" id="downloadBtn" onclick="downloadPresentation()" title="Descargar presentación para ver sin internet">
+        <i class="fa-solid fa-download"></i>
+    </button>
+
+    <!-- Botón de Glosario flotante -->
+    <button class="glosario-btn" onclick="openModal('modal-glosario')" title="Glosario de términos">
+        <i class="fa-solid fa-book-open"></i>
+    </button>
+
+    <!-- ========== CONTENEDOR DE SLIDES ========== -->
+    <div class="slides-container" id="slides-container">
+        
+        <!-- ==================== SLIDE 0: Portada ==================== -->
+        <div class="slide active">
+            <div class="text-center w-full max-w-6xl z-10 relative">
+                <i class="fa-solid fa-cubes-stacked bg-icon text-[350px] -top-20 -left-20" style="color: var(--una-red);"></i>
+                <i class="fa-brands fa-discord bg-icon text-[250px] -bottom-10 right-10" style="color: var(--accent-blue);"></i>
+                
+                <div class="bg-white px-8 py-4 rounded-3xl inline-block mb-6 shadow-md border border-gray-100 relative z-10">
+                    <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png" 
+                         alt="Logo UNA" class="h-28 object-contain"
+                         onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png'">
+                </div>
+                
+                <h2 class="text-lg md:text-xl font-bold tracking-[0.2em] mb-4 uppercase" style="color: var(--text-muted);">Sección Regional Central Occidente, UNA</h2>
+                
+                <h1 class="text-3xl md:text-3xl font-extrabold mb-4 tracking-tight">
+                    Programación <span style="color: var(--una-red);">III</span>
+                </h1>
+                <h2 class="text-5xl md:text-6xl font-extrabold mb-2" style="color: var(--text-main);">Semana 7</h2>
+                <h3 class="text-3xl md:text-5xl font-bold mb-6" style="color: var(--una-red);">
+                    Arquitectura de Software: MVC, N-Tier y Patrones
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-6 relative z-10">
+                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--una-red);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-red flex items-center justify-center text-2xl"><i class="fa-solid fa-chalkboard-user"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Docente — Grupo 41</p>
+                            <p class="text-lg font-bold">Ing. Siandi Araya Bello</p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);">M 13:00 - 16:20</p>
+                        </div>
+                    </div>
+                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--accent-blue);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-blue flex items-center justify-center text-2xl"><i class="fa-solid fa-chalkboard-user"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Docente — Grupo 40</p>
+                            <p class="text-lg font-bold">Ing. Kristel Duarte Pérez</p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);">K 08:00 - 11:20</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto relative z-10">
+                    <div class="glass-panel text-left flex items-center gap-4 border-l-4" style="border-left-color: var(--una-gold);">
+                        <div class="w-10 h-10 shrink-0 rounded-full tint-gold flex items-center justify-center text-lg"><i class="fa-regular fa-clock"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider" style="color: var(--text-muted);">Atención Grupo 41</p>
+                            <p class="text-sm">M 10:00 - 12:00</p>
+                        </div>
+                    </div>
+                    <div class="glass-panel text-left flex items-center gap-4 border-l-4" style="border-left-color: var(--accent-green);">
+                        <div class="w-10 h-10 shrink-0 rounded-full tint-green flex items-center justify-center text-lg"><i class="fa-regular fa-clock"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider" style="color: var(--text-muted);">Atención Grupo 40</p>
+                            <p class="text-sm">K 13:00 - 14:00</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-sm animate-pulse mt-6" style="color: var(--text-muted);"><i class="fa-solid fa-keyboard mr-2"></i>Use las flechas del teclado para navegar</p>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 1: Agenda del Día ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-map-location-dot bg-icon text-[350px] top-10 right-0 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">¿Qué se estudiará hoy?</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Dejamos atrás el código espagueti: estructuración profesional en JavaFX.</p>
+                </div>
+
+                <div class="relative max-w-2xl mx-auto">
+                    <div class="absolute border-l-2 border-dashed border-gray-300 h-full" style="left: 50%; transform: translateX(-50%);"></div>
+
+                    <!-- 1. El Gran Problema -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-gold font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">1</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(2)">
+                            <div class="glass-panel py-2 px-5 border-r-4" style="border-right-color: var(--una-gold);">
+                                <h3 class="font-bold text-base md:text-lg text-right">El Problema Espagueti</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. MVC y Variantes -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(3)">
+                            <div class="glass-panel py-2 px-5 border-l-4" style="border-left-color: var(--accent-blue);">
+                                <h3 class="font-bold text-base md:text-lg text-left">Patrón MVC</h3>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-blue font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">2</div>
+                        <div class="w-1/2"></div>
+                    </div>
+
+                    <!-- 3. Patrones Subyacentes -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-purple font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">3</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(4)">
+                            <div class="glass-panel py-2 px-5 border-r-4" style="border-right-color: var(--accent-purple);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Patrones GoF Subyacentes <i class="fa-solid fa-triangle-exclamation text-red-500 ml-1"></i></h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Arquitectura vs Patrones -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(5)">
+                            <div class="glass-panel py-2 px-5 border-l-4" style="border-left-color: var(--una-gold);">
+                                <h3 class="font-bold text-base md:text-lg text-left">Arquitectura vs Patrones</h3>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-gold font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">4</div>
+                        <div class="w-1/2"></div>
+                    </div>
+
+                    <!-- 5. Clasificación de Patrones -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-green font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">5</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(6)">
+                            <div class="glass-panel py-2 px-5 border-r-4" style="border-right-color: var(--accent-green);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Catálogo de Patrones</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. N-Layers vs N-Tiers -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(7)">
+                            <div class="glass-panel py-2 px-5 border-l-4" style="border-left-color: var(--una-red);">
+                                <h3 class="font-bold text-base md:text-lg text-left">N-Layers vs N-Tiers <i class="fa-solid fa-triangle-exclamation text-red-500 ml-1"></i></h3>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-red font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">6</div>
+                        <div class="w-1/2"></div>
+                    </div>
+
+                    <!-- 7. Bibliotecas y Persistencia -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-peach font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">7</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(8)">
+                            <div class="glass-panel py-2 px-5 border-r-4" style="border-right-color: var(--accent-peach);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Bibliotecas & Persistencia</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 8. RegistroUsuariosFX vs MVC -->
+                    <div class="flex items-center mb-3 relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(9)">
+                            <div class="glass-panel py-2 px-5 border-l-4" style="border-left-color: var(--accent-blue);">
+                                <h3 class="font-bold text-base md:text-lg text-left">RegistroUsuariosFX <i class="fa-solid fa-arrow-right text-gray-400 mx-1"></i> MVC</h3>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-blue font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">8</div>
+                        <div class="w-1/2"></div>
+                    </div>
+
+                    <!-- 9. Laboratorio: Mini-Discord -->
+                    <div class="flex items-center relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-green font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">9</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(10)">
+                            <div class="glass-panel py-2 px-5 border-r-4" style="border-right-color: var(--accent-green);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Lab: Mini-Discord</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Tooltip de advertencia (contenido adicional) -->
+                <div class="text-center mt-4 text-xs text-gray-400">
+                    <i class="fa-solid fa-circle-exclamation text-yellow-500 mr-1"></i> Los temas marcados con <i class="fa-solid fa-triangle-exclamation text-red-500"></i> son conceptos clave que se ilustrarán con ejemplos reales. ¡No se preocupe!
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 2: El Gran Problema ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-triangle-exclamation bg-icon text-[350px] -left-10 opacity-5" style="color: var(--una-red);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">¿Por qué se necesita la Arquitectura?</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">El peligro del botón "habelotodo" (código espagueti monolítico).</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Código Malo Monolítico (IntelliJ Darcula) -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--una-red);">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="tint-red w-10 h-10 rounded-xl flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-dumpster-fire"></i></span>
+                            <h3 class="text-2xl font-bold" style="color: var(--una-red);">Sin Arquitectura (Todo Mezclado)</h3>
+                        </div>
+                        <p class="text-sm mb-3" style="color: var(--text-muted);">Todo centralizado dentro del método del botón en la ventana:</p>
+                        
+                        <div class="darcula-editor">
+                            <div class="darcula-header">
+                                <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                                <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                                <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                                <div class="darcula-tab ml-2">
+                                    <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> VentanaChat.java
+                                </div>
+                            </div>
+                            <pre class="darcula-code p-3 text-xs leading-relaxed overflow-x-auto m-0"><code><span class="jk-comment">// En el controlador o evento de la vista:</span>
+btnEnviar.<span class="jk-method">setOnAction</span>(e -> {
+    <span class="jk-comment">// 1. Extrae datos de la pantalla (GUI)</span>
+    <span class="jk-type">String</span> texto = txtMensaje.<span class="jk-method">getText</span>();
+    
+    <span class="jk-comment">// 2. Valida reglas de negocio</span>
+    <span class="jk-keyword">if</span> (texto.<span class="jk-method">contains</span>(<span class="jk-string">"spam"</span>)) <span class="jk-keyword">return</span>;
+    
+    <span class="jk-comment">// 3. Escribe directamente en archivo/disco</span>
+    <span class="jk-type">FileWriter</span> fw = <span class="jk-keyword">new</span> <span class="jk-type">FileWriter</span>(<span class="jk-string">"chat.txt"</span>, <span class="jk-keyword">true</span>);
+    fw.<span class="jk-method">write</span>(texto); 
+    fw.<span class="jk-method">close</span>();
+    
+    <span class="jk-comment">// 4. Modifica la interfaz gráfica</span>
+    lblAlerta.<span class="jk-method">setText</span>(<span class="jk-string">"¡Enviado!"</span>);
+});</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- El Desastre -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-green);">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="tint-green w-10 h-10 rounded-xl flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-shield-halved"></i></span>
+                            <h3 class="text-2xl font-bold">¿Qué sucede si el sistema crece?</h3>
+                        </div>
+                        <div class="space-y-3 text-sm">
+                            <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--una-red);">
+                                <p><strong>1. Se cambia la interfaz a Web/Móvil:</strong> Se debe descartar y reescribir todo porque las validaciones y el guardado estaban amarrados al botón de JavaFX.</p>
+                            </div>
+                            <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--una-gold);">
+                                <p><strong>2. Se cambia el archivo plano por MySQL:</strong> Se debe abrir cada ventana y modificar código visual para adaptar la persistencia.</p>
+                            </div>
+                            <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--accent-green);">
+                                <p><strong>3. Solución (Separación de Responsabilidades):</strong> Cada clase tiene un único rol: renderizar pantalla, procesar lógica o persistir datos.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel py-3 px-6 text-center border-l-4" style="border-left-color: var(--una-gold);">
+                    <p class="text-base">
+                        <i class="fa-solid fa-lightbulb mr-2" style="color: var(--una-gold);"></i>
+                        <strong>Principio de Responsabilidad Única (SRP):</strong> Un módulo debe tener una, y solo una, razón para cambiar.
+                    </p>
+                </div>
+
+                <!-- PREGUNTA DE REFLEXIÓN -->
+                <div class="pregunta-box mt-4">
+                    <p><i class="fa-solid fa-circle-question mr-2 text-yellow-600"></i><strong>Pregunta para la clase:</strong></p>
+                    <p class="text-sm">"Si tuviera que cambiar el almacenamiento de archivo plano a MySQL en ese código... ¿Cuántas líneas y en cuántos lugares tendría que modificar?"</p>
+                    <span class="respuesta"><i class="fa-solid fa-lightbulb"></i> Respuesta: prácticamente todo el método del botón, y además todas las otras ventanas que también escriben en el archivo.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 3: Patrón MVC y Variantes ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-network-wired bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">Arquitectura MVC (Modelo - Vista - Controlador)</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Desacoplando la interfaz de usuario en tres componentes especializados.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
+                    <!-- MODELO -->
+                    <div class="glass-panel p-5 border-t-4 text-center" style="border-color: var(--accent-green);">
+                        <div class="tint-green w-14 h-14 rounded-2xl flex items-center justify-center text-3xl font-bold mx-auto mb-3">M</div>
+                        <h4 class="font-bold text-2xl mb-2">Modelo (Model)</h4>
+                        <p class="text-sm font-bold text-green-600 mb-2">"El Cerebro y Estado"</p>
+                        <p class="text-xs leading-relaxed" style="color: var(--text-muted);">
+                            Contiene las entidades de datos (<code class="font-mono text-xs">Message</code>, <code class="font-mono text-xs">User</code>) y el estado interno. <strong>No sabe que existe una ventana gráfica</strong> ni qué botón se acciona.
+                        </p>
+                        <div class="mt-3 darcula-editor text-left p-2">
+                            <span class="jk-keyword">public class</span> <span class="jk-type">Message</span> { ... }
+                        </div>
+                    </div>
+
+                    <!-- VISTA -->
+                    <div class="glass-panel p-5 border-t-4 text-center" style="border-color: var(--accent-blue);">
+                        <div class="tint-blue w-14 h-14 rounded-2xl flex items-center justify-center text-3xl font-bold mx-auto mb-3">V</div>
+                        <h4 class="font-bold text-2xl mb-2">Vista (View)</h4>
+                        <p class="text-sm font-bold text-blue-600 mb-2">"Los Ojos y la Cara"</p>
+                        <p class="text-xs leading-relaxed" style="color: var(--text-muted);">
+                            El archivo <code class="font-mono text-xs">.fxml</code> y estilos CSS. Expone la información gráfica al usuario y captura clics/teclado. <strong>No calcula ni procesa datos</strong>.
+                        </p>
+                        <div class="mt-3 darcula-editor text-left p-2">
+                            <span class="jk-xml-tag">&lt;BorderPane</span> <span class="jk-xml-attr">prefWidth=</span><span class="jk-string">"700"</span><span class="jk-xml-tag">&gt;</span>
+                        </div>
+                    </div>
+
+                    <!-- CONTROLADOR -->
+                    <div class="glass-panel p-5 border-t-4 text-center" style="border-color: var(--accent-purple);">
+                        <div class="tint-purple w-14 h-14 rounded-2xl flex items-center justify-center text-3xl font-bold mx-auto mb-3">C</div>
+                        <h4 class="font-bold text-2xl mb-2">Controlador (Controller)</h4>
+                        <p class="text-sm font-bold text-purple-600 mb-2">"El Mediador / Director"</p>
+                        <p class="text-xs leading-relaxed" style="color: var(--text-muted);">
+                            Escucha los eventos de la Vista (<code class="font-mono text-xs">@FXML handleSend</code>), los interpreta, solicita al Modelo o Servicios que actúen, y actualiza la Vista.
+                        </p>
+                        <div class="mt-3 darcula-editor text-left p-2">
+                            <span class="jk-annot">@FXML</span> <span class="jk-keyword">private void</span> <span class="jk-method">handleSend</span>()
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DIAGRAMA DE FLUJO -->
+                <div class="glass-panel p-4 mb-4 border-l-4" style="border-left-color: var(--accent-blue);">
+                    <h4 class="font-bold text-base flex items-center gap-2"><i class="fa-solid fa-arrows-rotate"></i> Flujo de comunicación en MVC</h4>
+                    <div class="text-xs font-mono bg-gray-100 dark:bg-gray-800 p-3 rounded-lg text-center overflow-x-auto">
+                        <span class="text-blue-600">Usuario</span> 
+                        <i class="fa-solid fa-arrow-right text-gray-400"></i> 
+                        <span class="text-purple-600">(clic) <i class="fa-solid fa-arrow-right text-gray-400 mx-1"></i> Controlador</span> 
+                        <i class="fa-solid fa-arrow-right text-gray-400"></i> 
+                        <span class="text-green-600">(llama) <i class="fa-solid fa-arrow-right text-gray-400 mx-1"></i> Modelo</span> 
+                        <i class="fa-solid fa-arrow-right text-gray-400"></i> 
+                        <span class="text-green-600">(cambia estado)</span> 
+                        <i class="fa-solid fa-arrow-right text-gray-400"></i> 
+                        <span class="text-yellow-600">(notifica) <i class="fa-solid fa-arrow-right text-gray-400 mx-1"></i> Vista</span> 
+                        <i class="fa-solid fa-arrow-right text-gray-400"></i> 
+                        <span class="text-blue-600">(se actualiza)</span>
+                    </div>
+                    <p class="text-xs mt-2 text-gray-500"><i class="fa-solid fa-lightbulb text-yellow-500 mr-1"></i> Ejemplo concreto: cuando el usuario hace clic en "Enviar", el Controlador NO guarda el archivo, solo le indica al Modelo: "agregue este mensaje". El Modelo modifica su lista interna y la Vista se actualiza sola gracias a <code class="font-mono">ObservableList</code>.</p>
+                </div>
+
+                <!-- Variantes de MVC -->
+                <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--una-gold);">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-code-branch text-2xl" style="color: var(--una-gold);"></i>
+                        <div>
+                            <h4 class="font-bold text-base">Variantes Modernas de MVC:</h4>
+                            <p class="text-xs" style="color: var(--text-muted);">
+                                <strong>MVP (Model-View-Presenter):</strong> El Presenter maneja toda la actualización de la UI estrictamente mediante interfaces. <br>
+                                <strong>MVVM (Model-View-ViewModel):</strong> Popular en WPF y Android/iOS mediante enlace de datos bidireccional (<em>Data Binding</em>).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAUSA ACTIVA -->
+                <div class="pregunta-box mt-4">
+                    <p><i class="fa-solid fa-hand text-yellow-600 mr-1"></i><strong>Pausa activa:</strong></p>
+                    <p class="text-sm">¿Cuál de estas NO es una responsabilidad del Controlador en MVC?</p>
+                    <ul class="text-sm list-disc list-inside mt-1">
+                        <li>A) Validar que el formato de un texto sea correcto</li>
+                        <li>B) Escuchar clics del usuario en la interfaz</li>
+                        <li>C) Guardar los datos permanentemente en un archivo de texto</li>
+                    </ul>
+                    <span class="respuesta"><i class="fa-solid fa-check text-green-600 mr-1"></i> Respuesta: C (persistir datos es tarea del Modelo o de la capa de acceso a datos).</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 4: Patrones Subyacentes ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-puzzle-piece bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Patrones Subyacentes en MVC</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">MVC no es un solo patrón: es una orquesta de tres patrones clásicos en conjunto.</p>
+                </div>
+
+                <!-- TABLA COMPARATIVA -->
+                <div class="glass-panel p-4 mb-5 border-t-4" style="border-color: var(--accent-blue);">
+                    <h4 class="font-bold text-base mb-2"><i class="fa-solid fa-chart-column mr-1"></i> ¿Dónde se han usado estos patrones previamente?</h4>
+                    <table class="tabla-compare">
+                        <thead>
+                            <tr><th>Patrón</th><th>¿Qué resuelve?</th><th>Ejemplo en JavaFX</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong class="text-blue-500"><i class="fa-solid fa-bell mr-1"></i> Observer</strong></td>
+                                <td>Notificar cambios a varios objetos sin acoplarlos.</td>
+                                <td><code class="font-mono text-xs bg-gray-100 px-2 py-1 rounded text-blue-600">ObservableList + ListView</code><br>
+                                <span class="text-xs text-gray-500">Cuando se agrega un elemento, la lista gráfica se refresca sola sin llamar a un método <code class="font-mono text-[10px]">repintar()</code>.</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong class="text-green-500"><i class="fa-solid fa-sitemap mr-1"></i> Composite</strong></td>
+                                <td>Tratar objetos individuales y compuestos de forma uniforme.</td>
+                                <td><code class="font-mono text-xs bg-gray-100 px-2 py-1 rounded text-green-600">El Árbol de Nodos FXML</code><br>
+                                <span class="text-xs text-gray-500">Un <code class="font-mono text-[10px]">BorderPane</code> contiene <code class="font-mono text-[10px]">VBox</code>, que contiene <code class="font-mono text-[10px]">Buttons</code>. Todos heredan de <code class="font-mono text-[10px]">Node</code>.</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong class="text-yellow-600"><i class="fa-solid fa-chess mr-1"></i> Strategy</strong></td>
+                                <td>Cambiar el comportamiento de un objeto en tiempo de ejecución.</td>
+                                <td><code class="font-mono text-xs bg-gray-100 px-2 py-1 rounded text-yellow-600">Los EventHandler (onAction)</code><br>
+                                <span class="text-xs text-gray-500">El botón delega su estrategia de respuesta al método que se le asigne en el controlador.</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="text-xs text-gray-500 mt-1"><i class="fa-solid fa-comment-dots text-gray-400 mr-1"></i> Esta tabla conecta los conceptos abstractos con la experiencia cotidiana programando en JavaFX.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+                    <!-- Observer -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-blue);">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="tint-blue w-10 h-10 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-bell"></i></span>
+                            <h3 class="text-xl font-bold">1. Observer</h3>
+                        </div>
+                        <p class="text-sm mb-2 font-bold" style="color: var(--accent-blue);">Suscripción y Notificación</p>
+                        <p class="text-xs leading-relaxed" style="color: var(--text-muted);">
+                            El Modelo no conoce a la Vista. Cuando el chat recibe un mensaje, la lista emite un aviso y la interfaz gráfica se repinta automáticamente.
+                        </p>
+                        <div class="mt-3 darcula-editor text-center p-2">
+                            <code class="text-xs"><span class="jk-type">ObservableList</span>&lt;<span class="jk-type">String</span>&gt;</code>
+                        </div>
+                    </div>
+
+                    <!-- Composite -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-green);">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="tint-green w-10 h-10 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-sitemap"></i></span>
+                            <h3 class="text-xl font-bold">2. Composite</h3>
+                        </div>
+                        <p class="text-sm mb-2 font-bold" style="color: var(--accent-green);">Jerarquía Gráfica</p>
+                        <p class="text-xs leading-relaxed" style="color: var(--text-muted);">
+                            La Vista trata contenedores y componentes de la misma forma. Todo elemento visual hereda de una clase base común, permitiendo tratarlos en grupo.
+                        </p>
+                        <div class="mt-3 darcula-editor text-center p-2">
+                            <code class="text-xs"><span class="jk-type">Parent</span> &gt; <span class="jk-type">Node</span> &gt; <span class="jk-type">Control</span></code>
+                        </div>
+                    </div>
+
+                    <!-- Strategy -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--una-gold);">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="tint-gold w-10 h-10 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-chess"></i></span>
+                            <h3 class="text-xl font-bold">3. Strategy</h3>
+                        </div>
+                        <p class="text-sm mb-2 font-bold" style="color: var(--una-gold);">Comportamiento Intercambiable</p>
+                        <p class="text-xs leading-relaxed" style="color: var(--text-muted);">
+                            La Vista delega la respuesta a los eventos en diferentes estrategias (ActionHandlers). Se puede cambiar la forma de responder al clic dinámicamente.
+                        </p>
+                        <div class="mt-3 darcula-editor text-center p-2">
+                            <code class="text-xs"><span class="jk-type">EventHandler</span>&lt;<span class="jk-type">ActionEvent</span>&gt;</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button class="px-6 py-2 rounded-full text-sm font-bold tint-purple transition-transform hover:scale-105 shadow-lg" onclick="openModal('modal-patrones-gof')">
+                        <i class="fa-solid fa-book-open mr-2"></i> Ver Catálogo Completo Gang of Four (GoF)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 5: Arquitectura vs Patrones ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-scale-unbalanced bg-icon text-[350px] -right-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Arquitectura vs Patrones de Diseño</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">¿Son lo mismo? La diferencia principal radica en la <strong style="color: var(--una-gold);">escala</strong>.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Arquitectura (Nivel Macro) -->
+                    <div class="glass-panel p-6 border-t-4" style="border-color: var(--accent-blue);">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="tint-blue w-12 h-12 rounded-xl flex items-center justify-center text-2xl"><i class="fa-solid fa-city"></i></span>
+                            <div>
+                                <h3 class="text-2xl font-bold" style="color: var(--accent-blue);">Arquitectura de Software</h3>
+                                <p class="text-sm font-bold" style="color: var(--text-muted);">Nivel Macro (El plano de la ciudad)</p>
+                            </div>
+                        </div>
+                        <ul class="space-y-3 text-sm leading-relaxed" style="color: var(--text-muted);">
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-ruler-combined text-blue-500 mt-1"></i>
+                                <span>Define la estructura global de <strong>todo el sistema</strong>. Cómo se organizan y comunican los grandes módulos.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-ruler-combined text-blue-500 mt-1"></i>
+                                <span>Si hay un error en el diseño general, corregirlo requiere reescribir casi todo el código.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-ruler-combined text-blue-500 mt-1"></i>
+                                <span><strong>Ejemplos:</strong> N-Capas (N-Layers), N-Tiers, Microservicios, Cliente-Servidor.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Patrón de Diseño (Nivel Micro) -->
+                    <div class="glass-panel p-6 border-t-4" style="border-color: var(--accent-purple);">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="tint-purple w-12 h-12 rounded-xl flex items-center justify-center text-2xl"><i class="fa-solid fa-door-open"></i></span>
+                            <div>
+                                <h3 class="text-2xl font-bold" style="color: var(--accent-purple);">Patrón de Diseño</h3>
+                                <p class="text-sm font-bold" style="color: var(--text-muted);">Nivel Micro (La bisagra de la puerta)</p>
+                            </div>
+                        </div>
+                        <ul class="space-y-3 text-sm leading-relaxed" style="color: var(--text-muted);">
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-puzzle-piece text-purple-500 mt-1"></i>
+                                <span>Soluciona un <strong>problema técnico específico</strong> dentro de un módulo o clase puntual.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-puzzle-piece text-purple-500 mt-1"></i>
+                                <span>Solo afecta a una porción pequeña de código. Es fácil de cambiar o refactorizar.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-puzzle-piece text-purple-500 mt-1"></i>
+                                <span><strong>Ejemplos:</strong> Observer, Strategy, Composite, Singleton (Catálogo GoF).</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Analogía -->
+                <div class="glass-panel p-4 border-l-4 mb-4" style="border-left-color: var(--una-gold);">
+                    <div class="flex flex-col md:flex-row gap-5 items-center">
+                        <div class="flex-1 text-sm">
+                            <p class="mb-2"><i class="fa-solid fa-house-chimney text-lg mr-2" style="color: var(--una-gold);"></i><strong>La Arquitectura</strong> es como los planos de una casa (dónde van la cocina y los cuartos). Si cambia la distribución, tiene que rehacer la casa.</p>
+                            <p><i class="fa-solid fa-key text-lg mr-2" style="color: var(--una-gold);"></i><strong>Los Patrones</strong> son los mecanismos de las puertas (las bisagras). Si cambia una bisagra defectuosa, la casa no colapsa, solo se repara esa puerta.</p>
+                        </div>
+                        <div class="flex-1 bg-gray-50 p-3 rounded-lg border border-gray-200">
+                            <p class="font-bold text-sm text-gray-800 mb-1"><i class="fa-solid fa-brain mr-1" style="color: var(--una-gold);"></i> Reflexión rápida:</p>
+                            <p class="text-xs text-gray-600">¿Qué pasa si la arquitectura es de 3 capas pero se utiliza el patrón Singleton incorrectamente en una clase? ¿Afecta a toda la app o solo a esa parte?</p>
+                            <p class="text-[10px] text-green-700 mt-1 font-bold">Respuesta: Solo a esa parte, el sistema global sigue en pie.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 6: Catálogo de Patrones GoF ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-list-check bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-peach);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Patrones aplicables al Mini-Discord</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">No es necesario memorizar los 23 patrones hoy; el enfoque estará en los que se aplicarán.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
+                    <!-- Creacionales -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-blue);">
+                        <h3 class="text-lg font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-hammer text-blue-500"></i> Creacionales</h3>
+                        <p class="text-xs mb-3 text-gray-500">Cómo se instancian los objetos.</p>
+                        <ul class="text-sm space-y-2 text-gray-700">
+                            <li class="font-bold flex items-center gap-2">
+                                <span class="bg-yellow-200 px-1 rounded text-gray-800"><i class="fa-solid fa-star text-yellow-600"></i> Singleton</span> <span class="font-normal text-xs text-gray-500">(Instancia única)</span>
+                            </li>
+                            <li class="opacity-50 text-xs">Factory Method</li>
+                            <li class="opacity-50 text-xs">Builder</li>
+                        </ul>
+                    </div>
+
+                    <!-- Estructurales -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-green);">
+                        <h3 class="text-lg font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-cubes text-green-500"></i> Estructurales</h3>
+                        <p class="text-xs mb-3 text-gray-500">Cómo se ensamblan las clases.</p>
+                        <ul class="text-sm space-y-2 text-gray-700">
+                            <li class="font-bold flex items-center gap-2">
+                                <span class="bg-yellow-200 px-1 rounded text-gray-800"><i class="fa-solid fa-star text-yellow-600"></i> Composite</span> <span class="font-normal text-xs text-gray-500">(Árbol visual)</span>
+                            </li>
+                            <li class="opacity-50 text-xs">Adapter</li>
+                            <li class="opacity-50 text-xs">Facade</li>
+                        </ul>
+                    </div>
+
+                    <!-- De Comportamiento -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-purple);">
+                        <h3 class="text-lg font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-person-running text-purple-500"></i> Comportamiento</h3>
+                        <p class="text-xs mb-3 text-gray-500">Cómo se comunican los objetos.</p>
+                        <ul class="text-sm space-y-2 text-gray-700">
+                            <li class="font-bold flex items-center gap-2">
+                                <span class="bg-yellow-200 px-1 rounded text-gray-800"><i class="fa-solid fa-star text-yellow-600"></i> Observer</span> <span class="font-normal text-xs text-gray-500">(Suscripción UI)</span>
+                            </li>
+                            <li class="font-bold flex items-center gap-2">
+                                <span class="bg-yellow-200 px-1 rounded text-gray-800"><i class="fa-solid fa-star text-yellow-600"></i> Strategy</span> <span class="font-normal text-xs text-gray-500">(Eventos clic)</span>
+                            </li>
+                            <li class="opacity-50 text-xs">Command</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--accent-blue);">
+                    <p class="text-xs leading-relaxed" style="color: var(--text-muted);">
+                        <i class="fa-solid fa-quote-left mr-1" style="color: var(--accent-blue);"></i>
+                        <em>"Los patrones de diseño no se inventan, se descubren y catalogan para no reinventar la rueda."</em> — Gamma, Helm, Johnson, Vlissides (GoF).
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 7: N-Capas vs N-Tiers ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-server bg-icon text-[350px] -left-10 opacity-5" style="color: var(--una-red);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">N-Layers (Lógico) vs N-Tiers (Físico)</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">El concepto clave para escalar sistemas al mundo real.</p>
+                </div>
+
+                <div class="glass-panel p-6 border-l-4 mb-6" style="border-left-color: var(--una-red);">
+                    <p class="text-base mb-4 text-gray-800">
+                        Imagine que el <strong>Mini-Discord</strong> crece a 10,000 usuarios. Con 3 capas lógicas (Layers) ejecutándose en una sola computadora, el sistema colapsa. Se decide mover el acceso a base de datos a un servidor en la nube, y la lógica de validación a otro servidor. <br>
+                        <strong>Las capas de código son las mismas, pero ahora están distribuidas en distintos equipos físicos (Tiers).</strong>
+                    </p>
+                    
+                    <!-- Evolución Visual -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center mt-4">
+                        <div class="glass-panel p-4" style="background: rgba(88, 101, 242, 0.05);">
+                            <h4 class="font-bold text-lg mb-2 text-blue-600">1 Tier (El Monolito)</h4>
+                            <i class="fa-solid fa-laptop text-4xl text-blue-400 mb-2"></i>
+                            <p class="text-xs text-gray-600">Vista + Lógica + Base de Datos <br>Todo en la misma máquina.</p>
+                        </div>
+                        <div class="glass-panel p-4" style="background: rgba(87, 242, 135, 0.05);">
+                            <h4 class="font-bold text-lg mb-2 text-green-600">2 Tiers (Cliente-Servidor)</h4>
+                            <div class="flex justify-center items-center gap-2 mb-2">
+                                <i class="fa-solid fa-laptop text-2xl text-green-500"></i>
+                                <i class="fa-solid fa-arrow-right-arrow-left text-gray-400 text-xs"></i>
+                                <i class="fa-solid fa-database text-2xl text-green-600"></i>
+                            </div>
+                            <p class="text-xs text-gray-600">La Aplicación corre en la PC, <br>los datos en un Servidor Remoto.</p>
+                        </div>
+                        <div class="glass-panel p-4" style="background: rgba(254, 231, 92, 0.1);">
+                            <h4 class="font-bold text-lg mb-2 text-yellow-600">3 Tiers (Empresarial)</h4>
+                            <div class="flex justify-center items-center gap-2 mb-2">
+                                <i class="fa-solid fa-mobile-screen text-xl text-yellow-500"></i>
+                                <i class="fa-solid fa-arrow-right text-gray-400 text-xs"></i>
+                                <i class="fa-solid fa-server text-xl text-yellow-600"></i>
+                                <i class="fa-solid fa-arrow-right text-gray-400 text-xs"></i>
+                                <i class="fa-solid fa-database text-xl text-yellow-700"></i>
+                            </div>
+                            <p class="text-xs text-gray-600">Cliente (PC/Web) <i class="fa-solid fa-arrow-right text-gray-400 text-[10px] mx-1"></i> Servidor API <i class="fa-solid fa-arrow-right text-gray-400 text-[10px] mx-1"></i> Servidor Base de Datos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 8: Bibliotecas y Persistencia ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-floppy-disk bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">Serialización y DTOs</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Estrategias para preservar datos y trasladarlos de forma segura.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-5">
+                    <!-- Serialización -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-green);">
+                        <h3 class="text-xl font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-file-code text-green-500"></i> Persistencia: Serializable</h3>
+                        <p class="text-sm mb-3 text-gray-600">Si se cierra la aplicación, los objetos en RAM desaparecen. Serializar es convertir un objeto vivo en bytes para almacenarlo en el disco duro.</p>
+                        
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="darcula-editor p-2">
+                                <span class="text-[10px] font-bold text-red-400 block mb-1">Sin serializar:</span>
+                                <code class="text-[10px] text-gray-400">class User {<br>  // Pérdida al cerrar<br>}</code>
+                            </div>
+                            <div class="darcula-editor p-2 border-l-2 border-green-500">
+                                <span class="text-[10px] font-bold text-green-400 block mb-1">Con serializable:</span>
+                                <code class="text-[10px]"><span class="jk-keyword">class</span> <span class="jk-type">User</span> <span class="jk-keyword">implements</span> <br><span class="jk-type">Serializable</span> { <br>  // Permite guardado en disco<br>}</code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DTO -->
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-purple);">
+                        <h3 class="text-xl font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-truck-fast text-purple-500"></i> Transporte: DTO</h3>
+                        <p class="text-sm mb-3 text-gray-600"><strong>D</strong>ata <strong>T</strong>ransfer <strong>O</strong>bject. Es una clase plana (solo atributos, getters y setters) que se utiliza como "caja de transporte" para mover datos entre capas sin exponer lógica interna.</p>
+                        
+                        <div class="darcula-editor p-3 text-xs">
+                            <code class="jk-comment">// DTO simple para enviar a la capa de datos</code><br>
+                            <code><span class="jk-keyword">public class</span> <span class="jk-type">UserDTO</span> {<br>
+                                &nbsp;&nbsp;<span class="jk-keyword">public</span> <span class="jk-type">String</span> nombre;<br>
+                                &nbsp;&nbsp;<span class="jk-keyword">public</span> <span class="jk-type">String</span> rol;<br>
+                            }</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 9: Comparativa RegistroUsuariosFX vs MVC + N-Tier ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[94%] mx-auto relative z-10">
+                <i class="fa-solid fa-code-compare bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-4xl font-bold mb-1">De "RegistroUsuariosFX" a MVC + N-Tier</h2>
+                    <p class="text-base" style="color: var(--text-muted);">Métricas de mantenibilidad: ¿Por qué resulta superior el nuevo enfoque?</p>
+                </div>
+
+                <!-- TABLA ANTES VS DESPUÉS -->
+                <div class="glass-panel p-4 mb-4 border-t-4" style="border-color: var(--accent-blue);">
+                    <h4 class="font-bold text-base mb-2"><i class="fa-solid fa-chart-line mr-2"></i> Antes vs Después (Mantenibilidad)</h4>
+                    <table class="tabla-compare">
+                        <thead>
+                            <tr><th>Aspecto evaluado</th><th>RegistroUsuariosFX (monolítico)</th><th>Mini-Discord (MVC+N-Tier)</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>¿Dónde reside la validación?</td><td>En el controlador (mezclado)</td><td>En <code class="font-mono">ChatService</code> (aislado)</td></tr>
+                            <tr><td>¿Cómo cambiar el guardado a BD?</td><td>Se debe modificar el controlador visual</td><td>Solo se modifica <code class="font-mono">MessageDAO</code></td></tr>
+                            <tr><td>¿Se puede reutilizar la lógica en web?</td><td>No, está fuertemente acoplada a JavaFX</td><td>Sí, el <code class="font-mono">Service</code> es independiente</td></tr>
+                        </tbody>
+                    </table>
+                    <p class="text-xs text-gray-500 mt-1"><i class="fa-regular fa-comment-dots mr-1"></i> Análisis: una estructura desacoplada garantiza mayor longevidad al software.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-3">
+                    <!-- Antes: RegistroUsuariosFX -->
+                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--una-red);">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="tint-red w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold"><i class="fa-solid fa-arrow-rotate-left"></i></span>
+                            <div>
+                                <h3 class="text-lg font-bold" style="color: var(--una-red);">Práctica Previa: RegistroUsuariosFX</h3>
+                            </div>
+                        </div>
+
+                        <div class="darcula-editor mb-2">
+                            <div class="darcula-header">
+                                <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                                <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                                <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                                <div class="darcula-tab ml-2">
+                                    <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> RegistroController.java
+                                </div>
+                            </div>
+                            <pre class="darcula-code p-3 text-xs leading-tight overflow-x-auto m-0"><code><span class="jk-annot">@FXML</span>
+<span class="jk-keyword">private void</span> <span class="jk-method">onGuardarUsuario</span>() {
+    <span class="jk-comment">// 1. Lee datos de la vista</span>
+    <span class="jk-type">String</span> nombre = txtNombre.<span class="jk-method">getText</span>();
+    <span class="jk-type">String</span> email = txtEmail.<span class="jk-method">getText</span>();
+
+    <span class="jk-comment">// 2. Validación de negocio pegada en el Controller</span>
+    <span class="jk-keyword">if</span> (nombre.<span class="jk-method">isEmpty</span>() || !email.<span class="jk-method">contains</span>(<span class="jk-string">"@"</span>)) {
+        lblError.<span class="jk-method">setText</span>(<span class="jk-string">"Datos inválidos"</span>);
+        <span class="jk-keyword">return</span>;
+    }
+
+    <span class="jk-comment">// 3. Agrega directo a la lista interna</span>
+    listaUsuarios.<span class="jk-method">add</span>(<span class="jk-keyword">new</span> <span class="jk-type">Usuario</span>(nombre, email));
+}</code></pre>
+                        </div>
+
+                        <div class="space-y-1 text-xs" style="color: var(--text-muted);">
+                            <p class="flex items-center gap-1.5"><i class="fa-solid fa-circle-xmark text-red-500"></i> El controlador debe saber cómo validar reglas de negocio.</p>
+                            <p class="flex items-center gap-1.5"><i class="fa-solid fa-circle-xmark text-red-500"></i> Si se hace una versión por consola, hay que duplicar validaciones.</p>
+                        </div>
+                    </div>
+
+                    <!-- Ahora: MiniDiscord -->
+                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-green);">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="tint-green w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold"><i class="fa-solid fa-cubes-stacked"></i></span>
+                            <div>
+                                <h3 class="text-lg font-bold" style="color: var(--accent-green);">Actual: Mini-Discord (MVC + N-Tier)</h3>
+                            </div>
+                        </div>
+
+                        <div class="darcula-editor mb-2">
+                            <div class="darcula-header">
+                                <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                                <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                                <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                                <div class="darcula-tab ml-2">
+                                    <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> ChatViewController.java
+                                </div>
+                            </div>
+                            <pre class="darcula-code p-3 text-xs leading-tight overflow-x-auto m-0"><code><span class="jk-annot">@FXML</span>
+<span class="jk-keyword">private void</span> <span class="jk-method">handleSendMessage</span>() {
+    <span class="jk-keyword">try</span> {
+        <span class="jk-comment">// 1. El controlador delega a la capa de negocio</span>
+        <span class="jk-type">Message</span> msg = chatService.<span class="jk-method">processMessage</span>(usr, txtMsg.<span class="jk-method">getText</span>());
+        
+        <span class="jk-comment">// 2. Observer: la lista observable actualiza la vista sola</span>
+        messages.<span class="jk-method">add</span>(msg.<span class="jk-method">toString</span>());
+        txtMsg.<span class="jk-method">clear</span>();
+    } <span class="jk-keyword">catch</span> (<span class="jk-type">IllegalArgumentException</span> e) {
+        mostrarAlerta(e.<span class="jk-method">getMessage</span>()); <span class="jk-comment">// Regla del Service</span>
+    }
+}</code></pre>
+                        </div>
+
+                        <div class="space-y-1 text-xs" style="color: var(--text-muted);">
+                            <p class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-green-500"></i> <code class="font-mono tint-green px-1 rounded text-[10px]">ChatService</code> contiene todas las reglas aisladas.</p>
+                            <p class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-green-500"></i> Preparado para añadir <code class="font-mono text-[10px]">MessageDAO</code> sin afectar el controlador.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 10: Laboratorio Mini-Discord ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-brands fa-discord bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-3">
+                    <h2 class="text-4xl font-bold mb-1">Laboratorio: Mini-Discord (Etapa 1: MVC)</h2>
+                    <p class="text-base" style="color: var(--text-muted);">Construcción guiada hacia una primera arquitectura desacoplada.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <!-- Estructura de Paquetes -->
+                    <div class="glass-panel p-4 border-t-4" style="border-color: #5865F2;">
+                        <h4 class="font-bold text-base mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-folder-tree" style="color: #5865F2;"></i> Project Explorer (IntelliJ)
+                        </h4>
+                        
+                        <div class="darcula-editor">
+                            <div class="darcula-header">
+                                <i class="fa-solid fa-folder-open text-xs" style="color: #4a88c7;"></i>
+                                <span class="text-xs font-mono" style="color: #a9b7c6;">cr.ac.una.est.minidiscord</span>
+                            </div>
+                            <pre class="darcula-code p-3 text-xs leading-relaxed overflow-x-auto m-0"><code><span class="jk-comment">▼ src/main/java/cr/ac/una/minidiscord</span>
+  <span class="jk-comment">▼ presentation</span>
+    <span class="jk-comment">▼ controller</span>
+        <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> ChatViewController.java
+    <span class="jk-comment">▼ view</span>
+        <i class="fa-solid fa-file-code text-xs" style="color: #e8bf6a;"></i> chat-view.fxml
+        <i class="fa-brands fa-css3-alt text-xs" style="color: #4a88c7;"></i> styles.css
+  <span class="jk-comment">▼ business</span>
+    <span class="jk-comment">▼ model</span>
+        <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> Message.java <span class="jk-comment">(implements Serializable)</span>
+        <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> User.java
+    <span class="jk-comment">▼ service</span>
+        <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> ChatService.java
+  <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> App.java</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Instrucciones del Lab -->
+                    <div class="flex flex-col gap-2">
+                        <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--una-red);">
+                            <h4 class="font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-bullseye text-sm" style="color: var(--una-red);"></i>Objetivo</h4>
+                            <p class="text-xs" style="color: var(--text-muted);">Crear la vista FXML de chat, enlazar el controlador, validar mensajes mediante <code class="font-mono text-xs">ChatService</code> y refrescar la lista con el patrón Observer (<code class="font-mono text-xs">ObservableList</code>).</p>
+                        </div>
+
+                        <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--accent-green);">
+                            <h4 class="font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-list-check text-sm" style="color: var(--accent-green);"></i>Plan de ataque</h4>
+                            <ol class="text-xs space-y-1 list-decimal list-inside" style="color: var(--text-muted);">
+                                <li><strong>[ ]</strong> Crear clases <code class="font-mono text-[10px]">User</code> y <code class="font-mono text-[10px]">Message</code> con atributos y <code class="font-mono text-[10px]">Serializable</code>.</li>
+                                <li><strong>[ ]</strong> Crear <code class="font-mono text-[10px]">ChatService</code> con método <code class="font-mono text-[10px]">processMessage(...)</code>.</li>
+                                <li><strong>[ ]</strong> Diseñar <code class="font-mono text-[10px]">chat-view.fxml</code> (interfaz visual sin lógica de negocio).</li>
+                                <li><strong>[ ]</strong> Crear <code class="font-mono text-[10px]">ChatViewController</code> con <code class="font-mono text-[10px]">@FXML</code> y <code class="font-mono text-[10px]">ObservableList</code>.</li>
+                                <li><strong>[ ]</strong> Conectar el botón al método que llamará a <code class="font-mono text-[10px]">ChatService</code>.</li>
+                            </ol>
+                            <div class="bg-blue-50 dark:bg-blue-900/20 p-2 rounded border-l-4 border-blue-400 text-[11px] mt-2">
+                                <strong><i class="fa-solid fa-lightbulb text-yellow-500 mr-1"></i> Tip del docente:</strong> Si se utiliza un <code class="font-mono text-[10px]">ArrayList</code> normal, la vista no se actualiza por sí sola. Se necesita <code class="font-mono text-[10px]">ObservableList</code>.
+                            </div>
+                        </div>
+
+                        <div class="glass-panel p-2.5 border-l-4 text-center" style="border-left-color: var(--una-gold);">
+                            <button class="px-4 py-1.5 rounded-full text-xs font-bold tint-gold transition-transform hover:scale-105 shadow" onclick="openModal('modal-codigo-chat')">
+                                <i class="fa-solid fa-code mr-1"></i> Ver Snippets de Código en Darcula
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 11: Resumen Visual (CORREGIDO) ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-brain bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-4xl font-bold mb-2">Mapa Conceptual de Cierre</h2>
+                    <p class="text-base" style="color: var(--text-muted);">Relación estructurada entre arquitectura, patrones y capas.</p>
+                </div>
+
+                <div class="glass-panel p-6 border-t-4 shadow-lg" style="border-color: var(--accent-blue);">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center items-stretch">
+                        
+                        <!-- Bloque N-Capas -->
+                        <div class="flex flex-col h-full">
+                            <div class="bg-blue-600 dark:bg-blue-700 text-white p-4 rounded-lg font-bold shadow-md flex items-center justify-center gap-2 text-base">
+                                <i class="fa-solid fa-folder-tree"></i> Arquitectura N-Capas
+                            </div>
+                            <ul class="text-xs mt-3 space-y-2 text-left bg-white dark:bg-gray-700 p-3 rounded border border-gray-200 dark:border-gray-600 flex-grow text-gray-800 dark:text-gray-100">
+                                <li><i class="fa-solid fa-caret-right text-blue-500 mr-1"></i> Organiza el código en capas lógicas de responsabilidad.</li>
+                                <li><i class="fa-solid fa-caret-right text-blue-500 mr-1"></i> Presentación, Negocio, Datos.</li>
+                            </ul>
+                            <div class="mt-2 text-lg text-gray-400"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="bg-green-600 dark:bg-green-700 text-white p-3 rounded-lg font-bold shadow-md mt-auto text-base">
+                                Contiene a <i class="fa-solid fa-arrow-right mx-1"></i> MVC
+                            </div>
+                        </div>
+
+                        <!-- Bloque Patrones -->
+                        <div class="flex flex-col h-full">
+                            <div class="bg-purple-600 dark:bg-purple-700 text-white p-4 rounded-lg font-bold shadow-md flex items-center justify-center gap-2 text-base">
+                                <i class="fa-solid fa-puzzle-piece"></i> Patrones de Diseño
+                            </div>
+                            <ul class="text-xs mt-3 space-y-2 text-left bg-white dark:bg-gray-700 p-3 rounded border border-gray-200 dark:border-gray-600 flex-grow text-gray-800 dark:text-gray-100">
+                                <li><i class="fa-solid fa-caret-right text-purple-500 mr-1"></i> <strong>Observer:</strong> actualización reactiva.</li>
+                                <li><i class="fa-solid fa-caret-right text-purple-500 mr-1"></i> <strong>Composite:</strong> árbol de nodos UI.</li>
+                                <li><i class="fa-solid fa-caret-right text-purple-500 mr-1"></i> <strong>Strategy:</strong> comportamientos de eventos dinámicos.</li>
+                            </ul>
+                            <div class="mt-2 text-lg text-gray-400"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="bg-yellow-500 dark:bg-yellow-600 text-gray-900 dark:text-white p-3 rounded-lg font-bold shadow-md mt-auto text-base">
+                                Soportan a <i class="fa-solid fa-arrow-right mx-1"></i> MVC
+                            </div>
+                        </div>
+
+                        <!-- Bloque Persistencia -->
+                        <div class="flex flex-col h-full">
+                            <div class="bg-red-600 dark:bg-red-700 text-white p-4 rounded-lg font-bold shadow-md flex items-center justify-center gap-2 text-base">
+                                <i class="fa-solid fa-database"></i> Persistencia y DTOs
+                            </div>
+                            <ul class="text-xs mt-3 space-y-2 text-left bg-white dark:bg-gray-700 p-3 rounded border border-gray-200 dark:border-gray-600 flex-grow text-gray-800 dark:text-gray-100">
+                                <li><i class="fa-solid fa-caret-right text-red-500 mr-1"></i> <strong>Serialización:</strong> almacenamiento binario de objetos.</li>
+                                <li><i class="fa-solid fa-caret-right text-red-500 mr-1"></i> <strong>DTO:</strong> encapsulamiento para transporte de datos.</li>
+                            </ul>
+                            <div class="mt-2 text-lg text-gray-400"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="bg-indigo-600 dark:bg-indigo-700 text-white p-3 rounded-lg font-bold shadow-md mt-auto text-base">
+                                Soportan a <i class="fa-solid fa-arrow-right mx-1"></i> Capa de Datos
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="text-center mt-6">
+                    <button class="px-8 py-3 rounded-full text-lg font-bold tint-blue transition-transform hover:scale-105 shadow-xl">
+                        <i class="fa-solid fa-rocket mr-2"></i> ¡A programar!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Botones de navegación -->
+    <button class="float-btn" id="prevBtn" onclick="changeSlide(-1)"><i class="fa-solid fa-arrow-left"></i></button>
+    <button class="float-btn" id="nextBtn" onclick="changeSlide(1)"><i class="fa-solid fa-arrow-right"></i></button>
+    
+    <!-- Barra de progreso -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+    </div>
+
+    <!-- Script compartido -->
+    <script src="../../../assets/js/presentacion.js"></script>
+
+    <!-- ========== MODAL: Catálogo Gang of Four ========== -->
+    <div class="modal-backdrop" id="modal-patrones-gof">
+        <div class="modal-content max-w-4xl">
+            <button class="close-modal" onclick="closeModal('modal-patrones-gof')">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-3xl font-bold mb-4 text-center" style="color: var(--accent-purple);">
+                <i class="fa-solid fa-book-bookmark mr-2"></i> Catálogo Completo: Patrones de Diseño (GoF)
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+                <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-blue);">
+                    <h4 class="font-bold text-base mb-2 text-blue-500">Creacionales</h4>
+                    <ul class="text-xs space-y-1.5" style="color: var(--text-muted);">
+                        <li><i class="fa-solid fa-circle text-[8px] text-gray-400 mr-1"></i> <strong>Singleton:</strong> Instancia única.</li>
+                        <li><i class="fa-solid fa-circle text-[8px] text-gray-400 mr-1"></i> <strong>Factory Method:</strong> Fábrica en métodos.</li>
+                        <li><i class="fa-solid fa-circle text-[8px] text-gray-400 mr-1"></i> <strong>Abstract Factory:</strong> Familias de objetos.</li>
+                        <li><i class="fa-solid fa-circle text-[8px] text-gray-400 mr-1"></i> <strong>Builder:</strong> Paso a paso.</li>
+                        <li><i class="fa-solid fa-circle text-[8px] text-gray-400 mr-1"></i> <strong>Prototype:</strong> Clonación de objetos.</li>
+                    </ul>
+                </div>
+                <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-green);">
+                    <h4 class="font-bold text-base mb-2 text-green-500">Estructurales</h4>
+                    <ul class="text-xs space-y-1.5" style="color: var(--text-muted);">
+                        <li><i class="fa-solid fa-circle text-[8px] text-gray-400 mr-1"></i> <strong>Adapter:</strong> Adaptador de interfaces.</li>
+                        <li><i class="fa-solid fa-circle text-[8px] text-gray-400 mr-1"></i> <strong>Bridge:</strong> Desacopla abstracción e implementación.</li>
+                        <li><i class="fa-solid fa-circle text-[8px] text-gray-400 mr-1"></i> <strong>Composite:</strong> Jerarquías tipo árbol.</li>
+                        <li><i class="fa-solid fa-circle text-[8px] text-gray-400 mr-1"></i> <strong>Decorator:</strong> Añade funcionalidad dinámica.</li>
+                        <li><i class="fa-solid fa-circle text-[8px] text-gray-400 mr-1"></i> <strong>Facade:</strong> Interfaz simplificada.</li>
+                        <li><i class="fa-solid fa-circle text-[8px] text-gray-400 mr-1"></i> <strong>Flyweight:</strong> Ahorro de memoria compartida.</li>
+                        <li><i class="fa-solid fa-circle text-[8px] text-gray-400 mr-1"></i> <strong>Proxy:</strong> Sustituto de acceso controlado.</li>
+                    </ul>
+                </div>
+                <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-purple);">
+                    <h4 class="font-bold text-base mb-2 text-purple-500">Comportamiento</h4>
+                    <ul class="text-xs space-y-1.5" style="color: var(--text-muted);">
+                        <li><i class="fa-solid fa-circle text-[8px] text-gray-400 mr-1"></i> <strong>Observer:</strong> Suscripción y aviso.</li>
+                        <li><i class="fa-solid fa-circle text-[8px] text-gray-400 mr-1"></i> <strong>Strategy:</strong> Algoritmos intercambiables.</li>
+                        <li><i class="fa-solid fa-circle text-[8px] text-gray-400 mr-1"></i> <strong>Command:</strong> Petición encapsulada.</li>
+                        <li><i class="fa-solid fa-circle text-[8px] text-gray-400 mr-1"></i> <strong>Iterator:</strong> Recorrido secuencial.</li>
+                        <li><i class="fa-solid fa-circle text-[8px] text-gray-400 mr-1"></i> <strong>Mediator:</strong> Comunicación centralizada.</li>
+                        <li><i class="fa-solid fa-circle text-[8px] text-gray-400 mr-1"></i> <strong>State:</strong> Cambia según estado interno.</li>
+                        <li><i class="fa-solid fa-circle text-[8px] text-gray-400 mr-1"></i> <strong>Template Method:</strong> Esqueleto de algoritmo.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MODAL: Guía de Código Mini-Discord ========== -->
+    <div class="modal-backdrop" id="modal-codigo-chat">
+        <div class="modal-content max-w-4xl">
+            <button class="close-modal" onclick="closeModal('modal-codigo-chat')">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-2xl font-bold mb-4 text-center" style="color: #5865F2;">
+                <i class="fa-brands fa-discord mr-2"></i> Snippets Clave del Laboratorio (IntelliJ IDEA Darcula)
+            </h3>
+            
+            <div class="space-y-4 text-left">
+                <!-- Snippet 1: ChatViewController.java -->
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2">
+                            <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> ChatViewController.java
+                        </div>
+                    </div>
+                    <pre class="darcula-code p-4 text-xs leading-relaxed overflow-x-auto m-0"><code><span class="jk-annot">@FXML</span> <span class="jk-keyword">private</span> <span class="jk-type">ListView</span>&lt;<span class="jk-type">String</span>&gt; messageListView;
+<span class="jk-annot">@FXML</span> <span class="jk-keyword">private</span> <span class="jk-type">TextField</span> messageInputField;
+
+<span class="jk-keyword">private final</span> <span class="jk-type">ChatService</span> chatService = <span class="jk-keyword">new</span> <span class="jk-type">ChatService</span>();
+<span class="jk-keyword">private final</span> <span class="jk-type">User</span> currentUser = <span class="jk-keyword">new</span> <span class="jk-type">User</span>(<span class="jk-string">"u1"</span>, <span class="jk-string">"UsuarioLocal"</span>);
+
+<span class="jk-comment">// ObservableList nativa: patrón Observer integrado en JavaFX</span>
+<span class="jk-keyword">private final</span> <span class="jk-type">ObservableList</span>&lt;<span class="jk-type">String</span>&gt; messages = <span class="jk-type">FXCollections</span>.<span class="jk-method">observableArrayList</span>();
+
+<span class="jk-annot">@FXML</span>
+<span class="jk-keyword">public void</span> <span class="jk-method">initialize</span>() {
+    messageListView.<span class="jk-method">setItems</span>(messages); <span class="jk-comment">// La vista queda suscrita al modelo observable</span>
+}
+
+<span class="jk-annot">@FXML</span>
+<span class="jk-keyword">private void</span> <span class="jk-method">handleSendMessage</span>() {
+    <span class="jk-type">String</span> text = messageInputField.<span class="jk-method">getText</span>();
+    <span class="jk-keyword">try</span> {
+        <span class="jk-type">Message</span> nuevo = chatService.<span class="jk-method">processMessage</span>(currentUser, text);
+        messages.<span class="jk-method">add</span>(nuevo.<span class="jk-method">toString</span>()); <span class="jk-comment">// Dispara la notificación automática a la UI</span>
+        messageInputField.<span class="jk-method">clear</span>();
+    } <span class="jk-keyword">catch</span> (<span class="jk-type">IllegalArgumentException</span> e) {
+        <span class="jk-type">System</span>.out.<span class="jk-method">println</span>(<span class="jk-string">"Aviso: "</span> + e.<span class="jk-method">getMessage</span>());
+    }
+}</code></pre>
+                </div>
+
+                <!-- Snippet 2: chat-view.fxml -->
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2">
+                            <i class="fa-solid fa-file-code text-xs" style="color: #e8bf6a;"></i> chat-view.fxml
+                        </div>
+                    </div>
+                    <pre class="darcula-code p-4 text-xs leading-relaxed overflow-x-auto m-0"><code><span class="jk-xml-tag">&lt;HBox</span> <span class="jk-xml-attr">spacing=</span><span class="jk-string">"10"</span><span class="jk-xml-tag">&gt;</span>
+    <span class="jk-xml-tag">&lt;TextField</span> <span class="jk-xml-attr">fx:id=</span><span class="jk-string">"messageInputField"</span> 
+               <span class="jk-xml-attr">promptText=</span><span class="jk-string">"Enviar mensaje a #general"</span> 
+               <span class="jk-xml-attr">HBox.hgrow=</span><span class="jk-string">"ALWAYS"</span> 
+               <span class="jk-xml-attr">onAction=</span><span class="jk-string">"#handleSendMessage"</span><span class="jk-xml-tag">/&gt;</span>
+    <span class="jk-xml-tag">&lt;Button</span> <span class="jk-xml-attr">text=</span><span class="jk-string">"Enviar"</span> 
+            <span class="jk-xml-attr">onAction=</span><span class="jk-string">"#handleSendMessage"</span> 
+            <span class="jk-xml-attr">style=</span><span class="jk-string">"-fx-background-color: #5865F2; -fx-text-fill: white;"</span><span class="jk-xml-tag">/&gt;</span>
+<span class="jk-xml-tag">&lt;/HBox&gt;</span></code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MODAL: GLOSARIO FLOTANTE ========== -->
+    <div class="modal-backdrop glosario-modal" id="modal-glosario">
+        <div class="modal-content max-w-lg">
+            <button class="close-modal" onclick="closeModal('modal-glosario')">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-2xl font-bold mb-4 text-center" style="color: var(--accent-blue);">
+                <i class="fa-solid fa-book-open mr-2"></i> Glosario de Términos Clave
+            </h3>
+            <ul class="text-sm space-y-3">
+                <li><strong>MVC:</strong> Modelo-Vista-Controlador. Patrón arquitectónico que separa datos, interfaz y lógica de control.</li>
+                <li><strong>DAO (Data Access Object):</strong> Objeto que encapsula el acceso a la fuente de datos (archivo, base de datos).</li>
+                <li><strong>DTO (Data Transfer Object):</strong> Objeto simple que transporta datos entre capas sin exponer la lógica interna.</li>
+                <li><strong>Serialización:</strong> Proceso de convertir un objeto en una secuencia de bytes para almacenarlo de forma persistente.</li>
+                <li><strong>Observer:</strong> Patrón que permite que un objeto notifique a otros de forma desvinculada sobre cambios en su estado.</li>
+                <li><strong>Strategy:</strong> Patrón que permite seleccionar un algoritmo o respuesta en tiempo de ejecución.</li>
+                <li><strong>Composite:</strong> Patrón que trata objetos individuales y estructuras jerárquicas (árboles) de manera uniforme.</li>
+                <li><strong>N-Layers:</strong> División lógica del código en paquetes según su responsabilidad dentro de un mismo programa.</li>
+                <li><strong>N-Tiers:</strong> División física de la aplicación ejecutándose en diferentes equipos de cómputo en una red.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Script para controlar el progreso y sincronización -->
+    <script>
+        if (typeof updateProgress === 'undefined') {
+            window.updateProgress = function() {
+                const slides = document.querySelectorAll('.slide');
+                let activeIndex = 0;
+                slides.forEach((s, i) => { if (s.classList.contains('active')) activeIndex = i; });
+                const progress = ((activeIndex + 1) / slides.length) * 100;
+                document.getElementById('progressBar').style.width = progress + '%';
+            };
+        }
+        
+        const origGoToSlide = window.goToSlide;
+        if (origGoToSlide) {
+            window.goToSlide = function(index) {
+                origGoToSlide(index);
+                updateProgress();
+            };
+        }
+        
+        const origChangeSlide = window.changeSlide;
+        if (origChangeSlide) {
+            window.changeSlide = function(delta) {
+                origChangeSlide(delta);
+                updateProgress();
+            };
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgress();
+        });
+    </script>
+
+</body>
+</html>
