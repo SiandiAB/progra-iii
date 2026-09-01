@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 7 — Programación III</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+
+    <!-- Recursos compartidos del proyecto -->
+    <link rel="icon" type="image/svg+xml" href="../../../assets/img/favicon.svg">
+    <link rel="stylesheet" href="../../../assets/css/presentacion.css">
+
+    <!-- Tooltips interactivos para palabras clave -->
+    <style>
+        .keyword {
+            position: relative;
+            cursor: help;
+            border-bottom: 2px dotted var(--una-red);
+            font-weight: 700;
+            color: var(--una-red);
+        }
+        .keyword::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2b2b2b;
+            color: #a9b7c6;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid #555555;
+            font-size: 0.85rem;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 400;
+            white-space: normal;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 999;
+            width: max-content;
+            max-width: 320px;
+            text-align: left;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            line-height: 1.5;
+        }
+        .keyword:hover::after,
+        .keyword:focus::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-4px);
+        }
+        
+        /* Tema Darcula (IntelliJ Default Dark) para bloques de código */
+        .darcula-bg { background-color: #2b2b2b; color: #a9b7c6; }
+        .darcula-kw { color: #cc7832; font-weight: bold; }
+        .darcula-str { color: #6a8759; }
+        .darcula-num { color: #6897bb; }
+        .darcula-com { color: #808080; font-style: italic; }
+        .darcula-func { color: #ffc66d; }
+        .darcula-class { color: #a9b7c6; }
+        .darcula-anno { color: #bbb529; }
+    </style>
+</head>
+<body>
+
+    <!-- Botones flotantes -->
+    <button class="float-btn" id="downloadBtn" onclick="downloadPresentation()" title="Descargar presentación para ver sin internet">
+        <i class="fa-solid fa-download"></i>
+    </button>
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar modo claro/oscuro">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+    <button class="float-btn" id="prevBtn" onclick="changeSlide(-1)"><i class="fa-solid fa-arrow-left"></i></button>
+    <button class="float-btn" id="nextBtn" onclick="changeSlide(1)"><i class="fa-solid fa-arrow-right"></i></button>
+
+    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+
+    <!-- ========== CONTENEDOR DE SLIDES ========== -->
+    <div class="slides-container" id="slides-container">
+
+        <!-- ==================== SLIDE 0: PORTADA ==================== -->
+        <div class="slide active">
+            <div class="text-center w-full max-w-6xl z-10 relative">
+                <i class="fa-solid fa-sitemap bg-icon text-[350px] -top-20 -left-20" style="color: var(--una-red);"></i>
+                <i class="fa-brands fa-java bg-icon text-[250px] -bottom-10 right-10" style="color: var(--accent-blue);"></i>
+
+                <div class="bg-white px-8 py-4 rounded-3xl inline-block mb-6 shadow-md border border-gray-100 relative z-10">
+                    <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png"
+                         alt="Logo UNA" class="h-28 object-contain">
+                </div>
+
+                <h2 class="text-lg md:text-xl font-bold tracking-[0.2em] mb-4 uppercase" style="color: var(--text-muted);">Sección Regional Central Occidente, UNA</h2>
+
+                <h1 class="text-3xl md:text-4xl font-extrabold mb-4 tracking-tight">
+                    Programación <span style="color: var(--una-red);">III</span>
+                </h1>
+                <h2 class="text-5xl md:text-7xl font-extrabold mb-2" style="color: var(--text-main);">Semana 7</h2>
+                <h3 class="text-3xl md:text-5xl font-bold mb-6" style="color: var(--una-red);">
+                    Arquitectura de las aplicaciones (Parte I)
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-6 relative z-10">
+                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--accent-blue);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-blue flex items-center justify-center text-2xl"><i class="fa-solid fa-chalkboard-user"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Docente — Grupo 40</p>
+                            <p class="text-lg font-bold" data-curso="40-docente">Kristel Duarte Pérez</p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);" data-curso="40-horario">Horario: K 08:00 - 11:20</p>
+                        </div>
+                    </div>
+                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--una-gold);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-gold flex items-center justify-center text-2xl"><i class="fa-solid fa-clock"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Atención a Estudiantes</p>
+                            <p class="text-lg font-bold" data-curso="40-atencion">K 13:00 - 14:00</p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);">Consultas y tutorías</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-sm animate-pulse mt-6" style="color: var(--text-muted);"><i class="fa-solid fa-keyboard mr-2"></i>Usa las flechas del teclado para navegar</p>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 1: AGENDA ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-map-location-dot bg-icon text-[350px] top-10 right-0 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-8">
+                    <h2 class="text-5xl font-bold mb-2">¿Qué vamos a ver hoy?</h2>
+                    <p class="text-sm mt-2" style="color: var(--text-muted);"><i class="fa-solid fa-hand-pointer mr-1"></i> Fundamentos arquitectónicos para aplicaciones robustas y mantenibles.</p>
+                </div>
+
+                <div class="relative max-w-2xl mx-auto">
+                    <div class="absolute border-l-2 border-dashed border-gray-300 h-full" style="left: 50%; transform: translateX(-50%);"></div>
+
+                    <!-- 1. Introducción a arquitectura -->
+                    <div class="flex items-center mb-4 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-gold font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">1</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(2)">
+                            <div class="glass-panel py-3 px-5 border-r-4" style="border-right-color: var(--una-gold);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Arquitectura de Software</h3>
+                                <p class="text-xs text-right text-gray-500 mt-1">Definición, objetivos y cualidades</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. MVC -->
+                    <div class="flex items-center mb-4 relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(3)">
+                            <div class="glass-panel py-3 px-5 border-l-4" style="border-left-color: var(--accent-blue);">
+                                <h3 class="font-bold text-base md:text-lg text-left">MVC: Concepto y división</h3>
+                                <p class="text-xs text-left text-gray-500 mt-1">Modelo, Vista, Controlador</p>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-blue font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">2</div>
+                        <div class="w-1/2"></div>
+                    </div>
+
+                    <!-- 3. Patrones subyacentes -->
+                    <div class="flex items-center mb-4 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-green font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">3</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(9)">
+                            <div class="glass-panel py-3 px-5 border-r-4" style="border-right-color: var(--accent-green);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Patrones subyacentes</h3>
+                                <p class="text-xs text-right text-gray-500 mt-1">Observer, Composite, Strategy</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Separación y bibliotecas -->
+                    <div class="flex items-center mb-4 relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(12)">
+                            <div class="glass-panel py-3 px-5 border-l-4" style="border-left-color: var(--accent-purple);">
+                                <h3 class="font-bold text-base md:text-lg text-left">Separación de componentes</h3>
+                                <p class="text-xs text-left text-gray-500 mt-1">Bibliotecas, referencias y dependencias</p>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-purple font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">4</div>
+                        <div class="w-1/2"></div>
+                    </div>
+
+                    <!-- 5. Persistencia y serialización -->
+                    <div class="flex items-center relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-red font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">5</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(16)">
+                            <div class="glass-panel py-3 px-5 border-r-4" style="border-right-color: var(--una-red);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Persistencia básica</h3>
+                                <p class="text-xs text-right text-gray-500 mt-1">Serialización y XML</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 2: INTRODUCCIÓN A ARQUITECTURA ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid bg-icon text-[350px] -left-10 opacity-5" style="color: var(--text-muted);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Arquitectura de Software</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">El cimiento de toda aplicación profesional.</p>
+                </div>
+                <div class="glass-panel p-6 border-t-4 max-w-6xl mx-auto" style="border-color: var(--text-muted);">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-3 text-gray-700">Definición</h3>
+                            <p class="text-md leading-relaxed mb-4" style="color: var(--text-muted);">
+                                La <span class="keyword" data-tooltip="Estructura fundamental de un sistema, sus componentes y las relaciones entre ellos.">arquitectura de software</span> es la <strong>organización fundamental</strong> de un sistema, reflejada en sus componentes, las relaciones entre ellos, y los principios que guían su diseño y evolución.
+                            </p>
+                            <p class="text-md leading-relaxed mb-4" style="color: var(--text-muted);">
+                                No se trata solo de cómo se ve el código, sino de <strong>cómo se comporta</strong> ante cambios, cómo se <strong>mantiene</strong> y cómo se <strong>escala</strong>.
+                            </p>
+                            <ul class="list-disc list-inside text-sm space-y-1 text-gray-600">
+                                <li><strong>Robustez:</strong> Tolerancia a errores y cambios.</li>
+                                <li><strong>Flexibilidad:</strong> Facilidad para incorporar nuevas funcionalidades.</li>
+                                <li><strong>Fluidez:</strong> Comprensión clara de la estructura.</li>
+                                <li><strong>Portabilidad:</strong> Independencia de plataforma.</li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 3: MVC - CONCEPTO Y DIVISIÓN ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-cubes-stacked bg-icon text-[350px] -right-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">MVC: Modelo-Vista-Controlador</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">El estándar de oro para interfaces de usuario.</p>
+                </div>
+
+                <div class="glass-panel p-6 border-t-4 max-w-6xl mx-auto" style="border-color: var(--una-gold);">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Modelo -->
+                        <div class="bg-yellow-50 p-5 rounded-xl border border-yellow-200 shadow-sm flex flex-col items-start">
+                            <div class="w-12 h-12 rounded-full bg-yellow-200 flex items-center justify-center text-yellow-800 text-xl mb-3"><i class="fa-solid fa-database"></i></div>
+                            <h4 class="font-bold text-lg text-yellow-900 mb-2">Modelo</h4>
+                            <ul class="text-sm text-gray-700 space-y-1 list-disc list-inside">
+                                <li>Datos y lógica de negocio.</li>
+                                <li>Estado de la aplicación.</li>
+                                <li><strong>No sabe nada</strong> de la interfaz.</li>
+                                <li>Ejemplo: clases <code>Factura</code>, <code>Usuario</code>.</li>
+                            </ul>
+                        </div>
+                        <!-- Vista -->
+                        <div class="bg-blue-50 p-5 rounded-xl border border-blue-200 shadow-sm flex flex-col items-start">
+                            <div class="w-12 h-12 rounded-full bg-blue-200 flex items-center justify-center text-blue-800 text-xl mb-3"><i class="fa-regular fa-window-maximize"></i></div>
+                            <h4 class="font-bold text-lg text-blue-900 mb-2">Vista</h4>
+                            <ul class="text-sm text-gray-700 space-y-1 list-disc list-inside">
+                                <li>Interfaz gráfica (Swing, JavaFX).</li>
+                                <li>Renderiza los datos del Modelo.</li>
+                                <li>Captura eventos del usuario.</li>
+                                <li>Ejemplo: <code>JFrame</code>, <code>JButton</code>.</li>
+                            </ul>
+                        </div>
+                        <!-- Controlador -->
+                        <div class="bg-purple-50 p-5 rounded-xl border border-purple-200 shadow-sm flex flex-col items-start">
+                            <div class="w-12 h-12 rounded-full bg-purple-200 flex items-center justify-center text-purple-800 text-xl mb-3"><i class="fa-solid fa-gears"></i></div>
+                            <h4 class="font-bold text-lg text-purple-900 mb-2">Controlador</h4>
+                            <ul class="text-sm text-gray-700 space-y-1 list-disc list-inside">
+                                <li>Intermediario entre Vista y Modelo.</li>
+                                <li>Recibe eventos, invoca lógica.</li>
+                                <li>Actualiza la Vista según resultados.</li>
+                                <li>Ejemplo: <code>FacturaControlador</code>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mt-6 text-center text-sm text-gray-500 border-t border-gray-200 pt-4">
+                        <i class="fa-solid fa-arrows-spin mr-2"></i> Flujo: Usuario → Vista → Controlador → Modelo → Controlador → Vista (actualizada)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 4: MVC - EL MODELO ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-database bg-icon text-[300px] -left-10 opacity-5" style="color: #eab308;"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">El Modelo</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">El corazón de la lógica de negocio.</p>
+                </div>
+                <div class="glass-panel p-6 border-t-4 max-w-5xl mx-auto" style="border-color: #eab308;">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <p class="text-md leading-relaxed mb-4" style="color: var(--text-muted);">
+                                El <strong>Modelo</strong> encapsula el <span class="keyword" data-tooltip="Conjunto de reglas que definen cómo se manejan los datos y las operaciones del negocio.">dominio</span> de la aplicación. Es la representación de los datos y las reglas que los gobiernan.
+                            </p>
+                            <ul class="list-disc list-inside text-sm space-y-2 text-gray-700">
+                                <li><strong>Estado:</strong> atributos que describen una entidad.</li>
+                                <li><strong>Comportamiento:</strong> métodos que implementan la lógica.</li>
+                                <li><strong>Independencia:</strong> no debe importar cómo se muestra ni cómo se persiste.</li>
+                            </ul>
+                            <div class="mt-4 bg-yellow-50 p-3 rounded border border-yellow-200 text-sm">
+                                <i class="fa-regular fa-lightbulb text-yellow-600 mr-2"></i> <strong>Ejemplo:</strong> Una clase <code>Producto</code> con precio, nombre, y métodos para calcular descuentos.
+                            </div>
+                        </div>
+                        <div class="darcula-bg p-4 rounded-xl shadow-xl border border-gray-600 text-xs">
+                            <div class="flex items-center gap-2 mb-2 border-b border-gray-600 pb-2 text-yellow-400 font-bold">
+                                <i class="fa-solid fa-code"></i> Producto.java
+                            </div>
+                            <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-kw">public class</span> <span class="darcula-class">Producto</span> {
+    <span class="darcula-kw">private String</span> nombre;
+    <span class="darcula-kw">private double</span> precio;
+    <span class="darcula-kw">private double</span> iva = <span class="darcula-num">0.13</span>;
+
+    <span class="darcula-kw">public</span> <span class="darcula-func">Producto</span>(<span class="darcula-class">String</span> n, <span class="darcula-kw">double</span> p) {
+        <span class="darcula-kw">this</span>.nombre = n;
+        <span class="darcula-kw">this</span>.precio = p;
+    }
+
+    <span class="darcula-kw">public double</span> <span class="darcula-func">calcularPrecioFinal</span>() {
+        <span class="darcula-kw">return</span> precio * (<span class="darcula-num">1</span> + iva);
+    }
+
+    <span class="darcula-com">// Getters y setters (omitidos)</span>
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 5: MVC - LA VISTA ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-regular fa-window-maximize bg-icon text-[300px] -right-10 opacity-5" style="color: #3b82f6;"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">La Vista</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">La cara visible de la aplicación.</p>
+                </div>
+                <div class="glass-panel p-6 border-t-4 max-w-5xl mx-auto" style="border-color: #3b82f6;">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <p class="text-md leading-relaxed mb-4" style="color: var(--text-muted);">
+                                La <strong>Vista</strong> es la interfaz de usuario. Su responsabilidad es <span class="keyword" data-tooltip="Mostrar los datos del modelo de forma comprensible para el usuario.">renderizar</span> el estado del Modelo y capturar las interacciones del usuario (clics, tecleo).
+                            </p>
+                            <ul class="list-disc list-inside text-sm space-y-2 text-gray-700">
+                                <li><strong>Pasiva:</strong> No contiene lógica de negocio.</li>
+                                <li><strong>Observadora:</strong> Escucha cambios en el Modelo (a través del patrón Observer).</li>
+                                <li><strong>Delega:</strong> Todas las acciones del usuario se pasan al Controlador.</li>
+                            </ul>
+                            <div class="mt-4 bg-blue-50 p-3 rounded border border-blue-200 text-sm">
+                                <i class="fa-regular fa-lightbulb text-blue-600 mr-2"></i> <strong>Ejemplo:</strong> Una ventana con campos de texto y botones, sin ningún cálculo.
+                            </div>
+                        </div>
+                        <div class="darcula-bg p-4 rounded-xl shadow-xl border border-gray-600 text-xs">
+                            <div class="flex items-center gap-2 mb-2 border-b border-gray-600 pb-2 text-blue-400 font-bold">
+                                <i class="fa-regular fa-window-maximize"></i> VentanaProducto.java
+                            </div>
+                            <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-kw">public class</span> <span class="darcula-class">VentanaProducto</span> <span class="darcula-kw">extends</span> <span class="darcula-class">JFrame</span> {
+    <span class="darcula-kw">private</span> <span class="darcula-class">JTextField</span> txtNombre, txtPrecio;
+    <span class="darcula-kw">private</span> <span class="darcula-class">JLabel</span> lblResultado;
+    <span class="darcula-kw">private</span> <span class="darcula-class">JButton</span> btnCalcular;
+
+    <span class="darcula-kw">public</span> <span class="darcula-func">VentanaProducto</span>() {
+        <span class="darcula-com">// Inicializa componentes (setText, setLayout...)</span>
+        <span class="darcula-com">// El listener del botón llama al Controlador</span>
+        btnCalcular.<span class="darcula-func">addActionListener</span>(e -> {
+            <span class="darcula-com">// NO calcular aquí, solo invocar al controlador</span>
+            <span class="darcula-class">ControladorProducto</span> ctrl = <span class="darcula-kw">new</span> <span class="darcula-class">ControladorProducto</span>();
+            <span class="darcula-kw">double</span> resultado = ctrl.<span class="darcula-func">calcular</span>(txtPrecio.<span class="darcula-func">getText</span>());
+            lblResultado.<span class="darcula-func">setText</span>(<span class="darcula-str">"Total: $"</span> + resultado);
+        });
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 6: MVC - EL CONTROLADOR ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-gears bg-icon text-[300px] -left-10 opacity-5" style="color: #8b5cf6;"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">El Controlador</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">El cerebro que coordina todo.</p>
+                </div>
+                <div class="glass-panel p-6 border-t-4 max-w-5xl mx-auto" style="border-color: #8b5cf6;">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <p class="text-md leading-relaxed mb-4" style="color: var(--text-muted);">
+                                El <strong>Controlador</strong> actúa como intermediario. Recibe las solicitudes de la Vista, las traduce en operaciones sobre el Modelo y decide qué vista mostrar a continuación.
+                            </p>
+                            <ul class="list-disc list-inside text-sm space-y-2 text-gray-700">
+                                <li><strong>Orquestador:</strong> Coordina el flujo de la aplicación.</li>
+                                <li><strong>Ligero:</strong> Idealmente, no contiene lógica de negocio; solo la invoca.</li>
+                                <li><strong>Reutilizable:</strong> Un controlador puede servir para múltiples vistas.</li>
+                            </ul>
+                            <div class="mt-4 bg-purple-50 p-3 rounded border border-purple-200 text-sm">
+                                <i class="fa-regular fa-lightbulb text-purple-600 mr-2"></i> <strong>Ejemplo:</strong> Un controlador que recibe un precio, instancia un <code>Producto</code>, calcula el total y lo retorna.
+                            </div>
+                        </div>
+                        <div class="darcula-bg p-4 rounded-xl shadow-xl border border-gray-600 text-xs">
+                            <div class="flex items-center gap-2 mb-2 border-b border-gray-600 pb-2 text-purple-400 font-bold">
+                                <i class="fa-solid fa-gears"></i> ControladorProducto.java
+                            </div>
+                            <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-kw">public class</span> <span class="darcula-class">ControladorProducto</span> {
+    <span class="darcula-kw">public double</span> <span class="darcula-func">calcular</span>(<span class="darcula-class">String</span> precioTexto) {
+        <span class="darcula-kw">try</span> {
+            <span class="darcula-kw">double</span> precio = <span class="darcula-class">Double</span>.<span class="darcula-func">parseDouble</span>(precioTexto);
+            <span class="darcula-class">Producto</span> p = <span class="darcula-kw">new</span> <span class="darcula-class">Producto</span>(<span class="darcula-str">"Genérico"</span>, precio);
+            <span class="darcula-kw">return</span> p.<span class="darcula-func">calcularPrecioFinal</span>();
+        } <span class="darcula-kw">catch</span> (<span class="darcula-class">NumberFormatException</span> e) {
+            <span class="darcula-com">// Podría lanzar una excepción o devolver 0</span>
+            <span class="darcula-kw">return</span> <span class="darcula-num">0</span>;
+        }
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 7: MVC - FLUJO COMPLETO ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 flex flex-col items-center">
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Flujo MVC en acción</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Cómo se comunican las capas paso a paso.</p>
+                </div>
+                <div class="w-full max-w-5xl bg-white p-6 rounded-2xl shadow-xl border border-gray-200">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 text-center">
+                            <i class="fa-regular fa-hand-pointer text-3xl text-blue-600 mb-2"></i>
+                            <p><strong>1. Interacción</strong></p>
+                            <p class="text-gray-600">Usuario hace clic en un botón.</p>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-lg border border-purple-200 text-center">
+                            <i class="fa-solid fa-arrow-right-long text-3xl text-purple-600 mb-2"></i>
+                            <p><strong>2. Delegación</strong></p>
+                            <p class="text-gray-600">La Vista invoca al Controlador.</p>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200 text-center">
+                            <i class="fa-solid fa-calculator text-3xl text-yellow-600 mb-2"></i>
+                            <p><strong>3. Lógica</strong></p>
+                            <p class="text-gray-600">Controlador opera sobre el Modelo.</p>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200 text-center">
+                            <i class="fa-solid fa-arrow-left-long text-3xl text-yellow-600 mb-2"></i>
+                            <p><strong>4. Resultado</strong></p>
+                            <p class="text-gray-600">El Modelo retorna datos al Controlador.</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 text-center">
+                            <i class="fa-regular fa-window-maximize text-3xl text-blue-600 mb-2"></i>
+                            <p><strong>5. Actualización</strong></p>
+                            <p class="text-gray-600">Controlador ordena a la Vista refrescarse.</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg border border-green-200 text-center">
+                            <i class="fa-regular fa-circle-check text-3xl text-green-600 mb-2"></i>
+                            <p><strong>6. Visualización</strong></p>
+                            <p class="text-gray-600">El usuario ve el nuevo estado.</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-center text-xs text-gray-400">
+                        <i class="fa-regular fa-comment mr-1"></i> La Vista nunca toca el Modelo directamente; todo pasa por el Controlador.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 8: VARIANTES DE MVC ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-code-branch bg-icon text-[300px] -right-10 opacity-5" style="color: #6b7280;"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Variantes de MVC</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Adaptaciones del patrón para diferentes contextos.</p>
+                </div>
+                <div class="glass-panel p-6 border-t-4 max-w-5xl mx-auto" style="border-color: #6b7280;">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                            <h4 class="font-bold text-lg text-gray-800 mb-2 flex items-center gap-2"><i class="fa-brands fa-angular text-red-600"></i> MVP</h4>
+                            <p class="text-sm text-gray-600"><strong>Modelo-Vista-Presentador</strong>. La Vista se vuelve completamente pasiva y el Presentador (similar al Controlador) maneja toda la lógica de presentación. Muy usado en Android.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                            <h4 class="font-bold text-lg text-gray-800 mb-2 flex items-center gap-2"><i class="fa-regular fa-circle-check text-green-600"></i> MVVM</h4>
+                            <p class="text-sm text-gray-600"><strong>Modelo-Vista-Modelo de Vista</strong>. Introduce un <em>ViewModel</em> que expone datos y comandos a la Vista mediante enlace de datos (data binding). Popular en WPF y frameworks web modernos.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                            <h4 class="font-bold text-lg text-gray-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-layer-group text-blue-600"></i> N-capas</h4>
+                            <p class="text-sm text-gray-600"><strong>Arquitectura en capas</strong>. Separa físicamente las responsabilidades en capas: presentación, lógica de negocio, acceso a datos. Cada capa puede estar en diferentes servidores.</p>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-sm text-gray-500 border-t border-gray-200 pt-4 text-center">Aunque existen variantes, <strong>MVC sigue siendo la base conceptual</strong> que todas comparten.</p>
+                </div>
+
+                <!-- Aclaraciones: dos cards aparte, fuera del card principal -->
+                <div class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4 items-start max-w-5xl mx-auto">
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                        <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-scale-balanced text-gray-500"></i> ¿Por qué son diferentes?</h4>
+                        <p class="text-sm text-gray-600 mb-3">Cambian <strong>qué tan pasiva es la Vista</strong> y <strong>quién media la comunicación</strong> con el Modelo.</p>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs text-gray-700 border-collapse">
+                                <thead>
+                                    <tr class="text-left text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                        <th class="py-2 pr-3">Patrón</th>
+                                        <th class="py-2 pr-3">¿La Vista ve al Modelo?</th>
+                                        <th class="py-2">¿Quién dirige?</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-gray-100">
+                                        <td class="py-2 pr-3 font-bold">MVC</td>
+                                        <td class="py-2 pr-3">Sí (lo observa)</td>
+                                        <td class="py-2">El Controlador</td>
+                                    </tr>
+                                    <tr class="border-b border-gray-100">
+                                        <td class="py-2 pr-3 font-bold">MVP</td>
+                                        <td class="py-2 pr-3">No, es pasiva</td>
+                                        <td class="py-2">El Presentador</td>
+                                    </tr>
+                                    <tr class="border-b border-gray-100">
+                                        <td class="py-2 pr-3 font-bold">MVVM</td>
+                                        <td class="py-2 pr-3">No</td>
+                                        <td class="py-2">El ViewModel</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2 pr-3 font-bold">N-capas</td>
+                                        <td class="py-2" colspan="2">No cambia el flujo: separa físicamente las capas</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                        <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-bullseye text-blue-600"></i> ¿Cuándo usar cada una?</h4>
+                        <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                            <li><strong>MVC:</strong> referencia estándar de partida.</li>
+                            <li><strong>MVP:</strong> cuando el testing de la UI es prioridad (Android).</li>
+                            <li><strong>MVVM:</strong> con <em>data binding</em> (WPF, web moderno).</li>
+                            <li><strong>N-capas:</strong> sistemas empresariales grandes.</li>
+                        </ul>
+                        <p class="mt-3 text-xs text-gray-600 bg-amber-50 border border-amber-200 rounded p-2">
+                            <i class="fa-regular fa-lightbulb text-amber-500 mr-1"></i> <strong>Regla mental:</strong> MVC deja la Vista activa; MVP la vuelve pasiva; MVVM automatiza la comunicación; N-capas cambia dónde vive cada capa.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 9: PATRONES SUBYACENTES - OBSERVER ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-satellite-dish bg-icon text-[300px] -left-10 opacity-5" style="color: #22c55e;"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Observer</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Notificación automática de cambios.</p>
+                </div>
+                <div class="glass-panel p-6 border-t-4 max-w-6xl mx-auto" style="border-color: #22c55e;">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <p class="text-md leading-relaxed mb-4" style="color: var(--text-muted);">
+                                El patrón <strong>Observer</strong> define una dependencia uno-a-muchos entre objetos, de modo que cuando un objeto cambia de estado, todos sus dependientes son notificados y actualizados automáticamente.
+                            </p>
+                            <ul class="list-disc list-inside text-sm space-y-1 text-gray-700">
+                                <li><strong>Sujeto:</strong> El objeto que mantiene el estado (ej. el Modelo).</li>
+                                <li><strong>Observadores:</strong> Los objetos que dependen del estado (ej. las Vistas).</li>
+                            </ul>
+                            <div class="mt-4 bg-green-50 p-3 rounded border border-green-200 text-sm">
+                                <i class="fa-regular fa-lightbulb text-green-600 mr-2"></i> En Swing, los <code>ActionListener</code> son observadores que esperan eventos del botón (sujeto).
+                            </div>
+                        </div>
+                        <div class="darcula-bg p-4 rounded-xl shadow-xl border border-gray-600 text-xs">
+                            <div class="flex items-center gap-2 mb-2 border-b border-gray-600 pb-2 text-green-400 font-bold">
+                                <i class="fa-solid fa-code"></i> Observer en Java
+                            </div>
+                            <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-kw">import</span> java.util.Observable;
+<span class="darcula-kw">import</span> java.util.Observer;
+
+<span class="darcula-com">// Sujeto</span>
+<span class="darcula-kw">class</span> <span class="darcula-class">Modelo</span> <span class="darcula-kw">extends</span> <span class="darcula-class">Observable</span> {
+    <span class="darcula-kw">private int</span> valor;
+    <span class="darcula-kw">public void</span> <span class="darcula-func">setValor</span>(<span class="darcula-kw">int</span> v) {
+        valor = v;
+        <span class="darcula-func">setChanged</span>();
+        <span class="darcula-func">notifyObservers</span>(valor); <span class="darcula-com">// Notifica a todos</span>
+    }
+}
+
+<span class="darcula-com">// Observador</span>
+<span class="darcula-kw">class</span> <span class="darcula-class">Vista</span> <span class="darcula-kw">implements</span> <span class="darcula-class">Observer</span> {
+    <span class="darcula-kw">public void</span> <span class="darcula-func">update</span>(<span class="darcula-class">Observable</span> o, <span class="darcula-class">Object</span> arg) {
+        <span class="darcula-class">System</span>.out.<span class="darcula-func">println</span>(<span class="darcula-str">"Nuevo valor: "</span> + arg);
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aclaraciones: dos cards aparte, fuera del card principal -->
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-6xl mx-auto">
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                        <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-robot text-green-600"></i> ¿Se hace solo?</h4>
+                        <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                            <li><strong>No por sí solo:</strong> el patrón lo implementas tú (el Sujeto guarda y notifica).</li>
+                            <li><code>Observable</code> / <code>Observer</code> es <strong>semiautomático</strong>: debes llamar <code>setChanged()</code> y <code>notifyObservers()</code> manualmente. <strong>Deprecados desde Java 9</strong>.</li>
+                            <li>En Swing/JavaFX <strong>sí es automático</strong>: con <code>addActionListener()</code> el framework notifica por ti y el emisor no conoce a los oyentes.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                        <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-circle-check text-green-600"></i> ¿Cuándo usarlo?</h4>
+                        <p class="text-sm text-gray-600 mb-2">Relación <strong>uno-a-muchos</strong> y quieres <strong>desacoplar</strong> al emisor de los receptores.</p>
+                        <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                            <li><strong>Usar:</strong> varias vistas de un mismo modelo; eventos de UI.</li>
+                            <li><strong>No usar:</strong> un solo receptor, o si basta un acoplamiento simple — agrega complejidad y es difícil de depurar.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 10: PATRONES SUBYACENTES - COMPOSITE ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-boxes-stacked bg-icon text-[300px] -right-10 opacity-5" style="color: #3b82f6;"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Composite</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Tratar objetos individuales y compuestos de forma uniforme.</p>
+                </div>
+                <div class="glass-panel p-6 border-t-4 max-w-6xl mx-auto" style="border-color: #3b82f6;">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <p class="text-md leading-relaxed mb-4" style="color: var(--text-muted);">
+                                El patrón <strong>Composite</strong> permite construir estructuras de árbol donde los objetos compuestos y los primitivos son tratados de la misma manera. Es fundamental en las jerarquías de componentes gráficos.
+                            </p>
+                            <ul class="list-disc list-inside text-sm space-y-1 text-gray-700">
+                                <li><strong>Componente:</strong> Interfaz común para todos los elementos.</li>
+                                <li><strong>Hoja:</strong> Objeto simple (ej. un botón).</li>
+                                <li><strong>Compuesto:</strong> Contiene hijos (ej. un panel con varios botones).</li>
+                            </ul>
+                            <div class="mt-4 bg-blue-50 p-3 rounded border border-blue-200 text-sm">
+                                <i class="fa-regular fa-lightbulb text-blue-600 mr-2"></i> En Swing, <code>JComponent</code> es la base; <code>JButton</code> es hoja y <code>JPanel</code> es compuesto.
+                            </div>
+                        </div>
+                        <div class="darcula-bg p-4 rounded-xl shadow-xl border border-gray-600 text-xs">
+                            <div class="flex items-center gap-2 mb-2 border-b border-gray-600 pb-2 text-blue-400 font-bold">
+                                <i class="fa-solid fa-code"></i> Composite en GUI
+                            </div>
+                            <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-com">// Todos son JComponent</span>
+<span class="darcula-class">JFrame</span> frame = <span class="darcula-kw">new</span> <span class="darcula-class">JFrame</span>();
+<span class="darcula-class">JPanel</span> panel = <span class="darcula-kw">new</span> <span class="darcula-class">JPanel</span>(); <span class="darcula-com">// compuesto</span>
+panel.<span class="darcula-func">add</span>(<span class="darcula-kw">new</span> <span class="darcula-class">JButton</span>(<span class="darcula-str">"Aceptar"</span>)); <span class="darcula-com">// hoja</span>
+panel.<span class="darcula-func">add</span>(<span class="darcula-kw">new</span> <span class="darcula-class">JButton</span>(<span class="darcula-str">"Cancelar"</span>));
+frame.<span class="darcula-func">add</span>(panel); <span class="darcula-com">// frame también es compuesto</span>
+
+<span class="darcula-com">// Se puede recorrer la jerarquía con getComponents()</span>
+<span class="darcula-kw">for</span> (<span class="darcula-class">Component</span> c : frame.<span class="darcula-func">getComponents</span>()) {
+    <span class="darcula-class">System</span>.out.<span class="darcula-func">println</span>(c.<span class="darcula-func">getName</span>());
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aclaraciones: dos cards aparte, fuera del card principal -->
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-6xl mx-auto">
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                        <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-circle-question text-blue-600"></i> ¿Para qué sirve?</h4>
+                        <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                            <li>Trata igual un objeto simple y un contenedor: <strong>no pregunta "¿es un grupo?"</strong>.</li>
+                            <li>La <strong>recursividad la maneja cada nodo</strong>, no el cliente.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                        <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-bullseye text-blue-600"></i> ¿Cuándo se usa?</h4>
+                        <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                            <li>Estructuras de <strong>árbol parte-todo</strong>: menús y submenús, sistemas de archivos, organigramas, componentes GUI.</li>
+                            <li><strong>Pista:</strong> "Composite hace que un panel con botones y un botón se traten igual."</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 11: PATRONES SUBYACENTES - STRATEGY ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-chess-knight bg-icon text-[300px] -left-10 opacity-5" style="color: #8b5cf6;"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Strategy</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Algoritmos intercambiables en tiempo de ejecución.</p>
+                </div>
+                <div class="glass-panel p-6 border-t-4 max-w-6xl mx-auto" style="border-color: #8b5cf6;">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <p class="text-md leading-relaxed mb-4" style="color: var(--text-muted);">
+                                El patrón <strong>Strategy</strong> permite definir una familia de algoritmos, encapsularlos y hacerlos intercambiables. El cliente puede seleccionar la estrategia adecuada en tiempo de ejecución.
+                            </p>
+                            <ul class="list-disc list-inside text-sm space-y-1 text-gray-700">
+                                <li><strong>Contexto:</strong> El objeto que usa la estrategia.</li>
+                                <li><strong>Estrategia:</strong> Interfaz común para todos los algoritmos.</li>
+                                <li><strong>Implementaciones concretas:</strong> Cada variante del algoritmo.</li>
+                            </ul>
+                            <div class="mt-4 bg-purple-50 p-3 rounded border border-purple-200 text-sm">
+                                <i class="fa-regular fa-lightbulb text-purple-600 mr-2"></i> En MVC, el Controlador actúa como la estrategia que la Vista utiliza para manejar las acciones del usuario.
+                            </div>
+                        </div>
+                        <div class="darcula-bg p-4 rounded-xl shadow-xl border border-gray-600 text-xs">
+                            <div class="flex items-center gap-2 mb-2 border-b border-gray-600 pb-2 text-purple-400 font-bold">
+                                <i class="fa-solid fa-code"></i> Strategy en Java
+                            </div>
+                            <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-com">// Interfaz estrategia</span>
+<span class="darcula-kw">interface</span> <span class="darcula-class">Operacion</span> {
+    <span class="darcula-kw">int</span> <span class="darcula-func">ejecutar</span>(<span class="darcula-kw">int</span> a, <span class="darcula-kw">int</span> b);
+}
+
+<span class="darcula-com">// Estrategias concretas</span>
+<span class="darcula-kw">class</span> <span class="darcula-class">Suma</span> <span class="darcula-kw">implements</span> <span class="darcula-class">Operacion</span> {
+    <span class="darcula-kw">public int</span> <span class="darcula-func">ejecutar</span>(<span class="darcula-kw">int</span> a, <span class="darcula-kw">int</span> b) { <span class="darcula-kw">return</span> a + b; }
+}
+<span class="darcula-kw">class</span> <span class="darcula-class">Multiplicacion</span> <span class="darcula-kw">implements</span> <span class="darcula-class">Operacion</span> {
+    <span class="darcula-kw">public int</span> <span class="darcula-func">ejecutar</span>(<span class="darcula-kw">int</span> a, <span class="darcula-kw">int</span> b) { <span class="darcula-kw">return</span> a * b; }
+}
+
+<span class="darcula-com">// Contexto que usa la estrategia</span>
+<span class="darcula-kw">class</span> <span class="darcula-class">Calculadora</span> {
+    <span class="darcula-kw">private</span> <span class="darcula-class">Operacion</span> estrategia;
+    <span class="darcula-kw">public void</span> <span class="darcula-func">setEstrategia</span>(<span class="darcula-class">Operacion</span> e) { <span class="darcula-kw">this</span>.estrategia = e; }
+    <span class="darcula-kw">public int</span> <span class="darcula-func">calcular</span>(<span class="darcula-kw">int</span> a, <span class="darcula-kw">int</span> b) {
+        <span class="darcula-kw">return</span> estrategia.<span class="darcula-func">ejecutar</span>(a, b);
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aclaraciones: dos cards aparte, fuera del card principal -->
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-6xl mx-auto">
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                        <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-shuffle text-purple-600"></i> ¿No es solo una interfaz?</h4>
+                        <p class="text-sm text-gray-600 mb-2">La interfaz es la <strong>herramienta</strong>; Strategy es la <strong>intención de diseño</strong>.</p>
+                        <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                            <li>Con herencia el comportamiento queda <strong>fijo</strong> (se elige al compilar).</li>
+                            <li>Con Strategy se <strong>intercambia en tiempo de ejecución</strong>: <code>setEstrategia(new Multiplicacion())</code>, sin recompilar ni <code>if/else</code>.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                        <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-circle-check text-purple-600"></i> ¿Cuándo usarlo?</h4>
+                        <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                            <li><strong>Usar:</strong> familia de algoritmos (ordenamientos, descuentos, pagos); cambiar de algoritmo en caliente; eliminar <code>switch</code> largos; testear cada variante por separado.</li>
+                            <li><strong>No usar:</strong> si hay una sola implementación o nunca cambiará — una interfaz normal basta.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 12: SEPARACIÓN DE COMPONENTES ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-box-open bg-icon text-[300px] -right-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Separación de Componentes</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Organización física del código en módulos reutilizables.</p>
+                </div>
+                <div class="glass-panel p-6 border-t-4 max-w-6xl mx-auto" style="border-color: var(--accent-blue);">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <p class="text-md leading-relaxed mb-4" style="color: var(--text-muted);">
+                                La <strong>separación de componentes</strong> va más allá de la división lógica en paquetes. Implica <strong>empaquetar físicamente</strong> el código en unidades independientes llamadas <span class="keyword" data-tooltip="Java Archive, un archivo comprimido que agrupa clases compiladas.">bibliotecas</span> o <em>JARs</em>.
+                            </p>
+                            <ul class="list-disc list-inside text-sm space-y-2 text-gray-700">
+                                <li><strong>Modularidad:</strong> Cada biblioteca tiene una responsabilidad única.</li>
+                                <li><strong>Reutilización:</strong> Una biblioteca puede usarse en múltiples proyectos.</li>
+                                <li><strong>Mantenimiento:</strong> Cambios en un módulo no afectan a otros si la interfaz se mantiene.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-100 p-6 rounded-2xl shadow-inner border border-gray-300 flex flex-col items-center justify-center">
+                            <div class="flex items-center gap-4 w-full bg-white p-3 rounded border border-gray-300 shadow-sm">
+                                <i class="fa-brands fa-java text-3xl text-orange-600"></i>
+                                <div>
+                                    <p class="font-bold text-gray-800">Código Fuente (.java)</p>
+                                    <p class="text-xs text-gray-500">Módulos lógicos.</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-arrow-down text-gray-400 my-2"></i>
+                            <div class="text-xs font-mono text-gray-500 uppercase tracking-widest font-bold">Compilación y empaquetado</div>
+                            <i class="fa-solid fa-arrow-down text-gray-400 my-2"></i>
+                            <div class="flex items-center gap-4 w-full bg-blue-50 p-3 rounded border border-blue-300 shadow-sm">
+                                <i class="fa-solid fa-file-zipper text-3xl text-blue-600"></i>
+                                <div>
+                                    <p class="font-bold text-blue-900">Biblioteca (.jar)</p>
+                                    <p class="text-xs text-blue-700">Binario comprimido, listo para importar.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 13: BIBLIOTECAS - DEFINICIÓN Y CONSTRUCCIÓN ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-cubes bg-icon text-[300px] -left-10 opacity-5" style="color: #6b7280;"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Definición y Construcción de Bibliotecas</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Creando artefactos reutilizables.</p>
+                </div>
+                <div class="glass-panel p-6 border-t-4 max-w-6xl mx-auto" style="border-color: #6b7280;">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <p class="text-md leading-relaxed mb-4" style="color: var(--text-muted);">
+                                Una <strong>biblioteca</strong> en Java es un archivo <code>.jar</code> que contiene clases compiladas, recursos y metadatos. Se construye mediante el comando <code>jar</code> o desde el IDE (IntelliJ: <em>Build Artifact</em>).
+                            </p>
+                            <p class="text-md leading-relaxed mb-4" style="color: var(--text-muted);">
+                                Las bibliotecas permiten compartir funcionalidades como acceso a bases de datos, utilidades matemáticas, o incluso capas enteras de una aplicación (ej. <code>acceso-datos.jar</code>).
+                            </p>
+                            <div class="bg-gray-50 p-3 rounded border border-gray-300 text-sm">
+                                <strong>Pasos básicos para crear un JAR:</strong>
+                                <ol class="list-decimal list-inside text-gray-700 mt-1 space-y-1">
+                                    <li>Compilar todas las clases.</li>
+                                    <li>Crear un archivo de manifiesto (<code>MANIFEST.MF</code>) opcional.</li>
+                                    <li>Ejecutar: <code>jar cf mi-biblioteca.jar *.class</code>.</li>
+                                </ol>
+                            </div>
+                        </div>
+                        <div class="darcula-bg p-4 rounded-xl shadow-xl border border-gray-600 text-xs">
+                            <div class="flex items-center gap-2 mb-2 border-b border-gray-600 pb-2 text-gray-400 font-bold">
+                                <i class="fa-solid fa-terminal"></i> Comando jar
+                            </div>
+                            <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-com"># Crear JAR con todas las clases</span>
+$ jar cf utilidades.jar com/miempresa/util/*.class
+
+<span class="darcula-com"># Ver contenido del JAR</span>
+$ jar tf utilidades.jar
+
+<span class="darcula-com"># Extraer JAR</span>
+$ jar xf utilidades.jar
+
+<span class="darcula-com"># Incluir manifiesto personalizado</span>
+$ jar cfm mi-app.jar MANIFEST.MF -C classes/ .</code></pre>
+                            <p class="mt-2 text-gray-400 text-[0.6rem]">En IntelliJ, puedes crear un JAR desde <em>File → Project Structure → Artifacts</em>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 14: REFERENCIAS ENTRE BIBLIOTECAS ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-link bg-icon text-[300px] -right-10 opacity-5" style="color: var(--una-red);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Referencias entre Bibliotecas</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Cómo vincular módulos en el classpath.</p>
+                </div>
+                <div class="glass-panel p-6 border-t-4 max-w-6xl mx-auto" style="border-color: var(--una-red);">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <p class="text-md leading-relaxed mb-4" style="color: var(--text-muted);">
+                                Para que una biblioteca A pueda usar clases de la biblioteca B, debemos agregar B al <span class="keyword" data-tooltip="Ruta donde el JVM busca clases y bibliotecas."><strong>classpath</strong></span> de A. Esto se hace al compilar y al ejecutar.
+                            </p>
+                            <ul class="list-disc list-inside text-sm space-y-2 text-gray-700">
+                                <li><strong>Compilación:</strong> <code>javac -cp "lib/b.jar" src/*.java</code></li>
+                                <li><strong>Ejecución:</strong> <code>java -cp "lib/b.jar;classes" MiApp</code></li>
+                                <li><strong>IDEs:</strong> IntelliJ maneja las referencias a través de <em>Libraries</em> o <em>Modules</em>.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-50 p-5 rounded-xl border border-gray-200">
+                            <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2"><i class="fa-brands fa-java"></i> Ejemplo en IntelliJ</h4>
+                            <ol class="list-decimal list-inside text-sm space-y-2 text-gray-700">
+                                <li>Ve a <em>File → Project Structure → Modules</em>.</li>
+                                <li>En la pestaña <em>Dependencies</em>, haz clic en <em>+</em> → <em>JARs or directories</em>.</li>
+                                <li>Selecciona el archivo <code>.jar</code> de la biblioteca B.</li>
+                                <li>El IDE ahora reconoce las clases de B en el proyecto A.</li>
+                            </ol>
+                            <div class="mt-4 text-sm text-gray-500 border-t border-gray-300 pt-3">
+                                <i class="fa-regular fa-file-code mr-1"></i> Las referencias también pueden ser transitivas: si A depende de B y B depende de C, A necesita a C en el classpath.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 15: DEPENDENCIA ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-diagram-project bg-icon text-[300px] -left-10 opacity-5" style="color: #d97706;"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Dependencia</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Dirección y control del acoplamiento.</p>
+                </div>
+                <div class="glass-panel p-6 border-t-4 max-w-6xl mx-auto" style="border-color: #d97706;">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <p class="text-md leading-relaxed mb-4" style="color: var(--text-muted);">
+                                <strong>Dependencia</strong> significa que un módulo <em>necesita</em> a otro para funcionar. En arquitectura limpia, las dependencias deben apuntar <strong>hacia adentro</strong>, desde las capas externas (Vista) hacia las internas (Modelo).
+                            </p>
+                            <ul class="list-disc list-inside text-sm space-y-2 text-gray-700">
+                                <li><strong>Acoplamiento bajo:</strong> Los módulos dependen de abstracciones, no de implementaciones concretas.</li>
+                                <li><strong>Inversión de dependencias:</strong> Las capas de alto nivel no dependen de las de bajo nivel; ambas dependen de abstracciones.</li>
+                            </ul>
+                            <div class="mt-4 bg-yellow-50 p-3 rounded border border-yellow-200 text-sm">
+                                <i class="fa-regular fa-lightbulb text-yellow-600 mr-2"></i> <strong>Ejemplo:</strong> La Vista depende del Controlador (interfaz), no del Controlador concreto. Esto permite cambiar la implementación sin afectar la Vista.
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center justify-center gap-4 bg-gray-100 p-6 rounded-xl">
+                            <div class="text-center">
+                                <p class="font-bold text-gray-700">Dirección de dependencia en MVC</p>
+                                <div class="flex items-center justify-center gap-3 mt-2 text-sm">
+                                    <span class="bg-blue-100 px-3 py-1 rounded-full">Vista</span>
+                                    <i class="fa-solid fa-arrow-right text-gray-500"></i>
+                                    <span class="bg-purple-100 px-3 py-1 rounded-full">Controlador</span>
+                                    <i class="fa-solid fa-arrow-right text-gray-500"></i>
+                                    <span class="bg-yellow-100 px-3 py-1 rounded-full">Modelo</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">El Modelo no depende de nadie.</p>
+                            </div>
+                            <div class="w-full border-t border-gray-300 pt-3 text-center text-sm text-gray-600">
+                                <i class="fa-regular fa-circle-check text-green-600 mr-1"></i> Dependencias unidireccionales reducen el impacto de los cambios.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 16: PERSISTENCIA BÁSICA ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-hard-drive bg-icon text-[300px] -right-10 opacity-5" style="color: #a855f7;"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Persistencia Básica</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Guardar datos más allá de la memoria RAM.</p>
+                </div>
+                <div class="glass-panel p-6 border-t-4 max-w-6xl mx-auto" style="border-color: #a855f7;">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <p class="text-md leading-relaxed mb-4" style="color: var(--text-muted);">
+                                La <strong>persistencia</strong> es el mecanismo para almacenar el estado de los objetos en medios no volátiles. Existen varias estrategias:
+                            </p>
+                            <ul class="list-disc list-inside text-sm space-y-2 text-gray-700">
+                                <li><strong>Serialización de texto:</strong> Archivos CSV, TXT con separadores.</li>
+                                <li><strong>Serialización binaria:</strong> Usando <code>ObjectOutputStream</code> (específico de Java).</li>
+                                <li><strong>XML:</strong> Formato estándar y legible por humanos.</li>
+                                <li><strong>Bases de datos:</strong> Relacionales o NoSQL (se verán más adelante).</li>
+                            </ul>
+                            <p class="mt-4 text-sm bg-gray-100 p-3 rounded border border-gray-300">
+                                <i class="fa-regular fa-clock mr-1"></i> En proyectos sin BD, la serialización en archivos permite mantener datos entre ejecuciones.
+                            </p>
+                        </div>
+                        <div class="flex flex-col gap-3">
+                            <div class="bg-white p-3 rounded border-l-4 border-gray-400 shadow-sm">
+                                <h4 class="font-bold text-gray-700">Serialización de texto</h4>
+                                <p class="text-xs text-gray-600">Ejemplo: <code>"Juan,25,30000"</code> separado por comas.</p>
+                            </div>
+                            <div class="bg-white p-3 rounded border-l-4 border-purple-500 shadow-sm">
+                                <h4 class="font-bold text-gray-700">Serialización binaria</h4>
+                                <p class="text-xs text-gray-600">Utiliza <code>Serializable</code> y flujos de bytes. Eficiente pero no interoperable.</p>
+                            </div>
+                            <div class="bg-white p-3 rounded border-l-4 border-yellow-500 shadow-sm">
+                                <h4 class="font-bold text-gray-700">XML</h4>
+                                <p class="text-xs text-gray-600">Estructura jerárquica con etiquetas: <code>&lt;nombre&gt;Juan&lt;/nombre&gt;</code></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aclaraciones: dos cards aparte, fuera del card principal -->
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-6xl mx-auto">
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                        <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-scale-balanced text-purple-500"></i> ¿Qué estrategia conviene?</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs text-gray-700 border-collapse">
+                                <thead>
+                                    <tr class="text-left text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                        <th class="py-2 pr-3">Criterio</th>
+                                        <th class="py-2 pr-3">Binaria</th>
+                                        <th class="py-2 pr-3">Texto (CSV)</th>
+                                        <th class="py-2">XML</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-gray-100">
+                                        <td class="py-2 pr-3 font-bold">Legible</td>
+                                        <td class="py-2 pr-3"><i class="fa-solid fa-xmark text-red-500"></i></td>
+                                        <td class="py-2 pr-3"><i class="fa-solid fa-check text-green-500"></i></td>
+                                        <td class="py-2"><i class="fa-solid fa-check text-green-500"></i></td>
+                                    </tr>
+                                    <tr class="border-b border-gray-100">
+                                        <td class="py-2 pr-3 font-bold">Interoperable</td>
+                                        <td class="py-2 pr-3"><i class="fa-solid fa-xmark text-red-500"></i> solo Java</td>
+                                        <td class="py-2 pr-3"><i class="fa-solid fa-triangle-exclamation text-amber-500"></i> manual</td>
+                                        <td class="py-2"><i class="fa-solid fa-check text-green-500"></i></td>
+                                    </tr>
+                                    <tr class="border-b border-gray-100">
+                                        <td class="py-2 pr-3 font-bold">Automático</td>
+                                        <td class="py-2 pr-3"><i class="fa-solid fa-check text-green-500"></i></td>
+                                        <td class="py-2 pr-3"><i class="fa-solid fa-xmark text-red-500"></i> parseo manual</td>
+                                        <td class="py-2"><i class="fa-solid fa-triangle-exclamation text-amber-500"></i> anotaciones</td>
+                                    </tr>
+                                    <tr class="border-b border-gray-100">
+                                        <td class="py-2 pr-3 font-bold">Tamaño/velocidad</td>
+                                        <td class="py-2 pr-3"><i class="fa-solid fa-check text-green-500"></i></td>
+                                        <td class="py-2 pr-3"><i class="fa-solid fa-check text-green-500"></i></td>
+                                        <td class="py-2"><i class="fa-solid fa-xmark text-red-500"></i> verboso</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                        <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-bullseye text-purple-500"></i> ¿Cuál usar?</h4>
+                        <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                            <li><strong>Binaria:</strong> persistir objetos entre ejecuciones sin BD (rápida y automática).</li>
+                            <li><strong>Texto:</strong> datos simples y editables a mano.</li>
+                            <li><strong>XML/JSON:</strong> intercambiar con otros sistemas o datos legibles.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 17: SERIALIZACIÓN EN JAVA ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-arrow-up-from-bracket bg-icon text-[300px] -left-10 opacity-5" style="color: #f59e0b;"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Serialización en Java</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Guardar y restaurar objetos con <code>Serializable</code>.</p>
+                </div>
+                <div class="glass-panel p-6 border-t-4 max-w-6xl mx-auto" style="border-color: #f59e0b;">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <p class="text-md leading-relaxed mb-4" style="color: var(--text-muted);">
+                                Java proporciona el mecanismo de <strong>serialización</strong> a través de la interfaz <code>Serializable</code>. Basta con marcar la clase y usar <code>ObjectOutputStream</code> para escribir el objeto en un archivo.
+                            </p>
+                            <ul class="list-disc list-inside text-sm space-y-2 text-gray-700">
+                                <li><strong>Restricciones:</strong> Todos los atributos deben ser serializables (o marcados <code>transient</code>).</li>
+                                <li><strong>Versiones:</strong> Se recomienda definir <code>serialVersionUID</code> para controlar la compatibilidad.</li>
+                                <li><strong>Uso:</strong> Ideal para guardar configuraciones, sesiones o datos temporales.</li>
+                            </ul>
+                        </div>
+                        <div class="darcula-bg p-4 rounded-xl shadow-xl border border-gray-600 text-xs">
+                            <div class="flex items-center gap-2 mb-2 border-b border-gray-600 pb-2 text-yellow-400 font-bold">
+                                <i class="fa-solid fa-code"></i> Serialización
+                            </div>
+                            <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-com">// Clase serializable</span>
+<span class="darcula-kw">class</span> <span class="darcula-class">Empleado</span> <span class="darcula-kw">implements</span> <span class="darcula-class">Serializable</span> {
+    <span class="darcula-kw">private static final long</span> serialVersionUID = <span class="darcula-num">1L</span>;
+    <span class="darcula-kw">private String</span> nombre;
+    <span class="darcula-kw">private double</span> salario;
+}
+
+<span class="darcula-com">// Guardar</span>
+<span class="darcula-kw">try</span> (<span class="darcula-class">ObjectOutputStream</span> oos = <span class="darcula-kw">new</span> <span class="darcula-class">ObjectOutputStream</span>(
+        <span class="darcula-kw">new</span> <span class="darcula-class">FileOutputStream</span>(<span class="darcula-str">"empleado.dat"</span>))) {
+    oos.<span class="darcula-func">writeObject</span>(<span class="darcula-kw">new</span> <span class="darcula-class">Empleado</span>(<span class="darcula-str">"Ana"</span>, <span class="darcula-num">35000</span>));
+}
+
+<span class="darcula-com">// Recuperar</span>
+<span class="darcula-kw">try</span> (<span class="darcula-class">ObjectInputStream</span> ois = <span class="darcula-kw">new</span> <span class="darcula-class">ObjectInputStream</span>(
+        <span class="darcula-kw">new</span> <span class="darcula-class">FileInputStream</span>(<span class="darcula-str">"empleado.dat"</span>))) {
+    <span class="darcula-class">Empleado</span> e = (<span class="darcula-class">Empleado</span>) ois.<span class="darcula-func">readObject</span>();
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aclaraciones: dos cards aparte, fuera del card principal -->
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-6xl mx-auto">
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                        <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-gear text-amber-500"></i> Detalles clave</h4>
+                        <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                            <li><code>Serializable</code> es una interfaz de <strong>marcado</strong>: no tiene métodos.</li>
+                            <li><code>serialVersionUID</code>: si la clase cambia sin actualizarlo, al leer datos viejos lanza <code>InvalidClassException</code>.</li>
+                            <li><code>transient</code>: el campo <strong>no se guarda</strong> (contraseñas, conexiones) y se recupera con su valor por defecto.</li>
+                            <li>Los campos <code>static</code> tampoco se serializan (son de la clase, no del objeto).</li>
+                            <li>Conserva el <strong>grafo de objetos</strong>: referencias y ciclos se mantienen.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                        <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-amber-500"></i> Ventajas y riesgos</h4>
+                        <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                            <li><strong>Ventaja:</strong> automático, rápido y sin código extra por campo.</li>
+                            <li><strong>Desventaja:</strong> formato <strong>propietario de Java</strong> — no lo leen otros lenguajes.</li>
+                            <li><strong>Desventaja:</strong> frágil ante cambios de clase.</li>
+                            <li><strong>Riesgo de seguridad:</strong> deserializar datos no confiables puede ejecutar código. ¡Nunca deserialices archivos de dudosa procedencia!</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 18: SERIALIZACIÓN XML ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-code bg-icon text-[300px] -right-10 opacity-5" style="color: #8b5cf6;"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-5xl font-bold mb-2">Serialización XML</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Estructura legible y estándar para el intercambio de datos.</p>
+                </div>
+                <div class="glass-panel p-6 border-t-4 max-w-6xl mx-auto" style="border-color: #8b5cf6;">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <p class="text-md leading-relaxed mb-4" style="color: var(--text-muted);">
+                                <strong>XML</strong> (eXtensible Markup Language) es un formato de texto que organiza los datos en una estructura jerárquica de etiquetas. Es ampliamente usado en servicios web, archivos de configuración y persistencia.
+                            </p>
+                            <ul class="list-disc list-inside text-sm space-y-2 text-gray-700">
+                                <li><strong>Autodescriptivo:</strong> Las etiquetas indican el significado de los datos.</li>
+                                <li><strong>Interoperable:</strong> Puede ser leído por cualquier lenguaje.</li>
+                                <li><strong>Java:</strong> Se puede usar <code>JAXB</code> para mapear objetos a XML.</li>
+                            </ul>
+                            <div class="mt-4 bg-purple-50 p-3 rounded border border-purple-200 text-sm">
+                                <i class="fa-regular fa-lightbulb text-purple-600 mr-2"></i> En el curso, veremos XML como alternativa a la serialización binaria cuando se requiera interoperabilidad.
+                            </div>
+                        </div>
+                        <div class="darcula-bg p-4 rounded-xl shadow-xl border border-gray-600 text-xs">
+                            <div class="flex items-center gap-2 mb-2 border-b border-gray-600 pb-2 text-purple-400 font-bold">
+                                <i class="fa-solid fa-code"></i> XML con JAXB
+                            </div>
+                            <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-com">// Clase anotada para JAXB</span>
+<span class="darcula-anno">@XmlRootElement</span>
+<span class="darcula-kw">class</span> <span class="darcula-class">Empleado</span> {
+    <span class="darcula-anno">@XmlElement</span> <span class="darcula-kw">private String</span> nombre;
+    <span class="darcula-anno">@XmlElement</span> <span class="darcula-kw">private double</span> salario;
+}
+
+<span class="darcula-com">// Serializar a XML</span>
+<span class="darcula-class">JAXBContext</span> ctx = <span class="darcula-class">JAXBContext</span>.<span class="darcula-func">newInstance</span>(<span class="darcula-class">Empleado</span>.class);
+<span class="darcula-class">Marshaller</span> marshaller = ctx.<span class="darcula-func">createMarshaller</span>();
+marshaller.<span class="darcula-func">marshal</span>(<span class="darcula-kw">new</span> <span class="darcula-class">Empleado</span>(<span class="darcula-str">"Ana"</span>, <span class="darcula-num">35000</span>), <span class="darcula-class">System</span>.out);
+
+<span class="darcula-com">// Deserializar desde XML</span>
+<span class="darcula-class">Unmarshaller</span> unmarshaller = ctx.<span class="darcula-func">createUnmarshaller</span>();
+<span class="darcula-class">Empleado</span> e = (<span class="darcula-class">Empleado</span>) unmarshaller.<span class="darcula-func">unmarshal</span>(<span class="darcula-kw">new</span> <span class="darcula-class">File</span>(<span class="darcula-str">"empleado.xml"</span>));</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aclaraciones: dos cards aparte, fuera del card principal -->
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-6xl mx-auto">
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                        <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-circle-question text-purple-500"></i> Anotaciones de JAXB</h4>
+                        <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                            <li><code>@XmlRootElement</code>: define el <strong>nodo raíz</strong> del documento.</li>
+                            <li><code>@XmlElement</code>: el campo se convierte en un <strong>elemento</strong>.</li>
+                            <li><code>@XmlAttribute</code>: el campo se convierte en un <strong>atributo</strong> del elemento.</li>
+                            <li><code>@XmlTransient</code>: el campo se <strong>ignora</strong>.</li>
+                            <li><code>Marshaller</code>: objeto → XML. <code>Unmarshaller</code>: XML → objeto.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                        <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-red-500"></i> JAXB en JDK 11+</h4>
+                        <p class="text-sm text-gray-600 mb-2">JAXB venía incluido en <strong>Java 8</strong>, pero fue <strong>removido del JDK en Java 11</strong> (módulo <code>java.xml.bind</code>).</p>
+                        <p class="text-sm text-gray-600 mb-2">En JDK 11 o superior hay que agregar la dependencia manualmente:</p>
+                        <div class="darcula-bg p-3 rounded-xl border border-gray-600 text-xs">
+                            <pre class="font-mono leading-snug" style="margin:0;"><code>&lt;dependency&gt;
+    &lt;groupId&gt;jakarta.xml.bind&lt;/groupId&gt;
+    &lt;artifactId&gt;jakarta.xml.bind-api&lt;/artifactId&gt;
+    &lt;version&gt;4.0.2&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 19: RESUMEN Y CIERRE ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-flag-checkered bg-icon text-[300px] -left-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Recapitulación</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Fundamentos arquitectónicos para el desarrollo profesional.</p>
+                </div>
+                <div class="glass-panel p-6 border-t-4 max-w-5xl mx-auto" style="border-color: var(--una-gold);">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                            <h4 class="font-bold text-gray-800 flex items-center gap-2"><i class="fa-solid fa-layer-group text-blue-600"></i> MVC</h4>
+                            <p class="text-gray-600">Separa Modelo, Vista y Controlador. El controlador orquesta, la vista muestra, el modelo contiene la lógica.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                            <h4 class="font-bold text-gray-800 flex items-center gap-2"><i class="fa-solid fa-puzzle-piece text-green-600"></i> Patrones subyacentes</h4>
+                            <p class="text-gray-600">Observer (notificaciones), Composite (jerarquías de componentes), Strategy (algoritmos intercambiables).</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                            <h4 class="font-bold text-gray-800 flex items-center gap-2"><i class="fa-solid fa-box-open text-purple-600"></i> Bibliotecas</h4>
+                            <p class="text-gray-600">Módulos físicos (JAR) que encapsulan responsabilidades y se referencian entre sí.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                            <h4 class="font-bold text-gray-800 flex items-center gap-2"><i class="fa-solid fa-hard-drive text-yellow-600"></i> Persistencia</h4>
+                            <p class="text-gray-600">Serialización binaria y XML para guardar objetos en disco y recuperarlos.</p>
+                        </div>
+                    </div>
+                    <div class="mt-6 text-center text-gray-500 border-t border-gray-200 pt-4">
+                        <i class="fa-regular fa-comment-dots mr-2"></i> Próxima semana: profundizaremos en <strong>Persistencia con SABD</strong> y <strong>Arquitectura n-capas</strong>.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- fin slides-container -->
+
+    <!-- Scripts compartidos del proyecto — NO borrar ni agregar scripts abajo -->
+    <script src="../../../assets/js/curso-info.js"></script>
+    <script src="../../../assets/js/presentacion.js"></script>
+
+</body>
+</html>
