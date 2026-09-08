@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../../../assets/img/favicon.svg">
+    <title>Laboratorio Autoguiado — Mini-Discord (Persistencia, DAO y DTO)</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --bg-panel: #ffffff;
+            --bg-terminal: #2b2b2b;
+            --text-main: #0f172a;
+            --text-muted: #334155;
+            --border-panel: #cbd5e1;
+            --una-red: #c8102e;
+            --una-gold: #b28900;
+            --accent-blue: #1d4ed8;
+            --accent-green: #15803d;
+            --accent-purple: #6d28d9;
+            --accent-peach: #c2410c;
+        }
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --bg-panel: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+            --border-panel: #334155;
+            --una-gold: #d4ac0d;
+            --accent-blue: #3b82f6;
+            --accent-green: #22c55e;
+            --accent-purple: #8b5cf6;
+            --accent-peach: #f97316;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .glass-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .glass-panel h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.75rem; }
+        .glass-panel h3 { font-size: 1.3rem; font-weight: 700; margin: 1.2rem 0 0.6rem 0; }
+        .glass-panel h4 { font-size: 1.1rem; font-weight: 700; margin: 1rem 0 0.4rem 0; }
+        .glass-panel p { color: var(--text-muted); margin-bottom: 0.75rem; }
+        .glass-panel p:not([class*="text-"]) { font-size: 1.15rem; }
+        .glass-panel ul, .glass-panel ol { color: var(--text-muted); padding-left: 1.5rem; margin-bottom: 0.75rem; }
+        .glass-panel li { margin-bottom: 0.3rem; font-size: 1.1rem; }
+
+        /* Etiquetas rediseñadas para alto contraste */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #ffffff;
+        }
+        .badge-red { background: var(--una-red); }
+        .badge-blue { background: var(--accent-blue); }
+        .badge-green { background: var(--accent-green); }
+        .badge-purple { background: var(--accent-purple); }
+        .badge-gold { background: var(--una-gold); }
+
+        /* Contenedor tipo archivo IntelliJ Darcula */
+        .darcula-editor {
+            background-color: #2b2b2b !important;
+            border: 1px solid #1a1a1a !important;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+            margin: 1rem 0;
+        }
+        .darcula-header {
+            background-color: #313335;
+            border-bottom: 1px solid #1a1a1a;
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .darcula-tab {
+            background: #2b2b2b;
+            color: #a9b7c6;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 2px 10px;
+            border-radius: 4px 4px 0 0;
+            border-top: 2px solid #4a88c7;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .darcula-code {
+            color: #a9b7c6;
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.5;
+            white-space: pre;
+            overflow-x: auto;
+            display: block;
+            padding: 1rem 1.2rem;
+            margin: 0;
+        }
+
+        /* Clases específicas de coloreado de sintaxis Darcula */
+        .d-comment { color: #808080; font-style: italic; }
+        .d-keyword { color: #cc7832; font-weight: bold; }
+        .d-string { color: #6a8759; }
+        .d-number { color: #6897bb; }
+        .d-annotation { color: #bbb529; }
+        .d-method { color: #ffc66d; }
+        .d-field { color: #9876aa; }
+        .d-type { color: #a9b7c6; font-weight: bold; }
+        .d-xml-tag { color: #e8bf6a; }
+        .d-xml-attr { color: #bababa; }
+        .d-xml-comment { color: #808080; font-style: italic; }
+        /* Comentario que marca código agregado en la Semana 8, para distinguirlo a simple vista
+           del código que ya existía en el proyecto (comentario gris normal = ya existía). */
+        .d-new { color: #98c379; font-weight: bold; font-style: normal; }
+
+        .step-sub {
+            border-left: 4px solid var(--accent-blue);
+            padding-left: 1.2rem;
+            margin: 1.5rem 0;
+        }
+        .step-sub h5 {
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.4rem;
+        }
+        .step-sub p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight-box {
+            padding: 1rem 1.2rem;
+            border-radius: 0.5rem;
+            border-left: 5px solid var(--una-gold);
+            background: #fffbef;
+            color: #423500;
+            margin: 1rem 0;
+            border-top: 1px solid #fce895;
+            border-right: 1px solid #fce895;
+            border-bottom: 1px solid #fce895;
+        }
+        [data-theme="dark"] .highlight-box {
+            background: #332900;
+            color: #fef08a;
+            border-color: #856600;
+        }
+        .highlight-box strong { color: var(--una-gold); font-weight: 800; }
+
+        .pregunta-box {
+            background: #f0fdf4;
+            border-left: 5px solid var(--accent-green);
+            padding: 1rem 1.2rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            border-top: 1px solid #bbf7d0;
+            border-right: 1px solid #bbf7d0;
+            border-bottom: 1px solid #bbf7d0;
+            color: #14532d;
+        }
+        [data-theme="dark"] .pregunta-box {
+            background: #052e16;
+            color: #86efac;
+            border-color: #166534;
+        }
+        .pregunta-box p { margin-bottom: 0.5rem; }
+
+        /* NUEVO — caja de razonamiento de diseño: "¿cómo se llega a esta decisión?" */
+        .decision-box {
+            background: #f5f3ff;
+            border-left: 5px solid var(--accent-purple);
+            padding: 1rem 1.2rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            border-top: 1px solid #ddd6fe;
+            border-right: 1px solid #ddd6fe;
+            border-bottom: 1px solid #ddd6fe;
+            color: #3b0764;
+        }
+        [data-theme="dark"] .decision-box {
+            background: #2e1065;
+            color: #ddd6fe;
+            border-color: #6d28d9;
+        }
+        .decision-box p { margin-bottom: 0.5rem; }
+        .decision-box .decision-label {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 800;
+            color: var(--accent-purple);
+            margin-bottom: 0.4rem;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .float-btn {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50;
+            background: var(--bg-panel);
+            border: 2px solid var(--border-panel);
+            border-radius: 9999px;
+            padding: 0.65rem 1rem;
+            font-size: 1rem;
+            color: var(--text-main);
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            transition: transform 0.15s, background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .float-btn:hover { transform: scale(1.05); background: var(--border-panel); }
+
+        details {
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--bg-panel);
+            padding: 0.8rem 1.2rem;
+            border-radius: 0.5rem;
+            border: 2px solid var(--border-panel);
+        }
+        details summary {
+            cursor: pointer;
+            font-weight: 800;
+            color: var(--accent-blue);
+            font-size: 1.1rem;
+        }
+        details summary:hover { color: var(--accent-purple); }
+
+        .code-explanation {
+            margin-top: 1rem;
+            font-size: 1.05rem;
+            border-top: 1px solid var(--border-panel);
+            padding-top: 1rem;
+        }
+        .code-explanation p { margin-bottom: 0.8rem; }
+
+        .code-explanation code {
+            background: #2b2b2b;
+            color: #a9b7c6;
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.3rem;
+            font-family: 'JetBrains Mono', monospace;
+            border: 1px solid #1a1a1a;
+            font-size: 1rem;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* Estilos Diagrama de Archivos */
+        .diagram-node {
+            background: var(--bg-panel);
+            border: 2px solid var(--border-panel);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 10;
+        }
+        .diagram-arrow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+        }
+        .diagram-container {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .tabla-compare {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin: 0.8rem 0;
+        }
+        .tabla-compare th {
+            background: #2b2b2b;
+            color: #cdd6f4;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        .tabla-compare td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-panel);
+            color: var(--text-muted);
+        }
+        .tabla-compare tr:nth-child(even) { background: rgba(0,0,0,0.02); }
+        [data-theme="dark"] .tabla-compare tr:nth-child(even) { background: rgba(255,255,255,0.03); }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .glass-panel { padding: 1rem; }
+            .glass-panel h2 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar modo claro/oscuro">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+
+    <div class="container">
+
+        <!-- PORTADA -->
+        <div class="glass-panel text-center" style="border-top: 6px solid var(--una-red);">
+            <div class="flex justify-center mb-4">
+                <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png" alt="Logo UNA" class="h-20 object-contain"
+                     onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png';">
+            </div>
+            <h2 class="text-3xl font-extrabold">Laboratorio Autoguiado</h2>
+            <p class="text-xl" style="color: var(--una-red); font-weight: 800;">Mini-Discord: Persistencia, DAO y DTO</p>
+            <p class="text-sm font-semibold mt-2" style="color: var(--text-muted);">Programación III — Universidad Nacional de Costa Rica · Sección Regional Central Occidente (SRCO)</p>
+            <div class="flex flex-wrap justify-center gap-3 mt-4">
+                <span class="badge badge-red">Java 21</span>
+                <span class="badge badge-blue">Serializable</span>
+                <span class="badge badge-green">DAO</span>
+                <span class="badge badge-purple">DTO + XML</span>
+                <span class="badge badge-gold">Singleton (opcional)</span>
+            </div>
+            <div class="mt-5 text-sm font-bold" style="color: var(--text-muted);">
+                <i class="fa-regular fa-clock mr-1"></i> Duración estimada: 1.5 – 2 horas &nbsp;·&nbsp;
+                <i class="fa-solid fa-user-graduate mr-1"></i> Práctica Académica — Semana 8
+            </div>
+        </div>
+
+        <!-- INTRODUCCIÓN -->
+        <div class="glass-panel" style="border-left: 5px solid var(--una-gold);">
+            <h2><i class="fa-solid fa-layer-group mr-2" style="color: var(--una-gold);"></i> Introducción al Laboratorio</h2>
+            <p>
+                En el laboratorio anterior armaron la Arquitectura MVC del Mini-Discord: la Vista captura el clic, el Controlador delega, el Service valida y el <code class="font-mono text-sm">ObservableList</code> repinta la pantalla sola gracias al patrón Observer. Todo eso funciona perfectamente... hasta que cierran la aplicación. En ese momento, <strong>todos los mensajes desaparecen</strong>, porque viven únicamente en la memoria RAM.
+            </p>
+            <p>
+                Hoy van a cerrar ese círculo. <code class="font-mono text-sm">Message</code> y <code class="font-mono text-sm">User</code> ya implementan <code class="font-mono text-sm">Serializable</code> desde la semana pasada, pero esa promesa nunca se cumplió: nadie ha escrito esos objetos a disco todavía. Van a construir <strong>dos</strong> formas de persistencia — una binaria (rápida, para uso interno del programa) y una en XML (legible, usando un DTO) — y, de paso, van a entender la diferencia real entre un <strong>DAO</strong> y un <strong>DTO</strong>, dos siglas que se confunden todo el tiempo.
+            </p>
+            <div class="highlight-box">
+                <strong><i class="fa-solid fa-chalkboard-user mr-1"></i> Enfoque Pedagógico:</strong> Este manual no solo le muestra QUÉ escribir. En cada paso va a encontrar una caja morada titulada <strong>"¿Cómo se llega a esta decisión?"</strong> — ahí se explica el razonamiento que lleva de un problema a la solución, para que la próxima vez que enfrenten un problema parecido (aunque no sea exactamente este), sepan cómo pensarlo desde cero. Además, dentro del código van a ver comentarios en <span style="color:#98c379; font-weight:800;">verde y en negrita</span> que dicen <strong>"Nuevo de la clase 8: ..."</strong> — esos marcan exactamente qué línea es nueva de hoy. Los comentarios grises normales son código que ya existía desde el laboratorio anterior y no cambió.
+            </div>
+        </div>
+
+        <!-- PASO 1: DÓNDE QUEDAMOS -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-blue);">
+            <h2><i class="fa-solid fa-map-pin mr-2" style="color: var(--accent-blue);"></i> Paso 1: ¿Dónde quedamos la clase pasada?</h2>
+            <p>Antes de escribir una sola línea nueva, ubíquense en el proyecto. Esta es la estructura con la que deberían estar arrancando hoy — noten que <code class="font-mono text-sm">MessageDAO.java</code> existe, pero está completamente vacío:</p>
+
+            <div class="darcula-editor">
+                <div class="darcula-header">
+                    <i class="fa-solid fa-folder-tree text-xs" style="color: #a9b7c6;"></i>
+                    <span class="text-xs font-mono" style="color: #a9b7c6;">Project Explorer (IntelliJ IDEA) — estado inicial de hoy</span>
+                </div>
+                <pre class="darcula-code text-xs"><code><span class="d-comment">▼ src/main/java/cr.ac.una.est.minidiscord</span>
+  <span class="d-comment">▼ business</span>
+    <span class="d-comment">▼ model</span>
+        <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> Message.java <span class="d-comment">(implements Serializable)</span>
+        <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> User.java <span class="d-comment">(implements Serializable)</span>
+    <span class="d-comment">▼ service</span>
+        <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> ChatService.java
+  <span class="d-comment">▼ data</span>
+    <span class="d-comment">▼ dao</span>
+        <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> MessageDAO.java <span class="d-comment" style="color:#e06c75;">← vacío, hoy lo completamos</span>
+  <span class="d-comment">▼ presentation</span>
+    <span class="d-comment">▼ controller</span>
+        <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> ChatViewController.java
+  <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> App.java</code></pre>
+            </div>
+
+            <p>Hoy van a agregar <strong>tres piezas nuevas</strong> a este árbol: un DTO plano, un exportador de XML, y (opcionalmente) un administrador Singleton. Todas viven dentro de la capa que ya conocen — <code class="font-mono text-sm">business</code> y <code class="font-mono text-sm">data</code> — nunca en <code class="font-mono text-sm">presentation</code>.</p>
+
+            <div class="decision-box">
+                <p class="decision-label"><i class="fa-solid fa-lightbulb"></i> ¿Cómo se llega a esta decisión?</p>
+                <p>Antes de escribir código, siempre pregúntense: "¿qué capa es responsable de este problema?". Persistir datos es un problema de la capa de Datos. Por eso todo lo que construyan hoy relacionado con guardar/leer archivos va a vivir en <code class="font-mono text-sm">data.dao</code>, nunca en el Controller ni en el Service. Esta pregunta — "¿de quién es este problema?" — es la herramienta mental más útil de todo el curso.</p>
+            </div>
+        </div>
+
+        <!-- PASO 2: DAO BINARIO -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-green);">
+            <h2><i class="fa-solid fa-floppy-disk mr-2" style="color: var(--accent-green);"></i> Paso 2: Construir el MessageDAO (persistencia binaria)</h2>
+
+            <div class="step-sub">
+                <h5>2.1 Diseñar la firma de los métodos ANTES de programar</h5>
+                <p>Es tentador abrir <code class="font-mono text-sm">MessageDAO.java</code> y empezar a escribir código de una vez. Resistan esa tentación un minuto y respondan primero: <em>¿qué necesita el Controller pedirle al DAO?</em> Necesita poder guardar el historial completo, y poder recuperarlo completo al iniciar. Nada más, nada menos.</p>
+                <div class="decision-box">
+                    <p class="decision-label"><i class="fa-solid fa-lightbulb"></i> ¿Cómo se llega a esta decisión?</p>
+                    <p>Podrían haber diseñado <code class="font-mono text-sm">guardarUno(Message m)</code> y <code class="font-mono text-sm">cargarUno(int id)</code> en su lugar. ¿Por qué no? Porque en esta etapa del Mini-Discord no hay una base de datos con identificadores únicos — solo hay una lista completa de mensajes en memoria. Diseñar la interfaz del DAO significa preguntarse "¿cómo está organizada la información en el lado que la usa (el Controller)?" y calcar esa forma. Si mañana agregan una base de datos, ahí sí tendría sentido guardar/cargar de uno en uno — por ahora, sería complejidad que no necesitan.</p>
+                </div>
+                <p>Con eso decidido, la firma queda así:</p>
+                <ul>
+                    <li><code class="font-mono text-sm">void guardarTodos(List&lt;Message&gt; mensajes)</code> — recibe el historial completo y lo persiste.</li>
+                    <li><code class="font-mono text-sm">List&lt;Message&gt; cargarTodos()</code> — devuelve el historial completo (o una lista vacía si todavía no hay nada guardado).</li>
+                </ul>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.2 Implementar guardarTodos()</h5>
+                <p>Abran <code class="font-mono text-sm">MessageDAO.java</code> y escriban:</p>
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> MessageDAO.java</div>
+                    </div>
+                    <pre class="darcula-code text-xs"><code><span class="d-keyword">package</span> cr.ac.una.est.minidiscord.data.dao;
+
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.model.Message;
+<span class="d-keyword">import</span> java.io.*;
+<span class="d-keyword">import</span> java.util.ArrayList;
+<span class="d-keyword">import</span> java.util.List;
+
+<span class="d-new">// Nuevo de la clase 8: este archivo estaba vacío — hoy se implementa toda la persistencia binaria.</span>
+<span class="d-comment">// Esta clase es la ÚNICA responsable de saber CÓMO se guardan y se leen los mensajes.</span>
+<span class="d-comment">// Ni el Service ni el Controller deben saber que existe un archivo llamado "mensajes.dat".</span>
+<span class="d-keyword">public class</span> <span class="d-type">MessageDAO</span> {
+
+    <span class="d-keyword">private static final</span> <span class="d-type">String</span> <span class="d-field">ARCHIVO</span> = <span class="d-string">"mensajes.dat"</span>;
+
+    <span class="d-keyword">public void</span> <span class="d-method">guardarTodos</span>(<span class="d-type">List</span>&lt;<span class="d-type">Message</span>&gt; <span class="d-field">mensajes</span>) {
+        <span class="d-keyword">try</span> (<span class="d-type">ObjectOutputStream</span> <span class="d-field">salida</span> = <span class="d-keyword">new</span> <span class="d-type">ObjectOutputStream</span>(<span class="d-keyword">new</span> <span class="d-type">FileOutputStream</span>(<span class="d-field">ARCHIVO</span>))) {
+            <span class="d-field">salida</span>.writeObject(<span class="d-keyword">new</span> <span class="d-type">ArrayList</span>&lt;&gt;(<span class="d-field">mensajes</span>));
+        } <span class="d-keyword">catch</span> (<span class="d-type">IOException</span> <span class="d-field">e</span>) {
+            <span class="d-type">System</span>.out.println(<span class="d-string">"No se pudo guardar el historial: "</span> + <span class="d-field">e</span>.getMessage());
+        }
+    }
+}</code></pre>
+                </div>
+                <details>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p><code><span class="d-keyword">try</span> (<span class="d-type">ObjectOutputStream</span> ...)</code>: Es un <em>try-with-resources</em>. Java cierra automáticamente el archivo al salir del bloque, incluso si ocurre un error a la mitad de la escritura. Sin esto, tendrían que acordarse de llamar <code class="font-mono text-[10px]">salida.close()</code> manualmente en un <code class="font-mono text-[10px]">finally</code> — y es muy fácil olvidarlo, dejando el archivo "trabado".</p>
+                        <p><code><span class="d-field">salida</span>.writeObject(...)</code>: Esta única línea serializa TODA la lista de una vez — cada <code class="font-mono text-[10px]">Message</code>, con su <code class="font-mono text-[10px]">User</code> adentro, se convierte en bytes automáticamente. Java recorre el grafo de objetos completo porque tanto <code class="font-mono text-[10px]">Message</code> como <code class="font-mono text-[10px]">User</code> implementan <code class="font-mono text-[10px]">Serializable</code>.</p>
+                        <p><code><span class="d-keyword">new</span> <span class="d-type">ArrayList</span>&lt;&gt;(<span class="d-field">mensajes</span>)</code>: Se envuelve la lista recibida en un <code class="font-mono text-[10px]">ArrayList</code> nuevo (en vez de serializar directamente un <code class="font-mono text-[10px]">ObservableList</code>) porque <code class="font-mono text-[10px]">ObservableList</code> no es <code class="font-mono text-[10px]">Serializable</code> — es una clase especial de JavaFX pensada para la interfaz gráfica, no para guardarse en disco.</p>
+                    </div>
+                </details>
+                <div class="decision-box">
+                    <p class="decision-label"><i class="fa-solid fa-lightbulb"></i> ¿Cómo se llega a esta decisión?</p>
+                    <p>El detalle del <code class="font-mono text-sm">ArrayList</code> nuevo no es obvio la primera vez — normalmente se descubre por prueba y error: si intentan serializar el <code class="font-mono text-sm">ObservableList</code> directamente, van a obtener un <code class="font-mono text-sm">NotSerializableException</code> en tiempo de ejecución. Ese mensaje de error es una pista, no un fracaso: les está diciendo exactamente qué clase no puede convertirse a bytes. Aprender a leer el nombre de la excepción y buscar qué clase la origina es una destreza que van a usar todo el semestre.</p>
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.3 Implementar cargarTodos() — pensando primero en el caso frontera</h5>
+                <p>Antes de escribir el "camino feliz" (el archivo ya existe y se lee bien), pregúntense: ¿qué pasa la PRIMERA vez que alguien ejecuta el programa? El archivo <code class="font-mono text-sm">mensajes.dat</code> todavía no existe. Si intentan abrirlo igual, el programa truena con un <code class="font-mono text-sm">FileNotFoundException</code> apenas lo abran — y eso pasaría siempre en la primera ejecución de cada compañero que pruebe el proyecto.</p>
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> MessageDAO.java (continuación)</div>
+                    </div>
+                    <pre class="darcula-code text-xs"><code>    <span class="d-new">// Nuevo de la clase 8: continúa el mismo MessageDAO — método para leer el historial guardado</span>
+    <span class="d-annotation">@SuppressWarnings</span>(<span class="d-string">"unchecked"</span>)
+    <span class="d-keyword">public</span> <span class="d-type">List</span>&lt;<span class="d-type">Message</span>&gt; <span class="d-method">cargarTodos</span>() {
+        <span class="d-type">File</span> <span class="d-field">archivo</span> = <span class="d-keyword">new</span> <span class="d-type">File</span>(<span class="d-field">ARCHIVO</span>);
+        <span class="d-keyword">if</span> (!<span class="d-field">archivo</span>.exists()) {
+            <span class="d-keyword">return new</span> <span class="d-type">ArrayList</span>&lt;&gt;(); <span class="d-comment">// primera ejecución: no hay nada guardado todavía</span>
+        }
+        <span class="d-keyword">try</span> (<span class="d-type">ObjectInputStream</span> <span class="d-field">entrada</span> = <span class="d-keyword">new</span> <span class="d-type">ObjectInputStream</span>(<span class="d-keyword">new</span> <span class="d-type">FileInputStream</span>(<span class="d-field">archivo</span>))) {
+            <span class="d-keyword">return</span> (<span class="d-type">List</span>&lt;<span class="d-type">Message</span>&gt;) <span class="d-field">entrada</span>.readObject();
+        } <span class="d-keyword">catch</span> (<span class="d-type">IOException</span> | <span class="d-type">ClassNotFoundException</span> <span class="d-field">e</span>) {
+            <span class="d-type">System</span>.out.println(<span class="d-string">"No se pudo leer el historial: "</span> + <span class="d-field">e</span>.getMessage());
+            <span class="d-keyword">return new</span> <span class="d-type">ArrayList</span>&lt;&gt;();
+        }
+    }
+}</code></pre>
+                </div>
+                <details>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p><code><span class="d-annotation">@SuppressWarnings</span>(<span class="d-string">"unchecked"</span>)</code>: Java no puede verificar en tiempo de compilación que lo que devuelve <code class="font-mono text-[10px]">readObject()</code> sea realmente un <code class="font-mono text-[10px]">List&lt;Message&gt;</code> (esa información de tipo genérico se pierde al serializar). Esta anotación silencia la advertencia del compilador porque nosotros sabemos con certeza qué guardamos ahí — fuimos nosotros quienes lo escribimos con <code class="font-mono text-[10px]">guardarTodos</code>.</p>
+                        <p><code><span class="d-keyword">if</span> (!<span class="d-field">archivo</span>.exists())</code>: Este es el caso frontera resuelto ANTES de tocar el archivo. Nunca lanza una excepción por algo tan predecible como "todavía no existe" — devuelve una lista vacía, que es un resultado perfectamente válido y esperado.</p>
+                        <p><code><span class="d-keyword">catch</span> (<span class="d-type">IOException</span> | <span class="d-type">ClassNotFoundException</span> <span class="d-field">e</span>)</code>: <code class="font-mono text-[10px]">ClassNotFoundException</code> puede ocurrir si el archivo fue guardado con una versión anterior de la clase <code class="font-mono text-[10px]">Message</code> que ya no coincide con la actual — es el tipo de error que van a ver en el mundo real cuando una aplicación evoluciona pero los datos guardados no.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.4 Conectar el DAO con el Controller</h5>
+                <p>Abran <code class="font-mono text-sm">ChatViewController.java</code> y agreguen una instancia del DAO y una lista "espejo" con los objetos <code class="font-mono text-sm">Message</code> reales (el <code class="font-mono text-sm">ObservableList</code> actual solo guarda <code class="font-mono text-sm">String</code>, y el DAO necesita los objetos completos para poder volver a serializarlos):</p>
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> ChatViewController.java</div>
+                    </div>
+                    <pre class="darcula-code text-xs"><code><span class="d-new">// Nuevo de la clase 8: instancia del DAO para poder guardar y cargar el historial</span>
+<span class="d-keyword">private final</span> <span class="d-type">MessageDAO</span> <span class="d-field">messageDAO</span> = <span class="d-keyword">new</span> <span class="d-type">MessageDAO</span>();
+<span class="d-new">// Nuevo de la clase 8: lista "espejo" con los objetos Message reales — el DAO necesita</span>
+<span class="d-new">// los objetos completos, el ObservableList de abajo solo guarda el texto para pintar la pantalla</span>
+<span class="d-keyword">private final</span> <span class="d-type">List</span>&lt;<span class="d-type">Message</span>&gt; <span class="d-field">historial</span> = <span class="d-keyword">new</span> <span class="d-type">ArrayList</span>&lt;&gt;();
+
+<span class="d-annotation">@FXML</span>
+<span class="d-keyword">public void</span> <span class="d-method">initialize</span>() {
+    <span class="d-field">messageListView</span>.setItems(<span class="d-field">messages</span>); <span class="d-comment">// esta línea ya existía la clase pasada</span>
+
+    <span class="d-new">// Nuevo de la clase 8: al abrir la ventana, se pide el historial guardado y se muestra de una vez</span>
+    <span class="d-keyword">for</span> (<span class="d-type">Message</span> <span class="d-field">m</span> : <span class="d-field">messageDAO</span>.cargarTodos()) {
+        <span class="d-field">historial</span>.add(<span class="d-field">m</span>);
+        <span class="d-field">messages</span>.add(<span class="d-field">m</span>.toString());
+    }
+}
+
+<span class="d-annotation">@FXML</span>
+<span class="d-keyword">private void</span> <span class="d-method">handleSendMessage</span>() {
+    <span class="d-keyword">try</span> {
+        <span class="d-comment">// esta línea ya existía la clase pasada, no cambió</span>
+        <span class="d-type">Message</span> <span class="d-field">nuevoMsg</span> = <span class="d-field">chatService</span>.processMessage(<span class="d-field">currentUser</span>, <span class="d-field">messageInputField</span>.getText());
+        <span class="d-new">// Nuevo de la clase 8: guardamos también el objeto de dominio (no solo el texto)</span>
+        <span class="d-field">historial</span>.add(<span class="d-field">nuevoMsg</span>);
+        <span class="d-comment">// estas dos líneas ya existían la clase pasada, no cambiaron</span>
+        <span class="d-field">messages</span>.add(<span class="d-field">nuevoMsg</span>.toString());
+        <span class="d-field">messageInputField</span>.clear();
+
+        <span class="d-new">// Nuevo de la clase 8: se persiste el historial completo cada vez que se agrega un mensaje válido</span>
+        <span class="d-field">messageDAO</span>.guardarTodos(<span class="d-field">historial</span>);
+    } <span class="d-keyword">catch</span> (<span class="d-type">IllegalArgumentException</span> <span class="d-field">e</span>) {
+        <span class="d-type">System</span>.out.println(<span class="d-string">"Aviso de Validación: "</span> + <span class="d-field">e</span>.getMessage()); <span class="d-comment">// ya existía</span>
+    }
+}</code></pre>
+                </div>
+                <details>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p><code><span class="d-annotation">@FXML</span> <span class="d-keyword">public void</span> <span class="d-method">initialize</span>()</code>: Este método lo llama automáticamente el <code class="font-mono text-[10px]">FXMLLoader</code> DESPUÉS de inyectar todos los campos <code class="font-mono text-[10px]">@FXML</code> (como <code class="font-mono text-[10px]">messageListView</code>). Por eso el DAO se consulta aquí y no en el constructor: en el constructor, <code class="font-mono text-[10px]">messageListView</code> todavía sería <code class="font-mono text-[10px]">null</code>, porque JavaFX aún no ha terminado de leer el FXML.</p>
+                        <p><code>historial</code> vs. <code>messages</code>: son dos colecciones con propósitos distintos. <code class="font-mono text-[10px]">messages</code> (ObservableList&lt;String&gt;) es solo para PINTAR la pantalla. <code class="font-mono text-[10px]">historial</code> (List&lt;Message&gt;) es la fuente de verdad que se persiste. Nunca se persiste directamente lo que se muestra en pantalla — se persisten los datos de dominio.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="highlight-box">
+                <strong><i class="fa-solid fa-play mr-1"></i> ¡A probar!</strong> Ejecuten <code class="font-mono text-sm">App</code>, envíen 2 o 3 mensajes, cierren la ventana y vuelvan a ejecutar. Los mensajes anteriores deben seguir apareciendo. Si no aparecen, revisen primero si se creó el archivo <code class="font-mono text-sm">mensajes.dat</code> en la raíz del proyecto.
+            </div>
+        </div>
+
+        <!-- PASO 3: DAO vs DTO -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-purple);">
+            <h2><i class="fa-solid fa-shuffle mr-2" style="color: var(--accent-purple);"></i> Paso 3: DAO vs. DTO — antes de tocar código, entender la diferencia</h2>
+            <p>
+                Van a construir una segunda forma de persistencia en XML. Antes de escribir nada, es importante distinguir dos siglas que se confunden todo el tiempo: <strong>DAO</strong> (Data Access Object, lo que acaban de construir) y <strong>DTO</strong> (Data Transfer Object, lo que van a construir ahora).
+            </p>
+            <div class="glass-panel" style="box-shadow:none; border: 2px solid var(--border-panel); margin-bottom: 1rem;">
+                <table class="tabla-compare">
+                    <thead><tr><th></th><th>DAO</th><th>DTO</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Qué es</strong></td><td>Una clase CON lógica: sabe leer y escribir datos.</td><td>Una clase plana SIN lógica: solo atributos y getters/setters.</td></tr>
+                        <tr><td><strong>Responde a</strong></td><td>"¿CÓMO se guarda o se lee la información?"</td><td>"¿QUÉ datos viajan, sin exponer el dominio completo?"</td></tr>
+                        <tr><td><strong>En Mini-Discord</strong></td><td><code class="font-mono text-xs">MessageDAO</code>, <code class="font-mono text-xs">MessageXmlExporter</code></td><td><code class="font-mono text-xs">MessageDTO</code></td></tr>
+                        <tr><td><strong>Analogía</strong></td><td>El camión repartidor: sabe manejar y conoce la ruta.</td><td>La caja de cartón dentro del camión: no maneja nada, solo contiene el producto.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.1 El problema: XMLEncoder no entiende a Message</h5>
+                <p>Podrían pensar: "ya tengo <code class="font-mono text-sm">Message</code> serializable, ¿por qué no lo exporto directo a XML?". Inténtenlo y van a chocar con un problema: <code class="font-mono text-sm">XMLEncoder</code> (la herramienta nativa de Java para exportar a XML) exige que la clase tenga un <strong>constructor vacío</strong> y <strong>setters</strong> para cada atributo — porque reconstruye el objeto llamando al constructor vacío y después "rellenando" cada campo con su setter.</p>
+                <p><code class="font-mono text-sm">Message</code> no tiene nada de eso a propósito: su único constructor exige <code class="font-mono text-sm">author</code> y <code class="font-mono text-sm">content</code>, y sus campos son <code class="font-mono text-sm">final</code> (inmutables, sin setters). Esa inmutabilidad la diseñaron con intención la semana pasada, para evitar que un mensaje cambie después de creado.</p>
+                <div class="decision-box">
+                    <p class="decision-label"><i class="fa-solid fa-lightbulb"></i> ¿Cómo se llega a esta decisión?</p>
+                    <p>La primera reacción de casi todo el mundo es "voy a agregarle un constructor vacío y setters a <code class="font-mono text-sm">Message</code> para que XMLEncoder lo acepte". <strong>Eso sería un error de diseño</strong>: estarían debilitando el Modelo de dominio (quitándole la inmutabilidad que le da seguridad) solo para satisfacer una herramienta externa de un formato de archivo específico. La regla general es: <em>el dominio nunca se deforma para acomodar una tecnología de infraestructura</em>. La solución correcta es crear una clase paralela, que solo existe para el viaje: el DTO.</p>
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.2 Crear MessageDTO.java</h5>
+                <p>En el paquete <code class="font-mono text-sm">business.dto</code> (nuevo — créenlo), agreguen:</p>
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> MessageDTO.java</div>
+                    </div>
+                    <pre class="darcula-code text-xs"><code><span class="d-keyword">package</span> cr.ac.una.est.minidiscord.business.dto;
+
+<span class="d-new">// Nuevo de la clase 8: archivo (y paquete business.dto) completos — no existían la clase pasada</span>
+<span class="d-keyword">public class</span> <span class="d-type">MessageDTO</span> {
+
+    <span class="d-keyword">private</span> <span class="d-type">String</span> <span class="d-field">autor</span>;
+    <span class="d-keyword">private</span> <span class="d-type">String</span> <span class="d-field">contenido</span>;
+
+    <span class="d-comment">// XMLEncoder necesita este constructor vacío para poder reconstruir el objeto</span>
+    <span class="d-keyword">public</span> <span class="d-method">MessageDTO</span>() { }
+
+    <span class="d-keyword">public</span> <span class="d-method">MessageDTO</span>(<span class="d-type">String</span> <span class="d-field">autor</span>, <span class="d-type">String</span> <span class="d-field">contenido</span>) {
+        <span class="d-keyword">this</span>.<span class="d-field">autor</span> = <span class="d-field">autor</span>;
+        <span class="d-keyword">this</span>.<span class="d-field">contenido</span> = <span class="d-field">contenido</span>;
+    }
+
+    <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">getAutor</span>() { <span class="d-keyword">return</span> <span class="d-field">autor</span>; }
+    <span class="d-keyword">public void</span> <span class="d-method">setAutor</span>(<span class="d-type">String</span> <span class="d-field">autor</span>) { <span class="d-keyword">this</span>.<span class="d-field">autor</span> = <span class="d-field">autor</span>; }
+
+    <span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">getContenido</span>() { <span class="d-keyword">return</span> <span class="d-field">contenido</span>; }
+    <span class="d-keyword">public void</span> <span class="d-method">setContenido</span>(<span class="d-type">String</span> <span class="d-field">contenido</span>) { <span class="d-keyword">this</span>.<span class="d-field">contenido</span> = <span class="d-field">contenido</span>; }
+}</code></pre>
+                </div>
+                <details>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p>Noten lo que <strong>NO</strong> tiene esta clase: ningún <code class="font-mono text-[10px]">if</code>, ninguna validación, ninguna referencia a <code class="font-mono text-[10px]">User</code> ni a <code class="font-mono text-[10px]">ChatService</code>. Un DTO es deliberadamente "tonto" — es una caja de transporte, no un objeto de negocio. Si alguna vez sienten la tentación de agregarle lógica a un DTO, esa lógica probablemente pertenece a otra clase.</p>
+                        <p>¿Por qué <code class="font-mono text-[10px]">autor</code> es un <code class="font-mono text-[10px]">String</code> y no un <code class="font-mono text-[10px]">User</code> completo? Porque el DTO solo lleva lo mínimo necesario para reconstruir la información en el otro extremo — exponer todo el objeto <code class="font-mono text-[10px]">User</code> (que en el futuro podría tener contraseña, correo, etc.) sería filtrar más del dominio de lo que el archivo XML necesita saber.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.3 Crear MessageXmlExporter.java (el DAO de la versión XML)</h5>
+                <p>En <code class="font-mono text-sm">data.dao</code>, junto a <code class="font-mono text-sm">MessageDAO</code>, agreguen:</p>
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> MessageXmlExporter.java</div>
+                    </div>
+                    <pre class="darcula-code text-xs"><code><span class="d-keyword">package</span> cr.ac.una.est.minidiscord.data.dao;
+
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.dto.MessageDTO;
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.model.Message;
+<span class="d-keyword">import</span> java.beans.XMLEncoder;
+<span class="d-keyword">import</span> java.io.*;
+<span class="d-keyword">import</span> java.util.ArrayList;
+<span class="d-keyword">import</span> java.util.List;
+
+<span class="d-new">// Nuevo de la clase 8: archivo completo — el "DAO" de la versión en XML, junto a MessageDAO</span>
+<span class="d-keyword">public class</span> <span class="d-type">MessageXmlExporter</span> {
+
+    <span class="d-keyword">private static final</span> <span class="d-type">String</span> <span class="d-field">ARCHIVO_XML</span> = <span class="d-string">"mensajes.xml"</span>;
+
+    <span class="d-keyword">public void</span> <span class="d-method">exportar</span>(<span class="d-type">List</span>&lt;<span class="d-type">Message</span>&gt; <span class="d-field">mensajes</span>) {
+        <span class="d-type">List</span>&lt;<span class="d-type">MessageDTO</span>&gt; <span class="d-field">dtos</span> = <span class="d-keyword">new</span> <span class="d-type">ArrayList</span>&lt;&gt;();
+        <span class="d-keyword">for</span> (<span class="d-type">Message</span> <span class="d-field">m</span> : <span class="d-field">mensajes</span>) {
+            <span class="d-comment">// El DAO CONVIERTE el dominio (Message) a un DTO antes de exportarlo</span>
+            <span class="d-field">dtos</span>.add(<span class="d-keyword">new</span> <span class="d-type">MessageDTO</span>(<span class="d-field">m</span>.getAuthor().getUsername(), <span class="d-field">m</span>.getContent()));
+        }
+
+        <span class="d-keyword">try</span> (<span class="d-type">XMLEncoder</span> <span class="d-field">encoder</span> = <span class="d-keyword">new</span> <span class="d-type">XMLEncoder</span>(<span class="d-keyword">new</span> <span class="d-type">BufferedOutputStream</span>(<span class="d-keyword">new</span> <span class="d-type">FileOutputStream</span>(<span class="d-field">ARCHIVO_XML</span>)))) {
+            <span class="d-field">encoder</span>.writeObject(<span class="d-field">dtos</span>); <span class="d-comment">// lo que realmente viaja al archivo es el DTO, no el Message</span>
+        } <span class="d-keyword">catch</span> (<span class="d-type">IOException</span> <span class="d-field">e</span>) {
+            <span class="d-type">System</span>.out.println(<span class="d-string">"No se pudo exportar a XML: "</span> + <span class="d-field">e</span>.getMessage());
+        }
+    }
+}</code></pre>
+                </div>
+                <details>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p><code><span class="d-field">m</span>.getAuthor().getUsername()</code>: para leer estos valores, <code class="font-mono text-[10px]">Message</code> necesita exponer <code class="font-mono text-[10px]">getAuthor()</code> y <code class="font-mono text-[10px]">getContent()</code>. Si su <code class="font-mono text-[10px]">Message</code> de la semana pasada no los tenía, agréguenlos ahora — son getters de solo lectura, no rompen la inmutabilidad (no hay setters).</p>
+                        <p>El ciclo completo: <code class="font-mono text-[10px]">Message</code> (dominio, inmutable) → se CONVIERTE a <code class="font-mono text-[10px]">MessageDTO</code> (plano, mutable) → SOLO el DTO se le entrega a <code class="font-mono text-[10px]">XMLEncoder</code>. El dominio nunca toca directamente la herramienta de serialización.</p>
+                    </div>
+                </details>
+                <div class="decision-box">
+                    <p class="decision-label"><i class="fa-solid fa-lightbulb"></i> ¿Cómo se llega a esta decisión?</p>
+                    <p>¿Por qué esta clase se llama "Exporter" y no "DAO"? Cualquier nombre sirve mientras el equipo lo entienda, pero fíjense en el patrón: esta clase, igual que <code class="font-mono text-sm">MessageDAO</code>, vive en <code class="font-mono text-sm">data.dao</code> porque cumple el mismo rol arquitectónico — sabe CÓMO persistir datos, solo que en un formato distinto. El nombre de la clase es una etiqueta; lo que define su capa es su responsabilidad.</p>
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.4 Habilitar el módulo java.desktop</h5>
+                <p><code class="font-mono text-sm">XMLEncoder</code> vive en el módulo <code class="font-mono text-sm">java.desktop</code>, que su proyecto todavía no declara. Abran <code class="font-mono text-sm">module-info.java</code> y agreguen una línea:</p>
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> module-info.java</div>
+                    </div>
+                    <pre class="darcula-code text-xs"><code><span class="d-keyword">module</span> cr.ac.una.est.minidiscord {
+    <span class="d-comment">// estas dos líneas ya existían la clase pasada</span>
+    <span class="d-keyword">requires</span> javafx.controls;
+    <span class="d-keyword">requires</span> javafx.fxml;
+    <span class="d-new">// Nuevo de la clase 8: necesario para poder usar XMLEncoder/XMLDecoder</span>
+    <span class="d-keyword">requires</span> java.desktop;
+
+    <span class="d-comment">// estas líneas ya existían la clase pasada, no cambiaron</span>
+    <span class="d-keyword">opens</span> cr.ac.una.est.minidiscord.presentation.controller <span class="d-keyword">to</span> javafx.fxml;
+    <span class="d-keyword">exports</span> cr.ac.una.est.minidiscord;
+    <span class="d-keyword">exports</span> cr.ac.una.est.minidiscord.presentation.controller;
+}</code></pre>
+                </div>
+                <div class="highlight-box">
+                    <strong><i class="fa-solid fa-triangle-exclamation mr-1"></i> El error más común de este paso:</strong> si olvidan esta línea, el proyecto no compila y el mensaje de error habla de un módulo, no de su lógica. Si ven un error mencionando "module" o "java.desktop" al compilar, revisen <code class="font-mono text-sm">module-info.java</code> antes que cualquier otra cosa.
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.5 Conectar y probar</h5>
+                <p>En <code class="font-mono text-sm">ChatViewController</code>, agreguen una instancia de <code class="font-mono text-sm">MessageXmlExporter</code> y llámenla justo después de guardar en binario:</p>
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> ChatViewController.java</div>
+                    </div>
+                    <pre class="darcula-code text-xs"><code><span class="d-new">// Nuevo de la clase 8: instancia del exportador XML</span>
+<span class="d-keyword">private final</span> <span class="d-type">MessageXmlExporter</span> <span class="d-field">xmlExporter</span> = <span class="d-keyword">new</span> <span class="d-type">MessageXmlExporter</span>();
+
+<span class="d-new">// Nuevo de la clase 8: se llama dentro de handleSendMessage(), justo después de messageDAO.guardarTodos(historial);</span>
+<span class="d-field">xmlExporter</span>.exportar(<span class="d-field">historial</span>);</code></pre>
+                </div>
+                <p>Ejecuten la app, envíen un mensaje, y abran el archivo <code class="font-mono text-sm">mensajes.xml</code> generado con un editor de texto (Bloc de notas o el propio IntelliJ). Deberían ver texto perfectamente legible — esa es la diferencia práctica frente a <code class="font-mono text-sm">mensajes.dat</code>, que al abrirlo se ve como texto ilegible.</p>
+                <div class="pregunta-box">
+                    <p><i class="fa-solid fa-circle-question mr-2 text-green-700"></i><strong>Compruébenlo ustedes mismos:</strong></p>
+                    <p class="text-sm">Abran ambos archivos con un editor de texto y comparen. ¿Cuál pesa más en bytes para el mismo historial? ¿Por qué XML necesita más espacio para guardar la misma información?</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 4: SINGLETON (OPCIONAL) -->
+        <div class="glass-panel" style="border-left: 5px solid var(--una-gold);">
+            <h2><i class="fa-solid fa-star mr-2" style="color: var(--una-gold);"></i> Paso 4 (Opcional): PersistenceManager — Patrón Singleton</h2>
+            <p>
+                Este paso es un reto opcional. Ahora mismo, cada clase que necesita persistencia crea su propia instancia de <code class="font-mono text-sm">MessageDAO</code> con <code class="font-mono text-sm">new MessageDAO()</code>. Funciona bien porque el proyecto es pequeño, pero imaginen que en el futuro agregan <code class="font-mono text-sm">UserDAO</code>, <code class="font-mono text-sm">ConfigDAO</code>, etc., y varias clases distintas intentan escribir al mismo tiempo en la misma carpeta de datos — ahí es donde conviene centralizar el acceso.
+            </p>
+            <div class="decision-box">
+                <p class="decision-label"><i class="fa-solid fa-lightbulb"></i> ¿Cómo se sabe que este es el momento de usar un Singleton?</p>
+                <p>La pregunta que activa este patrón es: "¿le conviene a mi aplicación que exista MÁS de una instancia de esta clase al mismo tiempo?" Si la respuesta es "no, y además tener dos causaría problemas (como pisarse al escribir el mismo archivo)", ahí es donde el patrón Singleton (categoría creacional: resuelve CÓMO se instancian los objetos) resuelve exactamente ese problema.</p>
+            </div>
+            <div class="darcula-editor">
+                <div class="darcula-header">
+                    <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                    <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                    <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                    <div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> PersistenceManager.java</div>
+                </div>
+                <pre class="darcula-code text-xs"><code><span class="d-keyword">package</span> cr.ac.una.est.minidiscord.data.dao;
+
+<span class="d-new">// Nuevo de la clase 8 (opcional): archivo completo — Singleton que centraliza el acceso al MessageDAO</span>
+<span class="d-keyword">public class</span> <span class="d-type">PersistenceManager</span> {
+
+    <span class="d-keyword">private static</span> <span class="d-type">PersistenceManager</span> <span class="d-field">instancia</span>;
+    <span class="d-keyword">private final</span> <span class="d-type">MessageDAO</span> <span class="d-field">dao</span>;
+
+    <span class="d-comment">// Constructor PRIVADO: nadie fuera de esta clase puede hacer "new PersistenceManager()"</span>
+    <span class="d-keyword">private</span> <span class="d-method">PersistenceManager</span>() {
+        <span class="d-keyword">this</span>.<span class="d-field">dao</span> = <span class="d-keyword">new</span> <span class="d-type">MessageDAO</span>();
+    }
+
+    <span class="d-keyword">public static synchronized</span> <span class="d-type">PersistenceManager</span> <span class="d-method">getInstance</span>() {
+        <span class="d-keyword">if</span> (<span class="d-field">instancia</span> == <span class="d-keyword">null</span>) {
+            <span class="d-field">instancia</span> = <span class="d-keyword">new</span> <span class="d-type">PersistenceManager</span>();
+        }
+        <span class="d-keyword">return</span> <span class="d-field">instancia</span>;
+    }
+
+    <span class="d-keyword">public</span> <span class="d-type">MessageDAO</span> <span class="d-method">getMessageDAO</span>() { <span class="d-keyword">return</span> <span class="d-field">dao</span>; }
+}</code></pre>
+            </div>
+            <details>
+                <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                <div class="code-explanation">
+                    <p><code><span class="d-keyword">private</span> <span class="d-method">PersistenceManager</span>()</code>: el constructor privado es lo que hace imposible que otra clase escriba <code class="font-mono text-[10px]">new PersistenceManager()</code> — es la regla que garantiza que solo pueda existir una instancia.</p>
+                    <p><code><span class="d-keyword">if</span> (<span class="d-field">instancia</span> == <span class="d-keyword">null</span>)</code>: se crea la única instancia la PRIMERA vez que alguien llama <code class="font-mono text-[10px]">getInstance()</code> (inicialización perezosa). Las siguientes llamadas devuelven siempre la misma instancia ya creada.</p>
+                    <p><code><span class="d-keyword">synchronized</span></code>: protege el método para que, si dos hilos llamaran <code class="font-mono text-[10px]">getInstance()</code> exactamente al mismo tiempo, no terminen creando dos instancias por accidente. No es el foco de hoy, pero es la razón técnica de por qué aparece esa palabra.</p>
+                </div>
+            </details>
+            <p>Para usarlo, reemplacen en el Controller <code class="font-mono text-sm">new MessageDAO()</code> por <code class="font-mono text-sm">PersistenceManager.getInstance().getMessageDAO()</code>.</p>
+        </div>
+
+        <!-- PASO 5: DIAGRAMA -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-blue);">
+            <h2><i class="fa-solid fa-diagram-project mr-2" style="color: var(--accent-blue);"></i> Paso 5: Diagrama de Comunicación Actualizado</h2>
+            <p>Así queda el flujo completo, incluyendo las dos formas de persistencia que construyeron hoy:</p>
+
+            <div class="diagram-container mt-6 mb-4">
+                <div class="flex flex-col md:flex-row justify-between items-stretch gap-6 bg-gray-50 dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+
+                    <div class="diagram-node flex-1 flex flex-col justify-center" style="border-top: 4px solid var(--accent-blue);">
+                        <h4 class="font-bold text-blue-600 dark:text-blue-400 mb-3"><i class="fa-solid fa-desktop mr-1"></i> 1. Presentación</h4>
+                        <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-2 rounded text-xs font-mono">
+                            <i class="fa-brands fa-java text-orange-500 mr-1"></i> ChatViewController.java
+                        </div>
+                    </div>
+
+                    <div class="diagram-arrow hidden md:flex">
+                        <span class="text-[10px] text-blue-500 font-bold mb-1">Delega</span>
+                        <i class="fa-solid fa-arrow-right-long text-blue-500"></i>
+                    </div>
+
+                    <div class="diagram-node flex-1 flex flex-col justify-center" style="border-top: 4px solid var(--accent-green);">
+                        <h4 class="font-bold text-green-600 dark:text-green-400 mb-3"><i class="fa-solid fa-gears mr-1"></i> 2. Negocio</h4>
+                        <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-2 rounded text-xs font-mono mb-2">
+                            <i class="fa-brands fa-java text-orange-500 mr-1"></i> ChatService.java
+                        </div>
+                        <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-2 rounded text-xs font-mono">
+                            <i class="fa-solid fa-box text-purple-500 mr-1"></i> MessageDTO.java <span class="text-[9px] text-gray-500">(solo transporta)</span>
+                        </div>
+                    </div>
+
+                    <div class="diagram-arrow hidden md:flex">
+                        <span class="text-[10px] text-purple-500 font-bold mb-1">Persiste</span>
+                        <i class="fa-solid fa-arrow-right-long text-purple-500"></i>
+                    </div>
+
+                    <div class="diagram-node flex-1 flex flex-col justify-between" style="border-top: 4px solid var(--accent-purple);">
+                        <h4 class="font-bold text-purple-600 dark:text-purple-400 mb-3"><i class="fa-solid fa-database mr-1"></i> 3. Datos</h4>
+                        <div class="space-y-2">
+                            <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-2 rounded text-xs font-mono">
+                                <i class="fa-brands fa-java text-orange-500 mr-1"></i> MessageDAO.java <span class="text-[9px] text-gray-500">→ mensajes.dat</span>
+                            </div>
+                            <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 p-2 rounded text-xs font-mono">
+                                <i class="fa-brands fa-java text-orange-500 mr-1"></i> MessageXmlExporter.java <span class="text-[9px] text-gray-500">→ mensajes.xml</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 p-4 rounded-xl text-center">
+                    <h5 class="font-bold text-yellow-700 dark:text-yellow-500 mb-2"><i class="fa-solid fa-bolt mr-1"></i> La prueba de que la arquitectura está bien separada</h5>
+                    <p class="text-sm text-gray-700 dark:text-gray-300">
+                        Si mañana <code class="font-mono text-xs">MessageDAO</code> guardara en un servidor remoto en vez de un archivo, <code class="font-mono text-xs">ChatService</code> y <code class="font-mono text-xs">ChatViewController</code> seguirían exactamente igual. Solo cambiaría la capa de Datos.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center text-xs font-bold mt-10 mb-4" style="color: var(--text-muted); border-top: 1px solid var(--border-panel); padding-top: 2rem;">
+            <p>Laboratorio Autoguiado &bull; Programación III &bull; Universidad Nacional &bull; Semana 8 &bull; 2026</p>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', next);
+            const icon = document.getElementById('theme-icon');
+            icon.className = next === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+        }
+    </script>
+</body>
+</html>

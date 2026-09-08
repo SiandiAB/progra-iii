@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 8 — Programación III</title>
+
+    <link rel="icon" type="image/svg+xml" href="../../../assets/img/favicon.svg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Dependencias externas -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+
+    <!-- Recursos compartidos del proyecto -->
+    <link rel="stylesheet" href="../../../assets/css/presentacion.css">
+    <script src="../../../assets/js/curso-info.js"></script>
+
+    <!-- Estilos específicos y Tooltips interactivos (mismo bloque que Semana 7) -->
+    <style>
+        .keyword { position: relative; cursor: help; }
+        .keyword::after {
+            content: attr(data-tooltip);
+            position: absolute; bottom: calc(100% + 8px); left: 50%;
+            transform: translateX(-50%);
+            background: #1e1e2e; color: #cdd6f4;
+            padding: 6px 14px; border-radius: 10px; font-size: 0.8rem;
+            font-family: 'Nunito', sans-serif; white-space: normal;
+            opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+            z-index: 999; max-width: 260px; text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.35); line-height: 1.4;
+        }
+        .keyword:hover::after, .keyword:focus::after { opacity: 1; }
+
+        /* IntelliJ Darcula Theme Spec */
+        .darcula-editor {
+            background-color: #2b2b2b !important; border: 1px solid #3c3f41 !important;
+            border-radius: 0.75rem; overflow: hidden; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+        .darcula-header {
+            background-color: #313335; border-bottom: 1px solid #3c3f41;
+            padding: 6px 12px; display: flex; align-items: center; gap: 8px;
+        }
+        .darcula-tab {
+            background: #2b2b2b; color: #a9b7c6; font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem; padding: 2px 10px; border-radius: 4px 4px 0 0;
+            border-top: 2px solid #4a88c7; display: flex; align-items: center; gap: 6px;
+        }
+        .darcula-code { color: #a9b7c6; font-family: 'JetBrains Mono', monospace; line-height: 1.5; }
+        .jk-keyword { color: #cc7832; font-weight: bold; }
+        .jk-annot { color: #bbb529; }
+        .jk-type { color: #a9b7c6; }
+        .jk-method { color: #ffc66d; }
+        .jk-string { color: #6a8759; }
+        .jk-number { color: #6897bb; }
+        .jk-comment { color: #808080; font-style: italic; }
+
+        .pregunta-box {
+            background: #fef9e7; border-left: 6px solid #f1c40f; padding: 12px 18px;
+            border-radius: 12px; margin-top: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .pregunta-box p { margin-bottom: 4px; }
+        .pregunta-box .respuesta {
+            font-size: 0.85rem; color: #2c3e50; background: #ecf0f1;
+            padding: 4px 12px; border-radius: 20px; display: none; margin-top: 4px;
+        }
+        .pregunta-box .respuesta.visible { display: inline-block; }
+        .toggle-respuesta-btn {
+            display: block; width: fit-content;
+            background: var(--accent-blue); color: white; border: none;
+            padding: 6px 14px; border-radius: 20px; cursor: pointer;
+            font-size: 0.8rem; font-family: 'Nunito', sans-serif; margin-top: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12); transition: transform 0.2s;
+        }
+        .toggle-respuesta-btn:hover { transform: scale(1.04); }
+
+        .glosario-btn {
+            position: fixed; bottom: 100px; right: 20px; z-index: 999;
+            background: var(--accent-blue); color: white; border: none; border-radius: 50%;
+            width: 54px; height: 54px; font-size: 1.6rem; box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+            transition: transform 0.2s; cursor: pointer;
+        }
+        .glosario-btn:hover { transform: scale(1.08); }
+        .glosario-modal .modal-content { max-width: 600px; }
+        .glosario-modal .modal-content ul { list-style: none; padding: 0; }
+        .glosario-modal .modal-content li { border-bottom: 1px solid #eee; padding: 10px 0; }
+        .glosario-modal .modal-content li strong { color: var(--accent-blue); }
+
+        .tabla-compare { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin: 8px 0; }
+        .tabla-compare th { background: #2b2b2b; color: #cdd6f4; padding: 8px 10px; text-align: left; }
+        .tabla-compare td { padding: 8px 10px; border-bottom: 1px solid #ddd; }
+        .tabla-compare tr:nth-child(even) { background: #f8f9fa; }
+    </style>
+</head>
+<body>
+
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar Modo">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+    <button class="float-btn" id="downloadBtn" onclick="downloadPresentation()" title="Descargar presentación para ver sin internet">
+        <i class="fa-solid fa-download"></i>
+    </button>
+    <button class="glosario-btn" onclick="openModal('modal-glosario')" title="Glosario de términos">
+        <i class="fa-solid fa-book-open"></i>
+    </button>
+
+    <div class="slides-container" id="slides-container">
+
+        <!-- ==================== SLIDE 0: Portada ==================== -->
+        <div class="slide active">
+            <div class="text-center w-full max-w-6xl z-10 relative">
+                <i class="fa-solid fa-layer-group bg-icon text-[350px] -top-20 -left-20" style="color: var(--una-red);"></i>
+                <i class="fa-brands fa-discord bg-icon text-[250px] -bottom-10 right-10" style="color: var(--accent-blue);"></i>
+
+                <div class="bg-white px-8 py-4 rounded-3xl inline-block mb-6 shadow-md border border-gray-100 relative z-10">
+                    <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png"
+                         alt="Logo UNA" class="h-28 object-contain"
+                         onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png'">
+                </div>
+
+                <h2 class="text-lg md:text-xl font-bold tracking-[0.2em] mb-4 uppercase" style="color: var(--text-muted);">Sección Regional Central Occidente, UNA</h2>
+
+                <h1 class="text-3xl md:text-3xl font-extrabold mb-4 tracking-tight">
+                    Programación <span style="color: var(--una-red);">III</span>
+                </h1>
+                <h2 class="text-5xl md:text-6xl font-extrabold mb-2" style="color: var(--text-main);">Semana 8</h2>
+                <h3 class="text-2xl md:text-4xl font-bold mb-6" style="color: var(--una-red);">
+                    Cierre de Arquitectura: Bibliotecas, Persistencia, Patrones y N-Capas
+                </h3>
+
+                <div class="glass-panel inline-block text-left py-3 px-6 border-l-4 mb-6" style="border-left-color: var(--una-gold);">
+                    <p class="text-sm"><i class="fa-solid fa-circle-exclamation mr-2" style="color: var(--una-gold);"></i>
+                    La próxima clase (15/09) es <strong>feriado</strong>. Hoy cerramos todo el tema antes del quiz, y en el laboratorio avanzamos el Mini-Discord (nuestro proyecto de práctica) con persistencia real. Recuerden que el <strong>Proyecto 1</strong> —aparte del Mini-Discord— se entrega el <strong>13/09</strong>.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-6 relative z-10">
+                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--una-red);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-red flex items-center justify-center text-2xl"><i class="fa-solid fa-chalkboard-user"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Docente — Grupo 41</p>
+                            <p class="text-lg font-bold">Ing. Siandi Araya Bello</p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);">M 13:00 - 16:20</p>
+                        </div>
+                    </div>
+                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--accent-blue);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-blue flex items-center justify-center text-2xl"><i class="fa-solid fa-chalkboard-user"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Docente — Grupo 40</p>
+                            <p class="text-lg font-bold">Ing. Kristel Duarte Pérez</p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);">K 08:00 - 11:20</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-sm animate-pulse mt-6" style="color: var(--text-muted);"><i class="fa-solid fa-keyboard mr-2"></i>Use las flechas del teclado para navegar</p>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 1: Agenda ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-map-location-dot bg-icon text-[350px] top-10 right-0 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">¿Qué cerramos hoy?</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Todo lo que falta de "Arquitectura de las aplicaciones", en una sola clase.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+                    <div class="glass-panel p-5 border-l-4 cursor-pointer hover:scale-105 transition-transform" style="border-left-color: var(--una-gold);" onclick="goToSlide(2)">
+                        <div class="tint-gold w-11 h-11 rounded-full flex items-center justify-center font-bold text-lg mb-2">1</div>
+                        <h3 class="font-bold text-lg">Bibliotecas y Dependencias</h3>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">Separación de componentes</p>
+                    </div>
+                    <div class="glass-panel p-5 border-l-4 cursor-pointer hover:scale-105 transition-transform" style="border-left-color: var(--accent-green);" onclick="goToSlide(3)">
+                        <div class="tint-green w-11 h-11 rounded-full flex items-center justify-center font-bold text-lg mb-2">2</div>
+                        <h3 class="font-bold text-lg">Persistencia y Serialización</h3>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">Binaria vs. XML</p>
+                    </div>
+                    <div class="glass-panel p-5 border-l-4 cursor-pointer hover:scale-105 transition-transform" style="border-left-color: var(--accent-blue);" onclick="goToSlide(4)">
+                        <div class="tint-blue w-11 h-11 rounded-full flex items-center justify-center font-bold text-lg mb-2">3</div>
+                        <h3 class="font-bold text-lg">DAO vs. DTO</h3>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">Dos siglas, dos trabajos</p>
+                    </div>
+                    <div class="glass-panel p-5 border-l-4 cursor-pointer hover:scale-105 transition-transform" style="border-left-color: var(--accent-purple);" onclick="goToSlide(5)">
+                        <div class="tint-purple w-11 h-11 rounded-full flex items-center justify-center font-bold text-lg mb-2">4</div>
+                        <h3 class="font-bold text-lg">Clasificación de Patrones</h3>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">Creacionales, estructurales, comportamiento</p>
+                    </div>
+                    <div class="glass-panel p-5 border-l-4 cursor-pointer hover:scale-105 transition-transform" style="border-left-color: var(--una-red);" onclick="goToSlide(6)">
+                        <div class="tint-red w-11 h-11 rounded-full flex items-center justify-center font-bold text-lg mb-2">5</div>
+                        <h3 class="font-bold text-lg">N-Capas y Transferencia de Datos <i class="fa-solid fa-triangle-exclamation text-red-500 ml-1 text-sm"></i></h3>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">DTO entre capas</p>
+                    </div>
+                    <div class="glass-panel p-5 border-l-4 cursor-pointer hover:scale-105 transition-transform" style="border-left-color: var(--accent-blue);" onclick="goToSlide(7)">
+                        <div class="tint-blue w-11 h-11 rounded-full flex items-center justify-center font-bold text-lg mb-2">6</div>
+                        <h3 class="font-bold text-lg">Laboratorio: MessageDAO</h3>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">Persistencia real en Mini-Discord</p>
+                    </div>
+                    <div class="glass-panel p-5 border-l-4 cursor-pointer hover:scale-105 transition-transform" style="border-left-color: var(--accent-peach);" onclick="goToSlide(8)">
+                        <div class="tint-peach w-11 h-11 rounded-full flex items-center justify-center font-bold text-lg mb-2">7</div>
+                        <h3 class="font-bold text-lg">Cierre y Repaso para el Parcial</h3>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">Mapa conceptual completo</p>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4 text-xs text-gray-400">
+                    <i class="fa-solid fa-circle-exclamation text-yellow-500 mr-1"></i> El tema marcado con <i class="fa-solid fa-triangle-exclamation text-red-500"></i> incluye la pregunta más importante de la clase.
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 2: Bibliotecas y Dependencias ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-boxes-stacked bg-icon text-[350px] -left-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Separación de Componentes</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Bibliotecas, referencias entre bibliotecas y la regla de dependencia.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-5">
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-blue);">
+                        <h3 class="text-xl font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-box text-blue-500"></i> ¿Qué es una biblioteca?</h3>
+                        <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
+                            Un conjunto de clases ya compiladas (normalmente un <code class="font-mono text-xs">.jar</code>) que otro proyecto puede <strong>referenciar</strong> (declarar como dependencia) y usar, sin ver ni recompilar su código fuente. JavaFX mismo es una biblioteca externa que ya referencian en su <code class="font-mono text-xs">pom.xml</code>.
+                        </p>
+                        <div class="mt-3 darcula-editor p-3 text-xs">
+                            <span class="jk-comment">&lt;!-- pom.xml: referencia a una biblioteca --&gt;</span><br>
+                            <span class="jk-xml-tag" style="color:#e8bf6a">&lt;dependency&gt;</span><br>
+                            &nbsp;&nbsp;<span class="jk-xml-tag" style="color:#e8bf6a">&lt;artifactId&gt;</span>javafx-controls<span class="jk-xml-tag" style="color:#e8bf6a">&lt;/artifactId&gt;</span><br>
+                            <span class="jk-xml-tag" style="color:#e8bf6a">&lt;/dependency&gt;</span>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--una-red);">
+                        <h3 class="text-xl font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-arrows-down-to-line text-red-500"></i> La regla de dependencia</h3>
+                        <p class="text-sm mb-3" style="color: var(--text-muted);">Las flechas de dependencia siempre apuntan "hacia adentro". Nunca al revés.</p>
+                        <div class="flex items-center justify-center gap-3 text-sm font-bold flex-wrap">
+                            <span class="tint-blue px-3 py-2 rounded-lg">Presentación</span>
+                            <i class="fa-solid fa-arrow-right text-gray-400"></i>
+                            <span class="tint-green px-3 py-2 rounded-lg">Negocio</span>
+                            <i class="fa-solid fa-arrow-right text-gray-400"></i>
+                            <span class="tint-gold px-3 py-2 rounded-lg">Datos</span>
+                        </div>
+                        <p class="text-xs mt-3 text-center text-red-500"><i class="fa-solid fa-ban mr-1"></i> Datos → Presentación jamás debe existir</p>
+                    </div>
+                </div>
+
+                <div class="pregunta-box">
+                    <p><i class="fa-solid fa-circle-question mr-2 text-yellow-600"></i><strong>Pregunta para la clase:</strong></p>
+                    <p class="text-sm">"¿Por qué sería un error que <code class="font-mono text-xs">ChatService</code> importara clases de <code class="font-mono text-xs">ChatViewController</code>?"</p>
+                    <button class="toggle-respuesta-btn" onclick="toggleRespuesta(this)"><i class="fa-solid fa-eye"></i> Ver respuesta</button>
+                    <span class="respuesta"><i class="fa-solid fa-lightbulb"></i> Respuesta: ChatService dejaría de poder usarse sin JavaFX y perdería toda su reutilización.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 3: Persistencia y Serialización ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-floppy-disk bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">Persistencia: Binaria vs. XML</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">User y Message ya son Serializable. Hoy cumplimos esa promesa en el MessageDAO.</p>
+                </div>
+
+                <div class="glass-panel p-4 mb-5 border-t-4" style="border-color: var(--accent-blue);">
+                    <table class="tabla-compare">
+                        <thead><tr><th>Formato</th><th>Cómo se hace en Java</th><th>Ventaja</th><th>Desventaja</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>Binaria</strong></td><td><code class="font-mono text-xs">ObjectOutputStream</code></td><td>Rápida, sin librerías extra</td><td>Ilegible, solo Java la entiende</td></tr>
+                            <tr><td><strong>XML</strong></td><td><code class="font-mono text-xs">XMLEncoder</code> / JAXB</td><td>Legible, portable entre sistemas</td><td>Más pesada y lenta</td></tr>
+                            <tr><td>Otros (contexto real)</td><td>JSON con Jackson/Gson</td><td>Liviano, el más usado hoy en la industria</td><td>Fuera del temario oficial del curso</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="darcula-editor mb-4">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> MessageDAO.java</div>
+                    </div>
+                    <pre class="darcula-code p-3 text-xs leading-relaxed overflow-x-auto m-0"><code><span class="jk-keyword">public class</span> <span class="jk-type">MessageDAO</span> {
+
+    <span class="jk-keyword">public void</span> <span class="jk-method">guardarTodos</span>(<span class="jk-type">List</span>&lt;<span class="jk-type">Message</span>&gt; mensajes) {
+        <span class="jk-comment">// Convierte el grafo de objetos en bytes y lo escribe en disco</span>
+        <span class="jk-keyword">try</span> (<span class="jk-type">ObjectOutputStream</span> salida = <span class="jk-keyword">new</span> <span class="jk-type">ObjectOutputStream</span>(...)) {
+            salida.<span class="jk-method">writeObject</span>(mensajes);
+        }
+    }
+
+    <span class="jk-keyword">public</span> <span class="jk-type">List</span>&lt;<span class="jk-type">Message</span>&gt; <span class="jk-method">cargarTodos</span>() {
+        <span class="jk-comment">// Si el archivo no existe (primera ejecución), devuelve lista vacía</span>
+        <span class="jk-keyword">if</span> (!archivo.<span class="jk-method">exists</span>()) <span class="jk-keyword">return new</span> <span class="jk-type">ArrayList</span>&lt;&gt;();
+        ...
+    }
+}</code></pre>
+                </div>
+
+                <div class="glass-panel py-3 px-6 text-center border-l-4" style="border-left-color: var(--una-gold);">
+                    <p class="text-sm"><i class="fa-solid fa-lightbulb mr-2" style="color: var(--una-gold);"></i>
+                    Ni el Service ni el Controller deben saber CÓMO se guardan los datos — eso es exactamente lo que encapsula el DAO.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 4: DAO vs. DTO ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-shuffle bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">DAO vs. DTO: dos siglas, dos trabajos distintos</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Se confunden por el nombre parecido, pero no compiten — se necesitan el uno al otro.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-5">
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-blue);">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="tint-blue w-11 h-11 rounded-xl flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-truck"></i></span>
+                            <h3 class="text-xl font-bold" style="color: var(--accent-blue);">DAO — Data Access Object</h3>
+                        </div>
+                        <p class="text-sm font-bold mb-2">"El que SABE HACER el trabajo"</p>
+                        <p class="text-xs leading-relaxed mb-2" style="color: var(--text-muted);">Una clase con <strong>lógica</strong>: métodos que saben leer y escribir datos (a un archivo, XML, base de datos). Vive fijo en la capa de Datos.</p>
+                        <div class="darcula-editor p-2 text-xs">
+                            <span class="jk-type">MessageDAO</span>.<span class="jk-method">guardarTodos</span>(lista);<br>
+                            <span class="jk-type">MessageDAO</span>.<span class="jk-method">cargarTodos</span>();
+                        </div>
+                    </div>
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-purple);">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="tint-purple w-11 h-11 rounded-xl flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-box"></i></span>
+                            <h3 class="text-xl font-bold" style="color: var(--accent-purple);">DTO — Data Transfer Object</h3>
+                        </div>
+                        <p class="text-sm font-bold mb-2">"El que SOLO VIAJA con los datos adentro"</p>
+                        <p class="text-xs leading-relaxed mb-2" style="color: var(--text-muted);">Una clase <strong>plana</strong>: solo atributos + getters/setters, sin lógica. Es la caja que se transporta entre capas, nunca decide nada.</p>
+                        <div class="darcula-editor p-2 text-xs">
+                            <span class="jk-keyword">new</span> <span class="jk-type">MessageDTO</span>(autor, contenido);
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 mb-4 border-l-4" style="border-left-color: var(--una-gold);">
+                    <p class="text-sm"><i class="fa-solid fa-lightbulb mr-2" style="color: var(--una-gold);"></i>
+                    <strong>Analogía:</strong> el DAO es el camión repartidor — sabe manejar, conoce la ruta, hace el trabajo de llevar y traer. El DTO es la caja de cartón que va adentro del camión — no maneja nada, solo contiene el producto de forma ordenada para el viaje.</p>
+                </div>
+
+                <div class="glass-panel p-4 mb-4">
+                    <table class="tabla-compare">
+                        <thead><tr><th></th><th>DAO</th><th>DTO</th></tr></thead>
+                        <tbody>
+                            <tr><td>Contiene</td><td>Lógica (métodos que leen/escriben)</td><td>Solo datos (atributos)</td></tr>
+                            <tr><td>Responde a</td><td>"¿CÓMO se guarda o se lee la información?"</td><td>"¿QUÉ datos viajan, sin exponer el dominio?"</td></tr>
+                            <tr><td>En Mini-Discord</td><td><code class="font-mono text-xs">MessageDAO</code>, <code class="font-mono text-xs">MessageXmlExporter</code></td><td><code class="font-mono text-xs">MessageDTO</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="darcula-editor mb-3">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> MessageXmlExporter.java — el DAO usando al DTO</div>
+                    </div>
+                    <pre class="darcula-code p-3 text-xs leading-relaxed overflow-x-auto m-0"><code><span class="jk-keyword">public void</span> <span class="jk-method">exportar</span>(<span class="jk-type">List</span>&lt;<span class="jk-type">Message</span>&gt; mensajes) {
+    <span class="jk-type">List</span>&lt;<span class="jk-type">MessageDTO</span>&gt; dtos = <span class="jk-keyword">new</span> <span class="jk-type">ArrayList</span>&lt;&gt;();
+    <span class="jk-keyword">for</span> (<span class="jk-type">Message</span> m : mensajes) {
+        <span class="jk-comment">// el DAO (este exportador) CONVIERTE el dominio a un DTO antes de exportarlo</span>
+        dtos.<span class="jk-method">add</span>(<span class="jk-keyword">new</span> <span class="jk-type">MessageDTO</span>(m.<span class="jk-method">getAuthor</span>().<span class="jk-method">getUsername</span>(), m.<span class="jk-method">getContent</span>()));
+    }
+    encoder.<span class="jk-method">writeObject</span>(dtos); <span class="jk-comment">// lo que realmente viaja al archivo es el DTO</span>
+}</code></pre>
+                </div>
+
+                <div class="pregunta-box">
+                    <p><i class="fa-solid fa-circle-question mr-2 text-yellow-600"></i><strong>Para que quede claro:</strong></p>
+                    <p class="text-sm">El DAO <strong>decide cuándo y cómo</strong> usar el DTO. El DTO nunca decide nada por sí mismo — ni siquiera sabe que existen las otras capas.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 5: Clasificación de Patrones ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-diagram-project bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Clasificación Formal de Patrones GoF</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">La misma pregunta te dice a qué categoría pertenece cualquier patrón nuevo.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
+                    <div class="glass-panel p-5 border-t-4 text-center" style="border-color: var(--accent-blue);">
+                        <i class="fa-solid fa-hammer text-3xl mb-2" style="color: var(--accent-blue);"></i>
+                        <h3 class="text-xl font-bold mb-1">Creacionales</h3>
+                        <p class="text-xs italic mb-2" style="color: var(--text-muted);">¿Cómo se construye el objeto?</p>
+                        <p class="text-xs" style="color: var(--text-muted);">Singleton, Factory Method, Builder</p>
+                    </div>
+                    <div class="glass-panel p-5 border-t-4 text-center" style="border-color: var(--accent-green);">
+                        <i class="fa-solid fa-cubes text-3xl mb-2" style="color: var(--accent-green);"></i>
+                        <h3 class="text-xl font-bold mb-1">Estructurales</h3>
+                        <p class="text-xs italic mb-2" style="color: var(--text-muted);">¿Cómo se ensamblan/relacionan?</p>
+                        <p class="text-xs" style="color: var(--text-muted);">Composite, Adapter, Facade</p>
+                    </div>
+                    <div class="glass-panel p-5 border-t-4 text-center" style="border-color: var(--una-gold);">
+                        <i class="fa-solid fa-comments text-3xl mb-2" style="color: var(--una-gold);"></i>
+                        <h3 class="text-xl font-bold mb-1">Comportamiento</h3>
+                        <p class="text-xs italic mb-2" style="color: var(--text-muted);">¿Cómo se comunican en ejecución?</p>
+                        <p class="text-xs" style="color: var(--text-muted);">Observer, Strategy, Command</p>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 mb-4 border-l-4" style="border-left-color: var(--accent-purple);">
+                    <h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-magnifying-glass mr-2" style="color: var(--accent-purple);"></i>Casos de uso — ¿qué patrón usarían?</h4>
+                    <table class="tabla-compare">
+                        <tbody>
+                            <tr><td>"Solo debe existir una conexión al archivo en toda la app"</td><td><strong>Singleton</strong></td></tr>
+                            <tr><td>"Un botón cambia de comportamiento según el modo, sin montones de if"</td><td><strong>Strategy</strong></td></tr>
+                            <tr><td>"3 pantallas se actualizan solas cuando cambia el modelo"</td><td><strong>Observer</strong></td></tr>
+                            <tr><td>"Tratar una carpeta y un archivo suelto de la misma forma"</td><td><strong>Composite</strong></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pregunta-box">
+                    <p><i class="fa-solid fa-bolt mr-2 text-yellow-600"></i><strong>Ejercicio relámpago (a coro):</strong></p>
+                    <p class="text-sm">Singleton · Adapter · Observer · Builder · Strategy</p>
+                    <button class="toggle-respuesta-btn" onclick="toggleRespuesta(this)"><i class="fa-solid fa-eye"></i> Ver respuesta</button>
+                    <span class="respuesta"><i class="fa-solid fa-check text-green-600 mr-1"></i>Creacional · Estructural · Comportamiento · Creacional · Comportamiento</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 6: N-Capas y Transferencia de Datos ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-server bg-icon text-[350px] -right-10 opacity-5" style="color: var(--una-red);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">N-Capas y Transferencia de Datos</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Las 3 capas del Mini-Discord, formalizadas — y cómo "viaja" la información entre ellas.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
+                    <div class="glass-panel p-4 border-t-4 text-center" style="border-color: var(--accent-blue);">
+                        <h4 class="font-bold text-base mb-1">Presentación</h4>
+                        <code class="text-xs font-mono">ChatViewController</code>
+                        <p class="text-xs mt-2" style="color: var(--text-muted);">Solo eventos de UI</p>
+                    </div>
+                    <div class="glass-panel p-4 border-t-4 text-center" style="border-color: var(--accent-green);">
+                        <h4 class="font-bold text-base mb-1">Lógica de negocio</h4>
+                        <code class="text-xs font-mono">ChatService</code>
+                        <p class="text-xs mt-2" style="color: var(--text-muted);">Valida reglas, no sabe de archivos</p>
+                    </div>
+                    <div class="glass-panel p-4 border-t-4 text-center" style="border-color: var(--una-gold);">
+                        <h4 class="font-bold text-base mb-1">Acceso a datos</h4>
+                        <code class="text-xs font-mono">MessageDAO</code>
+                        <p class="text-xs mt-2" style="color: var(--text-muted);">Sabe leer/escribir, no valida reglas</p>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 mb-4 border-l-4" style="border-left-color: var(--accent-blue);">
+                    <h4 class="font-bold text-base mb-2"><i class="fa-solid fa-route mr-2" style="color: var(--accent-blue);"></i>Tracemos un mensaje por las 3 capas</h4>
+                    <div class="flex flex-wrap items-center justify-center gap-2 text-xs font-mono">
+                        <span class="tint-blue px-2 py-1 rounded">Clic "Enviar"</span>
+                        <i class="fa-solid fa-arrow-right text-gray-400"></i>
+                        <span class="tint-blue px-2 py-1 rounded">Controller</span>
+                        <i class="fa-solid fa-arrow-right text-gray-400"></i>
+                        <span class="tint-green px-2 py-1 rounded">Service valida</span>
+                        <i class="fa-solid fa-arrow-right text-gray-400"></i>
+                        <span class="tint-gold px-2 py-1 rounded">DAO guarda</span>
+                        <i class="fa-solid fa-arrow-right text-gray-400"></i>
+                        <span class="tint-blue px-2 py-1 rounded">Observer repinta la Vista</span>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 mb-4 border-l-4" style="border-left-color: var(--accent-purple);">
+                    <h4 class="font-bold text-base mb-1"><i class="fa-solid fa-truck-fast mr-2" style="color: var(--accent-purple);"></i>Transferencia de datos: el rol del DTO</h4>
+                    <p class="text-sm" style="color: var(--text-muted);">Hoy los objetos de dominio (<code class="font-mono text-xs">Message</code>, <code class="font-mono text-xs">User</code>) viajan directo entre capas — válido para este tamaño de proyecto. El <strong>DTO</strong> (objeto plano, sin lógica) es el mecanismo formal cuando el proyecto crece o las capas viven en máquinas físicas distintas (n-tier real). Sin DTO, exponer el Message completo expone también la estructura interna del dominio.</p>
+                </div>
+
+                <div class="pregunta-box">
+                    <p><i class="fa-solid fa-star mr-2 text-yellow-600"></i><strong>La pregunta más importante de la clase:</strong></p>
+                    <p class="text-sm">"Si mañana el <code class="font-mono text-xs">MessageDAO</code>, en vez de leer un archivo, llamara a un servidor remoto por sockets, ¿qué otras clases tendrían que modificar?"</p>
+                    <button class="toggle-respuesta-btn" onclick="toggleRespuesta(this)"><i class="fa-solid fa-eye"></i> Ver respuesta</button>
+                    <span class="respuesta"><i class="fa-solid fa-lightbulb"></i> Respuesta: ninguna otra. Solo el DAO cambia — esa es la prueba de que la arquitectura está bien separada.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 7: Laboratorio MessageDAO ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-brands fa-discord bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-4xl font-bold mb-1">Laboratorio Ampliado: Persistencia Real en Mini-Discord</h2>
+                    <p class="text-base" style="color: var(--text-muted);">Dos formas de persistencia funcionando: binaria y XML con DTO.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--accent-green);">
+                        <h4 class="font-bold text-sm flex items-center gap-2 mb-1"><i class="fa-solid fa-floppy-disk" style="color: var(--accent-green);"></i>Parte A — Binaria</h4>
+                        <ol class="text-xs space-y-1 list-decimal list-inside" style="color: var(--text-muted);">
+                            <li><code class="font-mono text-[10px]">MessageDAO</code>: guardarTodos/cargarTodos con ObjectOutputStream.</li>
+                            <li>Cargar en <code class="font-mono text-[10px]">initialize()</code>.</li>
+                            <li>Guardar en <code class="font-mono text-[10px]">handleSendMessage()</code>.</li>
+                            <li>Probar cerrando y abriendo la app.</li>
+                        </ol>
+                    </div>
+                    <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--accent-purple);">
+                        <h4 class="font-bold text-sm flex items-center gap-2 mb-1"><i class="fa-solid fa-file-code" style="color: var(--accent-purple);"></i>Parte B — XML (obligatoria)</h4>
+                        <ol class="text-xs space-y-1 list-decimal list-inside" style="color: var(--text-muted);">
+                            <li><code class="font-mono text-[10px]">MessageDTO</code>: clase plana con getters/setters.</li>
+                            <li><code class="font-mono text-[10px]">MessageXmlExporter</code> con XMLEncoder/XMLDecoder.</li>
+                            <li>Agregar <code class="font-mono text-[10px]">requires java.desktop;</code> en module-info.</li>
+                            <li>Abrir el .xml generado y comprobar que es legible.</li>
+                        </ol>
+                    </div>
+                    <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--una-gold);">
+                        <h4 class="font-bold text-sm flex items-center gap-2 mb-1"><i class="fa-solid fa-star" style="color: var(--una-gold);"></i>Parte C — Reto opcional</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">Para quien termine A y B: envolver el DAO en un <code class="font-mono text-[10px]">PersistenceManager</code> (Singleton) y comparar el tamaño de <code class="font-mono text-[10px]">mensajes.dat</code> vs <code class="font-mono text-[10px]">mensajes.xml</code>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 8: Cierre ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-brain bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-4xl font-bold mb-2">Cierre del Módulo: Arquitectura de las Aplicaciones</h2>
+                    <p class="text-base" style="color: var(--text-muted);">Ya completamos las 5 piezas del tema. ¡Bien hecho!</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mb-6">
+                    <div class="glass-panel p-3 text-center"><i class="fa-solid fa-check text-green-500 mb-1"></i><p class="text-xs font-bold">MVC y variantes</p></div>
+                    <div class="glass-panel p-3 text-center"><i class="fa-solid fa-check text-green-500 mb-1"></i><p class="text-xs font-bold">Bibliotecas y dependencias</p></div>
+                    <div class="glass-panel p-3 text-center"><i class="fa-solid fa-check text-green-500 mb-1"></i><p class="text-xs font-bold">Persistencia y serialización</p></div>
+                    <div class="glass-panel p-3 text-center"><i class="fa-solid fa-check text-green-500 mb-1"></i><p class="text-xs font-bold">Clasificación de patrones</p></div>
+                    <div class="glass-panel p-3 text-center"><i class="fa-solid fa-check text-green-500 mb-1"></i><p class="text-xs font-bold">N-capas y DTO</p></div>
+                </div>
+
+                <div class="glass-panel p-5 border-l-4 mb-4" style="border-left-color: var(--una-red);">
+                    <h4 class="font-bold text-base mb-2"><i class="fa-solid fa-bell mr-2" style="color: var(--una-red);"></i>Recordatorios</h4>
+                    <ul class="text-sm space-y-1" style="color: var(--text-muted);">
+                        <li><i class="fa-solid fa-caret-right mr-1"></i> Entrega Proyecto 1 (aparte del Mini-Discord): <strong>domingo 13/09</strong>, aula virtual.</li>
+                        <li><i class="fa-solid fa-caret-right mr-1"></i> <strong>Martes 15/09: NO hay clase</strong> (feriado, Día de la Independencia).</li>
+                        <li><i class="fa-solid fa-caret-right mr-1"></i> La siguiente clase después del feriado es el <strong>Examen Parcial</strong>.</li>
+                    </ul>
+                </div>
+
+                <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--accent-blue);">
+                    <h4 class="font-bold text-base mb-1"><i class="fa-solid fa-book-open mr-2" style="color: var(--accent-blue);"></i>Para repasar antes del parcial</h4>
+                    <p class="text-xs" style="color: var(--text-muted);">MVC y sus variantes (MVP, MVVM) · Observer/Composite/Strategy y su categoría GoF · N-Layers vs. N-Tiers · la regla de dependencia entre capas · qué es un DTO · serialización binaria vs. XML.</p>
+                </div>
+
+                <div class="text-center mt-6">
+                    <button class="px-8 py-3 rounded-full text-lg font-bold tint-red transition-transform hover:scale-105 shadow-xl">
+                        <i class="fa-solid fa-flag-checkered mr-2"></i> ¡Buena suerte con el Proyecto 1!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <button class="float-btn" id="prevBtn" onclick="changeSlide(-1)"><i class="fa-solid fa-arrow-left"></i></button>
+    <button class="float-btn" id="nextBtn" onclick="changeSlide(1)"><i class="fa-solid fa-arrow-right"></i></button>
+
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+    </div>
+
+    <script src="../../../assets/js/presentacion.js"></script>
+
+    <!-- ========== MODAL: GLOSARIO FLOTANTE ========== -->
+    <div class="modal-backdrop glosario-modal" id="modal-glosario">
+        <div class="modal-content max-w-lg">
+            <button class="close-modal" onclick="closeModal('modal-glosario')"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-2xl font-bold mb-4 text-center" style="color: var(--accent-blue);">
+                <i class="fa-solid fa-book-open mr-2"></i> Glosario de Términos Clave — Semana 8
+            </h3>
+            <ul class="text-sm space-y-3">
+                <li><strong>Biblioteca:</strong> conjunto de clases compiladas y empaquetadas que otro proyecto referencia y reutiliza sin ver su código fuente.</li>
+                <li><strong>Regla de dependencia:</strong> Presentación depende de Negocio, Negocio depende de Datos. Nunca al revés.</li>
+                <li><strong>Serialización binaria:</strong> convertir un objeto a bytes con ObjectOutputStream/ObjectInputStream. Rápida, pero ilegible fuera de Java.</li>
+                <li><strong>Serialización XML:</strong> con XMLEncoder/XMLDecoder o JAXB. Legible y portable, pero más pesada.</li>
+                <li><strong>Patrones creacionales:</strong> resuelven cómo se instancian los objetos (Singleton, Builder).</li>
+                <li><strong>Patrones estructurales:</strong> resuelven cómo se ensamblan/relacionan objetos (Composite, Adapter).</li>
+                <li><strong>Patrones de comportamiento:</strong> resuelven cómo se comunican en tiempo de ejecución (Observer, Strategy).</li>
+                <li><strong>DTO:</strong> objeto plano (solo atributos, getters/setters) para transportar datos entre capas sin exponer lógica interna.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function toggleRespuesta(btn) {
+            const box = btn.closest('.pregunta-box');
+            const respuesta = box ? box.querySelector('.respuesta') : null;
+            if (!respuesta) return;
+            const visible = respuesta.classList.toggle('visible');
+            btn.innerHTML = visible
+                ? '<i class="fa-solid fa-eye-slash"></i> Ocultar respuesta'
+                : '<i class="fa-solid fa-eye"></i> Ver respuesta';
+        }
+        if (typeof updateProgress === 'undefined') {
+            window.updateProgress = function() {
+                const slides = document.querySelectorAll('.slide');
+                let activeIndex = 0;
+                slides.forEach((s, i) => { if (s.classList.contains('active')) activeIndex = i; });
+                const progress = ((activeIndex + 1) / slides.length) * 100;
+                document.getElementById('progressBar').style.width = progress + '%';
+            };
+        }
+        const origGoToSlide = window.goToSlide;
+        if (origGoToSlide) { window.goToSlide = function(index) { origGoToSlide(index); updateProgress(); }; }
+        const origChangeSlide = window.changeSlide;
+        if (origChangeSlide) { window.changeSlide = function(delta) { origChangeSlide(delta); updateProgress(); }; }
+        document.addEventListener('DOMContentLoaded', function() { updateProgress(); });
+    </script>
+
+</body>
+</html>
