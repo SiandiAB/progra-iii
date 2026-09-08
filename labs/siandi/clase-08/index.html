@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" href="../../../assets/img/favicon.svg">
     <title>Laboratorio Autoguiado — Mini-Discord (Persistencia, DAO y DTO)</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -602,7 +601,28 @@
             </div>
 
             <div class="step-sub">
-                <h5>3.2 Crear MessageDTO.java</h5>
+                <h5>3.2 Preparar Message.java: agregar los getters que el DTO va a necesitar</h5>
+                <p>Antes de crear el DTO y el exportador, abran <code class="font-mono text-sm">Message.java</code> (el mismo de la semana pasada) y agreguen estos dos métodos dentro de la clase:</p>
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> Message.java</div>
+                    </div>
+                    <pre class="darcula-code text-xs"><code><span class="d-new">// Nuevo de la clase 8: getters de solo lectura — no rompen la inmutabilidad</span>
+<span class="d-new">// (no hay setters). Se necesitan porque la capa de datos va a leer estos</span>
+<span class="d-new">// valores para convertirlos a MessageDTO en el siguiente paso.</span>
+<span class="d-keyword">public</span> <span class="d-type">User</span> <span class="d-method">getAuthor</span>() { <span class="d-keyword">return</span> author; }
+<span class="d-keyword">public</span> <span class="d-type">String</span> <span class="d-method">getContent</span>() { <span class="d-keyword">return</span> content; }</code></pre>
+                </div>
+                <div class="highlight-box">
+                    <strong><i class="fa-solid fa-triangle-exclamation mr-1"></i> Si se saltan este paso:</strong> al escribir <code class="font-mono text-sm">MessageXmlExporter.java</code> (siguiente paso), IntelliJ va a marcar <code class="font-mono text-sm">Cannot resolve method 'getAuthor' in 'Message'</code> y <code class="font-mono text-sm">Cannot resolve method 'getContent' in 'Message'</code>. Si ven ese error, vuelvan aquí antes que cualquier otra cosa.
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.3 Crear MessageDTO.java</h5>
                 <p>En el paquete <code class="font-mono text-sm">business.dto</code> (nuevo — créenlo), agreguen:</p>
                 <div class="darcula-editor">
                     <div class="darcula-header">
@@ -644,7 +664,7 @@
             </div>
 
             <div class="step-sub">
-                <h5>3.3 Crear MessageXmlExporter.java (el DAO de la versión XML)</h5>
+                <h5>3.4 Crear MessageXmlExporter.java (el DAO de la versión XML)</h5>
                 <p>En <code class="font-mono text-sm">data.dao</code>, junto a <code class="font-mono text-sm">MessageDAO</code>, agreguen:</p>
                 <div class="darcula-editor">
                     <div class="darcula-header">
@@ -696,7 +716,7 @@
             </div>
 
             <div class="step-sub">
-                <h5>3.4 Habilitar el módulo java.desktop</h5>
+                <h5>3.5 Habilitar el módulo java.desktop</h5>
                 <p><code class="font-mono text-sm">XMLEncoder</code> vive en el módulo <code class="font-mono text-sm">java.desktop</code>, que su proyecto todavía no declara. Abran <code class="font-mono text-sm">module-info.java</code> y agreguen una línea:</p>
                 <div class="darcula-editor">
                     <div class="darcula-header">
@@ -724,7 +744,7 @@
             </div>
 
             <div class="step-sub">
-                <h5>3.5 Conectar y probar</h5>
+                <h5>3.6 Conectar y probar</h5>
                 <p>En <code class="font-mono text-sm">ChatViewController</code>, agreguen una instancia de <code class="font-mono text-sm">MessageXmlExporter</code> y llámenla justo después de guardar en binario:</p>
                 <div class="darcula-editor">
                     <div class="darcula-header">
