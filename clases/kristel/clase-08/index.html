@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 8 — Programación III</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+
+    <!-- Recursos compartidos del proyecto -->
+    <link rel="icon" type="image/svg+xml" href="../../../assets/img/favicon.svg">
+    <link rel="stylesheet" href="../../../assets/css/presentacion.css">
+
+    <!-- Tooltips interactivos para palabras clave -->
+    <style>
+        .keyword {
+            position: relative;
+            cursor: help;
+            border-bottom: 2px dotted var(--una-red);
+            font-weight: 700;
+            color: var(--una-red);
+        }
+        .keyword::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2b2b2b;
+            color: #a9b7c6;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid #555555;
+            font-size: 0.85rem;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 400;
+            white-space: normal;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 999;
+            width: max-content;
+            max-width: 320px;
+            text-align: left;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            line-height: 1.5;
+        }
+        .keyword:hover::after,
+        .keyword:focus::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-4px);
+        }
+
+        /* Tema Darcula (IntelliJ Default Dark) para bloques de código */
+        .darcula-bg { background-color: #2b2b2b; color: #a9b7c6; }
+        .darcula-kw { color: #cc7832; font-weight: bold; }
+        .darcula-str { color: #6a8759; }
+        .darcula-num { color: #6897bb; }
+        .darcula-com { color: #808080; font-style: italic; }
+        .darcula-func { color: #ffc66d; }
+        .darcula-class { color: #a9b7c6; }
+        .darcula-anno { color: #bbb529; }
+
+        .chip {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            margin: 0.2rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+        }
+        .flow-box {
+            background: var(--bg-panel);
+            border: 2px solid var(--border-panel);
+            border-radius: 1rem;
+            padding: 0.9rem 1.1rem;
+            text-align: center;
+            box-shadow: var(--shadow-panel);
+        }
+        .flow-arrow { color: var(--una-red); font-size: 1.6rem; align-self: center; }
+        table.deck { width: 100%; border-collapse: collapse; font-size: 0.95rem; color: var(--text-muted); }
+        table.deck th { text-align: left; padding: 0.6rem 0.7rem; font-weight: 800; color: var(--una-red); border-bottom: 2px solid var(--border-panel); background: rgba(230,106,106,0.08); }
+        table.deck td { padding: 0.6rem 0.7rem; border-bottom: 1px solid var(--border-panel); vertical-align: top; }
+        table.deck tr:last-child td { border-bottom: 0; }
+    </style>
+</head>
+<body>
+
+    <!-- Botones flotantes -->
+    <button class="float-btn" id="downloadBtn" onclick="downloadPresentation()" title="Descargar presentación para ver sin internet">
+        <i class="fa-solid fa-download"></i>
+    </button>
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar modo claro/oscuro">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+    <button class="float-btn" id="prevBtn" onclick="changeSlide(-1)"><i class="fa-solid fa-arrow-left"></i></button>
+    <button class="float-btn" id="nextBtn" onclick="changeSlide(1)"><i class="fa-solid fa-arrow-right"></i></button>
+
+    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+
+    <!-- ========== CONTENEDOR DE SLIDES ========== -->
+    <div class="slides-container" id="slides-container">
+
+        <!-- ==================== SLIDE 0: PORTADA ==================== -->
+        <div class="slide active">
+            <div class="text-center w-full max-w-6xl z-10 relative">
+                <i class="fa-solid fa-layer-group bg-icon text-[350px] -top-20 -left-20" style="color: var(--una-red);"></i>
+                <i class="fa-brands fa-java bg-icon text-[250px] -bottom-10 right-10" style="color: var(--accent-blue);"></i>
+
+                <div class="bg-white px-8 py-4 rounded-3xl inline-block mb-6 shadow-md border border-gray-100 relative z-10">
+                    <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png"
+                         alt="Logo UNA" class="h-28 object-contain">
+                </div>
+
+                <h2 class="text-lg md:text-xl font-bold tracking-[0.2em] mb-4 uppercase" style="color: var(--text-muted);">Sección Regional Central Occidente, UNA</h2>
+
+                <h1 class="text-3xl md:text-4xl font-extrabold mb-4 tracking-tight">
+                    Programación <span style="color: var(--una-red);">III</span>
+                </h1>
+                <h2 class="text-5xl md:text-7xl font-extrabold mb-2" style="color: var(--text-main);">Semana 8</h2>
+                <h3 class="text-3xl md:text-5xl font-bold mb-6" style="color: var(--una-red);">
+                    Arquitectura de las aplicaciones <span class="text-2xl md:text-3xl">(Parte II)</span>
+                </h3>
+                <p class="text-xl mb-2" style="color: var(--text-muted);">Patrones de diseño · N-capas · Datos y mensajes entre módulos</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-6 relative z-10">
+                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--accent-blue);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-blue flex items-center justify-center text-2xl"><i class="fa-solid fa-chalkboard-user"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Docente — Grupo 40</p>
+                            <p class="text-lg font-bold" data-curso="40-docente">Kristel Duarte Pérez</p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);" data-curso="40-horario">Horario: K 08:00 - 11:20</p>
+                        </div>
+                    </div>
+                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--una-gold);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-gold flex items-center justify-center text-2xl"><i class="fa-solid fa-clock"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Atención a Estudiantes</p>
+                            <p class="text-lg font-bold" data-curso="40-atencion">K 13:00 - 14:00</p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);">Consultas y tutorías</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-sm animate-pulse mt-6" style="color: var(--text-muted);"><i class="fa-solid fa-keyboard mr-2"></i>Usa las flechas del teclado para navegar</p>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 1: AGENDA DE HOY ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-map-location-dot bg-icon text-[350px] top-10 right-0 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-8">
+                    <h2 class="text-5xl font-bold mb-2">¿Qué vamos a ver hoy?</h2>
+                    <p class="text-sm mt-2" style="color: var(--text-muted);"><i class="fa-solid fa-hand-pointer mr-1"></i> Cierre del tema 5 · Haz clic en cada punto para ir directo.</p>
+                </div>
+
+                <div class="relative max-w-2xl mx-auto">
+                    <div class="absolute border-l-2 border-dashed border-gray-300 h-full" style="left: 50%; transform: translateX(-50%);"></div>
+
+                    <!-- 1. 5.4 Patrones de diseño -->
+                    <div class="flex items-center mb-4 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-gold font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">1</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(2)">
+                            <div class="glass-panel py-3 px-5 border-r-4" style="border-right-color: var(--una-gold);">
+                                <h3 class="font-bold text-base md:text-lg text-right">5.4 · Patrones de diseño</h3>
+                                <p class="text-xs text-right text-gray-500 mt-1">Qué es un patrón y cómo se clasifican</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Familias con ejemplos en código -->
+                    <div class="flex items-center mb-4 relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(4)">
+                            <div class="glass-panel py-3 px-5 border-l-4" style="border-left-color: var(--accent-blue);">
+                                <h3 class="font-bold text-base md:text-lg text-left">Familias con código</h3>
+                                <p class="text-xs text-left text-gray-500 mt-1">Creacionales, estructurales y de comportamiento</p>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-blue font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">2</div>
+                        <div class="w-1/2"></div>
+                    </div>
+
+                    <!-- 3. 5.5 Aplicaciones n-capas -->
+                    <div class="flex items-center mb-4 relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-green font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">3</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(9)">
+                            <div class="glass-panel py-3 px-5 border-r-4" style="border-right-color: var(--accent-green);">
+                                <h3 class="font-bold text-base md:text-lg text-right">5.5 · Aplicaciones n-capas</h3>
+                                <p class="text-xs text-right text-gray-500 mt-1">Capas lógicas y niveles físicos</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. 5.6 Datos y mensajes -->
+                    <div class="flex items-center mb-4 relative">
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(17)">
+                            <div class="glass-panel py-3 px-5 border-l-4" style="border-left-color: var(--accent-purple);">
+                                <h3 class="font-bold text-base md:text-lg text-left">5.6 · Datos y mensajes</h3>
+                                <p class="text-xs text-left text-gray-500 mt-1">DTO y transferencia entre módulos</p>
+                            </div>
+                        </div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-purple font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">4</div>
+                        <div class="w-1/2"></div>
+                    </div>
+
+                    <!-- 5. Radiografía Lab 05 -->
+                    <div class="flex items-center relative">
+                        <div class="w-1/2"></div>
+                        <div class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-red font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3">5</div>
+                        <div class="w-1/2 cursor-pointer hover:scale-105 transition-transform" onclick="goToSlide(23)">
+                            <div class="glass-panel py-3 px-5 border-r-4" style="border-right-color: var(--una-red);">
+                                <h3 class="font-bold text-base md:text-lg text-right">Radiografía del Lab 05</h3>
+                                <p class="text-xs text-right text-gray-500 mt-1">De la interfaz a la persistencia en TXT</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 2: 5.4 · UN PATRÓN NO ES CÓDIGO PARA COPIAR ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-wand-magic-sparkles bg-icon text-[300px] -left-10 opacity-5" style="color: var(--una-red);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Un patrón no es código para copiar</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">5.4 · Patrones de diseño</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
+                    <div class="glass-panel p-6 border-t-4" style="border-color: var(--una-red);">
+                        <p class="text-xl leading-relaxed" style="color: var(--text-main);">Es una <strong>solución reutilizable y comprobada</strong> para un problema de diseño que aparece con frecuencia.</p>
+                        <p class="mt-3 text-lg" style="color: var(--text-muted);">No resuelve toda la aplicación. Describe <span class="keyword" data-tooltip="Cada patrón define clases u objetos que participan, sus responsabilidades y cómo se relacionan.">participantes</span>, responsabilidades, relaciones y consecuencias.</p>
+                    </div>
+                    <div class="glass-panel p-6 border-t-4" style="border-color: var(--accent-blue);">
+                        <h3 class="font-extrabold text-xl text-gray-800 mb-3">Antes de usar uno, pregunte:</h3>
+                        <ul class="list-disc list-inside text-lg text-gray-700 space-y-1.5">
+                            <li>¿Cuál problema se repite?</li>
+                            <li>¿Qué partes deben variar?</li>
+                            <li>¿Qué dependencia quiero reducir?</li>
+                            <li>¿El beneficio compensa la complejidad?</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="glass-panel p-5 mt-6 max-w-6xl mx-auto border-l-4" style="border-left-color: var(--una-gold);">
+                    <p class="text-lg mb-0"><i class="fa-regular fa-comment-dots text-amber-500 mr-2"></i>Nombre conocido ≠ uso correcto. <strong>Primero se reconoce el problema; después se elige el patrón.</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 3: CLASIFICACIÓN - TRES FAMILIAS ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-diagram-project bg-icon text-[320px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Tres preguntas, tres familias</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">La clasificación de los patrones de diseño.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                    <div class="interactive-card bg-white rounded-2xl p-6 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--una-gold);">
+                        <div class="w-14 h-14 rounded-full tint-gold flex items-center justify-center text-2xl mb-3"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                        <h3 class="font-extrabold text-2xl mb-1">Creacionales</h3>
+                        <p class="font-bold text-lg mb-2">¿Cómo se crean?</p>
+                        <p class="text-sm text-gray-500 mb-3">Controlan la construcción de objetos sin amarrar el código a una clase concreta.</p>
+                        <div><span class="chip" style="background:rgba(244,208,63,0.14); color:#9a7d0c;">Factory Method</span><span class="chip" style="background:rgba(244,208,63,0.14); color:#9a7d0c;">Builder</span><span class="chip" style="background:rgba(244,208,63,0.14); color:#9a7d0c;">Singleton</span></div>
+                    </div>
+                    <div class="interactive-card bg-white rounded-2xl p-6 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-blue);">
+                        <div class="w-14 h-14 rounded-full tint-blue flex items-center justify-center text-2xl mb-3"><i class="fa-solid fa-cubes-stacked"></i></div>
+                        <h3 class="font-extrabold text-2xl mb-1">Estructurales</h3>
+                        <p class="font-bold text-lg mb-2">¿Cómo se combinan?</p>
+                        <p class="text-sm text-gray-500 mb-3">Organizan clases y objetos para formar estructuras más grandes.</p>
+                        <div><span class="chip" style="background:rgba(93,173,226,0.14); color:#1d6fa5;">Adapter</span><span class="chip" style="background:rgba(93,173,226,0.14); color:#1d6fa5;">Decorator</span><span class="chip" style="background:rgba(93,173,226,0.14); color:#1d6fa5;">Facade</span></div>
+                    </div>
+                    <div class="interactive-card bg-white rounded-2xl p-6 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-green);">
+                        <div class="w-14 h-14 rounded-full tint-green flex items-center justify-center text-2xl mb-3"><i class="fa-solid fa-comments"></i></div>
+                        <h3 class="font-extrabold text-2xl mb-1">Comportamiento</h3>
+                        <p class="font-bold text-lg mb-2">¿Cómo colaboran?</p>
+                        <p class="text-sm text-gray-500 mb-3">Distribuyen tareas y comunicación entre objetos.</p>
+                        <div><span class="chip" style="background:rgba(72,201,176,0.14); color:#0e8a72;">Observer</span><span class="chip" style="background:rgba(72,201,176,0.14); color:#0e8a72;">Strategy</span><span class="chip" style="background:rgba(72,201,176,0.14); color:#0e8a72;">Command</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 4: PATRONES CREACIONALES ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[94%] mx-auto relative z-10">
+                <i class="fa-solid fa-wand-magic-sparkles bg-icon text-[300px] -left-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">Patrones creacionales</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Separar el "qué" del "cómo se construye".</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 max-w-7xl mx-auto">
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4 flex flex-col" style="border-top-color: var(--una-gold);">
+                        <h3 class="font-extrabold text-xl text-gray-800 mb-1">Factory Method</h3>
+                        <p class="text-sm text-gray-500 mb-3">Delega la creación a un método o subtipo.</p>
+                        <div class="darcula-bg p-3 rounded-lg border border-gray-600 text-xs mt-auto">
+                            <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-class">Vehiculo</span> v = <span class="darcula-class">VehiculoFactory</span>
+    .<span class="darcula-func">crear</span>(tipo, placa, marca);</code></pre>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4 flex flex-col" style="border-top-color: var(--una-gold);">
+                        <h3 class="font-extrabold text-xl text-gray-800 mb-1">Builder</h3>
+                        <p class="text-sm text-gray-500 mb-3">Construye por pasos un objeto con muchas opciones.</p>
+                        <div class="darcula-bg p-3 rounded-lg border border-gray-600 text-xs mt-auto">
+                            <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-class">Reporte</span> r = <span class="darcula-kw">new</span> <span class="darcula-class">Reporte.Builder</span>()
+    .<span class="darcula-func">conFiltros</span>(anio)
+    .<span class="darcula-func">build</span>();</code></pre>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4 flex flex-col" style="border-top-color: var(--una-gold);">
+                        <h3 class="font-extrabold text-xl text-gray-800 mb-1">Singleton</h3>
+                        <p class="text-sm text-gray-500 mb-3">Limita una clase a una instancia compartida.</p>
+                        <div class="darcula-bg p-3 rounded-lg border border-gray-600 text-xs mt-auto">
+                            <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-class">Config</span> cfg = <span class="darcula-class">Config</span>
+    .<span class="darcula-func">getInstancia</span>();</code></pre>
+                        </div>
+                        <p class="text-[0.7rem] font-semibold text-red-600 mt-2 mb-0"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Cuidado: puede ocultar estado global y dificultar pruebas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 5: PATRONES ESTRUCTURALES ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[94%] mx-auto relative z-10">
+                <i class="fa-solid fa-cubes-stacked bg-icon text-[300px] -right-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">Patrones estructurales</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Ensamblar sin crear acoplamiento innecesario.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 max-w-7xl mx-auto">
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4 flex flex-col" style="border-top-color: var(--accent-blue);">
+                        <h3 class="font-extrabold text-xl text-gray-800 mb-1">Adapter</h3>
+                        <p class="text-sm text-gray-500 mb-3">Traduce una interfaz a otra compatible con el cliente.</p>
+                        <div class="darcula-bg p-3 rounded-lg border border-gray-600 text-xs mt-auto">
+                            <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-class">Repositorio</span> repo = <span class="darcula-kw">new</span>
+    <span class="darcula-class">AdaptadorLector</span>(lectorExterno);</code></pre>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4 flex flex-col" style="border-top-color: var(--accent-blue);">
+                        <h3 class="font-extrabold text-xl text-gray-800 mb-1">Decorator</h3>
+                        <p class="text-sm text-gray-500 mb-3">Agrega comportamiento envolviendo un objeto.</p>
+                        <div class="darcula-bg p-3 rounded-lg border border-gray-600 text-xs mt-auto">
+                            <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-class">Operacion</span> op = <span class="darcula-kw">new</span> <span class="darcula-class">ConRegistro</span>(
+    <span class="darcula-kw">new</span> <span class="darcula-class">ConValidacion</span>(servicio));</code></pre>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4 flex flex-col" style="border-top-color: var(--accent-blue);">
+                        <h3 class="font-extrabold text-xl text-gray-800 mb-1">Facade</h3>
+                        <p class="text-sm text-gray-500 mb-3">Ofrece una entrada simple a varios subsistemas.</p>
+                        <div class="darcula-bg p-3 rounded-lg border border-gray-600 text-xs mt-auto">
+                            <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-class">FlotaService</span> s = <span class="darcula-kw">new</span> <span class="darcula-class">FlotaService</span>();
+s.<span class="darcula-func">enviarAMantenimiento</span>(placa);</code></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-panel p-4 mt-5 max-w-7xl mx-auto border-l-4" style="border-left-color: var(--accent-blue);">
+                    <p class="text-sm mb-0"><i class="fa-regular fa-comment-dots text-blue-500 mr-2"></i>Composite, visto la semana anterior, también es estructural: permite tratar un elemento y un grupo de elementos <strong>de forma uniforme</strong>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 6: PATRONES DE COMPORTAMIENTO ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[94%] mx-auto relative z-10">
+                <i class="fa-solid fa-comments bg-icon text-[300px] -left-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">Patrones de comportamiento</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Organizar decisiones y colaboración.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 max-w-7xl mx-auto">
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4 flex flex-col" style="border-top-color: var(--accent-green);">
+                        <h3 class="font-extrabold text-xl text-gray-800 mb-1">Observer</h3>
+                        <p class="text-sm text-gray-500 mb-3">Un cambio notifica a varios interesados.</p>
+                        <div class="darcula-bg p-3 rounded-lg border border-gray-600 text-xs mt-auto">
+                            <pre class="font-mono leading-snug" style="margin:0;"><code>tabla.getSelectionModel()
+    .<span class="darcula-func">selectedItemProperty</span>()
+    .<span class="darcula-func">addListener</span>((o, a, n) -> <span class="darcula-func">cargar</span>(n));</code></pre>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4 flex flex-col" style="border-top-color: var(--accent-green);">
+                        <h3 class="font-extrabold text-xl text-gray-800 mb-1">Strategy</h3>
+                        <p class="text-sm text-gray-500 mb-3">Permite intercambiar una forma de realizar una tarea.</p>
+                        <div class="darcula-bg p-3 rounded-lg border border-gray-600 text-xs mt-auto">
+                            <pre class="font-mono leading-snug" style="margin:0;"><code>vehiculo.<span class="darcula-func">setEstrategia</span>(
+    <span class="darcula-kw">new</span> <span class="darcula-class">ConsumoElectrico</span>());</code></pre>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4 flex flex-col" style="border-top-color: var(--accent-green);">
+                        <h3 class="font-extrabold text-xl text-gray-800 mb-1">Command</h3>
+                        <p class="text-sm text-gray-500 mb-3">Representa una acción como objeto.</p>
+                        <div class="darcula-bg p-3 rounded-lg border border-gray-600 text-xs mt-auto">
+                            <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-kw">new</span> <span class="darcula-class">RegistrarVehiculo</span>(dto)
+    .<span class="darcula-func">ejecutar</span>();</code></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-panel p-4 mt-5 max-w-7xl mx-auto text-center">
+                    <p class="text-sm mb-0"><strong>Hilo conductor:</strong> estos patrones no son ajenos a MVC; ya los reconocimos como los patrones subyacentes del modelo de la semana 7.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 7: ¿CÓMO ELEGIR UN PATRÓN? ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-compass bg-icon text-[300px] -right-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">¿Cómo elegir un patrón?</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Criterio técnico antes de decidir.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-6xl mx-auto mb-4">
+                    <!-- Paso 1 -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-green);">
+                        <h4 class="font-extrabold text-lg text-gray-800 mb-2 flex items-center gap-2">
+                            <span class="inline-flex w-7 h-7 rounded-full tint-green items-center justify-center font-extrabold text-sm">1</span>
+                            Describa el problema
+                        </h4>
+                        <div class="darcula-bg p-3 rounded-lg border border-gray-600 text-xs overflow-x-auto">
+                            <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-com">// ¿Qué se repite? Crear el vehículo correcto</span>
+<span class="darcula-com">// según su tipo, sin acoplar la Vista.</span>
+<span class="darcula-kw">if</span> (tipo == TipoVehiculo.ELECTRICO)
+    v = <span class="darcula-kw">new</span> <span class="darcula-class">VehiculoElectrico</span>(...);
+<span class="darcula-kw">else if</span> (tipo == TipoVehiculo.PESADO) ...</code></pre>
+                        </div>
+                    </div>
+                    <!-- Paso 2 -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-green);">
+                        <h4 class="font-extrabold text-lg text-gray-800 mb-2 flex items-center gap-2">
+                            <span class="inline-flex w-7 h-7 rounded-full tint-green items-center justify-center font-extrabold text-sm">2</span>
+                            Ubique qué cambia
+                        </h4>
+                        <div class="darcula-bg p-3 rounded-lg border border-gray-600 text-xs overflow-x-auto">
+                            <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-com">// Cambia: el subtipo instanciado según el tipo.</span>
+<span class="darcula-com">// Estable: la referencia Vehiculo y sus métodos.</span>
+<span class="darcula-class">Vehiculo</span> v;  <span class="darcula-com">// la abstracción no cambia</span></code></pre>
+                        </div>
+                    </div>
+                    <!-- Paso 3 -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-green);">
+                        <h4 class="font-extrabold text-lg text-gray-800 mb-2 flex items-center gap-2">
+                            <span class="inline-flex w-7 h-7 rounded-full tint-green items-center justify-center font-extrabold text-sm">3</span>
+                            Compare alternativas
+                        </h4>
+                        <div class="darcula-bg p-3 rounded-lg border border-gray-600 text-xs overflow-x-auto">
+                            <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-com">// A) if/else en la Vista → acoplado y repetido</span>
+<span class="darcula-com">// B) VehiculoFactory.crear(tipo, ...) → desacoplado</span>
+v = <span class="darcula-class">VehiculoFactory</span>.<span class="darcula-func">crear</span>(tipo, placa, marca);</code></pre>
+                        </div>
+                    </div>
+                    <!-- Paso 4 -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-green);">
+                        <h4 class="font-extrabold text-lg text-gray-800 mb-2 flex items-center gap-2">
+                            <span class="inline-flex w-7 h-7 rounded-full tint-green items-center justify-center font-extrabold text-sm">4</span>
+                            Evalúe consecuencias
+                        </h4>
+                        <div class="darcula-bg p-3 rounded-lg border border-gray-600 text-xs overflow-x-auto">
+                            <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-com">// B: menos duplicación y un solo punto de cambio.</span>
+<span class="darcula-com">// Costo: se agrega una clase nueva a mantener.</span>
+<span class="darcula-class">VehiculoFactory</span> <span class="darcula-com">// nueva clase</span></code></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row gap-4 max-w-6xl mx-auto">
+                    <div class="flex-1 bg-white p-4 rounded-xl border border-gray-200 shadow-sm border-l-4" style="border-left-color: var(--accent-green);">
+                        <h4 class="font-bold text-gray-800 mb-1"><i class="fa-solid fa-circle-check text-green-600 mr-1"></i> Buena señal</h4>
+                        <p class="text-sm text-gray-600 mb-0">El patrón reduce <strong>duplicación, dependencias o decisiones dispersas</strong>.</p>
+                    </div>
+                    <div class="flex-1 bg-white p-4 rounded-xl border border-gray-200 shadow-sm border-l-4" style="border-left-color: var(--una-red);">
+                        <h4 class="font-bold text-gray-800 mb-1"><i class="fa-solid fa-circle-xmark text-red-500 mr-1"></i> Mala señal</h4>
+                        <p class="text-sm text-gray-600 mb-0">Se agregan clases y abstracciones <strong>sin un problema real</strong> que resolver.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 8: CASO - FLOTA VEHICULAR ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-truck-fast bg-icon text-[300px] -left-10 opacity-5" style="color: var(--una-red);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Caso: flota vehicular</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Patrones que ya podemos reconocer.</p>
+                </div>
+                <div class="glass-panel p-6 max-w-6xl mx-auto">
+                    <div class="overflow-x-auto">
+                        <table class="deck">
+                            <thead><tr><th>Necesidad</th><th>Patrón posible</th><th>Por qué encaja</th></tr></thead>
+                            <tbody>
+                                <tr><td>Crear distintos tipos de vehículo</td><td><span class="chip" style="background:rgba(244,208,63,0.14); color:#9a7d0c;">Factory Method</span></td><td>Centraliza la selección de la clase concreta.</td></tr>
+                                <tr><td>Mostrar cambios en la tabla</td><td><span class="chip" style="background:rgba(72,201,176,0.14); color:#0e8a72;">Observer</span></td><td>La interfaz reacciona a datos observables.</td></tr>
+                                <tr><td>Cambiar el cálculo de autonomía</td><td><span class="chip" style="background:rgba(72,201,176,0.14); color:#0e8a72;">Strategy</span></td><td>Intercambia algoritmos sin alterar al cliente.</td></tr>
+                                <tr><td>Ocultar varias operaciones internas</td><td><span class="chip" style="background:rgba(93,173,226,0.14); color:#1d6fa5;">Facade</span></td><td>Expone un servicio sencillo a la interfaz.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-sm mt-3 mb-0 text-center text-gray-500">Un mismo sistema puede usar varios patrones, cada uno para un problema distinto.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 9: 5.5 · CAPA Y NIVEL FÍSICO ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-layer-group bg-icon text-[300px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Capa y nivel físico no significan lo mismo</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">5.5 · Aplicaciones n-capas</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm border-t-4" style="border-top-color: var(--accent-purple);">
+                        <div class="w-14 h-14 rounded-full tint-purple flex items-center justify-center text-2xl mb-3"><i class="fa-solid fa-layer-group"></i></div>
+                        <h3 class="font-extrabold text-2xl text-gray-800 mb-1">Capa lógica · <span class="font-mono text-xl">layer</span></h3>
+                        <p class="text-lg text-gray-600 mb-2">Agrupa responsabilidades dentro del software.</p>
+                        <p class="text-sm font-semibold text-gray-500"><strong>Pregunta:</strong> ¿qué función cumple este código?</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm border-t-4" style="border-top-color: var(--una-red);">
+                        <div class="w-14 h-14 rounded-full tint-red flex items-center justify-center text-2xl mb-3"><i class="fa-solid fa-server"></i></div>
+                        <h3 class="font-extrabold text-2xl text-gray-800 mb-1">Nivel físico · <span class="font-mono text-xl">tier</span></h3>
+                        <p class="text-lg text-gray-600 mb-2">Indica dónde se ejecuta o despliega una parte.</p>
+                        <p class="text-sm font-semibold text-gray-500"><strong>Pregunta:</strong> ¿en qué proceso o máquina vive?</p>
+                    </div>
+                </div>
+                <div class="glass-panel p-5 mt-6 max-w-6xl mx-auto border-l-4" style="border-left-color: var(--una-gold);">
+                    <p class="text-lg mb-0"><i class="fa-regular fa-comment-dots text-amber-500 mr-2"></i>Tres capas pueden ejecutarse en una sola computadora. En ese caso hay <strong>separación lógica, pero un solo nivel físico</strong>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 10: ARQUITECTURA BASE - TRES CAPAS ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 flex flex-col items-center">
+                <i class="fa-solid fa-building-columns bg-icon text-[300px] -right-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Arquitectura base: tres capas</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Responsabilidades claras de arriba hacia abajo.</p>
+                </div>
+                <div class="flex flex-col items-center gap-3 w-full max-w-3xl">
+                    <div class="flow-box w-full" style="border-color: var(--accent-blue);">
+                        <i class="fa-solid fa-display text-2xl" style="color: var(--accent-blue);"></i>
+                        <p class="font-extrabold text-xl mb-0 mt-1">Presentación</p>
+                        <p class="text-sm text-gray-500 mb-0">FXML · controles · interacción</p>
+                    </div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+                    <div class="flow-box w-full" style="border-color: var(--accent-green);">
+                        <i class="fa-solid fa-gears text-2xl" style="color: var(--accent-green);"></i>
+                        <p class="font-extrabold text-xl mb-0 mt-1">Lógica de aplicación</p>
+                        <p class="text-sm text-gray-500 mb-0">casos de uso · reglas · coordinación</p>
+                    </div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+                    <div class="flow-box w-full" style="border-color: var(--una-gold);">
+                        <i class="fa-solid fa-database text-2xl" style="color: var(--una-gold);"></i>
+                        <p class="font-extrabold text-xl mb-0 mt-1">Acceso a datos</p>
+                        <p class="text-sm text-gray-500 mb-0">archivos · XML · base de datos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 11: CAPA 1 - PRESENTACIÓN ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-display bg-icon text-[300px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Presentación</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Capa 1 · Conversar con la persona usuaria.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm border-l-4" style="border-left-color: var(--accent-green);">
+                        <h4 class="font-bold text-xl text-gray-800 mb-3"><i class="fa-solid fa-circle-check text-green-600 mr-1"></i> Sí le corresponde</h4>
+                        <ul class="list-disc list-inside text-lg text-gray-700 space-y-1.5">
+                            <li>Mostrar datos y mensajes.</li>
+                            <li>Capturar acciones.</li>
+                            <li>Validar formato básico.</li>
+                            <li>Enviar solicitudes a la aplicación.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm border-l-4" style="border-left-color: var(--una-red);">
+                        <h4 class="font-bold text-xl text-gray-800 mb-3"><i class="fa-solid fa-circle-xmark text-red-500 mr-1"></i> No le corresponde</h4>
+                        <ul class="list-disc list-inside text-lg text-gray-700 space-y-1.5">
+                            <li>Calcular reglas del negocio.</li>
+                            <li>Guardar directamente en archivos o BD.</li>
+                            <li>Decidir cómo se construye el modelo.</li>
+                            <li>Conocer detalles de infraestructura.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="glass-panel p-5 mt-6 max-w-6xl mx-auto border-l-4" style="border-left-color: var(--accent-blue);">
+                    <p class="text-lg mb-0"><i class="fa-brands fa-java text-blue-500 mr-2"></i><strong>En JavaFX:</strong> el FXML describe la vista y el <strong>Controller</strong> traduce eventos de interfaz en solicitudes.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 12: CAPA 2 - LÓGICA DE APLICACIÓN ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-gears bg-icon text-[300px] -right-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Lógica de aplicación</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Capa 2 · Decidir y coordinar.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-6">
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-green);">
+                        <div class="w-12 h-12 rounded-full tint-green flex items-center justify-center text-xl mb-2"><i class="fa-solid fa-list-check"></i></div>
+                        <h4 class="font-extrabold text-lg text-gray-800">Casos de uso</h4>
+                        <p class="text-sm text-gray-500 mb-0">Registrar vehículo, iniciar ruta, enviar a mantenimiento.</p>
+                    </div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-green);">
+                        <div class="w-12 h-12 rounded-full tint-green flex items-center justify-center text-xl mb-2"><i class="fa-solid fa-scale-balanced"></i></div>
+                        <h4 class="font-extrabold text-lg text-gray-800">Reglas</h4>
+                        <p class="text-sm text-gray-500 mb-0">Un vehículo en ruta no puede eliminarse ni enviarse de nuevo.</p>
+                    </div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-green);">
+                        <div class="w-12 h-12 rounded-full tint-green flex items-center justify-center text-xl mb-2"><i class="fa-solid fa-diagram-project"></i></div>
+                        <h4 class="font-extrabold text-lg text-gray-800">Coordinación</h4>
+                        <p class="text-sm text-gray-500 mb-0">Valida, transforma datos y utiliza las abstracciones de persistencia.</p>
+                    </div>
+                </div>
+                <div class="darcula-bg p-4 rounded-xl shadow-xl border border-gray-600 text-xs max-w-4xl mx-auto">
+                    <div class="flex items-center gap-2 mb-2 border-b border-gray-600 pb-2 text-green-400 font-bold"><i class="fa-solid fa-code"></i> FlotaService — caso de uso</div>
+                    <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-kw">public void</span> <span class="darcula-func">enviarAMantenimiento</span>(<span class="darcula-class">String</span> placa) {
+    <span class="darcula-class">Vehiculo</span> v = repositorio.<span class="darcula-func">buscar</span>(placa);
+    v.<span class="darcula-func">cambiarEstado</span>(<span class="darcula-class">EstadoVehiculo</span>.MANTENIMIENTO);
+    repositorio.<span class="darcula-func">guardar</span>(v);
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 13: CAPA 3 - ACCESO A DATOS ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-database bg-icon text-[300px] -left-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Acceso a datos</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Capa 3 · Ocultar dónde y cómo se guarda.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <h4 class="font-bold text-xl text-gray-800 mb-3">Responsabilidades</h4>
+                        <ul class="list-disc list-inside text-lg text-gray-700 space-y-1.5">
+                            <li>Abrir y cerrar recursos.</li>
+                            <li>Leer, escribir, buscar y actualizar.</li>
+                            <li>Convertir datos persistidos.</li>
+                            <li>Manejar errores técnicos.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <h4 class="font-bold text-xl text-gray-800 mb-3">Implementaciones posibles</h4>
+                        <div class="mb-3">
+                            <span class="chip" style="background:rgba(200,16,46,0.1); color:var(--una-red);">Archivo binario</span>
+                            <span class="chip" style="background:rgba(93,173,226,0.12); color:#1d6fa5;">XML</span>
+                            <span class="chip" style="background:rgba(72,201,176,0.12); color:#0e8a72;">JSON</span>
+                            <span class="chip" style="background:rgba(212,172,13,0.14); color:#9a7d0c;">MySQL</span>
+                        </div>
+                        <p class="text-lg text-gray-600 mb-0">La lógica usa una <strong>interfaz</strong> y no necesita saber cuál implementación está activa.</p>
+                    </div>
+                </div>
+                <div class="darcula-bg p-4 rounded-xl shadow-xl border border-gray-600 text-xs max-w-4xl mx-auto mt-6">
+                    <div class="flex items-center gap-2 mb-2 border-b border-gray-600 pb-2 text-yellow-400 font-bold"><i class="fa-solid fa-code"></i> Contrato de persistencia</div>
+                    <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-kw">public interface</span> <span class="darcula-class">RepositorioVehiculo</span> {
+    <span class="darcula-class">Optional</span>&lt;<span class="darcula-class">Vehiculo</span>&gt; <span class="darcula-func">buscar</span>(<span class="darcula-class">String</span> placa);
+    <span class="darcula-kw">void</span> <span class="darcula-func">guardar</span>(<span class="darcula-class">Vehiculo</span> vehiculo);
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 14: FLUJO COMPLETO ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-route bg-icon text-[300px] -right-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Registrar un vehículo, paso a paso</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Flujo completo a través de las capas.</p>
+                </div>
+                <div class="flex flex-col md:flex-row items-stretch justify-center gap-3 max-w-6xl mx-auto mb-4 flex-wrap">
+                    <div class="flow-box flex-1" style="min-width:150px"><p class="font-extrabold mb-0">Usuario</p><p class="text-xs text-gray-500 mb-0">pulsa Registrar</p></div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="flow-box flex-1" style="min-width:150px"><p class="font-extrabold mb-0">Controller</p><p class="text-xs text-gray-500 mb-0">captura campos</p></div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="flow-box flex-1" style="min-width:150px"><p class="font-extrabold mb-0">Servicio</p><p class="text-xs text-gray-500 mb-0">valida reglas</p></div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="flow-box flex-1" style="min-width:150px"><p class="font-extrabold mb-0">Repositorio</p><p class="text-xs text-gray-500 mb-0">guarda</p></div>
+                </div>
+                <div class="glass-panel p-4 max-w-6xl mx-auto mb-4 text-center">
+                    <p class="text-lg mb-0"><i class="fa-solid fa-rotate-left text-amber-500 mr-2"></i><strong>Respuesta ←</strong> el resultado o el error regresa por el mismo camino hasta la Vista.</p>
+                </div>
+                <div class="glass-panel p-4 max-w-6xl mx-auto border-l-4" style="border-left-color: var(--una-gold);">
+                    <p class="text-lg mb-0"><i class="fa-regular fa-lightbulb text-amber-500 mr-2"></i>Cada capa conoce su <strong>contrato inmediato</strong>; ninguna necesita resolver todo el proceso.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 15: REGLAS DE DEPENDENCIA ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-sitemap bg-icon text-[300px] -left-10 opacity-5" style="color: var(--una-red);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Reglas de dependencia</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Separar no es solo crear carpetas.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-6">
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--una-red);">
+                        <h4 class="font-extrabold text-lg text-gray-800 mb-1">Evite saltos</h4>
+                        <p class="text-sm text-gray-500 mb-0">La Vista no debería escribir directamente en un archivo o base de datos.</p>
+                    </div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-blue);">
+                        <h4 class="font-extrabold text-lg text-gray-800 mb-1">Dependa de contratos</h4>
+                        <p class="text-sm text-gray-500 mb-0">Use interfaces cuando una implementación pueda cambiar.</p>
+                    </div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-green);">
+                        <h4 class="font-extrabold text-lg text-gray-800 mb-1">Controle el intercambio</h4>
+                        <p class="text-sm text-gray-500 mb-0">Pase solamente los datos que el siguiente módulo necesita.</p>
+                    </div>
+                </div>
+                <div class="darcula-bg p-4 rounded-xl shadow-xl border border-gray-600 text-xs max-w-4xl mx-auto">
+                    <div class="flex items-center gap-2 mb-2 border-b border-gray-600 pb-2 text-red-400 font-bold"><i class="fa-solid fa-code"></i> Acoplamiento vs. separación</div>
+                    <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-com">// Acoplamiento fuerte</span>  controller → MySqlConnection
+<span class="darcula-com">// Mejor separación</span>   controller → servicio → RepositorioVehiculo</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 16: SEPARACIÓN FÍSICA ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-server bg-icon text-[300px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Separación física</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">De una aplicación local a varios niveles.</p>
+                </div>
+                <div class="glass-panel p-6 max-w-6xl mx-auto">
+                    <div class="overflow-x-auto">
+                        <table class="deck">
+                            <thead><tr><th>Configuración</th><th>Distribución</th><th>Ejemplo</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>1-tier</strong></td><td>Interfaz, lógica y datos en un proceso</td><td>Aplicación JavaFX con archivo local</td></tr>
+                                <tr><td><strong>2-tier</strong></td><td>Cliente + servidor de datos</td><td>JavaFX conectado directamente a MySQL</td></tr>
+                                <tr><td><strong>3-tier</strong></td><td>Cliente + servidor de aplicación + datos</td><td>JavaFX → API → MySQL</td></tr>
+                                <tr><td><strong>n-tier</strong></td><td>Se agregan servicios o niveles especializados</td><td>API, autenticación, reportes y BD separados</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-sm mt-3 mb-0 text-center text-gray-500"><i class="fa-solid fa-triangle-exclamation mr-1" style="color: var(--una-gold);"></i>Más niveles pueden mejorar despliegue y escalabilidad, pero también agregan red, configuración y fallos posibles.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 17: 5.6 · DATOS Y MENSAJES ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-paper-plane bg-icon text-[300px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Datos y mensajes cumplen funciones distintas</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">5.6 · Transferencia entre módulos.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+                    <div class="interactive-card bg-white rounded-2xl p-6 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-blue);">
+                        <div class="w-14 h-14 rounded-full tint-blue flex items-center justify-center text-2xl mb-3"><i class="fa-solid fa-box"></i></div>
+                        <h3 class="font-extrabold text-2xl text-gray-800 mb-1">Datos</h3>
+                        <p class="text-lg text-gray-600 mb-2">Representan información que otra parte necesita.</p>
+                        <p class="text-sm font-semibold text-gray-500"><strong>Ejemplos:</strong> placa, marca, estado, lista de vehículos.</p>
+                    </div>
+                    <div class="interactive-card bg-white rounded-2xl p-6 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-green);">
+                        <div class="w-14 h-14 rounded-full tint-green flex items-center justify-center text-2xl mb-3"><i class="fa-solid fa-paper-plane"></i></div>
+                        <h3 class="font-extrabold text-2xl text-gray-800 mb-1">Mensajes</h3>
+                        <p class="text-lg text-gray-600 mb-2">Expresan una solicitud, respuesta o notificación.</p>
+                        <p class="text-sm font-semibold text-gray-500"><strong>Ejemplos:</strong> registrar, operación exitosa, estado actualizado.</p>
+                    </div>
+                </div>
+                <div class="glass-panel p-5 mt-6 max-w-6xl mx-auto border-l-4" style="border-left-color: var(--una-gold);">
+                    <p class="text-lg mb-0"><i class="fa-regular fa-comment-dots text-amber-500 mr-2"></i>Un mensaje puede transportar datos, pero también comunica una <strong>intención</strong>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 18: DTO ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-box-open bg-icon text-[300px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">DTO: transportar sin exponer todo el modelo</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Objeto de transferencia de datos.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <h4 class="font-bold text-xl text-gray-800 mb-3">¿Qué aporta?</h4>
+                        <ul class="list-disc list-inside text-lg text-gray-700 space-y-1.5">
+                            <li>Define qué campos cruzan el límite.</li>
+                            <li>Evita entregar el objeto de dominio completo.</li>
+                            <li>Facilita validación y serialización.</li>
+                            <li>Reduce dependencias entre módulos.</li>
+                        </ul>
+                    </div>
+                    <div class="darcula-bg p-4 rounded-xl shadow-xl border border-gray-600 text-xs">
+                        <div class="flex items-center gap-2 mb-2 border-b border-gray-600 pb-2 text-purple-400 font-bold"><i class="fa-solid fa-code"></i> VehiculoDTO.java</div>
+                        <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-kw">public record</span> <span class="darcula-class">VehiculoDTO</span>(
+    <span class="darcula-class">String</span> placa,
+    <span class="darcula-class">String</span> marca,
+    <span class="darcula-class">String</span> tipo,
+    <span class="darcula-class">String</span> estado
+) {}</code></pre>
+                    </div>
+                </div>
+                <p class="text-center text-sm mt-4" style="color: var(--text-muted);"><i class="fa-regular fa-comment-dots mr-1"></i>DTO significa <em>Data Transfer Object</em>: objeto de transferencia de datos.</p>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 19: MAPEAR PROTEGE LOS LÍMITES ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-arrows-turn-to-dots bg-icon text-[300px] -left-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Mapear protege los límites</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Traducción entre capas.</p>
+                </div>
+                <div class="flex flex-col md:flex-row items-stretch justify-center gap-3 max-w-6xl mx-auto mb-6 flex-wrap">
+                    <div class="flow-box flex-1" style="min-width:140px"><p class="font-extrabold mb-0">Vista</p><p class="text-xs text-gray-500 mb-0">campos de formulario</p></div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="flow-box flex-1" style="min-width:140px"><p class="font-extrabold mb-0">DTO</p><p class="text-xs text-gray-500 mb-0">datos necesarios</p></div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="flow-box flex-1" style="min-width:140px"><p class="font-extrabold mb-0">Dominio</p><p class="text-xs text-gray-500 mb-0">reglas y estado válido</p></div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="flow-box flex-1" style="min-width:140px"><p class="font-extrabold mb-0">Persistencia</p><p class="text-xs text-gray-500 mb-0">formato almacenado</p></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-l-4" style="border-left-color: var(--accent-green);">
+                        <h4 class="font-bold text-gray-800 mb-2"><i class="fa-solid fa-circle-check text-green-600 mr-1"></i> Ventaja</h4>
+                        <p class="text-sm text-gray-600 mb-0">Cada representación puede cambiar con <strong>menor impacto</strong> sobre las demás.</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-l-4" style="border-left-color: var(--una-red);">
+                        <h4 class="font-bold text-gray-800 mb-2"><i class="fa-solid fa-circle-xmark text-red-500 mr-1"></i> Costo</h4>
+                        <p class="text-sm text-gray-600 mb-0">Se escribe código de conversión y se deben <strong>mantener los mapeos</strong>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 20: MENSAJES DENTRO DE JAVAFX ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-bolt bg-icon text-[300px] -right-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Mensajes dentro de JavaFX</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Eventos, llamadas y resultados.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-6">
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-blue);">
+                        <h4 class="font-extrabold text-lg text-gray-800 mb-1">Evento de interfaz</h4>
+                        <p class="text-sm text-gray-500 mb-0"><code class="font-mono">onAction</code> avisa que ocurrió una interacción.</p>
+                    </div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-green);">
+                        <h4 class="font-extrabold text-lg text-gray-800 mb-1">Llamada al servicio</h4>
+                        <p class="text-sm text-gray-500 mb-0">El Controller envía la solicitud con los datos necesarios.</p>
+                    </div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--una-gold);">
+                        <h4 class="font-extrabold text-lg text-gray-800 mb-1">Resultado</h4>
+                        <p class="text-sm text-gray-500 mb-0">La Vista muestra confirmación, error o datos actualizados.</p>
+                    </div>
+                </div>
+                <div class="darcula-bg p-4 rounded-xl shadow-xl border border-gray-600 text-xs max-w-4xl mx-auto">
+                    <div class="flex items-center gap-2 mb-2 border-b border-gray-600 pb-2 text-yellow-400 font-bold"><i class="fa-solid fa-code"></i> FlotaController.java</div>
+                    <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-anno">@FXML</span>
+<span class="darcula-kw">private void</span> <span class="darcula-func">registrarVehiculo</span>() {
+    <span class="darcula-class">Resultado</span> resultado = servicio.<span class="darcula-func">registrar</span>(<span class="darcula-func">leerFormulario</span>());
+    vista.<span class="darcula-func">mostrar</span>(resultado.mensaje());
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 21: ¿DÓNDE DEBERÍA VIVIR? ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-circle-question bg-icon text-[300px] -left-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">¿Dónde debería vivir?</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Chequeo conceptual con la flota vehicular.</p>
+                </div>
+                <div class="glass-panel p-6 max-w-6xl mx-auto">
+                    <div class="overflow-x-auto">
+                        <table class="deck">
+                            <thead><tr><th>Responsabilidad</th><th>Capa</th><th>Razón</th></tr></thead>
+                            <tbody>
+                                <tr><td>Deshabilitar un botón</td><td><span class="chip" style="background:rgba(93,173,226,0.14); color:#1d6fa5;">Presentación</span></td><td>Es comportamiento visual.</td></tr>
+                                <tr><td>Impedir dos vehículos con la misma placa</td><td><span class="chip" style="background:rgba(72,201,176,0.14); color:#0e8a72;">Lógica</span></td><td>Es una regla del sistema.</td></tr>
+                                <tr><td>Convertir una fila de BD a objeto</td><td><span class="chip" style="background:rgba(212,172,13,0.14); color:#9a7d0c;">Datos</span></td><td>Es mapeo de persistencia.</td></tr>
+                                <tr><td>Enviar placa y marca al servicio</td><td><span class="chip" style="background:rgba(230,106,106,0.12); color:var(--una-red);">DTO / mensaje</span></td><td>Cruza el límite entre módulos.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 22: SÍNTESIS DEL TEMA 5 ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-flag-checkered bg-icon text-[300px] -right-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Una arquitectura útil responde cuatro preguntas</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Síntesis del tema 5.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto mb-6">
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--una-red);">
+                        <h3 class="font-extrabold text-3xl mb-1" style="color: var(--una-red);">¿Quién?</h3>
+                        <p class="text-sm text-gray-500 mb-0">MVC divide responsabilidades.</p>
+                    </div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--una-gold);">
+                        <h3 class="font-extrabold text-3xl mb-1" style="color: var(--una-gold);">¿Cómo?</h3>
+                        <p class="text-sm text-gray-500 mb-0">Los patrones resuelven problemas recurrentes.</p>
+                    </div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-blue);">
+                        <h3 class="font-extrabold text-3xl mb-1" style="color: var(--accent-blue);">¿Dónde?</h3>
+                        <p class="text-sm text-gray-500 mb-0">Las capas y tiers organizan lógica y despliegue.</p>
+                    </div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-green);">
+                        <h3 class="font-extrabold text-3xl mb-1" style="color: var(--accent-green);">¿Qué cruza?</h3>
+                        <p class="text-sm text-gray-500 mb-0">Datos y mensajes conectan módulos.</p>
+                    </div>
+                </div>
+                <div class="glass-panel p-5 max-w-6xl mx-auto border-l-4" style="border-left-color: var(--una-red);">
+                    <p class="text-lg mb-0"><i class="fa-solid fa-triangle-exclamation mr-2" style="color: var(--una-red);"></i><strong>Arquitectura no es acomodar carpetas:</strong> es controlar <strong>responsabilidades, dependencias y comunicación</strong>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 23: RADIOGRAFÍA DEL PROYECTO - INTRO ==================== -->
+        <div class="slide">
+            <div class="text-center w-full max-w-6xl z-10 relative">
+                <i class="fa-solid fa-magnifying-glass-chart bg-icon text-[350px] -bottom-10 -left-20" style="color: var(--una-red);"></i>
+                <div class="eyebrow-note mb-4" style="letter-spacing:0.2em; text-transform:uppercase; font-weight:800; color:var(--text-muted);">Radiografía del proyecto</div>
+                <h2 class="text-5xl md:text-6xl font-extrabold mb-3">Laboratorio <span style="color: var(--una-red);">05</span></h2>
+                <p class="text-2xl mb-6" style="color: var(--text-muted);">De la interfaz a las reglas de la flota y, después, a la persistencia en TXT.</p>
+                <div class="glass-panel inline-block px-8 py-4 text-center">
+                    <p class="text-lg mb-0"><i class="fa-regular fa-lightbulb text-amber-500 mr-2"></i><strong>Pregunta guía:</strong> ¿qué archivo participa cuando la persona pulsa "Registrar"?</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 24: ORGANIZACIÓN FÍSICA ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-folder-tree bg-icon text-[300px] -right-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">¿Qué responsabilidad tiene cada paquete?</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Organización física del Laboratorio 05.</p>
+                </div>
+                <div class="glass-panel p-6 max-w-6xl mx-auto">
+                    <div class="overflow-x-auto">
+                        <table class="deck">
+                            <thead><tr><th>Ubicación</th><th>Contenido</th><th>Responsabilidad</th></tr></thead>
+                            <tbody>
+                                <tr><td><code class="font-mono text-sm">lab.flotavehicular</code></td><td><code class="font-mono text-sm">Main</code></td><td>Iniciar JavaFX y abrir la ventana.</td></tr>
+                                <tr><td><code class="font-mono text-sm">controller</code></td><td><code class="font-mono text-sm">FlotaController</code></td><td>Traducir eventos de la interfaz.</td></tr>
+                                <tr><td><code class="font-mono text-sm">model</code></td><td>Vehículos, Flota, Cola y enums</td><td>Representar datos, reglas y comportamiento.</td></tr>
+                                <tr><td><code class="font-mono text-sm">resources/view</code></td><td><code class="font-mono text-sm">flotaView.fxml</code></td><td>Definir la estructura visual.</td></tr>
+                                <tr><td><code class="font-mono text-sm">assets</code></td><td>CSS e imágenes</td><td>Definir apariencia y recursos gráficos.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="glass-panel p-4 mt-4 mb-0">
+                        <p class="text-base mb-0 text-center"><i class="fa-regular fa-lightbulb text-amber-500 mr-1"></i>Un paquete representa una responsabilidad; no es únicamente una carpeta.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 25: ARRANQUE ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-rocket bg-icon text-[300px] -left-10 opacity-5" style="color: var(--una-red);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">De <code class="font-mono text-5xl">main</code> a la ventana</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">El arranque de la aplicación JavaFX.</p>
+                </div>
+                <div class="flex flex-col md:flex-row items-stretch justify-center gap-3 max-w-6xl mx-auto mb-6 flex-wrap">
+                    <div class="flow-box flex-1" style="min-width:150px"><code class="font-mono font-extrabold text-lg">main()</code><p class="text-xs text-gray-500 mb-0">launch(args)</p></div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="flow-box flex-1" style="min-width:150px"><code class="font-mono font-extrabold text-lg">start(Stage)</code><p class="text-xs text-gray-500 mb-0">crea la ventana</p></div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="flow-box flex-1" style="min-width:150px"><code class="font-mono font-extrabold text-lg">FXMLLoader</code><p class="text-xs text-gray-500 mb-0">lee el FXML</p></div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="flow-box flex-1" style="min-width:150px"><code class="font-mono font-extrabold text-lg">Controller</code><p class="text-xs text-gray-500 mb-0">initialize()</p></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4" style="border-top-color: var(--una-red);">
+                        <h4 class="font-bold text-lg text-gray-800 mb-2"><i class="fa-brands fa-java mr-1" style="color: var(--una-red);"></i> <code class="font-mono">pom.xml</code></h4>
+                        <p class="text-sm text-gray-600 mb-0">Dependencias, versión de Java, compilación y clase principal.</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4" style="border-top-color: var(--accent-blue);">
+                        <h4 class="font-bold text-lg text-gray-800 mb-2"><i class="fa-solid fa-cubes mr-1" style="color: var(--accent-blue);"></i> <code class="font-mono">module-info.java</code></h4>
+                        <p class="text-sm text-gray-600 mb-0"><code class="font-mono">requires</code>, <code class="font-mono">exports</code> y apertura del Controller a FXML.</p>
+                    </div>
+                </div>
+                <div class="glass-panel p-4 mt-6 max-w-6xl mx-auto border-l-4" style="border-left-color: var(--una-gold);">
+                    <p class="text-base mb-0"><i class="fa-solid fa-wrench text-amber-500 mr-2"></i><strong>Corrección necesaria:</strong> el proyecto original apunta a <code class="font-mono">HelloApplication</code>, pero la clase existente es <code class="font-mono">Main</code>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 26: MODELO - JERARQUÍA ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 flex flex-col items-center">
+                <i class="fa-solid fa-sitemap bg-icon text-[300px] -right-10 opacity-5" style="color: var(--una-red);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Una jerarquía, tres comportamientos</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">El modelo del Laboratorio 05.</p>
+                </div>
+                <div class="flex flex-col items-center gap-3 w-full max-w-3xl mb-6">
+                    <div class="flow-box w-full" style="border-color: var(--una-red);">
+                        <p class="font-extrabold text-xl mb-0 mt-1"><code class="font-mono">Vehiculo</code> · abstracta · implementa <code class="font-mono">Mantenible</code></p>
+                    </div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+                        <div class="flow-box"><p class="font-extrabold text-lg mb-0"><code class="font-mono">VehiculoCombustion</code></p><p class="text-xs text-gray-500 mb-0">combustible</p></div>
+                        <div class="flow-box"><p class="font-extrabold text-lg mb-0"><code class="font-mono">VehiculoElectrico</code></p><p class="text-xs text-gray-500 mb-0">batería y ciclos</p></div>
+                        <div class="flow-box"><p class="font-extrabold text-lg mb-0"><code class="font-mono">VehiculoPesado</code></p><p class="text-xs text-gray-500 mb-0">combustible y carga</p></div>
+                    </div>
+                </div>
+                <div class="glass-panel p-4 w-full max-w-4xl border-l-4" style="border-left-color: var(--accent-green);">
+                    <p class="text-base mb-0"><i class="fa-solid fa-arrows-spin text-green-500 mr-2"></i><strong>Polimorfismo:</strong> <code class="font-mono">seleccionado.iniciarRuta()</code> ejecuta la versión correspondiente al objeto real.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 27: ARCHIVOS DEL MODELO ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-file-code bg-icon text-[300px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Qué aporta cada pieza</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Archivos del modelo.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--una-red);"><h4 class="font-extrabold text-lg text-gray-800 mb-1"><code class="font-mono">Vehiculo</code></h4><p class="text-sm text-gray-500 mb-0">Datos comunes, estado, finalización de ruta y métodos abstractos.</p></div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-blue);"><h4 class="font-extrabold text-lg text-gray-800 mb-1">Subclases</h4><p class="text-sm text-gray-500 mb-0">Reglas particulares de energía, kilometraje, carga y evaluación.</p></div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-green);"><h4 class="font-extrabold text-lg text-gray-800 mb-1"><code class="font-mono">Mantenible</code></h4><p class="text-sm text-gray-500 mb-0">Contrato para evaluar el estado general.</p></div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--una-gold);"><h4 class="font-extrabold text-lg text-gray-800 mb-1">Enums</h4><p class="text-sm text-gray-500 mb-0">Estados y tipos válidos, sin textos arbitrarios.</p></div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-purple);"><h4 class="font-extrabold text-lg text-gray-800 mb-1"><code class="font-mono">Flota</code></h4><p class="text-sm text-gray-500 mb-0">Lista y operaciones CRUD por placa.</p></div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-blue);"><h4 class="font-extrabold text-lg text-gray-800 mb-1"><code class="font-mono">ColaMantenimiento</code></h4><p class="text-sm text-gray-500 mb-0">Genérico limitado a vehículos y atención FIFO.</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 28: MÉTODOS DEL MODELO ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-list-check bg-icon text-[300px] -left-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Reglas que no deberían vivir en la Vista</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Métodos centrales del modelo.</p>
+                </div>
+                <div class="glass-panel p-6 max-w-6xl mx-auto">
+                    <div class="overflow-x-auto">
+                        <table class="deck">
+                            <thead><tr><th>Clase</th><th>Métodos centrales</th><th>Regla representada</th></tr></thead>
+                            <tbody>
+                                <tr><td><code class="font-mono text-sm">Vehiculo</code></td><td><code class="font-mono text-sm">iniciarRuta</code>, <code class="font-mono text-sm">finalizarRuta</code>, <code class="font-mono text-sm">getTipo</code></td><td>Ciclo común y comportamiento polimórfico.</td></tr>
+                                <tr><td><code class="font-mono text-sm">Flota</code></td><td>agregar, obtener, actualizar, eliminar</td><td>CRUD y placa única.</td></tr>
+                                <tr><td><code class="font-mono text-sm">ColaMantenimiento</code></td><td>encolar, atender, cantidad</td><td>Estado válido y orden FIFO.</td></tr>
+                                <tr><td><code class="font-mono text-sm">VehiculoPesado</code></td><td><code class="font-mono text-sm">cargarMercancia</code></td><td>Peso positivo y sin sobrecarga.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-sm mt-3 mb-0 text-center text-gray-500"><i class="fa-regular fa-comment-dots mr-1"></i>Pregunta de revisión: <code class="font-mono text-sm">VehiculoPesado.iniciarRuta()</code> suma 50 km mediante <code class="font-mono text-sm">super</code> y luego 150 km adicionales.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 29: VISTA FXML ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-regular fa-window-maximize bg-icon text-[300px] -right-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Scene Builder guarda una jerarquía de objetos</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">La vista FXML.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <h4 class="font-bold text-xl text-gray-800 mb-3">Elementos estructurales</h4>
+                        <ul class="list-disc list-inside text-lg text-gray-700 space-y-1.5">
+                            <li><code class="font-mono">VBox</code>, <code class="font-mono">HBox</code>, <code class="font-mono">AnchorPane</code> y <code class="font-mono">GridPane</code>.</li>
+                            <li><code class="font-mono">TableView</code> contiene columnas.</li>
+                            <li><code class="font-mono">stylesheets</code> enlaza el CSS.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <h4 class="font-bold text-xl text-gray-800 mb-3">Puentes hacia Java</h4>
+                        <ul class="list-disc list-inside text-lg text-gray-700 space-y-1.5">
+                            <li><code class="font-mono">fx:controller</code> indica la clase.</li>
+                            <li><code class="font-mono">fx:id</code> coincide con un campo <code class="font-mono">@FXML</code>.</li>
+                            <li><code class="font-mono">onAction</code> coincide con un método <code class="font-mono">@FXML</code>.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="darcula-bg p-4 rounded-xl shadow-xl border border-gray-600 text-xs max-w-4xl mx-auto mt-6">
+                    <div class="flex items-center gap-2 mb-2 border-b border-gray-600 pb-2 text-blue-400 font-bold"><i class="fa-solid fa-code"></i> Puentes FXML ↔ Controller</div>
+                    <pre class="font-mono leading-snug" style="margin:0;"><code>fx:id=<span class="darcula-str">"txtPlaca"</span>  ↔  <span class="darcula-anno">@FXML</span> TextField txtPlaca;
+onAction=<span class="darcula-str">"#registrarVehiculo"</span>  ↔  <span class="darcula-anno">@FXML</span> <span class="darcula-func">registrarVehiculo</span>()</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 30: CONTROLLER - INYECCIÓN E INICIALIZACIÓN ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-plug bg-icon text-[300px] -left-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Inyección e inicialización</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Controller · Bloque 1.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-blue);">
+                        <h4 class="font-extrabold text-lg text-gray-800 mb-1">Campos <code class="font-mono">@FXML</code></h4>
+                        <p class="text-sm text-gray-500 mb-0">Son referencias a controles ya creados por el FXMLLoader.</p>
+                    </div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-green);">
+                        <h4 class="font-extrabold text-lg text-gray-800 mb-1"><code class="font-mono">initialize()</code></h4>
+                        <p class="text-sm text-gray-500 mb-0">Llena ComboBox, configura columnas y registra el listener.</p>
+                    </div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--una-gold);">
+                        <h4 class="font-extrabold text-lg text-gray-800 mb-1">Listener</h4>
+                        <p class="text-sm text-gray-500 mb-0">Observa la selección de la tabla y carga el formulario.</p>
+                    </div>
+                </div>
+                <div class="glass-panel p-5 mt-6 max-w-6xl mx-auto border-l-4" style="border-left-color: var(--accent-green);">
+                    <p class="text-lg mb-0"><i class="fa-solid fa-satellite-dish text-green-500 mr-2"></i><strong>Observer ya está presente:</strong> el listener recibe una notificación cuando cambia la selección.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 31: CONTROLLER - UTILIDADES Y CONSTRUCCIÓN ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-toolbox bg-icon text-[300px] -right-10 opacity-5" style="color: var(--una-red);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Utilidades y construcción</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Controller · Bloques 2 y 3.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm border-t-4" style="border-top-color: var(--accent-blue);">
+                        <h4 class="font-bold text-xl text-gray-800 mb-3"><i class="fa-solid fa-screwdriver-wrench mr-1" style="color: var(--accent-blue);"></i> Utilidades visuales</h4>
+                        <ul class="list-disc list-inside text-lg text-gray-700 space-y-1.5">
+                            <li><code class="font-mono text-base">mostrarCampo</code>, <code class="font-mono text-base">mostrarMensaje</code>, <code class="font-mono text-base">mostrarError</code>.</li>
+                            <li><code class="font-mono text-base">actualizarTabla</code>.</li>
+                            <li><code class="font-mono text-base">cargarVehiculoEnFormulario</code> y <code class="font-mono text-base">limpiarFormulario</code>.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm border-t-4" style="border-top-color: var(--una-red);">
+                        <h4 class="font-bold text-xl text-gray-800 mb-3"><i class="fa-solid fa-gears mr-1" style="color: var(--una-red);"></i> Creación actual</h4>
+                        <ul class="list-disc list-inside text-lg text-gray-700 space-y-1.5">
+                            <li><code class="font-mono text-base">construirVehiculoDesdeFormulario</code>.</li>
+                            <li>Tres métodos de creación mezclan lectura, validación y constructores.</li>
+                        </ul>
+                        <p class="text-sm text-gray-500 mt-3 mb-0">Este bloque funciona, pero hace que el Controller conozca demasiados detalles. Aquí agregaremos DTO y Factory.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 32: CONTROLLER - UN CASO DE USO COMPLETO ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-arrow-pointer bg-icon text-[300px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Un caso de uso completo</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Controller · Acciones.</p>
+                </div>
+                <div class="flex flex-col md:flex-row items-stretch justify-center gap-3 max-w-6xl mx-auto mb-6 flex-wrap">
+                    <div class="flow-box flex-1" style="min-width:140px"><p class="font-extrabold mb-0">Botón</p><p class="text-xs text-gray-500 mb-0"><code class="font-mono">onAction</code></p></div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="flow-box flex-1" style="min-width:140px"><p class="font-extrabold mb-0">Controller</p><p class="text-xs text-gray-500 mb-0">lee y coordina</p></div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="flow-box flex-1" style="min-width:140px"><p class="font-extrabold mb-0">Modelo</p><p class="text-xs text-gray-500 mb-0">aplica reglas</p></div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="flow-box flex-1" style="min-width:140px"><p class="font-extrabold mb-0">Vista</p><p class="text-xs text-gray-500 mb-0">refresca y avisa</p></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+                    <div class="glass-panel p-4 text-center"><p class="text-lg mb-0"><strong>CRUD:</strong> registrar, editar y eliminar.</p></div>
+                    <div class="glass-panel p-4 text-center"><p class="text-lg mb-0"><strong>Operaciones:</strong> iniciar/finalizar ruta, mantenimiento y carga.</p></div>
+                </div>
+                <p class="text-center text-sm mt-4" style="color: var(--text-muted);">Las excepciones detienen una operación inválida y el Controller las convierte en mensajes para la persona usuaria.</p>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 33: ¿QUÉ OCURRE AL CERRAR? ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-power-off bg-icon text-[300px] -right-10 opacity-5" style="color: var(--una-red);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">¿Qué ocurre al cerrar?</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Demostración: memoria vs. persistencia.</p>
+                </div>
+                <div class="flex flex-col md:flex-row items-stretch justify-center gap-3 max-w-5xl mx-auto mb-6 flex-wrap">
+                    <div class="flow-box flex-1" style="min-width:110px"><p class="font-extrabold mb-0">1</p><p class="text-xs text-gray-500 mb-0">Registrar</p></div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="flow-box flex-1" style="min-width:110px"><p class="font-extrabold mb-0">2</p><p class="text-xs text-gray-500 mb-0">Ver en la tabla</p></div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="flow-box flex-1" style="min-width:110px"><p class="font-extrabold mb-0">3</p><p class="text-xs text-gray-500 mb-0">Cerrar</p></div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="flow-box flex-1" style="min-width:110px; border-color: var(--una-red);"><p class="font-extrabold mb-0">4</p><p class="text-xs text-gray-500 mb-0">Datos perdidos</p></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4" style="border-top-color: var(--accent-purple);">
+                        <h4 class="font-bold text-lg text-gray-800 mb-1"><code class="font-mono">List&lt;Vehiculo&gt;</code></h4>
+                        <p class="text-sm text-gray-600 mb-0">Memoria de trabajo mientras el proceso existe.</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4" style="border-top-color: var(--accent-green);">
+                        <h4 class="font-bold text-lg text-gray-800 mb-1"><code class="font-mono">vehiculos.txt</code></h4>
+                        <p class="text-sm text-gray-600 mb-0">Almacenamiento que permanece entre ejecuciones.</p>
+                    </div>
+                </div>
+                <div class="glass-panel p-4 mt-6 max-w-5xl mx-auto border-l-4" style="border-left-color: var(--accent-green);">
+                    <p class="text-base mb-0"><i class="fa-regular fa-lightbulb text-green-500 mr-2"></i>El TXT no elimina la lista: cada uno resuelve un problema diferente.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 34: RUTA DE REFACTORIZACIÓN ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-code-branch bg-icon text-[300px] -left-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Ruta de refactorización</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">El cambio en vivo paso a paso.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto mb-6">
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--una-red);">
+                        <span class="inline-flex w-9 h-9 rounded-full tint-red items-center justify-center font-extrabold mb-2">1</span>
+                        <h4 class="font-extrabold text-lg text-gray-800 mb-1">Contrato</h4>
+                        <p class="text-sm text-gray-500 mb-0"><code class="font-mono">RepositorioVehiculo</code></p>
+                    </div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--una-gold);">
+                        <span class="inline-flex w-9 h-9 rounded-full tint-gold items-center justify-center font-extrabold mb-2">2</span>
+                        <h4 class="font-extrabold text-lg text-gray-800 mb-1">TXT</h4>
+                        <p class="text-sm text-gray-500 mb-0">Leer, convertir y escribir.</p>
+                    </div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-blue);">
+                        <span class="inline-flex w-9 h-9 rounded-full tint-blue items-center justify-center font-extrabold mb-2">3</span>
+                        <h4 class="font-extrabold text-lg text-gray-800 mb-1">Servicio</h4>
+                        <p class="text-sm text-gray-500 mb-0">Mover CRUD a <code class="font-mono">FlotaService</code>.</p>
+                    </div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-green);">
+                        <span class="inline-flex w-9 h-9 rounded-full tint-green items-center justify-center font-extrabold mb-2">4</span>
+                        <h4 class="font-extrabold text-lg text-gray-800 mb-1">Creación</h4>
+                        <p class="text-sm text-gray-500 mb-0">Agregar DTO y Factory.</p>
+                    </div>
+                </div>
+                <div class="glass-panel p-5 max-w-6xl mx-auto border-l-4" style="border-left-color: var(--una-red);">
+                    <p class="text-lg mb-0"><i class="fa-solid fa-fire text-red-500 mr-2"></i><strong>Regla para programar en caliente:</strong> después de cada paso, <strong>compilar y demostrar</strong> qué responsabilidad acaba de separarse.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 35: REPOSITORY ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-database bg-icon text-[300px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">La aplicación pide almacenamiento, no "un TXT"</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Patrón Repository.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
+                    <div class="darcula-bg p-4 rounded-xl shadow-xl border border-gray-600 text-xs">
+                        <div class="flex items-center gap-2 mb-2 border-b border-gray-600 pb-2 text-purple-400 font-bold"><i class="fa-solid fa-code"></i> RepositorioVehiculo.java</div>
+                        <pre class="font-mono leading-snug" style="margin:0;"><code><span class="darcula-kw">public interface</span> <span class="darcula-class">RepositorioVehiculo</span> {
+  <span class="darcula-class">List</span>&lt;<span class="darcula-class">Vehiculo</span>&gt; <span class="darcula-func">cargarTodos</span>();
+  <span class="darcula-kw">void</span> <span class="darcula-func">guardarTodos</span>(
+      <span class="darcula-class">List</span>&lt;<span class="darcula-class">Vehiculo</span>&gt; vehiculos
+  );
+}</code></pre>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <h4 class="font-bold text-xl text-gray-800 mb-3"><i class="fa-solid fa-circle-check mr-1" style="color: var(--accent-green);"></i> Ventaja</h4>
+                        <p class="text-lg text-gray-600 mb-3">El servicio depende de un <strong>contrato</strong>. Mañana puede existir otro repositorio para XML o base de datos.</p>
+                        <h4 class="font-bold text-xl text-gray-800 mb-2"><i class="fa-solid fa-gear mr-1" style="color: var(--accent-blue);"></i> Implementación actual</h4>
+                        <p class="text-lg text-gray-600 mb-0"><code class="font-mono">RepositorioVehiculoTxt</code> utiliza <code class="font-mono">Path</code> y <code class="font-mono">Files</code>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 36: FORMATO DEL ARCHIVO ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-file-lines bg-icon text-[300px] -left-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Serializar y deserializar texto</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Formato del archivo TXT.</p>
+                </div>
+                <div class="darcula-bg p-4 rounded-xl shadow-xl border border-gray-600 text-xs max-w-5xl mx-auto mb-6">
+                    <div class="flex items-center gap-2 mb-2 border-b border-gray-600 pb-2 text-green-400 font-bold"><i class="fa-solid fa-file-lines"></i> vehiculos.txt</div>
+                    <pre class="font-mono leading-snug" style="margin:0;"><code>tipo;placa;marca;kilometraje;estado;energia;ciclos;tonelaje;carga;tipoCarga
+ELECTRICO;EV-01;BYD;15000;DISPONIBLE;85.0;20;;;
+PESADO;TR-10;Volvo;80000;TALLER;60.0;;18.0;5.0;REFRIGERADA</code></pre>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4" style="border-top-color: var(--accent-green);">
+                        <h4 class="font-bold text-lg text-gray-800 mb-1"><code class="font-mono">convertirALinea()</code></h4>
+                        <p class="text-sm text-gray-600 mb-0">Objeto → texto para escribir.</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4" style="border-top-color: var(--accent-blue);">
+                        <h4 class="font-bold text-lg text-gray-800 mb-1"><code class="font-mono">convertirDesdeLinea()</code></h4>
+                        <p class="text-sm text-gray-600 mb-0">Texto → subtipo de vehículo.</p>
+                    </div>
+                </div>
+                <p class="text-center text-sm mt-4" style="color: var(--text-muted);"><code class="font-mono">split(";", -1)</code> conserva las columnas vacías. Placa y marca no deben contener punto y coma.</p>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 37: DTO + SIMPLE FACTORY ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-cubes bg-icon text-[300px] -right-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Sacar decisiones del Controller</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">DTO + Simple Factory.</p>
+                </div>
+                <div class="flex flex-col md:flex-row items-stretch justify-center gap-3 max-w-6xl mx-auto mb-6 flex-wrap">
+                    <div class="flow-box flex-1" style="min-width:150px"><p class="font-extrabold mb-0">Formulario</p><p class="text-xs text-gray-500 mb-0">controles JavaFX</p></div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="flow-box flex-1" style="min-width:150px"><p class="font-extrabold mb-0">DatosVehiculo</p><p class="text-xs text-gray-500 mb-0">DTO</p></div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="flow-box flex-1" style="min-width:150px"><p class="font-extrabold mb-0">VehiculoFactory</p><p class="text-xs text-gray-500 mb-0">elige subtipo</p></div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="flow-box flex-1" style="min-width:150px"><p class="font-extrabold mb-0">Vehiculo</p><p class="text-xs text-gray-500 mb-0">objeto de dominio</p></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4" style="border-top-color: var(--accent-blue);">
+                        <h4 class="font-bold text-lg text-gray-800 mb-1">DTO</h4>
+                        <p class="text-sm text-gray-600 mb-0">Transporta valores, sin transportar controles.</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4" style="border-top-color: var(--una-gold);">
+                        <h4 class="font-bold text-lg text-gray-800 mb-1">Simple Factory</h4>
+                        <p class="text-sm text-gray-600 mb-0">Centraliza validación y construcción según <code class="font-mono">TipoVehiculo</code>.</p>
+                    </div>
+                </div>
+                <p class="text-center text-sm mt-4" style="color: var(--text-muted);"><i class="fa-regular fa-comment-dots mr-1"></i>Precisión: Simple Factory es creacional, pero no es exactamente el Factory Method clásico basado en herencia.</p>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 38: ARQUITECTURA FINAL ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-layer-group bg-icon text-[300px] -left-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Nuevos límites del Laboratorio 05</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Arquitectura final por paquetes.</p>
+                </div>
+                <div class="glass-panel p-6 max-w-5xl mx-auto">
+                    <div class="overflow-x-auto">
+                        <table class="deck">
+                            <thead><tr><th>Paquete</th><th>Archivo principal</th><th>Concepto</th></tr></thead>
+                            <tbody>
+                                <tr><td><code class="font-mono text-sm">controller</code></td><td><code class="font-mono text-sm">FlotaController</code></td><td>Eventos y presentación.</td></tr>
+                                <tr><td><code class="font-mono text-sm">dto</code></td><td><code class="font-mono text-sm">DatosVehiculo</code></td><td>Transferencia entre módulos.</td></tr>
+                                <tr><td><code class="font-mono text-sm">factory</code></td><td><code class="font-mono text-sm">VehiculoFactory</code></td><td>Creación de subtipos.</td></tr>
+                                <tr><td><code class="font-mono text-sm">service</code></td><td><code class="font-mono text-sm">FlotaService</code></td><td>Casos de uso y reglas.</td></tr>
+                                <tr><td><code class="font-mono text-sm">repository</code></td><td>Contrato + implementación TXT</td><td>Acceso a datos.</td></tr>
+                                <tr><td><code class="font-mono text-sm">model</code></td><td>Vehículos y cola</td><td>Dominio.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 39: PATRONES IDENTIFICADOS ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-tags bg-icon text-[300px] -right-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Antes y después del cambio</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Patrones identificados en el Laboratorio 05.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm border-t-4" style="border-top-color: var(--accent-green);">
+                        <h4 class="font-bold text-xl text-gray-800 mb-3"><i class="fa-solid fa-circle-check mr-1" style="color: var(--accent-green);"></i> Ya estaban</h4>
+                        <ul class="list-disc list-inside text-lg text-gray-700 space-y-1.5">
+                            <li>MVC: FXML, Controller y modelo.</li>
+                            <li>Composite: árbol de nodos FXML.</li>
+                            <li>Observer: listener de selección.</li>
+                            <li>Polimorfismo: <code class="font-mono">iniciarRuta()</code>.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm border-t-4" style="border-top-color: var(--una-gold);">
+                        <h4 class="font-bold text-xl text-gray-800 mb-3"><i class="fa-solid fa-plus mr-1" style="color: var(--una-gold);"></i> Agregamos</h4>
+                        <ul class="list-disc list-inside text-lg text-gray-700 space-y-1.5">
+                            <li>Repository: contrato de persistencia.</li>
+                            <li>Simple Factory: creación de vehículos.</li>
+                            <li>DTO: transferencia de datos.</li>
+                            <li>Capa Service: coordinación y reglas.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="glass-panel p-5 mt-6 max-w-6xl mx-auto border-l-4" style="border-left-color: var(--una-red);">
+                    <p class="text-lg mb-0"><i class="fa-solid fa-triangle-exclamation mr-2" style="color: var(--una-red);"></i>Herencia y polimorfismo no son automáticamente Strategy: Strategy exige algoritmos intercambiables mediante composición.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 40: PRUEBA FINAL ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-flask bg-icon text-[300px] -left-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">¿Cómo sabemos que funcionó?</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Prueba final de la refactorización.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto mb-6">
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--una-red);">
+                        <h4 class="font-extrabold text-lg text-gray-800 mb-1">Crear</h4><p class="text-sm text-gray-500 mb-0">Registrar los tres tipos.</p>
+                    </div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--una-gold);">
+                        <h4 class="font-extrabold text-lg text-gray-800 mb-1">Reiniciar</h4><p class="text-sm text-gray-500 mb-0">Cerrar y recuperar desde TXT.</p>
+                    </div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-blue);">
+                        <h4 class="font-extrabold text-lg text-gray-800 mb-1">Modificar</h4><p class="text-sm text-gray-500 mb-0">Editar, ruta, carga y taller.</p>
+                    </div>
+                    <div class="interactive-card bg-white rounded-2xl p-5 shadow-sm border border-gray-200 border-t-4" style="border-top-color: var(--accent-green);">
+                        <h4 class="font-extrabold text-lg text-gray-800 mb-1">Verificar</h4><p class="text-sm text-gray-500 mb-0">Comparar tabla y líneas del archivo.</p>
+                    </div>
+                </div>
+                <div class="glass-panel p-5 max-w-6xl mx-auto border-l-4" style="border-left-color: var(--accent-purple);">
+                    <p class="text-lg mb-0"><i class="fa-solid fa-flask text-purple-500 mr-2"></i><strong>Prueba adicional:</strong> dejar un vehículo en taller, reiniciar y confirmar que vuelve a la cola de mantenimiento.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 41: ANTES DE SALIR ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-door-open bg-icon text-[300px] -right-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Antes de salir…</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Cierre de la sesión.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto mb-6">
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm border-t-4" style="border-top-color: var(--accent-green);">
+                        <h4 class="font-bold text-xl text-gray-800 mb-3"><i class="fa-solid fa-circle-check mr-1" style="color: var(--accent-green);"></i> Hoy cerramos</h4>
+                        <ul class="list-disc list-inside text-lg text-gray-700 space-y-1.5">
+                            <li>Clasificación de patrones.</li>
+                            <li>Capas lógicas y tiers físicos.</li>
+                            <li>Datos, DTO y mensajes.</li>
+                            <li>Lab 05: Repository, Service, Factory y TXT.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm border-t-4" style="border-top-color: var(--una-red);">
+                        <h4 class="font-bold text-xl text-gray-800 mb-3"><i class="fa-regular fa-calendar mr-1" style="color: var(--una-red);"></i> Fechas del programa</h4>
+                        <ul class="list-disc list-inside text-lg text-gray-700 space-y-1.5">
+                            <li><strong>13 de septiembre:</strong> entrega del Proyecto #1.</li>
+                            <li><strong>Próxima sesión:</strong> presentación y defensa de proyecto.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- fin slides-container -->
+
+    <!-- Scripts compartidos del proyecto — NO borrar ni agregar scripts abajo -->
+    <script src="../../../assets/js/curso-info.js"></script>
+    <script src="../../../assets/js/presentacion.js"></script>
+
+</body>
+</html>

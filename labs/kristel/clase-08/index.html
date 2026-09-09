@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio 6 — Programación III (Semana 8)</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --bg-panel: #ffffff;
+            --bg-terminal: #2b2b2b;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-panel: #e2e8f0;
+            --una-red: #c8102e;
+            --una-gold: #d4ac0d;
+            --accent-blue: #2563eb;
+            --accent-green: #16a34a;
+            --accent-purple: #7c3aed;
+            --accent-peach: #ea580c;
+        }
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --bg-panel: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-panel: #334155;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .glass-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .glass-panel h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.75rem; }
+        .glass-panel h3 { font-size: 1.3rem; font-weight: 700; margin: 1.2rem 0 0.6rem 0; }
+        .glass-panel h4 { font-size: 1.1rem; font-weight: 700; margin: 1rem 0 0.4rem 0; }
+        .glass-panel h2 code { font-size: 1.4rem; }
+        .glass-panel p { color: var(--text-muted); margin-bottom: 0.75rem; }
+        .glass-panel p:not([class*="text-"]) { font-size: 1.15rem; }
+        .glass-panel ul, .glass-panel ol { color: var(--text-muted); padding-left: 1.5rem; margin-bottom: 0.75rem; }
+        .glass-panel li { margin-bottom: 0.3rem; font-size: 1.1rem; }
+
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .badge-red { background: rgba(200,16,46,0.12); color: var(--una-red); }
+        .badge-blue { background: rgba(37,99,235,0.12); color: var(--accent-blue); }
+        .badge-green { background: rgba(22,163,74,0.12); color: var(--accent-green); }
+        .badge-purple { background: rgba(124,58,237,0.12); color: var(--accent-purple); }
+        .badge-gold { background: rgba(212,172,13,0.12); color: var(--una-gold); }
+
+        .code-fragment {
+            background: #2b2b2b;
+            border-radius: 0.6rem;
+            padding: 1rem 1.2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.15rem;
+            color: #a9b7c6;
+            margin: 0.5rem 0;
+            border: 1px solid #323232;
+            display: block;
+            white-space: pre;
+            overflow-x: auto;
+            width: 100%;
+            line-height: 1.5;
+        }
+
+        code.text-sm { font-size: 1.15rem; }
+        code.text-xs { font-size: 1.05rem; }
+        code:not([class*="text-"]) { font-size: 1.15rem; }
+
+        .d-comment { color: #808080; font-style: italic; }
+        .d-keyword { color: #cc7832; font-weight: bold; }
+        .d-string { color: #6a8759; }
+        .d-number { color: #6897bb; }
+        .d-annotation { color: #bbb529; }
+        .d-method { color: #ffc66d; }
+        .d-field { color: #9876aa; }
+        .d-type { color: #a9b7c6; font-weight: bold; }
+
+        .step-sub {
+            border-left: 3px solid var(--accent-blue);
+            padding-left: 1rem;
+            margin: 1.2rem 0;
+        }
+        .step-sub h5 {
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.2rem;
+        }
+        .step-sub p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+        }
+
+        .highlight-box {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--una-gold);
+            background: rgba(212,172,13,0.06);
+            margin: 0.75rem 0;
+        }
+        .highlight-box strong { color: var(--una-gold); }
+
+        .error-box {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--una-red);
+            background: rgba(200,16,46,0.06);
+            margin: 0.75rem 0;
+        }
+        .error-box strong { color: var(--una-red); }
+
+        .float-btn {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 9999px;
+            padding: 0.65rem 1rem;
+            font-size: 1rem;
+            color: var(--text-main);
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transition: transform 0.15s, background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .float-btn:hover { transform: scale(1.05); background: var(--border-panel); }
+
+        .group-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .group-card .members { color: var(--text-muted); font-size: 1.02rem; line-height: 1.55; margin-bottom: 0.6rem; }
+        .group-card .task { color: var(--text-muted); font-size: 1.05rem; }
+        .group-card .task strong { color: var(--text-main); }
+
+        .zone-chip {
+            display: inline-block;
+            border-radius: 9999px;
+            padding: 0.2rem 0.7rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin: 0.15rem 0.1rem;
+        }
+        .zone-chip.green { background: rgba(22,163,74,0.12); color: var(--accent-green); }
+        .zone-chip.blue { background: rgba(37,99,235,0.12); color: var(--accent-blue); }
+        .zone-chip.purple { background: rgba(124,58,237,0.12); color: var(--accent-purple); }
+        .zone-chip.gold { background: rgba(212,172,13,0.12); color: var(--una-gold); }
+        .zone-chip.red { background: rgba(200,16,46,0.12); color: var(--una-red); }
+
+        details {
+            margin-top: 1.2rem;
+            background: rgba(0,0,0,0.02);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-panel);
+        }
+        details summary {
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        details summary:hover { color: var(--accent-blue); }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .glass-panel { padding: 1rem; }
+            .glass-panel h2 { font-size: 1.4rem; }
+            .code-fragment { font-size: 0.95rem; padding: 0.4rem 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar modo claro/oscuro">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+
+    <div class="container">
+
+        <!-- PORTADA -->
+        <div class="glass-panel text-center" style="border-top: 6px solid var(--una-red);">
+            <div class="flex justify-center mb-4">
+                <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png" alt="Logo UNA" class="h-20 object-contain"
+                     onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png';">
+            </div>
+            <h2 class="text-3xl font-extrabold">Laboratorio 6</h2>
+            <p class="text-xl" style="color: var(--una-red); font-weight: 700;">Actividad colaborativa: Enseñemos Scene Builder</p>
+            <p class="text-sm" style="color: var(--text-muted);">Programación III — Semana 8: JavaFX · Scene Builder · FXML · Trabajo en equipo</p>
+            <div class="flex flex-wrap justify-center gap-3 mt-3">
+                <span class="badge badge-red">JavaFX 26</span>
+                <span class="badge badge-blue">Scene Builder &amp; FXML</span>
+                <span class="badge badge-green">Trabajo colaborativo</span>
+                <span class="badge badge-purple">Exposición en clase</span>
+                <span class="badge badge-gold">Laboratorio 05</span>
+            </div>
+            <div class="mt-4 text-sm" style="color: var(--text-muted);">
+                <i class="fa-regular fa-clock mr-1"></i> Duración: 30 min de investigación + 10 min por exposición &nbsp;·&nbsp;
+                <i class="fa-regular fa-users mr-1"></i> Equipos aleatorios de 2 a 3 personas
+            </div>
+        </div>
+
+        <!-- INTRODUCCIÓN -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-gold);">
+            <h2><i class="fa-regular fa-compass mr-2" style="color: var(--una-gold);"></i> Introducción</h2>
+            <p>
+                Durante el <strong>Laboratorio 05</strong> construimos el modelo de la flota vehicular y dejamos lista la estructura de recursos
+                (CSS, imágenes y la carpeta <code class="font-mono text-sm">view</code>). La interfaz gráfica <code class="font-mono text-sm">flotaView.fxml</code>
+                se creó y se trabajó con <strong>Scene Builder</strong>, la herramienta visual que genera FXML al arrastrar y soltar componentes.
+            </p>
+            <p>
+                En esta sesión convertiremos ese conocimiento en una <strong>actividad colaborativa</strong>: cada equipo investigará una parte concreta de
+                <strong>Library, Document o Inspector</strong> y la explicará al resto del grupo mediante una <strong>demostración en vivo</strong>, aplicando los cambios
+                sobre el archivo común <code class="font-mono text-sm">flotaView.fxml</code>. Entre los seis equipos debe quedar cubierto <strong>todo lo visible</strong>
+                en esas tres zonas de la versión de Scene Builder instalada en el laboratorio.
+            </p>
+            <div class="highlight-box">
+                <strong><i class="fa-regular fa-lightbulb mr-1"></i> Importante:</strong> esta es una actividad <strong>en equipos</strong> con valoración.
+                Todas las personas del equipo deben participar en la explicación. Guarden una copia del FXML antes de modificarlo.
+            </div>
+            <div class="highlight-box">
+                <strong><i class="fa-regular fa-list mr-1"></i> Objetivos de la actividad:</strong>
+            </div>
+            <ul>
+                <li>Reconocer y recorrer por completo las zonas <strong>Library, Document e Inspector</strong>.</li>
+                <li>Inventariar y explicar para qué sirve <strong>cada categoría, elemento, campo y opción</strong> asignada.</li>
+                <li>Relacionar cada opción con el Laboratorio 05 y con la arquitectura MVC estudiada en clase.</li>
+                <li>Demostrar cambios representativos sobre <code class="font-mono text-sm">flotaView.fxml</code>, sin omitir el resto de opciones del tema.</li>
+                <li>Comprobar el efecto visual o el FXML generado por la herramienta.</li>
+                <li>Desarrollar habilidades de comunicación técnica y trabajo en equipo.</li>
+            </ul>
+        </div>
+
+        <!-- MAPA DE LA HERRAMIENTA -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+            <h2><i class="fa-regular fa-map mr-2" style="color: var(--accent-blue);"></i> Mapa de la herramienta</h2>
+            <p>La investigación se concentra únicamente en las tres zonas laterales señaladas en la imagen de referencia. El contenido del Inspector cambia según el nodo seleccionado.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
+                <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                    <p class="font-bold text-gray-800 mb-1"><i class="fa-solid fa-box mr-1" style="color: var(--accent-blue);"></i> Library</p>
+                    <p class="text-sm mb-0" style="color: var(--text-muted);">Buscador y categorías: Containers, Controls, Gluon, Menu, Miscellaneous, Shapes, Charts y 3D.</p>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                    <p class="font-bold text-gray-800 mb-1"><i class="fa-solid fa-sitemap mr-1" style="color: var(--accent-purple);"></i> Document</p>
+                    <p class="text-sm mb-0" style="color: var(--text-muted);">Hierarchy y Controller: estructura padre-hijo, orden visual y conexión del FXML con Java.</p>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                    <p class="font-bold text-gray-800 mb-1"><i class="fa-solid fa-sliders mr-1" style="color: var(--accent-blue);"></i> Inspector</p>
+                    <p class="text-sm mb-0" style="color: var(--text-muted);">Properties, Layout y Code: características del nodo, restricciones de diseño, <code class="font-mono text-sm">fx:id</code> y eventos.</p>
+                </div>
+            </div>
+            <p class="text-xs mt-3 mb-0" style="color: var(--text-muted);">Base: <a href="https://docs.oracle.com/javafx/scenebuilder/1/user_guide/jsbpub-user_guide.htm" class="underline" style="color: var(--accent-blue);">Oracle — JavaFX Scene Builder User Guide</a>; versión actual en <a href="https://gluonhq.com/products/scene-builder/" class="underline" style="color: var(--accent-blue);">Gluon Scene Builder</a>.</p>
+        </div>
+
+        <!-- COBERTURA DE LA ACTIVIDAD -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-purple);">
+            <h2><i class="fa-regular fa-cubes mr-2" style="color: var(--accent-purple);"></i> Cobertura completa de la actividad</h2>
+            <p>Los seis bloques siguientes corresponden exactamente a los temas de los equipos. La regla es sencilla: <strong>si una opción aparece dentro del bloque asignado en la versión instalada, debe mencionarse y explicarse</strong>.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
+                <div class="group-card" style="border-top: 4px solid var(--accent-blue);">
+                    <p class="font-extrabold mb-1" style="color: var(--accent-blue);">Library · Containers</p>
+                    <p class="text-sm mb-2" style="color: var(--text-muted);">Todos los contenedores disponibles, cómo organizan sus hijos y qué restricciones usan.</p>
+                    <span class="zone-chip blue">Grupo 1</span>
+                </div>
+                <div class="group-card" style="border-top: 4px solid var(--accent-green);">
+                    <p class="font-extrabold mb-1" style="color: var(--accent-green);">Library · Controls</p>
+                    <p class="text-sm mb-2" style="color: var(--text-muted);">Todos los controles: acción, texto, selección, entrada, navegación, datos e indicadores.</p>
+                    <span class="zone-chip green">Grupo 2</span>
+                </div>
+                <div class="group-card" style="border-top: 4px solid var(--una-red);">
+                    <p class="font-extrabold mb-1" style="color: var(--una-red);">Library · Menu, Misc. y Gluon</p>
+                    <p class="text-sm mb-2" style="color: var(--text-muted);">Elementos de menú, componentes diversos, controles Gluon y administración de la Library.</p>
+                    <span class="zone-chip red">Grupo 3</span>
+                </div>
+                <div class="group-card" style="border-top: 4px solid var(--una-gold);">
+                    <p class="font-extrabold mb-1" style="color: var(--una-gold);">Library · Shapes, Charts y 3D</p>
+                    <p class="text-sm mb-2" style="color: var(--text-muted);">Todas las figuras, tipos de gráficos, ejes y objetos tridimensionales disponibles.</p>
+                    <span class="zone-chip gold">Grupo 4</span>
+                </div>
+                <div class="group-card" style="border-top: 4px solid var(--accent-purple);">
+                    <p class="font-extrabold mb-1" style="color: var(--accent-purple);">Document + Inspector Code</p>
+                    <p class="text-sm mb-2" style="color: var(--text-muted);">Hierarchy, Controller y Code: árbol FXML, controlador, identificadores y eventos.</p>
+                    <span class="zone-chip purple">Grupo 5</span>
+                </div>
+                <div class="group-card" style="border-top: 4px solid var(--accent-peach);">
+                    <p class="font-extrabold mb-1" style="color: var(--accent-peach);">Inspector · Properties + Layout</p>
+                    <p class="text-sm mb-2" style="color: var(--text-muted);">Propiedades generales y específicas, CSS, tamaños, posiciones, transformaciones y restricciones del padre.</p>
+                    <span class="zone-chip" style="background:rgba(234,88,12,0.12); color: var(--accent-peach);">Grupo 6</span>
+                </div>
+            </div>
+            <div class="highlight-box">
+                <strong><i class="fa-regular fa-circle-check mr-1"></i> Alcance real:</strong> las opciones pueden cambiar según la versión, los componentes importados y el nodo seleccionado.
+                Por eso, cada equipo debe expandir su sección y elaborar primero un inventario de <strong>todo lo que aparece en las computadoras del laboratorio</strong>.
+            </div>
+        </div>
+
+        <!-- ASIGNACIÓN DE EQUIPOS -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
+            <h2><i class="fa-solid fa-shuffle mr-2" style="color: var(--accent-green);"></i> Asignación de equipos · 1 a 3</h2>
+            <p>Los equipos son aleatorios. A cada grupo le corresponde un tema que deberá <strong>ubicar, explicar y demostrar</strong>.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
+                <div class="group-card" style="border-top: 4px solid var(--una-red);">
+                    <h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--una-red);">Grupo 1 · Library: Containers</h3>
+                    <p class="members">Mariano Martínez Alfaro<br>César Navarro Vásquez<br>Sebastián Arce Mejía</p>
+                    <p class="task"><strong>Expliquen todos los contenedores que aparezcan en la categoría Containers.</strong> Para cada uno: qué distribución produce, cómo recibe nodos hijos y cuándo conviene utilizarlo. Incluyan sus restricciones particulares en Layout.</p>
+                    <p class="task mt-2"><strong>Demostración mínima:</strong> comparar AnchorPane, HBox/VBox y GridPane; redimensionar la ventana para evidenciar su comportamiento.</p>
+                </div>
+                <div class="group-card" style="border-top: 4px solid var(--accent-blue);">
+                    <h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-blue);">Grupo 2 · Library: Controls</h3>
+                    <p class="members">Justin Gamboa Badilla<br>Carlo Méndez Barboza<br>Joshua Cascante Baltodano</p>
+                    <p class="task"><strong>Expliquen todos los elementos de Controls.</strong> Ordénenlos por familias: acción, texto, entrada, selección, navegación, visualización de datos e indicadores. Para cada control: propósito, dato que maneja y caso de uso.</p>
+                    <p class="task mt-2"><strong>Demostración mínima:</strong> un control de entrada, uno de selección y uno de datos; incluyan TableView por su uso en <code class="font-mono text-sm">flotaView.fxml</code>.</p>
+                </div>
+                <div class="group-card" style="border-top: 4px solid var(--accent-green);">
+                    <h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-green);">Grupo 3 · Library: Menu, Miscellaneous y Gluon</h3>
+                    <p class="members">Boris Arias Quintana<br>José Andia Chui<br>Juan Villagra Conejo</p>
+                    <p class="task"><strong>Expliquen todos los elementos de Menu, Miscellaneous y Gluon.</strong> Incluyan qué componentes pueden ser hijos de otros, para qué sirve cada uno y cuándo aparece o cambia la categoría Gluon.</p>
+                    <p class="task mt-2"><strong>Además:</strong> expliquen el buscador, expandir/contraer categorías y las opciones del engranaje para administrar o importar componentes cuando estén disponibles.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-purple);">
+            <h2><i class="fa-solid fa-shuffle mr-2" style="color: var(--accent-purple);"></i> Asignación de equipos · 4 a 6</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
+                <div class="group-card" style="border-top: 4px solid var(--una-gold);">
+                    <h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--una-gold);">Grupo 4 · Library: Shapes, Charts y 3D</h3>
+                    <p class="members">Jander Briones López<br>Kendall Valencia Murillo<br>Eduardo Sánchez Montero</p>
+                    <p class="task"><strong>Expliquen todos los elementos de Shapes, Charts y 3D.</strong> En Charts incluyan tipos de gráfico, series, datos y ejes; en Shapes, geometría, relleno y borde; en 3D, forma, material, luz, cámara y limitaciones que muestre la versión instalada.</p>
+                    <p class="task mt-2"><strong>Demostración mínima:</strong> agregar y configurar una figura, un gráfico y un objeto 3D disponible.</p>
+                </div>
+                <div class="group-card" style="border-top: 4px solid var(--accent-purple);">
+                    <h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-purple);">Grupo 5 · Document + Inspector Code</h3>
+                    <p class="members">Greivin Bermúdez Espinoza<br>Óscar Alvarado Méndez<br>Daniel Granados Pérez</p>
+                    <p class="task"><strong>Document completo:</strong> Hierarchy y Controller. Expliquen raíz, relaciones padre-hijo, orden, selección múltiple, arrastre, menús contextuales, elementos no visibles y recursos/controlador disponibles.</p>
+                    <p class="task mt-2"><strong>Inspector Code completo:</strong> <code class="font-mono text-sm">fx:id</code>, clase controladora, métodos de eventos y cualquier campo mostrado para distintos nodos. Comprueben qué código FXML se genera.</p>
+                </div>
+                <div class="group-card" style="border-top: 4px solid var(--una-red);">
+                    <h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--una-red);">Grupo 6 · Inspector: Properties + Layout</h3>
+                    <p class="members">Johnny Chaves Vega<br>Ángel Arana Taleno</p>
+                    <p class="task"><strong>Properties completo:</strong> buscador y modos de vista; propiedades comunes, específicas del control, CSS, estilo, clases, hojas de estilo, efectos y menús del engranaje.</p>
+                    <p class="task mt-2"><strong>Layout completo:</strong> tamaño mínimo/preferido/máximo, posición, alineación, padding, margin, grow, transformaciones y restricciones que dependen del contenedor padre. Comparen Button, TableView, AnchorPane y un nodo dentro de GridPane.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROTOCOLO DE INVESTIGACIÓN -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+            <h2><i class="fa-solid fa-clipboard-check mr-2" style="color: var(--accent-blue);"></i> Protocolo de investigación · 30 minutos</h2>
+            <p>Para lograr una explicación completa en poco tiempo, cada equipo debe trabajar con este orden:</p>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-3">
+                <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                    <p class="font-extrabold mb-1" style="color: var(--una-red);">0–5 min · Inventario</p>
+                    <p class="text-sm mb-0" style="color: var(--text-muted);">Expandan su bloque y anoten cada categoría, componente, campo, botón y menú que aparezca.</p>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                    <p class="font-extrabold mb-1" style="color: var(--una-gold);">5–18 min · Investigación</p>
+                    <p class="text-sm mb-0" style="color: var(--text-muted);">Para cada opción respondan: ¿qué es?, ¿para qué sirve?, ¿cuándo se usa? y ¿qué cambia en el FXML?</p>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                    <p class="font-extrabold mb-1" style="color: var(--accent-green);">18–25 min · Prueba</p>
+                    <p class="text-sm mb-0" style="color: var(--text-muted);">Pruébenla en una copia de <code class="font-mono text-sm">flotaView.fxml</code> y seleccionen los ejemplos más claros.</p>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                    <p class="font-extrabold mb-1" style="color: var(--accent-purple);">25–30 min · Ensayo</p>
+                    <p class="text-sm mb-0" style="color: var(--text-muted);">Distribuyan la participación y ensayen una exposición de 8 minutos sin omisiones.</p>
+                </div>
+            </div>
+            <div class="highlight-box">
+                <strong><i class="fa-regular fa-square-check mr-1"></i> Ficha mínima por opción:</strong>
+                nombre · propósito · ejemplo de uso · propiedad o restricción importante · efecto visual/FXML.
+                En bloques muy amplios, hagan un recorrido breve por todas las opciones y profundicen en los ejemplos mínimos asignados.
+            </div>
+            <div class="highlight-box">
+                <strong><i class="fa-solid fa-arrows-rotate mr-1"></i> Para Document e Inspector:</strong>
+                seleccionen al menos el nodo raíz, un Button, un TableView, una TableColumn, un AnchorPane y un elemento hijo de GridPane.
+                Registren qué secciones aparecen, desaparecen o cambian en cada selección.
+            </div>
+        </div>
+
+        <!-- PRODUCTO ESPERADO -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-gold);">
+            <h2><i class="fa-regular fa-note-sticky mr-2" style="color: var(--una-gold);"></i> Producto esperado</h2>
+            <p>Cada equipo debe <strong>enseñar, no solo definir</strong>. Antes de exponer debe preparar una lista de comprobación con todas las opciones visibles de su tema. La presentación cubrirá cuatro momentos:</p>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-3">
+                <div class="bg-white rounded-xl border border-gray-200 p-4 text-center shadow-sm">
+                    <span class="inline-flex w-10 h-10 rounded-full items-center justify-center font-extrabold mb-2" style="background:rgba(200,16,46,0.12); color: var(--una-red);">1</span>
+                    <p class="font-bold mb-1">Ubicar</p>
+                    <p class="text-sm mb-0" style="color: var(--text-muted);">Expandir su sección y mostrar el inventario completo.</p>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-4 text-center shadow-sm">
+                    <span class="inline-flex w-10 h-10 rounded-full items-center justify-center font-extrabold mb-2" style="background:rgba(212,172,13,0.12); color: var(--una-gold);">2</span>
+                    <p class="font-bold mb-1">Explicar</p>
+                    <p class="text-sm mb-0" style="color: var(--text-muted);">Dar el propósito y un uso de cada opción asignada.</p>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-4 text-center shadow-sm">
+                    <span class="inline-flex w-10 h-10 rounded-full items-center justify-center font-extrabold mb-2" style="background:rgba(37,99,235,0.12); color: var(--accent-blue);">3</span>
+                    <p class="font-bold mb-1">Demostrar</p>
+                    <p class="text-sm mb-0" style="color: var(--text-muted);">Probar los ejemplos mínimos indicados en <code class="font-mono text-sm">flotaView.fxml</code>.</p>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-4 text-center shadow-sm">
+                    <span class="inline-flex w-10 h-10 rounded-full items-center justify-center font-extrabold mb-2" style="background:rgba(22,163,74,0.12); color: var(--accent-green);">4</span>
+                    <p class="font-bold mb-1">Comprobar</p>
+                    <p class="text-sm mb-0" style="color: var(--text-muted);">Enseñar el efecto visual o el FXML generado.</p>
+                </div>
+            </div>
+            <div class="error-box">
+                <strong><i class="fa-solid fa-users mr-1"></i> Reglas:</strong> todas las personas del equipo deben participar. Ningún grupo puede limitarse a los ejemplos de esta guía:
+                debe comprobar y cubrir todo lo que realmente aparezca en su sección de Scene Builder.
+            </div>
+        </div>
+
+        <!-- ORGANIZACIÓN -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-peach);">
+            <h2><i class="fa-regular fa-clock mr-2" style="color: var(--accent-peach);"></i> Organización y tiempos</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
+                <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm text-center">
+                    <i class="fa-solid fa-magnifying-glass text-2xl mb-2" style="color: var(--una-gold);"></i>
+                    <p class="font-extrabold text-2xl mb-0" style="color: var(--una-gold);">30 min</p>
+                    <p class="text-sm mb-0" style="color: var(--text-muted);">Inventariar, investigar, probar y preparar la demostración.</p>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm text-center">
+                    <i class="fa-solid fa-person-chalkboard text-2xl mb-2" style="color: var(--accent-blue);"></i>
+                    <p class="font-extrabold text-2xl mb-0" style="color: var(--accent-blue);">10 min</p>
+                    <p class="text-sm mb-0" style="color: var(--text-muted);">Por equipo: 8 min de recorrido y demostración + 2 min de preguntas.</p>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm text-center">
+                    <i class="fa-solid fa-note-sticky text-2xl mb-2" style="color: var(--accent-green);"></i>
+                    <p class="font-extrabold text-2xl mb-0" style="color: var(--accent-green);">Anotar</p>
+                    <p class="text-sm mb-0" style="color: var(--text-muted);">Durante cada exposición, registrar una opción nueva y un uso posible.</p>
+                </div>
+            </div>
+            <ul class="mt-4">
+                <li><strong>Orden de exposición:</strong> grupos 1 → 6.</li>
+                <li><strong>Duración total estimada:</strong> 90 minutos (30 de investigación + 60 de exposiciones).</li>
+                <li>Guarden una copia de <code class="font-mono text-sm">flotaView.fxml</code> antes de modificarlo.</li>
+                <li>Archivo común de trabajo: <code class="font-mono text-sm">flotaView.fxml</code> del Laboratorio 05.</li>
+            </ul>
+        </div>
+
+        <!-- CRITERIOS DE VALORACIÓN -->
+        <div class="glass-panel" style="border-left: 4px solid var(--una-red);">
+            <h2><i class="fa-regular fa-star mr-2" style="color: var(--una-red);"></i> Criterios de valoración</h2>
+            <p>¿Qué hace clara una buena demostración? La exposición se valora con la siguiente rúbrica:</p>
+            <div class="overflow-x-auto">
+                <table style="width:100%; border-collapse: collapse; font-size: 0.95rem; color: var(--text-muted);">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--border-panel); text-align: left; color: var(--text-main);">
+                            <th style="padding: 0.6rem 0.7rem;">Criterio</th>
+                            <th style="padding: 0.6rem 0.7rem;">Se evidencia cuando…</th>
+                            <th style="padding: 0.6rem 0.7rem; text-align: center;">Peso</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Cobertura completa</td><td style="padding: 0.5rem 0.7rem;">Incluyen todas las opciones visibles de su bloque y explican para qué sirve cada una.</td><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-red">30%</span></td></tr>
+                        <tr><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Dominio técnico</td><td style="padding: 0.5rem 0.7rem;">Diferencian conceptos, responden preguntas y no se limitan a leer.</td><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-gold">25%</span></td></tr>
+                        <tr><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Demostración</td><td style="padding: 0.5rem 0.7rem;">Realizan cambios visibles, correctos y muestran el efecto en el FXML.</td><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-blue">25%</span></td></tr>
+                        <tr><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Aplicación</td><td style="padding: 0.5rem 0.7rem;">Relacionan las opciones con <code class="font-mono text-sm">flotaView.fxml</code> y el Laboratorio 05.</td><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-purple">10%</span></td></tr>
+                        <tr><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Participación y claridad</td><td style="padding: 0.5rem 0.7rem;">Hablan todas las personas y respetan los 10 minutos.</td><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-green">10%</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- REFERENCIAS ÚTILES -->
+        <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+            <h2><i class="fa-solid fa-book-open mr-2" style="color: var(--accent-blue);"></i> Referencias útiles</h2>
+            <ul>
+                <li><a href="https://docs.oracle.com/javafx/scenebuilder/1/user_guide/jsbpub-user_guide.htm" class="underline" style="color: var(--accent-blue);">Oracle — JavaFX Scene Builder User Guide</a>.</li>
+                <li><a href="https://gluonhq.com/products/scene-builder/" class="underline" style="color: var(--accent-blue);">Gluon — Scene Builder</a> (versión 26.0.0 publicada en 2026).</li>
+                <li><a href="https://github.com/gluonhq/scenebuilder/wiki" class="underline" style="color: var(--accent-blue);">GluonHQ — Scene Builder Wiki</a>.</li>
+                <li>Documentación de la clase: Arquitectura de las aplicaciones (Parte II) — Semana 8.</li>
+            </ul>
+            <div class="highlight-box">
+                <strong><i class="fa-regular fa-paper-plane mr-1"></i> Entrega:</strong> la actividad se desarrolla y valora <strong>durante la sesión de clase</strong>.
+                La participación y la demostración sobre <code class="font-mono text-sm">flotaView.fxml</code> constituyen la evidencia de la actividad.
+            </div>
+        </div>
+
+        <div class="text-center text-xs" style="color: var(--text-muted); padding: 2rem 0 1rem 0; border-top: 1px solid var(--border-panel);">
+            <p>Laboratorio 6 — Programación III &bull; Universidad Nacional &bull; 2026</p>
+            <p class="mt-1">Elaborado por: Kristel Duarte Pérez</p>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', next);
+            const icon = document.getElementById('theme-icon');
+            icon.className = next === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+        }
+    </script>
+</body>
+</html>
