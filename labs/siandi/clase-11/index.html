@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio Autoguiado — Mini-Discord (Persistencia con MySQL/JDBC)</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --bg-panel: #ffffff;
+            --bg-terminal: #2b2b2b;
+            --text-main: #0f172a;
+            --text-muted: #334155;
+            --border-panel: #cbd5e1;
+            --una-red: #c8102e;
+            --una-gold: #b28900;
+            --accent-blue: #1d4ed8;
+            --accent-green: #15803d;
+            --accent-purple: #6d28d9;
+            --accent-peach: #c2410c;
+        }
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --bg-panel: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+            --border-panel: #334155;
+            --una-gold: #d4ac0d;
+            --accent-blue: #3b82f6;
+            --accent-green: #22c55e;
+            --accent-purple: #8b5cf6;
+            --accent-peach: #f97316;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .glass-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .glass-panel h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.75rem; }
+        .glass-panel h3 { font-size: 1.3rem; font-weight: 700; margin: 1.2rem 0 0.6rem 0; }
+        .glass-panel h4 { font-size: 1.1rem; font-weight: 700; margin: 1rem 0 0.4rem 0; }
+        .glass-panel p { color: var(--text-muted); margin-bottom: 0.75rem; }
+        .glass-panel p:not([class*="text-"]) { font-size: 1.15rem; }
+        .glass-panel ul, .glass-panel ol { color: var(--text-muted); padding-left: 1.5rem; margin-bottom: 0.75rem; }
+        .glass-panel li { margin-bottom: 0.3rem; font-size: 1.1rem; }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #ffffff;
+        }
+        .badge-red { background: var(--una-red); }
+        .badge-blue { background: var(--accent-blue); }
+        .badge-green { background: var(--accent-green); }
+        .badge-purple { background: var(--accent-purple); }
+        .badge-gold { background: var(--una-gold); }
+
+        .darcula-editor {
+            background-color: #2b2b2b !important;
+            border: 1px solid #1a1a1a !important;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+            margin: 1rem 0;
+        }
+        .darcula-header {
+            background-color: #313335;
+            border-bottom: 1px solid #1a1a1a;
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .darcula-tab {
+            background: #2b2b2b;
+            color: #a9b7c6;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 2px 10px;
+            border-radius: 4px 4px 0 0;
+            border-top: 2px solid #4a88c7;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .darcula-code {
+            color: #a9b7c6;
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.5;
+            white-space: pre;
+            overflow-x: auto;
+            display: block;
+            padding: 1rem 1.2rem;
+            margin: 0;
+        }
+
+        .d-comment { color: #808080; font-style: italic; }
+        .d-keyword { color: #cc7832; font-weight: bold; }
+        .d-string { color: #6a8759; }
+        .d-number { color: #6897bb; }
+        .d-annotation { color: #bbb529; }
+        .d-method { color: #ffc66d; }
+        .d-field { color: #9876aa; }
+        .d-type { color: #a9b7c6; font-weight: bold; }
+        .d-xml-tag { color: #e8bf6a; }
+        .d-xml-attr { color: #bababa; }
+        .d-sql { color: #cc7832; font-weight: bold; }
+        .d-new { color: #98c379; font-weight: bold; font-style: normal; }
+
+        .step-sub {
+            border-left: 4px solid var(--accent-blue);
+            padding-left: 1.2rem;
+            margin: 1.5rem 0;
+        }
+        .step-sub h5 {
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.4rem;
+        }
+        .step-sub p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight-box {
+            padding: 1rem 1.2rem;
+            border-radius: 0.5rem;
+            border-left: 5px solid var(--una-gold);
+            background: #fffbef;
+            color: #423500;
+            margin: 1rem 0;
+            border-top: 1px solid #fce895;
+            border-right: 1px solid #fce895;
+            border-bottom: 1px solid #fce895;
+        }
+        [data-theme="dark"] .highlight-box {
+            background: #332900;
+            color: #fef08a;
+            border-color: #856600;
+        }
+        .highlight-box strong { color: var(--una-gold); font-weight: 800; }
+
+        .pregunta-box {
+            background: #f0fdf4;
+            border-left: 5px solid var(--accent-green);
+            padding: 1rem 1.2rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            border-top: 1px solid #bbf7d0;
+            border-right: 1px solid #bbf7d0;
+            border-bottom: 1px solid #bbf7d0;
+            color: #14532d;
+        }
+        [data-theme="dark"] .pregunta-box {
+            background: #052e16;
+            color: #86efac;
+            border-color: #166534;
+        }
+        .pregunta-box p { margin-bottom: 0.5rem; }
+
+        .decision-box {
+            background: #f5f3ff;
+            border-left: 5px solid var(--accent-purple);
+            padding: 1rem 1.2rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            border-top: 1px solid #ddd6fe;
+            border-right: 1px solid #ddd6fe;
+            border-bottom: 1px solid #ddd6fe;
+            color: #3b0764;
+        }
+        [data-theme="dark"] .decision-box {
+            background: #2e1065;
+            color: #ddd6fe;
+            border-color: #6d28d9;
+        }
+        .decision-box p { margin-bottom: 0.5rem; }
+        .decision-box .decision-label {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 800;
+            color: var(--accent-purple);
+            margin-bottom: 0.4rem;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .float-btn {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50;
+            background: var(--bg-panel);
+            border: 2px solid var(--border-panel);
+            border-radius: 9999px;
+            padding: 0.65rem 1rem;
+            font-size: 1rem;
+            color: var(--text-main);
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            transition: transform 0.15s, background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .float-btn:hover { transform: scale(1.05); background: var(--border-panel); }
+
+        details {
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--bg-panel);
+            padding: 0.8rem 1.2rem;
+            border-radius: 0.5rem;
+            border: 2px solid var(--border-panel);
+        }
+        details summary {
+            cursor: pointer;
+            font-weight: 800;
+            color: var(--accent-blue);
+            font-size: 1.1rem;
+        }
+        details summary:hover { color: var(--accent-purple); }
+
+        .code-explanation {
+            margin-top: 1rem;
+            font-size: 1.05rem;
+            border-top: 1px solid var(--border-panel);
+            padding-top: 1rem;
+        }
+        .code-explanation p { margin-bottom: 0.8rem; }
+
+        .code-explanation code {
+            background: #2b2b2b;
+            color: #a9b7c6;
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.3rem;
+            font-family: 'JetBrains Mono', monospace;
+            border: 1px solid #1a1a1a;
+            font-size: 1rem;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .diagram-node {
+            background: var(--bg-panel);
+            border: 2px solid var(--border-panel);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 10;
+        }
+
+        .tabla-compare {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin: 0.8rem 0;
+        }
+        .tabla-compare th {
+            background: #2b2b2b;
+            color: #cdd6f4;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        .tabla-compare td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-panel);
+            color: var(--text-muted);
+        }
+        .tabla-compare tr:nth-child(even) { background: rgba(0,0,0,0.02); }
+        [data-theme="dark"] .tabla-compare tr:nth-child(even) { background: rgba(255,255,255,0.03); }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .glass-panel { padding: 1rem; }
+            .glass-panel h2 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar modo claro/oscuro">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+
+    <div class="container">
+
+        <!-- PORTADA -->
+        <div class="glass-panel text-center" style="border-top: 6px solid var(--una-red);">
+            <div class="flex justify-center mb-4">
+                <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png" alt="Logo UNA" class="h-20 object-contain"
+                     onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png';">
+            </div>
+            <h2 class="text-3xl font-extrabold">Laboratorio Autoguiado</h2>
+            <p class="text-xl" style="color: var(--una-red); font-weight: 800;">Mini-Discord: Persistencia con MySQL y JDBC</p>
+            <p class="text-sm font-semibold mt-2" style="color: var(--text-muted);">Programación III — Universidad Nacional de Costa Rica · Sección Regional Central Occidente (SRCO)</p>
+            <div class="flex flex-wrap justify-center gap-3 mt-4">
+                <span class="badge badge-red">MySQL 8</span>
+                <span class="badge badge-blue">JDBC</span>
+                <span class="badge badge-green">Normalización 3FN</span>
+                <span class="badge badge-purple">Patrón Repository</span>
+                <span class="badge badge-gold">IntelliJ Database Tools</span>
+            </div>
+            <div class="mt-5 text-sm font-bold" style="color: var(--text-muted);">
+                <i class="fa-regular fa-clock mr-1"></i> Duración estimada: 2 horas &nbsp;·&nbsp;
+                <i class="fa-solid fa-user-graduate mr-1"></i> Práctica Académica — Semana 11
+            </div>
+        </div>
+
+        <!-- INTRODUCCIÓN -->
+        <div class="glass-panel" style="border-left: 5px solid var(--una-gold);">
+            <h2><i class="fa-solid fa-database mr-2" style="color: var(--una-gold);"></i> Introducción al Laboratorio</h2>
+            <p>
+                En la Semana 8 cerraron la persistencia con archivos: binaria con <code class="font-mono text-sm">MessageDAO</code> y en XML con <code class="font-mono text-sm">MessageXmlExporter</code>. Ambas funcionan, pero comparten un límite: los datos viven <strong>solo en el disco de cada computadora</strong>. Si dos personas corrieran Mini-Discord en máquinas distintas, cada una tendría su propio <code class="font-mono text-sm">mensajes.dat</code>, sin forma de compartir el historial.
+            </p>
+            <p>
+                Hoy resuelven eso arrancando una base de datos <strong>MySQL</strong> real — el mismo tipo de motor que corre detrás de aplicaciones de producción. No van a borrar lo que ya tienen: van a crear una <strong>interfaz</strong> (<code class="font-mono text-sm">MessageRepository</code>) que separa "qué necesita el Controller" de "cómo se guarda realmente", y una nueva implementación (<code class="font-mono text-sm">JdbcMessageRepository</code>) que cumple esa interfaz hablando con MySQL por JDBC.
+            </p>
+            <div class="highlight-box">
+                <strong><i class="fa-solid fa-chalkboard-user mr-1"></i> Enfoque Pedagógico:</strong> Igual que en la Semana 8, cada paso importante trae una caja morada <strong>"¿Cómo se llega a esta decisión?"</strong> con el razonamiento detrás. El código nuevo de hoy está marcado con comentarios en <span style="color:#98c379; font-weight:800;">verde y en negrita</span> ("Nuevo de la clase 11: ..."). Los comentarios grises son código que ya existía y no cambió.
+            </div>
+        </div>
+
+        <!-- PASO 1: DÓNDE QUEDAMOS -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-blue);">
+            <h2><i class="fa-solid fa-map-pin mr-2" style="color: var(--accent-blue);"></i> Paso 1: ¿Dónde quedamos la clase pasada?</h2>
+            <p>Esta es la estructura con la que arrancan hoy — el proyecto ya compila y persiste en binario y XML:</p>
+
+            <div class="darcula-editor">
+                <div class="darcula-header">
+                    <i class="fa-solid fa-folder-tree text-xs" style="color: #a9b7c6;"></i>
+                    <span class="text-xs font-mono" style="color: #a9b7c6;">Project Explorer (IntelliJ IDEA) — estado inicial de hoy</span>
+                </div>
+                <pre class="darcula-code text-xs"><code><span class="d-comment">▼ src/main/java/cr.ac.una.est.minidiscord</span>
+  <span class="d-comment">▼ business</span>
+    <span class="d-comment">▼ model</span>
+        <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> Message.java, User.java
+    <span class="d-comment">▼ dto</span>
+        <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> MessageDTO.java
+    <span class="d-comment">▼ service</span>
+        <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> ChatService.java
+  <span class="d-comment">▼ data</span>
+    <span class="d-comment">▼ dao</span>
+        <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> MessageDAO.java, MessageXmlExporter.java, PersistenceManager.java
+        <span class="d-comment" style="color:#e06c75;">← hoy agregamos MessageRepository y JdbcMessageRepository aquí</span>
+  <span class="d-comment">▼ presentation</span>
+    <span class="d-comment">▼ controller</span>
+        <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> ChatViewController.java
+  <i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> App.java</code></pre>
+            </div>
+
+            <div class="decision-box">
+                <p class="decision-label"><i class="fa-solid fa-lightbulb"></i> ¿Cómo se llega a esta decisión?</p>
+                <p>Todo lo de hoy vuelve a vivir en <code class="font-mono text-sm">data.dao</code>, la misma regla de la Semana 8: acceso a datos es problema de la capa de Datos, sin importar si el "dato" está en un archivo o en una base de datos. Lo único que cambia es la <em>tecnología</em> detrás del DAO — no la capa a la que pertenece.</p>
+            </div>
+        </div>
+
+        <!-- PASO 2: MODELAR LA BASE DE DATOS -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-green);">
+            <h2><i class="fa-solid fa-table mr-2" style="color: var(--accent-green);"></i> Paso 2: Modelar la base de datos</h2>
+
+            <div class="step-sub">
+                <h5>2.1 De dos clases Java a dos tablas normalizadas</h5>
+                <p><code class="font-mono text-sm">Message</code> tiene un <code class="font-mono text-sm">User</code> adentro. En SQL eso se traduce en <strong>dos tablas</strong> relacionadas por una llave foránea — nunca en repetir el nombre de usuario en cada fila de mensaje (eso violaría 3FN, como vimos en la clase de hoy).</p>
+                <div class="decision-box">
+                    <p class="decision-label"><i class="fa-solid fa-lightbulb"></i> ¿Cómo se llega a esta decisión?</p>
+                    <p>La pregunta guía es: "¿esta información depende del mensaje, o depende del usuario?". El nombre de usuario depende del usuario (no cambia mensaje a mensaje), así que vive en su propia tabla. El contenido y la fecha dependen del mensaje específico, así que viven en <code class="font-mono text-sm">mensajes</code>. Esa separación — preguntarse de qué "entidad" depende cada dato — es exactamente lo que hacen las formas normales de manera formal.</p>
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.2 Crear la base y las tablas (DDL)</h5>
+                <p>En IntelliJ, abran una consola SQL contra su servidor MySQL (o usen <code class="font-mono text-sm">mysql</code> desde terminal) y ejecuten:</p>
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2"><i class="fa-solid fa-database text-xs" style="color: #4a88c7;"></i> schema.sql</div>
+                    </div>
+                    <pre class="darcula-code text-xs"><code><span class="d-sql">CREATE DATABASE IF NOT EXISTS</span> minidiscord;
+<span class="d-sql">USE</span> minidiscord;
+
+<span class="d-sql">CREATE TABLE</span> usuarios (
+    id <span class="d-sql">INT</span> <span class="d-sql">AUTO_INCREMENT PRIMARY KEY</span>,
+    username <span class="d-sql">VARCHAR</span>(50) <span class="d-sql">NOT NULL UNIQUE</span>
+);
+
+<span class="d-sql">CREATE TABLE</span> mensajes (
+    id <span class="d-sql">INT</span> <span class="d-sql">AUTO_INCREMENT PRIMARY KEY</span>,
+    usuario_id <span class="d-sql">INT</span> <span class="d-sql">NOT NULL</span>,
+    contenido <span class="d-sql">VARCHAR</span>(500) <span class="d-sql">NOT NULL</span>,
+    fecha_envio <span class="d-sql">DATETIME</span> <span class="d-sql">DEFAULT CURRENT_TIMESTAMP</span>,
+    <span class="d-sql">FOREIGN KEY</span> (usuario_id) <span class="d-sql">REFERENCES</span> usuarios(id)
+);</code></pre>
+                </div>
+                <div class="highlight-box">
+                    <strong><i class="fa-solid fa-circle-info mr-1"></i> Nota:</strong> esto es DDL (Data Definition Language) — se corre <strong>una sola vez</strong> para crear la estructura. Todo lo que viene después (INSERT, SELECT) es DLM y va a vivir dentro del código Java, no en una consola manual.
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>2.3 Conectar IntelliJ Database Tools</h5>
+                <p>View → Tool Windows → <strong>Database</strong> → botón "+" → Data Source → <strong>MySQL</strong>. Completen host (<code class="font-mono text-sm">localhost</code>), puerto (<code class="font-mono text-sm">3306</code>), usuario, contraseña y la base <code class="font-mono text-sm">minidiscord</code>. Pulsen <strong>Test Connection</strong> (IntelliJ puede pedir descargar el driver la primera vez — acéptenlo) y luego <strong>Apply</strong>. Con esto pueden explorar las tablas visualmente desde el IDE.</p>
+            </div>
+        </div>
+
+        <!-- PASO 3: DEPENDENCIA JDBC + INTERFAZ -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-purple);">
+            <h2><i class="fa-solid fa-plug mr-2" style="color: var(--accent-purple);"></i> Paso 3: Agregar el driver JDBC y diseñar la interfaz</h2>
+
+            <div class="step-sub">
+                <h5>3.1 Agregar mysql-connector-j al pom.xml</h5>
+                <p>Java no trae incluido el driver de MySQL — es una biblioteca (¿recuerdan la Semana 8?) que hay que declarar como dependencia:</p>
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2"><i class="fa-solid fa-file-code text-xs" style="color: #4a88c7;"></i> pom.xml</div>
+                    </div>
+                    <pre class="darcula-code text-xs"><code><span class="d-new">&lt;!-- Nuevo de la clase 11: driver JDBC de MySQL --&gt;</span>
+<span class="d-xml-tag">&lt;dependency&gt;</span>
+    <span class="d-xml-tag">&lt;groupId&gt;</span>com.mysql<span class="d-xml-tag">&lt;/groupId&gt;</span>
+    <span class="d-xml-tag">&lt;artifactId&gt;</span>mysql-connector-j<span class="d-xml-tag">&lt;/artifactId&gt;</span>
+    <span class="d-xml-tag">&lt;version&gt;</span>8.4.0<span class="d-xml-tag">&lt;/version&gt;</span>
+<span class="d-xml-tag">&lt;/dependency&gt;</span></code></pre>
+                </div>
+                <p>Y en <code class="font-mono text-sm">module-info.java</code>, agreguen (si Maven no lo hace visible automáticamente):</p>
+                <div class="darcula-editor">
+                    <pre class="darcula-code text-xs"><code><span class="d-new">// Nuevo de la clase 11</span>
+<span class="d-keyword">requires</span> java.sql;</code></pre>
+                </div>
+            </div>
+
+            <div class="step-sub">
+                <h5>3.2 Diseñar MessageRepository — la interfaz antes que la implementación</h5>
+                <p>Igual que en la Semana 8 diseñaron primero la firma del DAO, hoy hacen lo mismo pero como <strong>interfaz</strong>, para que el Controller nunca dependa de si por detrás hay un archivo o una base de datos:</p>
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> MessageRepository.java</div>
+                    </div>
+                    <pre class="darcula-code text-xs"><code><span class="d-keyword">package</span> cr.ac.una.est.minidiscord.data.dao;
+
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.model.Message;
+<span class="d-keyword">import</span> java.util.List;
+
+<span class="d-new">// Nuevo de la clase 11: interfaz — el Controller programa contra esto, nunca contra una clase concreta</span>
+<span class="d-keyword">public interface</span> <span class="d-type">MessageRepository</span> {
+    <span class="d-keyword">void</span> <span class="d-method">guardar</span>(<span class="d-type">Message</span> mensaje);
+    <span class="d-type">List</span>&lt;<span class="d-type">Message</span>&gt; <span class="d-method">obtenerTodos</span>();
+}</code></pre>
+                </div>
+                <div class="decision-box">
+                    <p class="decision-label"><i class="fa-solid fa-lightbulb"></i> ¿Cómo se llega a esta decisión?</p>
+                    <p><code class="font-mono text-sm">guardar(Message)</code> reemplaza a <code class="font-mono text-sm">guardarTodos(List)</code> de la Semana 8. En un archivo, reescribir todo el historial en cada envío era razonable porque no había otra forma. Con una base de datos SÍ hay una forma mejor: un <code class="font-mono text-sm">INSERT</code> agrega una sola fila sin tocar las demás. Cambiar la firma del método es una señal de que están diseñando para la tecnología real, no forzando el mismo molde de la semana pasada.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 4: JdbcMessageRepository -->
+        <div class="glass-panel" style="border-left: 5px solid var(--una-red);">
+            <h2><i class="fa-solid fa-code mr-2" style="color: var(--una-red);"></i> Paso 4: Implementar JdbcMessageRepository</h2>
+
+            <div class="step-sub">
+                <h5>4.1 Conexión y guardar()</h5>
+                <p>En <code class="font-mono text-sm">data.dao</code>, junto a <code class="font-mono text-sm">MessageDAO</code>:</p>
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> JdbcMessageRepository.java</div>
+                    </div>
+                    <pre class="darcula-code text-xs"><code><span class="d-keyword">package</span> cr.ac.una.est.minidiscord.data.dao;
+
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.model.Message;
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.model.User;
+<span class="d-keyword">import</span> java.sql.*;
+<span class="d-keyword">import</span> java.util.ArrayList;
+<span class="d-keyword">import</span> java.util.List;
+
+<span class="d-new">// Nuevo de la clase 11: implementación de MessageRepository que habla con MySQL por JDBC</span>
+<span class="d-keyword">public class</span> <span class="d-type">JdbcMessageRepository</span> <span class="d-keyword">implements</span> <span class="d-type">MessageRepository</span> {
+
+    <span class="d-keyword">private static final</span> <span class="d-type">String</span> <span class="d-field">URL</span> = <span class="d-string">"jdbc:mysql://localhost:3306/minidiscord"</span>;
+    <span class="d-keyword">private static final</span> <span class="d-type">String</span> <span class="d-field">USUARIO</span> = <span class="d-string">"root"</span>;
+    <span class="d-keyword">private static final</span> <span class="d-type">String</span> <span class="d-field">CLAVE</span> = <span class="d-string">"CAMBIAR_POR_SU_CLAVE"</span>;
+
+    <span class="d-comment">// Devuelve el id del usuario, creándolo primero si todavía no existe</span>
+    <span class="d-keyword">private int</span> <span class="d-method">obtenerOcrearUsuario</span>(<span class="d-type">Connection</span> con, <span class="d-type">String</span> username) <span class="d-keyword">throws</span> <span class="d-type">SQLException</span> {
+        <span class="d-keyword">try</span> (<span class="d-type">PreparedStatement</span> buscar = con.prepareStatement(<span class="d-string">"SELECT id FROM usuarios WHERE username = ?"</span>)) {
+            buscar.setString(<span class="d-number">1</span>, username);
+            <span class="d-keyword">try</span> (<span class="d-type">ResultSet</span> rs = buscar.executeQuery()) {
+                <span class="d-keyword">if</span> (rs.next()) <span class="d-keyword">return</span> rs.getInt(<span class="d-string">"id"</span>);
+            }
+        }
+        <span class="d-keyword">try</span> (<span class="d-type">PreparedStatement</span> crear = con.prepareStatement(
+                <span class="d-string">"INSERT INTO usuarios (username) VALUES (?)"</span>, <span class="d-type">Statement</span>.RETURN_GENERATED_KEYS)) {
+            crear.setString(<span class="d-number">1</span>, username);
+            crear.executeUpdate();
+            <span class="d-keyword">try</span> (<span class="d-type">ResultSet</span> claves = crear.getGeneratedKeys()) {
+                claves.next();
+                <span class="d-keyword">return</span> claves.getInt(<span class="d-number">1</span>);
+            }
+        }
+    }
+
+    <span class="d-annotation">@Override</span>
+    <span class="d-keyword">public void</span> <span class="d-method">guardar</span>(<span class="d-type">Message</span> mensaje) {
+        <span class="d-keyword">try</span> (<span class="d-type">Connection</span> con = <span class="d-type">DriverManager</span>.getConnection(<span class="d-field">URL</span>, <span class="d-field">USUARIO</span>, <span class="d-field">CLAVE</span>)) {
+            <span class="d-keyword">int</span> usuarioId = obtenerOcrearUsuario(con, mensaje.getAuthor().getUsername());
+            <span class="d-keyword">try</span> (<span class="d-type">PreparedStatement</span> stmt = con.prepareStatement(
+                    <span class="d-string">"INSERT INTO mensajes (usuario_id, contenido) VALUES (?, ?)"</span>)) {
+                stmt.setInt(<span class="d-number">1</span>, usuarioId);
+                stmt.setString(<span class="d-number">2</span>, mensaje.getContent());
+                stmt.executeUpdate();
+            }
+        } <span class="d-keyword">catch</span> (<span class="d-type">SQLException</span> e) {
+            <span class="d-type">System</span>.out.println(<span class="d-string">"No se pudo guardar en la base de datos: "</span> + e.getMessage());
+        }
+    }
+}</code></pre>
+                </div>
+                <details>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p><code><span class="d-method">obtenerOcrearUsuario</span></code>: como <code class="font-mono text-[10px]">usuarios</code> y <code class="font-mono text-[10px]">mensajes</code> son tablas separadas (normalización), antes de insertar un mensaje hay que saber el <code class="font-mono text-[10px]">id</code> del usuario que lo escribió. Este método primero busca si ya existe; si no, lo crea y devuelve el id recién generado con <code class="font-mono text-[10px]">RETURN_GENERATED_KEYS</code>.</p>
+                        <p>Cada <code class="font-mono text-[10px]">try (Connection con = ...)</code> abre y cierra la conexión en cada llamada — sencillo para el laboratorio de hoy. En un sistema real esto se reemplaza por un <em>pool de conexiones</em>, pero eso queda fuera del alcance de esta clase.</p>
+                        <p><code><span class="d-field">CLAVE</span></code> como constante en el código es solo para este laboratorio. En un proyecto real, la contraseña de la base de datos nunca se escribe en el código fuente — se lee de una variable de entorno o un archivo de configuración fuera del repositorio.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="step-sub">
+                <h5>4.2 Leer el historial: obtenerTodos() con JOIN</h5>
+                <p>Agreguen dentro de la misma clase:</p>
+                <div class="darcula-editor">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> JdbcMessageRepository.java (continuación)</div>
+                    </div>
+                    <pre class="darcula-code text-xs"><code>    <span class="d-new">// Nuevo de la clase 11: continúa la misma clase — trae el historial completo con un JOIN</span>
+    <span class="d-annotation">@Override</span>
+    <span class="d-keyword">public</span> <span class="d-type">List</span>&lt;<span class="d-type">Message</span>&gt; <span class="d-method">obtenerTodos</span>() {
+        <span class="d-type">List</span>&lt;<span class="d-type">Message</span>&gt; resultado = <span class="d-keyword">new</span> <span class="d-type">ArrayList</span>&lt;&gt;();
+        <span class="d-type">String</span> sql = <span class="d-string">"SELECT u.username, m.contenido "</span> +
+                     <span class="d-string">"FROM mensajes m JOIN usuarios u ON m.usuario_id = u.id "</span> +
+                     <span class="d-string">"ORDER BY m.fecha_envio"</span>;
+        <span class="d-keyword">try</span> (<span class="d-type">Connection</span> con = <span class="d-type">DriverManager</span>.getConnection(<span class="d-field">URL</span>, <span class="d-field">USUARIO</span>, <span class="d-field">CLAVE</span>);
+             <span class="d-type">PreparedStatement</span> stmt = con.prepareStatement(sql);
+             <span class="d-type">ResultSet</span> rs = stmt.executeQuery()) {
+
+            <span class="d-keyword">while</span> (rs.next()) {
+                <span class="d-type">User</span> autor = <span class="d-keyword">new</span> <span class="d-type">User</span>(rs.getString(<span class="d-string">"username"</span>));
+                resultado.add(<span class="d-keyword">new</span> <span class="d-type">Message</span>(autor, rs.getString(<span class="d-string">"contenido"</span>)));
+            }
+        } <span class="d-keyword">catch</span> (<span class="d-type">SQLException</span> e) {
+            <span class="d-type">System</span>.out.println(<span class="d-string">"No se pudo leer el historial: "</span> + e.getMessage());
+        }
+        <span class="d-keyword">return</span> resultado;
+    }</code></pre>
+                </div>
+                <details>
+                    <summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código línea por línea.</strong></summary>
+                    <div class="code-explanation">
+                        <p><code><span class="d-sql">JOIN</span></code> es la operación que "deshace" la normalización cuando la necesitan: reconstruye, fila por fila, la combinación de un mensaje con el username de su autor — exactamente la información que antes vivía junta dentro de un solo objeto <code class="font-mono text-[10px]">Message</code> en memoria.</p>
+                        <p>Este método <strong>reconstruye objetos de dominio</strong> (<code class="font-mono text-[10px]">User</code>, <code class="font-mono text-[10px]">Message</code>) a partir de filas planas — es el "mapeo de datos" mencionado en el programa del curso: pasar de filas y columnas de vuelta a objetos Java.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- PASO 5: CONECTAR AL CONTROLLER -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-blue);">
+            <h2><i class="fa-solid fa-link mr-2" style="color: var(--accent-blue);"></i> Paso 5: Conectar el repositorio al Controller</h2>
+            <p>Cambien en <code class="font-mono text-sm">ChatViewController.java</code> el tipo de la variable a la <strong>interfaz</strong>, no a la clase concreta:</p>
+            <div class="darcula-editor">
+                <div class="darcula-header">
+                    <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                    <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                    <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                    <div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> ChatViewController.java</div>
+                </div>
+                <pre class="darcula-code text-xs"><code><span class="d-new">// Nuevo de la clase 11: el campo es del TIPO de la interfaz, la instancia es la implementación JDBC</span>
+<span class="d-keyword">private final</span> <span class="d-type">MessageRepository</span> <span class="d-field">messageRepository</span> = <span class="d-keyword">new</span> <span class="d-type">JdbcMessageRepository</span>();
+
+<span class="d-annotation">@FXML</span>
+<span class="d-keyword">public void</span> <span class="d-method">initialize</span>() {
+    messageListView.setItems(messages); <span class="d-comment">// ya existía</span>
+
+    <span class="d-new">// Nuevo de la clase 11: el historial ahora se carga desde MySQL, no desde mensajes.dat</span>
+    <span class="d-keyword">for</span> (<span class="d-type">Message</span> m : <span class="d-field">messageRepository</span>.obtenerTodos()) {
+        historial.add(m);
+        messages.add(m.toString());
+    }
+}
+
+<span class="d-annotation">@FXML</span>
+<span class="d-keyword">private void</span> <span class="d-method">handleSendMessage</span>() {
+    <span class="d-keyword">try</span> {
+        <span class="d-type">Message</span> nuevoMsg = chatService.processMessage(currentUser, messageInputField.getText()); <span class="d-comment">// ya existía</span>
+        historial.add(nuevoMsg);
+        messages.add(nuevoMsg.toString());
+        messageInputField.clear();
+
+        <span class="d-new">// Nuevo de la clase 11: se guarda directo en MySQL (un INSERT, no se reescribe todo el historial)</span>
+        <span class="d-field">messageRepository</span>.guardar(nuevoMsg);
+    } <span class="d-keyword">catch</span> (<span class="d-type">IllegalArgumentException</span> e) {
+        System.out.println(<span class="d-string">"Aviso de Validación: "</span> + e.getMessage()); <span class="d-comment">// ya existía</span>
+    }
+}</code></pre>
+            </div>
+            <div class="decision-box">
+                <p class="decision-label"><i class="fa-solid fa-lightbulb"></i> ¿Cómo se llega a esta decisión?</p>
+                <p>Fíjense qué NO cambió: <code class="font-mono text-sm">chatService.processMessage(...)</code>, la validación, y cómo se pinta la lista siguen exactamente igual. Esa es la prueba de que la arquitectura de la Semana 7-8 estaba bien separada — cambiar la tecnología de persistencia (de archivo a base de datos) solo tocó la capa de Datos y una línea del Controller.</p>
+            </div>
+            <div class="highlight-box">
+                <strong><i class="fa-solid fa-play mr-1"></i> ¡A probar!</strong> Ejecuten <code class="font-mono text-sm">App</code>, envíen 2 o 3 mensajes, y revisen la tabla <code class="font-mono text-sm">mensajes</code> desde la pestaña Database de IntelliJ — deberían ver las filas nuevas ahí, no en <code class="font-mono text-sm">mensajes.dat</code>. Cierren y vuelvan a abrir la app: el historial debe seguir apareciendo, ahora cargado desde MySQL.
+            </div>
+        </div>
+
+        <!-- CIERRE -->
+        <div class="glass-panel text-center" style="border-top: 6px solid var(--accent-green);">
+            <h2><i class="fa-solid fa-flag-checkered mr-2" style="color: var(--accent-green);"></i> ¡Listo por hoy!</h2>
+            <p>Mini-Discord ya guarda y lee mensajes reales desde MySQL, detrás de una interfaz intercambiable. La Semana 12 completa el CRUD (editar y eliminar mensajes) y formaliza el mapeo de datos; la Semana 13 cierra el módulo de SABD consolidando el patrón de acceso a datos.</p>
+        </div>
+
+        <div class="text-center text-xs font-bold mt-10 mb-4" style="color: var(--text-muted); border-top: 1px solid var(--border-panel); padding-top: 2rem;">
+            <p>Laboratorio Autoguiado &bull; Programación III &bull; Universidad Nacional &bull; Semana 11 &bull; 2026</p>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            const icon = document.getElementById('theme-icon');
+            if (icon) icon.className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+            try { localStorage.setItem('theme', isDark ? 'light' : 'dark'); } catch (e) {}
+        }
+        (function () {
+            try {
+                const saved = localStorage.getItem('theme');
+                if (saved === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const icon = document.getElementById('theme-icon');
+                        if (icon) icon.className = 'fa-solid fa-sun';
+                    });
+                }
+            } catch (e) {}
+        })();
+    </script>
+
+</body>
+</html>
