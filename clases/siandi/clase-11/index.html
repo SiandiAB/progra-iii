@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 11 — Programación III</title>
+
+    <link rel="icon" type="image/svg+xml" href="../../../assets/img/favicon.svg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Dependencias externas -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+
+    <!-- Recursos compartidos del proyecto -->
+    <link rel="stylesheet" href="../../../assets/css/presentacion.css">
+    <script src="../../../assets/js/curso-info.js"></script>
+
+    <!-- Estilos específicos (mismo bloque base que Semana 8) -->
+    <style>
+        .keyword { position: relative; cursor: help; border-bottom: 2px dotted currentColor; }
+        .keyword::after {
+            content: attr(data-tooltip);
+            position: absolute; bottom: calc(100% + 8px); left: 50%;
+            transform: translateX(-50%);
+            background: #2b2b2b; color: #a9b7c6;
+            padding: 10px 18px; border-radius: 8px; border: 1px solid #555555;
+            font-size: 0.85rem; font-family: 'Nunito', sans-serif; font-weight: 400;
+            white-space: normal;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 999; width: max-content; max-width: 350px; text-align: left;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); line-height: 1.5;
+        }
+        .keyword:hover::after, .keyword:focus::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-4px);
+        }
+        /* Tooltip hacia abajo: para palabras cerca del borde superior de la diapositiva */
+        .keyword-below::after { bottom: auto; top: calc(100% + 8px); }
+        .keyword-below:hover::after, .keyword-below:focus::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(4px);
+        }
+
+        /* Agenda compacta: mismo diseño vertical (timeline), tarjetas al tamaño de su texto */
+        .slide .agenda-compact { max-width: min(96%, 1050px); }
+        .agenda-compact h2 { font-size: 2rem; line-height: 1.1; margin-bottom: 0; }
+        .agenda-compact .text-xl { font-size: 0.95rem; line-height: 1.3; }
+        .agenda-compact .mb-6 { margin-bottom: 1px; }
+        .agenda-compact .wrap { padding: 4px; }
+        .agenda-compact .left-timeline, .agenda-compact .right-timeline { position: relative; justify-content: flex-start; }
+        .agenda-compact .glass-panel { width: max-content; max-width: 46%; padding: 2px 16px; }
+        .agenda-compact .left-timeline .glass-panel { margin-left: auto; margin-right: 8px; }
+        .agenda-compact .right-timeline .glass-panel { margin-left: 8px; }
+        .agenda-compact .glass-panel h3 { font-size: 0.85rem; line-height: 1.2; }
+        .agenda-compact .glass-panel p { font-size: 0.7rem; line-height: 1.2; margin-top: 0; }
+        .agenda-compact .z-20 { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 1.5rem; height: 1.5rem; font-size: 0.7rem; }
+        .agenda-compact .group:hover .z-20 { transform: translate(-50%, -50%) scale(1.08); }
+        .agenda-compact div.order-1:empty { flex: 0 0 50%; }
+        .agenda-compact .mt-4 { margin-top: 4px; }
+        .agenda-compact .text-gray-400 { font-size: 0.7rem; }
+
+        .darcula-editor {
+            background-color: #2b2b2b !important; border: 1px solid #3c3f41 !important;
+            border-radius: 0.75rem; overflow: hidden; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+        .darcula-header {
+            background-color: #313335; border-bottom: 1px solid #3c3f41;
+            padding: 6px 12px; display: flex; align-items: center; gap: 8px;
+        }
+        .darcula-tab {
+            background: #2b2b2b; color: #a9b7c6; font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem; padding: 2px 10px; border-radius: 4px 4px 0 0;
+            border-top: 2px solid #4a88c7; display: flex; align-items: center; gap: 6px;
+        }
+        .darcula-code { color: #a9b7c6; font-family: 'JetBrains Mono', monospace; line-height: 1.5; }
+        .jk-keyword { color: #cc7832; font-weight: bold; }
+        .jk-annot { color: #bbb529; }
+        .jk-type { color: #a9b7c6; }
+        .jk-method { color: #ffc66d; }
+        .jk-string { color: #6a8759; }
+        .jk-number { color: #6897bb; }
+        .jk-comment { color: #808080; font-style: italic; }
+        .jk-sql { color: #cc7832; font-weight: bold; }
+
+        .pregunta-box {
+            background: #fef9e7; border-left: 6px solid #f1c40f; padding: 12px 18px;
+            border-radius: 12px; margin-top: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .pregunta-box p { margin-bottom: 4px; }
+        .pregunta-box .respuesta {
+            font-size: 0.85rem; color: #2c3e50; background: #ecf0f1;
+            padding: 4px 12px; border-radius: 20px; display: none; margin-top: 4px;
+        }
+        .pregunta-box .respuesta.visible { display: inline-block; }
+        .toggle-respuesta-btn {
+            display: block; width: fit-content;
+            background: var(--accent-blue); color: white; border: none;
+            padding: 6px 14px; border-radius: 20px; cursor: pointer;
+            font-size: 0.8rem; font-family: 'Nunito', sans-serif; margin-top: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12); transition: transform 0.2s;
+        }
+        .toggle-respuesta-btn:hover { transform: scale(1.04); }
+
+        .glosario-btn {
+            position: fixed; bottom: 100px; right: 20px; z-index: 999;
+            background: var(--accent-blue); color: white; border: none; border-radius: 50%;
+            width: 54px; height: 54px; font-size: 1.6rem; box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+            transition: transform 0.2s; cursor: pointer;
+        }
+        .glosario-btn:hover { transform: scale(1.08); }
+        .glosario-modal .modal-content { max-width: 600px; }
+        .glosario-modal .modal-content ul { list-style: none; padding: 0; }
+        .glosario-modal .modal-content li { border-bottom: 1px solid #eee; padding: 10px 0; }
+        .glosario-modal .modal-content li strong { color: var(--accent-blue); }
+
+        .tabla-compare { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin: 8px 0; }
+        .tabla-compare th { background: #2b2b2b; color: #cdd6f4; padding: 8px 10px; text-align: left; }
+        .tabla-compare td { padding: 8px 10px; border-bottom: 1px solid #ddd; }
+        .tabla-compare tr:nth-child(even) { background: #f8f9fa; }
+
+        .er-table {
+            background: #fff; border: 2px solid #334155; border-radius: 10px; overflow: hidden;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; min-width: 200px;
+        }
+        .er-table-header { background: #334155; color: #fff; font-weight: 800; padding: 6px 10px; text-align: center; }
+        .er-table-row { padding: 5px 10px; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; gap: 10px; }
+        .er-table-row .pk { color: #b28900; font-weight: 800; }
+        .er-table-row .fk { color: #1d4ed8; font-weight: 800; }
+    </style>
+</head>
+<body>
+
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar Modo">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+    <button class="float-btn" id="downloadBtn" onclick="downloadPresentation()" title="Descargar presentación para ver sin internet">
+        <i class="fa-solid fa-download"></i>
+    </button>
+    <button class="glosario-btn" onclick="openModal('modal-glosario')" title="Glosario de términos">
+        <i class="fa-solid fa-book-open"></i>
+    </button>
+
+    <div class="slides-container" id="slides-container">
+
+        <!-- ==================== SLIDE 0: Portada ==================== -->
+        <div class="slide active">
+            <div class="text-center w-full max-w-6xl z-10 relative">
+                <i class="fa-solid fa-database bg-icon text-[350px] -top-20 -left-20" style="color: var(--una-red);"></i>
+                <i class="fa-brands fa-discord bg-icon text-[250px] -bottom-10 right-10" style="color: var(--accent-blue);"></i>
+
+                <div class="bg-white px-8 py-4 rounded-3xl inline-block mb-6 shadow-md border border-gray-100 relative z-10">
+                    <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png"
+                         alt="Logo UNA" class="h-28 object-contain"
+                         onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png'">
+                </div>
+
+                <h2 class="text-lg md:text-xl font-bold tracking-[0.2em] mb-4 uppercase" style="color: var(--text-muted);">Sección Regional Central Occidente, UNA</h2>
+
+                <h1 class="text-3xl md:text-3xl font-extrabold mb-4 tracking-tight">
+                    Programación <span style="color: var(--una-red);">III</span>
+                </h1>
+                <h2 class="text-5xl md:text-6xl font-extrabold mb-2" style="color: var(--text-main);">Semana 11</h2>
+                <h3 class="text-2xl md:text-4xl font-bold mb-6" style="color: var(--una-red);">
+                    Persistencia por Sistemas Administradores de Bases de Datos (SABD)
+                </h3>
+
+                <div class="glass-panel inline-block text-left py-3 px-6 border-l-4 mb-6" style="border-left-color: var(--una-gold);">
+                    <p class="text-sm"><i class="fa-solid fa-circle-exclamation mr-2" style="color: var(--una-gold);"></i>
+                    Hasta hoy, Mini-Discord guardaba sus mensajes en un archivo binario y en XML. Esos dos formatos viven <strong>solo en el disco de cada quien</strong>. Hoy arrancamos el reemplazo: una base de datos <strong>MySQL</strong> real, la misma tecnología que corre detrás de aplicaciones de producción.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-6 relative z-10">
+                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--una-red);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-red flex items-center justify-center text-2xl"><i class="fa-solid fa-chalkboard-user"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Docente — Grupo 41</p>
+                            <p class="text-lg font-bold">Ing. Siandi Araya Bello</p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);">M 13:00 - 16:20</p>
+                        </div>
+                    </div>
+                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--accent-blue);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-blue flex items-center justify-center text-2xl"><i class="fa-solid fa-chalkboard-user"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Docente — Grupo 40</p>
+                            <p class="text-lg font-bold">Ing. Kristel Duarte Pérez</p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);">K 08:00 - 11:20</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-sm animate-pulse mt-6" style="color: var(--text-muted);"><i class="fa-solid fa-keyboard mr-2"></i>Use las flechas del teclado para navegar</p>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 1: Agenda ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 agenda-compact">
+                <i class="fa-solid fa-map-location-dot bg-icon text-[350px] top-10 right-0 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">¿Qué vemos hoy?</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">La primera de tres clases sobre persistencia con bases de datos relacionales.</p>
+                </div>
+
+                <div class="relative wrap overflow-hidden p-4">
+                    <div class="absolute border-opacity-20 border-gray-400 h-full border-2" style="left: 50%;"></div>
+
+                    <div class="mb-6 flex justify-between items-center w-full right-timeline group cursor-pointer" onclick="goToSlide(2)">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-gold justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">1</div>
+                        <div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:-translate-x-2 border-r-4" style="border-right-color: var(--una-gold);">
+                            <h3 class="font-bold text-lg text-right">¿Qué es una base de datos?</h3>
+                            <p class="text-xs text-right" style="color: var(--text-muted);">Desde cero, con analogías</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-6 flex justify-between items-center w-full left-timeline group cursor-pointer" onclick="goToSlide(3)">
+                        <div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:translate-x-2 border-l-4" style="border-left-color: var(--accent-purple);">
+                            <h3 class="font-bold text-lg text-left">¿Qué es un SABD?</h3>
+                            <p class="text-xs text-left" style="color: var(--text-muted);">El software, no los datos</p>
+                        </div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-purple justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">2</div>
+                        <div class="order-1 w-5/12"></div>
+                    </div>
+
+                    <div class="mb-6 flex justify-between items-center w-full right-timeline group cursor-pointer" onclick="goToSlide(4)">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-gold justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">3</div>
+                        <div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:-translate-x-2 border-r-4" style="border-right-color: var(--una-gold);">
+                            <h3 class="font-bold text-lg text-right">MySQL cliente-servidor</h3>
+                            <p class="text-xs text-right" style="color: var(--text-muted);">Cómo se conectan las apps</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-6 flex justify-between items-center w-full left-timeline group cursor-pointer" onclick="goToSlide(5)">
+                        <div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:translate-x-2 border-l-4" style="border-left-color: var(--accent-green);">
+                            <h3 class="font-bold text-lg text-left">Objetos vs. Tablas</h3>
+                            <p class="text-xs text-left" style="color: var(--text-muted);">El "impedance mismatch"</p>
+                        </div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-green justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">4</div>
+                        <div class="order-1 w-5/12"></div>
+                    </div>
+
+                    <div class="mb-6 flex justify-between items-center w-full right-timeline group cursor-pointer" onclick="goToSlide(6)">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-red justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">5</div>
+                        <div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:-translate-x-2 border-r-4" style="border-right-color: var(--una-red);">
+                            <h3 class="font-bold text-lg text-right">¿Cómo se resuelve?</h3>
+                            <p class="text-xs text-right" style="color: var(--text-muted);">Mapeo de datos</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-6 flex justify-between items-center w-full left-timeline group cursor-pointer" onclick="goToSlide(7)">
+                        <div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:translate-x-2 border-l-4" style="border-left-color: var(--accent-blue);">
+                            <h3 class="font-bold text-lg text-left">Normalización — el problema</h3>
+                            <p class="text-xs text-left" style="color: var(--text-muted);">Dependencia funcional</p>
+                        </div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-blue justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">6</div>
+                        <div class="order-1 w-5/12"></div>
+                    </div>
+
+                    <div class="mb-6 flex justify-between items-center w-full right-timeline group cursor-pointer" onclick="goToSlide(8)">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-blue justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">7</div>
+                        <div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:-translate-x-2 border-r-4" style="border-right-color: var(--accent-blue);">
+                            <h3 class="font-bold text-lg text-right">1FN, 2FN, 3FN</h3>
+                            <p class="text-xs text-right" style="color: var(--text-muted);">Con Mini-Discord</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-6 flex justify-between items-center w-full left-timeline group cursor-pointer" onclick="goToSlide(9)">
+                        <div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:translate-x-2 border-l-4" style="border-left-color: var(--accent-purple);">
+                            <h3 class="font-bold text-lg text-left">JDBC: API y driver</h3>
+                            <p class="text-xs text-left" style="color: var(--text-muted);">El puente hacia MySQL</p>
+                        </div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-purple justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">8</div>
+                        <div class="order-1 w-5/12"></div>
+                    </div>
+
+                    <div class="mb-6 flex justify-between items-center w-full right-timeline group cursor-pointer" onclick="goToSlide(10)">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-purple justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">9</div>
+                        <div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:-translate-x-2 border-r-4" style="border-right-color: var(--accent-purple);">
+                            <h3 class="font-bold text-lg text-right">JDBC: las 4 piezas</h3>
+                            <p class="text-xs text-right" style="color: var(--text-muted);">Connection, Statement...</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-6 flex justify-between items-center w-full left-timeline group cursor-pointer" onclick="goToSlide(11)">
+                        <div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:translate-x-2 border-l-4" style="border-left-color: var(--accent-peach);">
+                            <h3 class="font-bold text-lg text-left">IntelliJ Database Tools</h3>
+                            <p class="text-xs text-left" style="color: var(--text-muted);">Conectar desde el IDE</p>
+                        </div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-peach justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">10</div>
+                        <div class="order-1 w-5/12"></div>
+                    </div>
+
+                    <div class="mb-6 flex justify-between items-center w-full right-timeline group cursor-pointer" onclick="goToSlide(12)">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-red justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">11</div>
+                        <div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:-translate-x-2 border-r-4" style="border-right-color: var(--una-red);">
+                            <h3 class="font-bold text-lg text-right">DLM e IMEC (CRUD) <i class="fa-solid fa-triangle-exclamation text-red-500 ml-1 text-sm"></i></h3>
+                            <p class="text-xs text-right" style="color: var(--text-muted);">Insertar, Mostrar, Editar, Cancelar</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-6 flex justify-between items-center w-full left-timeline group cursor-pointer" onclick="goToSlide(13)">
+                        <div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:translate-x-2 border-l-4" style="border-left-color: var(--accent-green);">
+                            <h3 class="font-bold text-lg text-left">Patrones de acceso a datos</h3>
+                            <p class="text-xs text-left" style="color: var(--text-muted);">Repository, el mismo DAO</p>
+                        </div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-green justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">12</div>
+                        <div class="order-1 w-5/12"></div>
+                    </div>
+
+                    <div class="mb-6 flex justify-between items-center w-full right-timeline group cursor-pointer" onclick="goToSlide(14)">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-blue justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">13</div>
+                        <div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:-translate-x-2 border-r-4" style="border-right-color: var(--accent-blue);">
+                            <h3 class="font-bold text-lg text-right">Ahora exponen ustedes</h3>
+                            <p class="text-xs text-right" style="color: var(--text-muted);">9 temas de SABD en grupos</p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center w-full left-timeline group cursor-pointer" onclick="goToSlide(16)">
+                        <div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:translate-x-2 border-l-4" style="border-left-color: var(--accent-green);">
+                            <h3 class="font-bold text-lg text-left">Cierre y próximas 2 clases</h3>
+                            <p class="text-xs text-left" style="color: var(--text-muted);">CRUD completo y patrones</p>
+                        </div>
+                        <div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-green justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">14</div>
+                        <div class="order-1 w-5/12"></div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4 text-xs text-gray-400">
+                    <i class="fa-solid fa-circle-exclamation text-yellow-500 mr-1"></i> El tema marcado con <i class="fa-solid fa-triangle-exclamation text-red-500"></i> es vocabulario oficial del programa de curso — puede salir literal en el examen.
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 2: ¿Qué es una base de datos? ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-box-archive bg-icon text-[350px] -right-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">Antes de MySQL: ¿qué es, literalmente, una base de datos?</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">La definición que deberían poder repetir de memoria, sin tecnicismos.</p>
+                </div>
+
+                <div class="glass-panel p-5 mb-5 border-t-4 text-center" style="border-color: var(--una-gold);">
+                    <p class="text-lg font-bold">"Una base de datos es una colección organizada de información, guardada de forma que se pueda buscar, agregar, modificar y borrar fácilmente — sin tener que leer todo desde el principio cada vez."</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+                    <div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-blue);">
+                        <i class="fa-solid fa-address-book text-2xl mb-2" style="color: var(--accent-blue);"></i>
+                        <h4 class="font-bold text-sm mb-1">Agenda de contactos del celular</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">Cada contacto es una <strong>fila</strong>. Nombre, teléfono, correo son las <strong>columnas</strong>. Buscar "Ana" no obliga a leer los 500 contactos en orden.</p>
+                    </div>
+                    <div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-green);">
+                        <i class="fa-solid fa-table text-2xl mb-2" style="color: var(--accent-green);"></i>
+                        <h4 class="font-bold text-sm mb-1">Hoja de cálculo compartida</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">Varias personas la consultan y editan al mismo tiempo, sin mandarse el archivo por correo cada vez que algo cambia.</p>
+                    </div>
+                    <div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--una-red);">
+                        <i class="fa-solid fa-boxes-stacked text-2xl mb-2" style="color: var(--una-red);"></i>
+                        <h4 class="font-bold text-sm mb-1">Archivador de oficina</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">Carpetas organizadas por categoría, no una pila de papeles sueltos. La organización es lo que hace rápida la búsqueda.</p>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--accent-blue);">
+                    <h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-circle-info mr-2" style="color: var(--accent-blue);"></i>Mini-Discord YA tiene algo parecido, desde la Semana 8 — pero le faltan piezas</h4>
+                    <p class="text-xs mb-2" style="color: var(--text-muted);"><code class="font-mono text-[10px]">mensajes.dat</code> y <code class="font-mono text-[10px]">mensajes.xml</code> ya son "información organizada guardada en disco". Lo que NO tienen es:</p>
+                    <ul class="text-xs space-y-1" style="color: var(--text-muted);">
+                        <li><i class="fa-solid fa-xmark text-red-500 mr-1"></i><strong>Acceso simultáneo:</strong> solo una aplicación, en una sola computadora, puede leer/escribir ese archivo a la vez.</li>
+                        <li><i class="fa-solid fa-xmark text-red-500 mr-1"></i><strong>Relaciones sin duplicar:</strong> si quisieran relacionar mensajes con usuarios sin repetir datos, tendrían que programarlo todo a mano.</li>
+                        <li><i class="fa-solid fa-xmark text-red-500 mr-1"></i><strong>Búsquedas rápidas:</strong> para buscar un mensaje hay que leer el archivo completo, no hay forma de "saltar" directo al dato.</li>
+                    </ul>
+                    <p class="text-xs mt-2 font-bold">Eso es exactamente lo que resuelve una base de datos relacional como MySQL.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 3a: ¿Qué es un SABD? ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-layer-group bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">El SABD: el programa que administra esos datos</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Los datos y el programa que los cuida no son la misma cosa.</p>
+                </div>
+
+                <div class="glass-panel p-5 mb-5 border-t-4 text-center" style="border-color: var(--accent-purple);">
+                    <p class="text-lg"><strong>SABD</strong> = <strong>S</strong>istema <strong>A</strong>dministrador de <strong>B</strong>ases de <strong>D</strong>atos. Es el <strong>software</strong> — no los datos en sí — que crea, organiza, protege y da acceso a la base de datos. <strong>MySQL es un SABD</strong>: uno entre varios que existen.</p>
+                </div>
+
+                <div class="glass-panel p-4">
+                    <h4 class="font-bold text-sm mb-2 text-center"><i class="fa-solid fa-list mr-2"></i>MySQL no es el único — panorama rápido</h4>
+                    <div class="flex flex-wrap items-center justify-center gap-2 text-xs">
+                        <span class="tint-blue px-3 py-1 rounded-full font-bold">MySQL</span>
+                        <span class="tint-green px-3 py-1 rounded-full">PostgreSQL</span>
+                        <span class="tint-gold px-3 py-1 rounded-full">SQL Server</span>
+                        <span class="tint-red px-3 py-1 rounded-full">Oracle</span>
+                        <span class="tint-peach px-3 py-1 rounded-full">SQLite</span>
+                        <span class="tint-purple px-3 py-1 rounded-full">MongoDB (NoSQL)</span>
+                    </div>
+                    <p class="text-xs mt-2 text-center" style="color: var(--text-muted);">Uno de los 9 temas de investigación de hoy es justo comparar SQL vs. NoSQL — ahí van a profundizar en esto.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 3b: MySQL como cliente-servidor ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-server bg-icon text-[350px] -right-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">MySQL corre como un servicio, no como un archivo que se abre</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">El modelo cliente-servidor, explicado con lo que ya van a usar hoy.</p>
+                </div>
+
+                <div class="glass-panel p-5 mb-4">
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-4 text-xs mb-2">
+                        <div class="glass-panel px-4 py-3 text-center" style="background: rgba(59,130,246,0.08);">Mini-Discord<br><span style="color: var(--text-muted);">(cliente)</span></div>
+                        <i class="fa-solid fa-arrows-left-right text-2xl text-gray-400"></i>
+                        <div class="glass-panel px-4 py-3 text-center font-bold" style="background: rgba(234,179,8,0.1);">MySQL Server (SABD)<br><span class="font-normal" style="color: var(--text-muted);">escuchando en el puerto 3306</span></div>
+                        <i class="fa-solid fa-arrows-left-right text-2xl text-gray-400"></i>
+                        <div class="glass-panel px-4 py-3 text-center" style="background: rgba(59,130,246,0.08);">MySQL Workbench<br><span style="color: var(--text-muted);">(cliente)</span></div>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--una-gold);">
+                    <p class="text-xs" style="color: var(--text-muted);">Mientras el SABD esté corriendo en segundo plano, cualquier cliente — la app de Java, Workbench, o incluso otra computadora en la red — se puede conectar a pedirle o guardarle datos. Por eso, más adelante en el curso, van a ver que ese servicio también puede vivir en <strong>otra computadora distinta</strong> — una base de datos remota — no necesariamente en la misma máquina donde corre la aplicación.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 4a: Objetos vs. Tablas — el problema ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-shuffle bg-icon text-[350px] -left-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">El modelo de objetos y el modelo relacional no hablan el mismo idioma</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">A esa fricción se le llama <span class="keyword keyword-below" data-tooltip="Impedancia (literal): en electrónica, la oposición que un circuito ofrece al paso de la corriente eléctrica. La frase se toma prestada de ahí: igual que dos circuitos con distinta impedancia no se conectan bien, el modelo de objetos (Java) y el modelo relacional (MySQL) no encajan solos y necesitan un 'adaptador' que traduzca entre ambos.">"impedance mismatch" (desajuste de impedancia)</span>.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-5">
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--accent-blue);">
+                        <h3 class="text-xl font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-cube text-blue-500"></i> Modelo de objetos (Java)</h3>
+                        <ul class="text-sm space-y-2" style="color: var(--text-muted);">
+                            <li><i class="fa-solid fa-check text-green-500 mr-1"></i> Un <code class="font-mono text-xs">Message</code> <strong>contiene</strong> una referencia directa a un <code class="font-mono text-xs">User</code>.</li>
+                            <li><i class="fa-solid fa-check text-green-500 mr-1"></i> La relación entre objetos es <strong>navegación por referencia</strong> (<code class="font-mono text-xs">m.getAuthor().getUsername()</code>).</li>
+                            <li><i class="fa-solid fa-check text-green-500 mr-1"></i> Soporta herencia, polimorfismo, encapsulamiento.</li>
+                        </ul>
+                    </div>
+                    <div class="glass-panel p-5 border-t-4" style="border-color: var(--una-gold);">
+                        <h3 class="text-xl font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-table text-yellow-600"></i> Modelo relacional (Codd, 1970)</h3>
+                        <ul class="text-sm space-y-2" style="color: var(--text-muted);">
+                            <li><i class="fa-solid fa-check text-green-500 mr-1"></i> Todo es una <strong>tabla</strong> (filas y columnas). No hay objetos ni referencias.</li>
+                            <li><i class="fa-solid fa-check text-green-500 mr-1"></i> Las relaciones se expresan con <strong>llaves foráneas</strong> (un número que apunta al id de otra tabla).</li>
+                            <li><i class="fa-solid fa-check text-green-500 mr-1"></i> No sabe qué es herencia ni polimorfismo — solo filas.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 mb-4">
+                    <h4 class="font-bold text-sm mb-3 text-center"><i class="fa-solid fa-right-left mr-2"></i>El mismo dato, en los dos modelos</h4>
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-6">
+                        <div class="darcula-editor p-3 text-xs">
+                            <span class="jk-type">Message</span> m = <span class="jk-keyword">new</span> <span class="jk-type">Message</span>(<br>
+                            &nbsp;&nbsp;<span class="jk-keyword">new</span> <span class="jk-type">User</span>(<span class="jk-string">"ana"</span>), <span class="jk-string">"hola!"</span>);
+                        </div>
+                        <i class="fa-solid fa-arrow-right-arrow-left text-2xl text-gray-400"></i>
+                        <div class="flex gap-3">
+                            <div class="er-table">
+                                <div class="er-table-header">usuarios</div>
+                                <div class="er-table-row"><span class="pk">id (PK)</span><span>1</span></div>
+                                <div class="er-table-row"><span>username</span><span>"ana"</span></div>
+                            </div>
+                            <div class="er-table">
+                                <div class="er-table-header">mensajes</div>
+                                <div class="er-table-row"><span class="pk">id (PK)</span><span>7</span></div>
+                                <div class="er-table-row"><span class="fk">usuario_id (FK)</span><span>1</span></div>
+                                <div class="er-table-row"><span>contenido</span><span>"hola!"</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-center mt-2" style="color: var(--text-muted);"><span class="pk font-bold">PK</span> = llave primaria (identifica la fila, única y nunca vacía) · <span class="fk font-bold">FK</span> = llave foránea (un número que apunta al id de otra tabla — así se representa una relación sin repetir datos)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 4b: Objetos vs. Tablas — cómo se resuelve ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-wrench bg-icon text-[350px] -right-10 opacity-5" style="color: var(--una-red);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">¿Y cómo desaparece esa fricción?</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">No desaparece sola — se traduce a mano, en código, en las dos direcciones.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-blue);">
+                        <h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-arrow-right mr-2" style="color: var(--accent-blue);"></i>Al guardar (objeto → tabla)</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">El <code class="font-mono text-[10px]">User</code> completo NO se guarda dentro de <code class="font-mono text-[10px]">mensajes</code>. Solo se extrae su <code class="font-mono text-[10px]">id</code> y se guarda como <code class="font-mono text-[10px]">usuario_id</code>, con un <code class="font-mono text-[10px]">INSERT</code>.</p>
+                    </div>
+                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--una-gold);">
+                        <h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-arrow-left mr-2" style="color: var(--una-gold);"></i>Al leer (tabla → objeto)</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">No hay referencia automática. Hay que reconstruirla: un <code class="font-mono text-[10px]">JOIN</code> trae usuario y mensaje juntos, y código Java arma de nuevo el objeto <code class="font-mono text-[10px]">Message</code> con su <code class="font-mono text-[10px]">User</code> adentro.</p>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 mb-4 border-l-4 text-center" style="border-left-color: var(--una-red);">
+                    <p class="text-sm font-bold">A esa reconstrucción se le llama <span class="keyword" data-tooltip="Mapeo de datos: el código que convierte filas y columnas de vuelta a objetos Java (y viceversa). No es automático — alguien tiene que programarlo, fila por fila, columna por columna.">mapeo de datos</span> — y es justo lo que van a programar hoy en <code class="font-mono text-[10px]">obtenerTodos()</code>. No es un detalle opcional: sin ese código, la impedancia no se resuelve sola.</p>
+                </div>
+
+                <div class="pregunta-box">
+                    <p><i class="fa-solid fa-circle-question mr-2 text-yellow-600"></i><strong>Pregunta para la clase:</strong></p>
+                    <p class="text-sm">Con el <code class="font-mono text-xs">MessageDAO</code> binario de la Semana 8, ¿cómo "viajaba" la relación Message→User? ¿Y ahora, con una tabla?</p>
+                    <button class="toggle-respuesta-btn" onclick="toggleRespuesta(this)"><i class="fa-solid fa-eye"></i> Ver respuesta</button>
+                    <span class="respuesta"><i class="fa-solid fa-lightbulb"></i> Antes: el objeto User completo iba serializado DENTRO del Message (referencia en memoria/bytes). Ahora: la tabla mensajes solo guarda un número (usuario_id) que apunta al id de la tabla usuarios — la relación es un JOIN, no una referencia.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 3a: Normalización — el problema ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-table-cells bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">Normalización: el problema que resuelve</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Reglas para que una tabla no repita ni contradiga información.</p>
+                </div>
+
+                <div class="glass-panel p-4 mb-4 border-t-4" style="border-color: var(--una-red);">
+                    <h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-ban mr-2 text-red-500"></i>Así NO se hace (todo en una sola tabla, sin normalizar)</h4>
+                    <table class="tabla-compare">
+                        <thead><tr><th>id</th><th>autor_username</th><th>contenido</th></tr></thead>
+                        <tbody>
+                            <tr><td>1</td><td>ana</td><td>hola!</td></tr>
+                            <tr><td>2</td><td>ana</td><td>¿cómo están?</td></tr>
+                            <tr><td>3</td><td>ana</td><td>ya me voy</td></tr>
+                        </tbody>
+                    </table>
+                    <p class="text-xs mt-2" style="color: var(--text-muted);">"ana" se repite en cada fila. Si cambia su nombre de usuario, hay que actualizar N filas — y si alguien escribe mal "ana" en una fila, el dato queda inconsistente.</p>
+                </div>
+
+                <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--accent-blue);">
+                    <h4 class="font-bold text-sm mb-1"><i class="fa-solid fa-arrow-right-long mr-2" style="color: var(--accent-blue);"></i>Antes de las tres reglas: ¿qué significa "depende de"?</h4>
+                    <p class="text-xs" style="color: var(--text-muted);">Decimos que la columna B <strong>depende de</strong> la columna A cuando, sabiendo el valor de A, se puede saber EXACTAMENTE el valor de B, sin ambigüedad. Ejemplo: sabiendo el <code class="font-mono text-[10px]">id</code> de un mensaje, ¿se sabe su <code class="font-mono text-[10px]">contenido</code>? Sí, exactamente uno — por eso <code class="font-mono text-[10px]">contenido</code> depende de <code class="font-mono text-[10px]">id</code>. Las tres reglas de la siguiente diapositiva son solo una forma ordenada de revisar esto, columna por columna.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 3b: Normalización — 1FN, 2FN, 3FN ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-table-cells bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">1FN, 2FN, 3FN — las reglas aplicadas</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">El mismo criterio de la diapositiva anterior, en tres pasos concretos.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div class="glass-panel p-4 border-t-4 text-center" style="border-color: var(--accent-blue);">
+                        <h4 class="font-bold text-base mb-1 keyword" data-tooltip="Primera Forma Normal: cada celda guarda un solo valor atómico. Prohíbe listas o varios valores dentro de una misma celda.">1FN</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">Cada columna guarda un solo valor atómico (nada de "ana,pedro" en una celda).</p>
+                    </div>
+                    <div class="glass-panel p-4 border-t-4 text-center" style="border-color: var(--accent-green);">
+                        <h4 class="font-bold text-base mb-1 keyword" data-tooltip="Segunda Forma Normal: todo atributo depende de la llave primaria completa, no de una sola parte. Aplica sobre todo en tablas con llaves compuestas.">2FN</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">Todo atributo depende de la llave completa (aplica sobre todo con llaves compuestas).</p>
+                    </div>
+                    <div class="glass-panel p-4 border-t-4 text-center" style="border-color: var(--una-gold);">
+                        <h4 class="font-bold text-base mb-1 keyword" data-tooltip="Tercera Forma Normal: ningún atributo depende de otro atributo que no sea la llave. Elimina las dependencias transitivas (por ejemplo, si ciudad define a país, país no debería estar en la misma tabla).">3FN</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">Ningún atributo depende de otro atributo que no sea la llave (sin dependencias transitivas).</p>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--accent-green);">
+                    <h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-check mr-2 text-green-600"></i>Así SÍ (normalizado a 3FN — lo que van a construir hoy)</h4>
+                    <div class="flex flex-wrap gap-4 justify-center">
+                        <div class="er-table">
+                            <div class="er-table-header">usuarios</div>
+                            <div class="er-table-row"><span class="pk">id (PK)</span></div>
+                            <div class="er-table-row"><span>username</span></div>
+                        </div>
+                        <div class="er-table">
+                            <div class="er-table-header">mensajes</div>
+                            <div class="er-table-row"><span class="pk">id (PK)</span></div>
+                            <div class="er-table-row"><span class="fk">usuario_id (FK)</span></div>
+                            <div class="er-table-row"><span>contenido</span></div>
+                            <div class="er-table-row"><span>fecha_envio</span></div>
+                        </div>
+                    </div>
+                    <p class="text-xs mt-2 text-center" style="color: var(--text-muted);">"ana" vive UNA sola vez, en usuarios. Cada mensaje solo guarda el número que la referencia.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 4a: JDBC — la API y el driver ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-plug bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">JDBC: el puente entre Java y MySQL</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Java Database Connectivity — una <span class="keyword keyword-below" data-tooltip="API = Application Programming Interface. Un conjunto de métodos ya definidos (con nombre y parámetros fijos) que alguien más construyó, para que ustedes los llamen sin saber cómo funcionan por dentro. No la inventan ni la modifican, solo la usan.">API</span> estándar, un <span class="keyword" data-tooltip="Driver: una biblioteca (un .jar) que traduce las órdenes genéricas de JDBC al protocolo específico que entiende cada motor de base de datos. Sin el driver correcto, JDBC no sabe cómo hablarle a MySQL.">driver</span> distinto por motor de BD.</p>
+                </div>
+
+                <div class="glass-panel p-5 mb-4 text-center border-t-4" style="border-color: var(--accent-blue);">
+                    <p class="text-sm" style="color: var(--text-muted);">JDBC define <strong>QUÉ</strong> se puede hacer (conectar, consultar, actualizar) de forma genérica. El <strong>driver</strong> — el <code class="font-mono text-[10px]">mysql-connector-j</code> que agregan al <code class="font-mono text-[10px]">pom.xml</code> — es la pieza que sabe <strong>CÓMO</strong> decírselo específicamente a MySQL.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--accent-green);">
+                        <h4 class="font-bold text-sm mb-2 text-center"><i class="fa-solid fa-remote mr-2" style="color: var(--accent-green);"></i>El control remoto (analogía)</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">Aprietan "subir volumen" sin saber qué circuito se activa adentro. JDBC es ese botón: métodos con nombre fijo que alguien más ya construyó — ustedes los llaman, no ven el código de adentro.</p>
+                    </div>
+                    <div class="glass-panel p-4 border-t-4" style="border-color: var(--una-gold);">
+                        <h4 class="font-bold text-sm mb-2 text-center"><i class="fa-solid fa-arrows-turn-right mr-2" style="color: var(--una-gold);"></i>Si cambiaran de motor de BD</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">Cambiarían el driver (otro <code class="font-mono text-[10px]">.jar</code>), pero el código Java que llama a la API de JDBC casi no cambia. Esa es la ventaja de programar contra una API y no contra un motor específico.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 4b: JDBC — las 4 piezas del código ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-code bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">JDBC en código: las 4 piezas</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">El mismo patrón se repite en guardar() y en obtenerTodos().</p>
+                </div>
+
+                <div class="glass-panel p-4 mb-4 border-l-4" style="border-left-color: var(--accent-blue);">
+                    <div class="flex flex-wrap items-center justify-center gap-2 text-xs font-mono">
+                        <span class="tint-blue px-2 py-1 rounded">DriverManager.getConnection(url, user, pass)</span>
+                        <i class="fa-solid fa-arrow-right text-gray-400"></i>
+                        <span class="tint-green px-2 py-1 rounded">Connection</span>
+                        <i class="fa-solid fa-arrow-right text-gray-400"></i>
+                        <span class="tint-gold px-2 py-1 rounded">PreparedStatement</span>
+                        <i class="fa-solid fa-arrow-right text-gray-400"></i>
+                        <span class="tint-purple px-2 py-1 rounded">ResultSet</span>
+                    </div>
+                </div>
+
+                <div class="darcula-editor mb-4">
+                    <div class="darcula-header">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                        <div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> Ejemplo mínimo</div>
+                    </div>
+                    <pre class="darcula-code p-3 text-xs leading-relaxed overflow-x-auto m-0"><code><span class="jk-type">String</span> url = <span class="jk-string">"jdbc:mysql://localhost:3306/minidiscord"</span>; <span class="jk-comment">// protocolo jdbc + máquina + puerto + nombre de la BD</span>
+<span class="jk-keyword">try</span> (<span class="jk-type">Connection</span> con = <span class="jk-type">DriverManager</span>.<span class="jk-method">getConnection</span>(url, <span class="jk-string">"root"</span>, <span class="jk-string">"clave"</span>)) { <span class="jk-comment">// abre la conexión; se cierra sola al salir</span>
+    <span class="jk-type">String</span> sql = <span class="jk-string">"INSERT INTO mensajes (usuario_id, contenido) VALUES (?, ?)"</span>; <span class="jk-comment">// el SQL con huecos: los valores van después</span>
+    <span class="jk-keyword">try</span> (<span class="jk-type">PreparedStatement</span> stmt = con.<span class="jk-method">prepareStatement</span>(sql)) { <span class="jk-comment">// prepara la instrucción; se cierra sola</span>
+        stmt.<span class="jk-method">setInt</span>(<span class="jk-number">1</span>, usuarioId); <span class="jk-comment">// llena el ? 1 con el id (int)</span>
+        stmt.<span class="jk-method">setString</span>(<span class="jk-number">2</span>, contenido); <span class="jk-comment">// llena el ? 2 con el texto, aparte del SQL = sin inyección</span>
+        stmt.<span class="jk-method">executeUpdate</span>(); <span class="jk-comment">// ejecuta el INSERT; devuelve cuántas filas cambió</span>
+    } <span class="jk-comment">// cierra el PreparedStatement</span>
+} <span class="jk-comment">// cierra la Connection</span></code></pre>
+                </div>
+
+                <div class="glass-panel py-3 px-6 text-center border-l-4" style="border-left-color: var(--una-gold);">
+                    <p class="text-sm"><i class="fa-solid fa-shield-halved mr-2" style="color: var(--una-gold);"></i>
+                    <strong><code class="font-mono text-xs">PreparedStatement</code>, no <code class="font-mono text-xs">Statement</code>:</strong> los <code class="font-mono text-xs">?</code> se rellenan de forma segura — evita <strong><span class="keyword" data-tooltip="Qué es: un ataque en el que el texto que escribe el usuario se concatena directo dentro de un comando SQL, dejando que ejecute consultas que no debería. Ejemplo: si la app arma SELECT * FROM usuarios WHERE nombre = '' + texto, el usuario escribe ' OR '1'='1' -- y la consulta devuelve TODOS los usuarios. Se previene con PreparedStatement.">inyección SQL</span></strong> (concatenar el texto del usuario directo en el SQL es una vulnerabilidad real, no un detalle académico).</p>
+                </div>
+
+                <div class="text-center mt-3">
+                    <button class="px-5 py-2 rounded-full text-sm font-bold tint-red transition-transform hover:scale-105 shadow-lg" onclick="openModal('modal-sql-inseguro')">
+                        <i class="fa-solid fa-triangle-exclamation mr-2"></i> Abrir para ver forma insegura
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 5: IntelliJ Database Tools ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-server bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Conectar MySQL desde IntelliJ IDEA</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Database Tools: administrar y explorar la BD sin salir del IDE.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="glass-panel p-4 text-center">
+                        <div class="tint-blue w-10 h-10 rounded-full flex items-center justify-center font-bold mx-auto mb-2">1</div>
+                        <p class="text-xs" style="color: var(--text-muted);"><i class="fa-solid fa-database mb-1 block text-lg" style="color: var(--accent-blue);"></i>View → Tool Windows → <strong>Database</strong></p>
+                    </div>
+                    <div class="glass-panel p-4 text-center">
+                        <div class="tint-green w-10 h-10 rounded-full flex items-center justify-center font-bold mx-auto mb-2">2</div>
+                        <p class="text-xs" style="color: var(--text-muted);"><i class="fa-solid fa-plus mb-1 block text-lg" style="color: var(--accent-green);"></i>"+" → Data Source → <strong>MySQL</strong></p>
+                    </div>
+                    <div class="glass-panel p-4 text-center">
+                        <div class="tint-gold w-10 h-10 rounded-full flex items-center justify-center font-bold mx-auto mb-2">3</div>
+                        <p class="text-xs" style="color: var(--text-muted);"><i class="fa-solid fa-key mb-1 block text-lg" style="color: var(--una-gold);"></i>Host, puerto (3306), usuario, contraseña, base de datos</p>
+                    </div>
+                    <div class="glass-panel p-4 text-center">
+                        <div class="tint-purple w-10 h-10 rounded-full flex items-center justify-center font-bold mx-auto mb-2">4</div>
+                        <p class="text-xs" style="color: var(--text-muted);"><i class="fa-solid fa-circle-check mb-1 block text-lg" style="color: var(--accent-purple);"></i><strong>Test Connection</strong> → descargar driver si lo pide → Apply</p>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 mt-5 border-l-4" style="border-left-color: var(--una-red);">
+                    <h4 class="font-bold text-sm mb-1"><i class="fa-solid fa-triangle-exclamation mr-2" style="color: var(--una-red);"></i>Conexión del IDE ≠ conexión de la aplicación</h4>
+                    <p class="text-xs" style="color: var(--text-muted);">Database Tools conecta el IDE a la BD para que ustedes puedan explorar tablas y correr SQL manualmente. Es una herramienta aparte de la conexión que hace <code class="font-mono text-[10px]">DriverManager.getConnection(...)</code> dentro del código Java — ambas apuntan a la misma base, pero son dos conexiones independientes.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 6: DLM e IMEC ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-list-check bg-icon text-[350px] -left-10 opacity-5" style="color: var(--una-red);"></i>
+                <div class="text-center mb-5">
+                    <h2 class="text-5xl font-bold mb-2">Instrucciones DLM y operaciones IMEC (CRUD)</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Vocabulario oficial del curso — así aparece en el programa.</p>
+                </div>
+
+                <div class="glass-panel p-4 mb-4">
+                    <table class="tabla-compare">
+                        <thead><tr><th>IMEC</th><th>Nombre en inglés (CRUD)</th><th>Sentencia SQL (DLM)</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>I</strong>nsertar</td><td>Create</td><td><code class="font-mono text-xs">INSERT INTO ...</code></td></tr>
+                            <tr><td><strong>M</strong>ostrar</td><td>Read</td><td><code class="font-mono text-xs">SELECT ...</code></td></tr>
+                            <tr><td><strong>E</strong>ditar</td><td>Update</td><td><code class="font-mono text-xs">UPDATE ... SET ...</code></td></tr>
+                            <tr><td><strong>C</strong>ancelar (eliminar)</td><td>Delete</td><td><code class="font-mono text-xs">DELETE FROM ...</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="glass-panel p-4 mb-4 border-l-4" style="border-left-color: var(--accent-blue);">
+                    <h4 class="font-bold text-sm mb-1"><i class="fa-solid fa-layer-group mr-2" style="color: var(--accent-blue);"></i>DLM vs. DDL — no son lo mismo</h4>
+                    <p class="text-xs" style="color: var(--text-muted);"><strong>DDL</strong> (Data Definition Language) define la estructura: <code class="font-mono text-xs">CREATE TABLE</code>, <code class="font-mono text-xs">ALTER TABLE</code>. <strong>DLM</strong> (Data Manipulation Language) manipula los datos que ya viven dentro de esa estructura: <code class="font-mono text-xs">INSERT</code>, <code class="font-mono text-xs">SELECT</code>, <code class="font-mono text-xs">UPDATE</code>, <code class="font-mono text-xs">DELETE</code>. La próxima sesión, cuando conecten MySQL de verdad, van a usar un poco de DDL (crear las tablas, una sola vez) y el resto del curso van a usar sobre todo DLM (desde el código Java).</p>
+                </div>
+
+                <div class="pregunta-box">
+                    <p><i class="fa-solid fa-bolt mr-2 text-yellow-600"></i><strong>Ejercicio relámpago:</strong></p>
+                    <p class="text-sm">¿Qué instrucción SQL usarían para borrar un mensaje que un estudiante mandó por error?</p>
+                    <button class="toggle-respuesta-btn" onclick="toggleRespuesta(this)"><i class="fa-solid fa-eye"></i> Ver respuesta</button>
+                    <span class="respuesta"><i class="fa-solid fa-check text-green-600 mr-1"></i><code class="font-mono text-xs">DELETE FROM mensajes WHERE id = ?</code> — la "C" de Cancelar en IMEC.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 7: Patrones de acceso a datos ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-diagram-project bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">Patrones de acceso a datos: el mismo DAO, con otra cara</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">No van a tirar el MessageDAO de la Semana 8 — lo van a volver intercambiable.</p>
+                </div>
+
+                <div class="glass-panel p-5 mb-5 border-t-4" style="border-color: var(--accent-blue);">
+                    <h3 class="text-xl font-bold mb-2"><i class="fa-solid fa-arrows-turn-to-dots mr-2" style="color: var(--accent-blue);"></i>La idea: una interfaz, dos implementaciones</h3>
+                    <p class="text-sm mb-3" style="color: var(--text-muted);">Hoy van a crear <code class="font-mono text-xs">MessageRepository</code>, una interfaz con los métodos que el Controller necesita. <code class="font-mono text-xs">MessageDAO</code> (binario, Semana 8) y el nuevo <code class="font-mono text-xs">JdbcMessageRepository</code> (MySQL, hoy) pueden implementarla por igual — el Controller nunca se entera de cuál está usando.</p>
+                    <div class="flex flex-wrap items-center justify-center gap-3 text-xs font-mono">
+                        <span class="tint-blue px-3 py-2 rounded-lg">ChatViewController</span>
+                        <i class="fa-solid fa-arrow-right text-gray-400"></i>
+                        <span class="tint-gold px-3 py-2 rounded-lg">interface MessageRepository</span>
+                        <span class="text-gray-400">◄──implementan──►</span>
+                        <span class="flex flex-col gap-1">
+                            <span class="tint-green px-2 py-1 rounded">JdbcMessageRepository</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 mb-4 border-l-4" style="border-left-color: var(--una-gold);">
+                    <p class="text-sm"><i class="fa-solid fa-lightbulb mr-2" style="color: var(--una-gold);"></i>
+                    Esto es exactamente el patrón <strong>DAO/Repository</strong>, ya formalizado como interfaz — y es la MISMA idea del principio de sustitución que usan al programar contra una interfaz en vez de una clase concreta. La pregunta de la Semana 8 ("¿qué otras clases cambiarían si el DAO leyera de un servidor remoto?") hoy tiene una respuesta concreta: ninguna, siempre que todos programen contra <code class="font-mono text-xs">MessageRepository</code>.</p>
+                </div>
+
+                <div class="pregunta-box">
+                    <p><i class="fa-solid fa-circle-question mr-2 text-yellow-600"></i><strong>Para pensar:</strong></p>
+                    <p class="text-sm">¿A qué categoría GoF (creacional / estructural / comportamiento) pertenece este uso de una interfaz para intercambiar implementaciones?</p>
+                    <button class="toggle-respuesta-btn" onclick="toggleRespuesta(this)"><i class="fa-solid fa-eye"></i> Ver respuesta</button>
+                    <span class="respuesta"><i class="fa-solid fa-lightbulb"></i> Comportamiento — es la misma familia que Strategy: el Controller delega el "cómo" a un objeto intercambiable sin cambiar su propio código.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 8: Investigación y exposición ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-magnifying-glass bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-4xl font-bold mb-1">Ahora exponen ustedes: 9 temas para profundizar</h2>
+                    <p class="text-base" style="color: var(--text-muted);">20 minutos de investigación en grupos de 2-3 · 3 minutos de exposición por grupo.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                    <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--accent-blue);">
+                        <h4 class="font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-shield-halved" style="color: var(--accent-blue);"></i>1. Transacciones y ACID</h4>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">¿Qué pasa si se corta la luz a mitad de un guardado?</p>
+                    </div>
+                    <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--accent-green);">
+                        <h4 class="font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-link" style="color: var(--accent-green);"></i>2. Tipos de JOIN</h4>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">INNER vs. LEFT vs. RIGHT vs. FULL OUTER.</p>
+                    </div>
+                    <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--una-gold);">
+                        <h4 class="font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-magnifying-glass" style="color: var(--una-gold);"></i>3. Índices</h4>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">¿Por qué son más rápidas las consultas con uno?</p>
+                    </div>
+                    <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--accent-purple);">
+                        <h4 class="font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-arrows-left-right" style="color: var(--accent-purple);"></i>4. ORM (Hibernate / JPA)</h4>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">¿Qué automatiza que JDBC no resuelve solo?</p>
+                    </div>
+                    <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--una-red);">
+                        <h4 class="font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-bolt" style="color: var(--una-red);"></i>5. Procedimientos y triggers</h4>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">Código que vive dentro de la propia base de datos.</p>
+                    </div>
+                    <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--accent-peach);">
+                        <h4 class="font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-eye" style="color: var(--accent-peach);"></i>6. Vistas (VIEWs)</h4>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">Una consulta guardada que actúa como tabla.</p>
+                    </div>
+                    <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--accent-blue);">
+                        <h4 class="font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-user-shield" style="color: var(--accent-blue);"></i>7. Seguridad y permisos</h4>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">Más allá de la <span class="keyword" data-tooltip="Qué es: un ataque en el que el texto que escribe el usuario se concatena directo dentro de un comando SQL, dejando que ejecute consultas que no debería. Ejemplo: si la app arma SELECT * FROM usuarios WHERE nombre = '' + texto, el usuario escribe ' OR '1'='1' -- y la consulta devuelve TODOS los usuarios. Se previene con PreparedStatement.">inyección SQL</span>: roles y mínimo privilegio.</p>
+                    </div>
+                    <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--accent-green);">
+                        <h4 class="font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-network-wired" style="color: var(--accent-green);"></i>8. Pool de conexiones</h4>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">¿Por qué no abrir una conexión nueva cada vez?</p>
+                    </div>
+                    <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--una-gold);">
+                        <h4 class="font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-cubes" style="color: var(--una-gold);"></i>9. NoSQL vs. relacional</h4>
+                        <p class="text-xs mt-1" style="color: var(--text-muted);">MongoDB, Redis, Neo4j — ¿cuándo elegirían cada uno?</p>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--una-red);">
+                    <h4 class="font-bold text-sm mb-1"><i class="fa-solid fa-list-ol mr-2" style="color: var(--una-red);"></i>Formato de exposición (10 min máximo)</h4>
+                    <p class="text-xs" style="color: var(--text-muted);">1) Qué es (30 seg) · 2) Para qué sirve / cuándo se usa (1 min) · 3) Al menos 2 fuentes reales de donde sacaron la información · 4) Algo que les pareció interesante investigándolo (30 seg).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 8.5: Grupos y temas asignados ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-users bg-icon text-[350px] -right-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-4xl font-bold mb-1">Grupos y temas asignados</h2>
+                    <p class="text-base" style="color: var(--text-muted);">9 grupos, cada uno con su tema, en el mismo orden de la diapositiva anterior. 20 minutos de investigación a partir de ahora.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--accent-blue);">
+                        <h4 class="font-bold text-sm flex items-center gap-2 mb-1"><i class="fa-solid fa-shield-halved" style="color: var(--accent-blue);"></i>Grupo 1 — Transacciones y ACID</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">José Manuel Quesada Gómez · Derek Alejandro Cruz Núñez · Allison Murillo Urbina</p>
+                    </div>
+                    <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--accent-green);">
+                        <h4 class="font-bold text-sm flex items-center gap-2 mb-1"><i class="fa-solid fa-link" style="color: var(--accent-green);"></i>Grupo 2 — Tipos de JOIN</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">José Daniel Alvarado Solano · Donovan Adolfo Mora Murillo · Sebastián Hincapié Salazar</p>
+                    </div>
+                    <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--una-gold);">
+                        <h4 class="font-bold text-sm flex items-center gap-2 mb-1"><i class="fa-solid fa-magnifying-glass" style="color: var(--una-gold);"></i>Grupo 3 — Índices en bases de datos</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">Amanda Picado Arias · Brayan Javier Reyes Tinoco · Cristian Coronado Chávez</p>
+                    </div>
+                    <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--accent-purple);">
+                        <h4 class="font-bold text-sm flex items-center gap-2 mb-1"><i class="fa-solid fa-arrows-left-right" style="color: var(--accent-purple);"></i>Grupo 4 — ORM (Hibernate / JPA)</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">Anthony Delay Porras · Isabella Cubillo Paniagua · Gabriel Del Gerardo Ramírez Valverde</p>
+                    </div>
+                    <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--una-red);">
+                        <h4 class="font-bold text-sm flex items-center gap-2 mb-1"><i class="fa-solid fa-bolt" style="color: var(--una-red);"></i>Grupo 5 — Procedimientos y triggers</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">Steven Huang Lin · Andrés Segura Arias</p>
+                    </div>
+                    <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--accent-peach);">
+                        <h4 class="font-bold text-sm flex items-center gap-2 mb-1"><i class="fa-solid fa-eye" style="color: var(--accent-peach);"></i>Grupo 6 — Vistas (VIEWs)</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">Valeria Bahena Mujica · Santiago Castro Arguedas</p>
+                    </div>
+                    <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--accent-blue);">
+                        <h4 class="font-bold text-sm flex items-center gap-2 mb-1"><i class="fa-solid fa-user-shield" style="color: var(--accent-blue);"></i>Grupo 7 — Seguridad y permisos</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">Tamara Natasha Ruiz Salas · Erving Sequeira Saravia · Valeria Cordero Murillo</p>
+                    </div>
+                    <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--accent-green);">
+                        <h4 class="font-bold text-sm flex items-center gap-2 mb-1"><i class="fa-solid fa-network-wired" style="color: var(--accent-green);"></i>Grupo 8 — Pool de conexiones</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">Carlos Andrés Víquez Sequeira · Ismael Alfaro Benavides · Wellintong Mariano Naranjo Corella</p>
+                    </div>
+                    <div class="glass-panel p-3 border-l-4" style="border-left-color: var(--una-gold);">
+                        <h4 class="font-bold text-sm flex items-center gap-2 mb-1"><i class="fa-solid fa-cubes" style="color: var(--una-gold);"></i>Grupo 9 — NoSQL vs. relacional</h4>
+                        <p class="text-xs" style="color: var(--text-muted);">Jefferson Espinoza Zumbado · Kenan Joel Solís Brenes · Arleth Sofía Varela González</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 9: Cierre ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-brain bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-4xl font-bold mb-2">Cierre — la base teórica de la persistencia por SABD</h2>
+                    <p class="text-base" style="color: var(--text-muted);">Hoy fue la teoría y un mapa de temas extra. La próxima sesión programan con MySQL real.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-green);">
+                        <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Semana 11 (hoy)</p>
+                        <p class="font-bold text-sm">Teoría de SABD + investigación en grupos</p>
+                    </div>
+                    <div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-blue);">
+                        <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Semana 12</p>
+                        <p class="font-bold text-sm">Conectar MySQL real y programar el CRUD completo (DLM/IMEC)</p>
+                    </div>
+                    <div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--una-gold);">
+                        <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Semana 13</p>
+                        <p class="font-bold text-sm">Patrones de acceso a datos, consolidar MySQL como persistencia principal</p>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 border-l-4" style="border-left-color: var(--accent-blue);">
+                    <h4 class="font-bold text-base mb-1"><i class="fa-solid fa-book-open mr-2" style="color: var(--accent-blue);"></i>Para repasar</h4>
+                    <p class="text-xs" style="color: var(--text-muted);">Qué es una base de datos y qué es un SABD · MySQL como cliente-servidor · modelo relacional de Codd vs. modelo de objetos · normalización (1FN/2FN/3FN) · las 4 piezas de JDBC · DLM vs. DDL · IMEC = CRUD · el patrón Repository como evolución del DAO · los 9 temas que expusieron sus compañeros.</p>
+                </div>
+
+                <div class="text-center mt-6">
+                    <button class="px-8 py-3 rounded-full text-lg font-bold tint-red transition-transform hover:scale-105 shadow-xl">
+                        <i class="fa-solid fa-database mr-2"></i> La próxima: ¡a conectar Mini-Discord a MySQL de verdad!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <button class="float-btn" id="prevBtn" onclick="changeSlide(-1)"><i class="fa-solid fa-arrow-left"></i></button>
+    <button class="float-btn" id="nextBtn" onclick="changeSlide(1)"><i class="fa-solid fa-arrow-right"></i></button>
+
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+    </div>
+
+    <script src="../../../assets/js/presentacion.js"></script>
+
+    <!-- ========== MODAL: GLOSARIO FLOTANTE ========== -->
+    <div class="modal-backdrop glosario-modal" id="modal-glosario">
+        <div class="modal-content max-w-lg">
+            <button class="close-modal" onclick="closeModal('modal-glosario')"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-2xl font-bold mb-4 text-center" style="color: var(--accent-blue);">
+                <i class="fa-solid fa-book-open mr-2"></i> Glosario de Términos Clave — Semana 11
+            </h3>
+            <ul class="text-sm space-y-3">
+                <li><strong>SABD:</strong> Sistema Administrador de Bases de Datos — el motor que guarda, organiza y protege los datos (MySQL, en este curso).</li>
+                <li><strong>Impedance mismatch:</strong> la fricción entre el modelo de objetos (Java) y el modelo relacional (tablas).</li>
+                <li><strong>Normalización:</strong> reglas (1FN, 2FN, 3FN) para eliminar redundancia e inconsistencia en las tablas.</li>
+                <li><strong>Llave primaria (PK):</strong> columna (o combinación de columnas) que identifica de forma única cada fila — no se repite entre filas y no puede quedar vacía.</li>
+                <li><strong>Llave compuesta:</strong> una llave primaria formada por <strong>dos o más columnas juntas</strong> (ninguna por separado identifica la fila, solo la combinación de ambas). Ejemplo: en una tabla de "inscripciones", la fila la identifica <code class="font-mono text-xs">(estudiante_id, curso_id)</code> junta, no cada una por su lado.</li>
+                <li><strong>Llave completa:</strong> término que se usa al hablar de 2FN — significa "todas las columnas que forman la llave primaria", en contraste con solo una parte de una llave compuesta. Un atributo "depende de la llave completa" cuando necesita las DOS columnas de la llave compuesta para determinarse; si le alcanza con una sola, viola 2FN.</li>
+                <li><strong>Llave foránea (FK):</strong> columna que referencia la PK de otra tabla — así se modelan las relaciones.</li>
+                <li><strong>API (Application Programming Interface):</strong> un conjunto de métodos ya definidos (nombre, parámetros, qué devuelven) que alguien más construyó para que otro programa los use, sin tener que saber cómo están implementados por dentro. Ejemplo: <code class="font-mono text-xs">DriverManager.getConnection(...)</code> es parte de la API de JDBC — la llaman, pero no ven ni tocan su código interno.</li>
+                <li><strong>JDBC:</strong> Java Database Connectivity — la API estándar de Java para hablar con cualquier motor de base de datos.</li>
+                <li><strong>DLM:</strong> Data Manipulation Language — INSERT, SELECT, UPDATE, DELETE (manipula datos, no estructura).</li>
+                <li><strong>IMEC:</strong> Insertar, Mostrar, Editar, Cancelar — el CRUD en español, tal como aparece en el programa del curso.</li>
+                <li><strong>Repository / DAO:</strong> patrón que aísla el "cómo se accede a los datos" detrás de una interfaz intercambiable.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ========== MODAL: FORMA INSEGURA (INYECCIÓN SQL) ========== -->
+    <div class="modal-backdrop" id="modal-sql-inseguro">
+        <div class="modal-content max-w-3xl">
+            <button class="close-modal" onclick="closeModal('modal-sql-inseguro')"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-2xl font-bold mb-2 text-center" style="color: var(--una-red);">
+                <i class="fa-solid fa-triangle-exclamation mr-2"></i> La forma insegura: concatenar el texto del usuario
+            </h3>
+            <p class="text-sm mb-3 text-center" style="color: var(--text-muted);">Este código funciona, pero el texto del usuario se mete DENTRO del SQL — y lo que escriba se interpreta como parte del comando.</p>
+
+            <div class="darcula-editor">
+                <div class="darcula-header">
+                    <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                    <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                    <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                    <div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> Inseguro.java</div>
+                </div>
+                <pre class="darcula-code p-3 text-xs leading-relaxed overflow-x-auto m-0"><code><span class="jk-type">String</span> url = <span class="jk-string">"jdbc:mysql://localhost:3306/minidiscord"</span>;
+<span class="jk-keyword">try</span> (<span class="jk-type">Connection</span> con = <span class="jk-type">DriverManager</span>.<span class="jk-method">getConnection</span>(url, <span class="jk-string">"root"</span>, <span class="jk-string">"clave"</span>)) {
+    <span class="jk-type">String</span> sql = <span class="jk-string">"INSERT INTO mensajes (usuario_id, contenido) VALUES ("</span> + usuarioId + <span class="jk-string">", '"</span> + contenido + <span class="jk-string">"')"</span>; <span class="jk-comment">// ⚠ el texto del usuario va DENTRO del SQL</span>
+    <span class="jk-keyword">try</span> (<span class="jk-type">Statement</span> stmt = con.<span class="jk-method">createStatement</span>()) { <span class="jk-comment">// Statement simple: no hay huecos ?</span>
+        stmt.<span class="jk-method">executeUpdate</span>(sql); <span class="jk-comment">// ejecuta el SQL tal cual quedó concatenado</span>
+    }
+}</code></pre>
+            </div>
+
+            <div class="darcula-editor mt-3">
+                <div class="darcula-header">
+                    <span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span>
+                    <span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span>
+                    <span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span>
+                    <div class="darcula-tab ml-2"><i class="fa-solid fa-bug text-xs" style="color: #cc7832;"></i> El ataque</div>
+                </div>
+                <pre class="darcula-code p-3 text-xs leading-relaxed overflow-x-auto m-0"><code><span class="jk-comment">// Si el usuario escribe esto en el campo contenido:</span>
+<span class="jk-string">hola'); DROP TABLE mensajes; --</span>
+<span class="jk-comment">// el SQL final que se ejecuta queda así:</span>
+INSERT INTO mensajes (usuario_id, contenido) VALUES (1, <span class="jk-string">'hola'</span>); DROP TABLE mensajes; --')
+<span class="jk-comment">// ← primero inserta 'hola' y después ¡BORRA la tabla mensajes!</span></code></pre>
+            </div>
+
+            <p class="text-sm mt-3" style="color: var(--text-muted);"><strong style="color: var(--text-main);">¿La diferencia con el código seguro?</strong> Allá los valores van con <code class="font-mono text-xs">?</code> y <code class="font-mono text-xs">setString</code>, separados del SQL. Aquí van dentro de la cadena: la comilla <code class="font-mono text-xs">'</code> del atacante no se escapa, se <strong>interpreta</strong>.</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleRespuesta(btn) {
+            const box = btn.closest('.pregunta-box');
+            const respuesta = box ? box.querySelector('.respuesta') : null;
+            if (!respuesta) return;
+            const visible = respuesta.classList.toggle('visible');
+            btn.innerHTML = visible
+                ? '<i class="fa-solid fa-eye-slash"></i> Ocultar respuesta'
+                : '<i class="fa-solid fa-eye"></i> Ver respuesta';
+        }
+        if (typeof updateProgress === 'undefined') {
+            window.updateProgress = function() {
+                const slides = document.querySelectorAll('.slide');
+                let activeIndex = 0;
+                slides.forEach((s, i) => { if (s.classList.contains('active')) activeIndex = i; });
+                const progress = ((activeIndex + 1) / slides.length) * 100;
+                document.getElementById('progressBar').style.width = progress + '%';
+            };
+        }
+        const origGoToSlide = window.goToSlide;
+        if (origGoToSlide) { window.goToSlide = function(index) { origGoToSlide(index); updateProgress(); }; }
+        const origChangeSlide = window.changeSlide;
+        if (origChangeSlide) { window.changeSlide = function(delta) { origChangeSlide(delta); updateProgress(); }; }
+        document.addEventListener('DOMContentLoaded', function() { updateProgress(); });
+    </script>
+
+</body>
+</html>
