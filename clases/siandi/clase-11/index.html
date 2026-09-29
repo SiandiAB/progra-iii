@@ -351,7 +351,7 @@
                 <i class="fa-solid fa-plug bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
                 <div class="text-center mb-5">
                     <h2 class="text-5xl font-bold mb-2">JDBC: el puente entre Java y MySQL</h2>
-                    <p class="text-xl" style="color: var(--text-muted);">Java Database Connectivity — una API estándar, un driver distinto por motor de BD.</p>
+                    <p class="text-xl" style="color: var(--text-muted);">Java Database Connectivity — una <span class="keyword" data-tooltip="API = Application Programming Interface. Un conjunto de métodos ya definidos (con nombre y parámetros fijos) que alguien más construyó, para que ustedes los llamen sin saber cómo funcionan por dentro. No la inventan ni la modifican, solo la usan.">API</span> estándar, un driver distinto por motor de BD.</p>
                 </div>
 
                 <div class="glass-panel p-4 mb-4 border-l-4" style="border-left-color: var(--accent-blue);">
@@ -596,9 +596,12 @@
                 <li><strong>SABD:</strong> Sistema Administrador de Bases de Datos — el motor que guarda, organiza y protege los datos (MySQL, en este curso).</li>
                 <li><strong>Impedance mismatch:</strong> la fricción entre el modelo de objetos (Java) y el modelo relacional (tablas).</li>
                 <li><strong>Normalización:</strong> reglas (1FN, 2FN, 3FN) para eliminar redundancia e inconsistencia en las tablas.</li>
-                <li><strong>Llave primaria (PK):</strong> columna que identifica de forma única cada fila.</li>
+                <li><strong>Llave primaria (PK):</strong> columna (o combinación de columnas) que identifica de forma única cada fila — no se repite entre filas y no puede quedar vacía.</li>
+                <li><strong>Llave compuesta:</strong> una llave primaria formada por <strong>dos o más columnas juntas</strong> (ninguna por separado identifica la fila, solo la combinación de ambas). Ejemplo: en una tabla de "inscripciones", la fila la identifica <code class="font-mono text-xs">(estudiante_id, curso_id)</code> junta, no cada una por su lado.</li>
+                <li><strong>Llave completa:</strong> término que se usa al hablar de 2FN — significa "todas las columnas que forman la llave primaria", en contraste con solo una parte de una llave compuesta. Un atributo "depende de la llave completa" cuando necesita las DOS columnas de la llave compuesta para determinarse; si le alcanza con una sola, viola 2FN.</li>
                 <li><strong>Llave foránea (FK):</strong> columna que referencia la PK de otra tabla — así se modelan las relaciones.</li>
-                <li><strong>JDBC:</strong> Java Database Connectivity — API estándar de Java para hablar con cualquier motor de base de datos.</li>
+                <li><strong>API (Application Programming Interface):</strong> un conjunto de métodos ya definidos (nombre, parámetros, qué devuelven) que alguien más construyó para que otro programa los use, sin tener que saber cómo están implementados por dentro. Ejemplo: <code class="font-mono text-xs">DriverManager.getConnection(...)</code> es parte de la API de JDBC — la llaman, pero no ven ni tocan su código interno.</li>
+                <li><strong>JDBC:</strong> Java Database Connectivity — la API estándar de Java para hablar con cualquier motor de base de datos.</li>
                 <li><strong>DLM:</strong> Data Manipulation Language — INSERT, SELECT, UPDATE, DELETE (manipula datos, no estructura).</li>
                 <li><strong>IMEC:</strong> Insertar, Mostrar, Editar, Cancelar — el CRUD en español, tal como aparece en el programa del curso.</li>
                 <li><strong>Repository / DAO:</strong> patrón que aísla el "cómo se accede a los datos" detrás de una interfaz intercambiable.</li>
