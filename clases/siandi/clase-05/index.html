@@ -54,6 +54,9 @@
             transform: translateX(-50%) translateY(-4px);
         }
 
+        /* Overlay de modales: flex solo cuando NO está oculto (evita el conflicto hidden/flex) */
+        .modal-overlay:not(.hidden) { display: flex; }
+
         /* Tooltip neutro (sin color rojo) */
         .keyword-neutral {
             position: relative;
@@ -368,7 +371,7 @@
                         </div>
                         <div class="text-xs md:text-sm space-y-2 border-t md:border-t-0 md:border-l pt-3 md:pt-0 md:pl-4 border-gray-200">
                             <h4 class="font-bold text-green-800"><i class="fa-regular fa-image mr-1"></i> Colocación de Imágenes en Componentes</h4>
-                            <p class="text-[11px] md:text-xs text-gray-600 font-semibold text-gray-800">El Proceso de Carga correcto:</p>
+                            <p class="text-[11px] md:text-xs font-semibold text-gray-800">El Proceso de Carga correcto:</p>
                             <p class="text-[11px] md:text-xs text-gray-600">
                                 En el Inspector, en la propiedad <code class="font-mono text-xs">icon</code>, se debe seleccionar la opción <strong>"Classpath"</strong> para buscar imágenes dentro del proyecto. Esto encapsula el recurso mediante un objeto <span class="keyword" data-tooltip="Clase de Swing que implementa la interfaz Icon para renderizar imágenes fijas desde recursos cargados en memoria.">ImageIcon</span>.
                             </p>
@@ -933,7 +936,7 @@ txtTelefono.<span class="darcula-func">addKeyListener</span>(<span class="darcul
     </div> <!-- fin slides-container -->
 
     <!-- ==================== MODALES ==================== -->
-    <div id="modalCapa" class="fixed inset-0 bg-black/60 z-[1000] hidden flex items-center justify-center p-4">
+    <div id="modalCapa" class="modal-overlay fixed inset-0 bg-black/60 hidden items-center justify-center p-4" style="z-index: 1000;">
         <div class="bg-white rounded-2xl max-w-2xl w-full p-6 max-h-[85vh] overflow-y-auto shadow-2xl relative">
             <button onclick="closeModal('modalCapa')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-3xl font-bold">&times;</button>
             <div class="flex items-center border-b pb-3 mb-4 pr-6">
@@ -968,7 +971,7 @@ txtTelefono.<span class="darcula-func">addKeyListener</span>(<span class="darcul
         </div>
     </div>
 
-    <div id="modalIcono" class="fixed inset-0 bg-black/60 z-[1000] hidden flex items-center justify-center p-4">
+    <div id="modalIcono" class="modal-overlay fixed inset-0 bg-black/60 hidden items-center justify-center p-4" style="z-index: 1000;">
         <div class="bg-white rounded-2xl max-w-2xl w-full p-6 max-h-[85vh] overflow-y-auto shadow-2xl relative">
             <button onclick="closeModal('modalIcono')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-3xl font-bold">&times;</button>
             <div class="flex items-center border-b pb-3 mb-4 pr-6">
@@ -991,7 +994,7 @@ txtTelefono.<span class="darcula-func">addKeyListener</span>(<span class="darcul
         </div>
     </div>
 
-    <div id="modalMouse" class="fixed inset-0 bg-black/60 z-[1000] hidden flex items-center justify-center p-4">
+    <div id="modalMouse" class="modal-overlay fixed inset-0 bg-black/60 hidden items-center justify-center p-4" style="z-index: 1000;">
         <div class="bg-white rounded-2xl max-w-2xl w-full p-6 max-h-[85vh] overflow-y-auto shadow-2xl relative">
             <button onclick="closeModal('modalMouse')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-3xl font-bold">&times;</button>
             <div class="flex items-center border-b pb-3 mb-4 pr-6">
@@ -1020,7 +1023,7 @@ txtTelefono.<span class="darcula-func">addKeyListener</span>(<span class="darcul
         </div>
     </div>
 
-    <div id="modalKey" class="fixed inset-0 bg-black/60 z-[1000] hidden flex items-center justify-center p-4">
+    <div id="modalKey" class="modal-overlay fixed inset-0 bg-black/60 hidden items-center justify-center p-4" style="z-index: 1000;">
         <div class="bg-white rounded-2xl max-w-2xl w-full p-6 max-h-[85vh] overflow-y-auto shadow-2xl relative">
             <button onclick="closeModal('modalKey')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-3xl font-bold">&times;</button>
             <div class="flex items-center border-b pb-3 mb-4 pr-6">
@@ -1043,7 +1046,7 @@ txtTelefono.<span class="darcula-func">addKeyListener</span>(<span class="darcul
         </div>
     </div>
 
-    <div id="modalSystem" class="fixed inset-0 bg-black/60 z-[1000] hidden flex items-center justify-center p-4">
+    <div id="modalSystem" class="modal-overlay fixed inset-0 bg-black/60 hidden items-center justify-center p-4" style="z-index: 1000;">
         <div class="bg-white rounded-2xl max-w-2xl w-full p-6 max-h-[85vh] overflow-y-auto shadow-2xl relative">
             <button onclick="closeModal('modalSystem')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-3xl font-bold">&times;</button>
             <div class="flex items-center border-b pb-3 mb-4 pr-6">
@@ -1066,7 +1069,7 @@ txtTelefono.<span class="darcula-func">addKeyListener</span>(<span class="darcul
         </div>
     </div>
 
-    <div id="modalShared" class="fixed inset-0 bg-black/60 z-[1000] hidden flex items-center justify-center p-4">
+    <div id="modalShared" class="modal-overlay fixed inset-0 bg-black/60 hidden items-center justify-center p-4" style="z-index: 1000;">
         <div class="bg-white rounded-2xl max-w-2xl w-full p-6 max-h-[85vh] overflow-y-auto shadow-2xl relative">
             <button onclick="closeModal('modalShared')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-3xl font-bold">&times;</button>
             <div class="flex items-center border-b pb-3 mb-4 pr-6">
