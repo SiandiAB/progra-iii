@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html data-theme="light" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Laboratorio 7 — Programación III (Semana 11)</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+<style>
+        :root {
+            --bg-main: #f8fafc;
+            --bg-panel: #ffffff;
+            --bg-terminal: #2b2b2b;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-panel: #e2e8f0;
+            --una-red: #c8102e;
+            --una-gold: #d4ac0d;
+            --accent-blue: #2563eb;
+            --accent-green: #16a34a;
+            --accent-purple: #7c3aed;
+            --accent-peach: #ea580c;
+        }
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --bg-panel: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-panel: #334155;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .glass-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .glass-panel h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.75rem; }
+        .glass-panel h3 { font-size: 1.3rem; font-weight: 700; margin: 1.2rem 0 0.6rem 0; }
+        .glass-panel h4 { font-size: 1.1rem; font-weight: 700; margin: 1rem 0 0.4rem 0; }
+        .glass-panel h2 code { font-size: 1.4rem; }
+        .glass-panel p { color: var(--text-muted); margin-bottom: 0.75rem; }
+        .glass-panel p:not([class*="text-"]) { font-size: 1.15rem; }
+        .glass-panel ul, .glass-panel ol { color: var(--text-muted); padding-left: 1.5rem; margin-bottom: 0.75rem; }
+        .glass-panel li { margin-bottom: 0.3rem; font-size: 1.1rem; }
+
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .badge-red { background: rgba(200,16,46,0.12); color: var(--una-red); }
+        .badge-blue { background: rgba(37,99,235,0.12); color: var(--accent-blue); }
+        .badge-green { background: rgba(22,163,74,0.12); color: var(--accent-green); }
+        .badge-purple { background: rgba(124,58,237,0.12); color: var(--accent-purple); }
+        .badge-gold { background: rgba(212,172,13,0.12); color: var(--una-gold); }
+
+        .code-fragment {
+            background: #2b2b2b;
+            border-radius: 0.6rem;
+            padding: 1rem 1.2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.15rem;
+            color: #a9b7c6;
+            margin: 0.5rem 0;
+            border: 1px solid #323232;
+            display: block;
+            white-space: pre;
+            overflow-x: auto;
+            width: 100%;
+            line-height: 1.5;
+        }
+
+        code.text-sm { font-size: 1.15rem; }
+        code.text-xs { font-size: 1.05rem; }
+        code:not([class*="text-"]) { font-size: 1.15rem; }
+
+        .d-comment { color: #808080; font-style: italic; }
+        .d-keyword { color: #cc7832; font-weight: bold; }
+        .d-string { color: #6a8759; }
+        .d-number { color: #6897bb; }
+        .d-annotation { color: #bbb529; }
+        .d-method { color: #ffc66d; }
+        .d-field { color: #9876aa; }
+        .d-type { color: #a9b7c6; font-weight: bold; }
+
+        .step-sub {
+            border-left: 3px solid var(--accent-blue);
+            padding-left: 1rem;
+            margin: 1.2rem 0;
+        }
+        .step-sub h5 {
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.2rem;
+        }
+        .step-sub p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+        }
+
+        .highlight-box {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--una-gold);
+            background: rgba(212,172,13,0.06);
+            margin: 0.75rem 0;
+        }
+        .highlight-box strong { color: var(--una-gold); }
+
+        .error-box {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--una-red);
+            background: rgba(200,16,46,0.06);
+            margin: 0.75rem 0;
+        }
+        .error-box strong { color: var(--una-red); }
+
+        .float-btn {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 9999px;
+            padding: 0.65rem 1rem;
+            font-size: 1rem;
+            color: var(--text-main);
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transition: transform 0.15s, background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .float-btn:hover { transform: scale(1.05); background: var(--border-panel); }
+
+        .group-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .group-card .members { color: var(--text-muted); font-size: 1.02rem; line-height: 1.55; margin-bottom: 0.6rem; }
+        .group-card .task { color: var(--text-muted); font-size: 1.05rem; }
+        .group-card .task strong { color: var(--text-main); }
+
+        .zone-chip {
+            display: inline-block;
+            border-radius: 9999px;
+            padding: 0.2rem 0.7rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin: 0.15rem 0.1rem;
+        }
+        .zone-chip.green { background: rgba(22,163,74,0.12); color: var(--accent-green); }
+        .zone-chip.blue { background: rgba(37,99,235,0.12); color: var(--accent-blue); }
+        .zone-chip.purple { background: rgba(124,58,237,0.12); color: var(--accent-purple); }
+        .zone-chip.gold { background: rgba(212,172,13,0.12); color: var(--una-gold); }
+        .zone-chip.red { background: rgba(200,16,46,0.12); color: var(--una-red); }
+
+        details {
+            margin-top: 1.2rem;
+            background: rgba(0,0,0,0.02);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-panel);
+        }
+        details summary {
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        details summary:hover { color: var(--accent-blue); }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .glass-panel { padding: 1rem; }
+            .glass-panel h2 { font-size: 1.4rem; }
+            .code-fragment { font-size: 0.95rem; padding: 0.4rem 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+<button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar modo claro/oscuro">
+<i class="fa-solid fa-moon" id="theme-icon"></i>
+</button>
+<div class="container">
+<div class="glass-panel text-center" style="border-top: 6px solid var(--una-red);">
+<div class="flex justify-center mb-4">
+<img alt="Logo UNA" class="h-20 object-contain" src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png"/>
+</div>
+<h2 class="text-3xl font-extrabold">Laboratorio 7</h2>
+<p class="text-xl" style="color: var(--una-red); font-weight: 700;">Investigación: Persistencia y SABD</p>
+<p class="text-sm" style="color: var(--text-muted);">Programación III — Semana 11: SABD · Modelo relacional · Normalización · Acceso a datos y JDBC</p>
+<div class="flex flex-wrap justify-center gap-3 mt-3">
+<span class="badge badge-red">SABD y modelo relacional</span>
+<span class="badge badge-blue">Normalización</span>
+<span class="badge badge-green">Acceso a datos y JDBC</span>
+<span class="badge badge-purple">Exposición en clase</span>
+<span class="badge badge-gold">Grupo 40 - Kristel Duarte Pérez</span>
+</div>
+<div class="mt-4 text-sm" style="color: var(--text-muted);">
+<i class="fa-regular fa-clock mr-1"></i> Duración: 15 min de investigación y preparación + 3 min por exposición &nbsp;·&nbsp;
+<i class="fa-regular fa-users mr-1"></i> 6 equipos de 2 a 3 personas
+</div>
+</div>
+<div class="glass-panel" style="border-left: 4px solid var(--una-red);">
+<h2><i class="fa-regular fa-compass mr-2" style="color:var(--una-red);"></i> Introducción</h2>
+<p>En esta actividad no vamos a programar todavía. La meta es que ustedes investiguen un concepto del nuevo bloque y sean capaces de explicárselo a sus compañeros con sus propias palabras.</p>
+<p>La actividad conecta directamente con los contenidos oficiales del tema 6: fundamentos relacionales, normalización, modelo de objetos, acceso a datos, conexiones, DDL/DML, mapeo y patrones de acceso a datos.</p>
+<div class="highlight-box">
+<strong>Regla principal:</strong> no gana el grupo que copie más información. Gana el grupo que logre explicar el concepto con claridad y un buen ejemplo.
+        </div>
+<div class="highlight-box">
+<strong>El ejemplo es libre:</strong> puede ser código, una consulta de datos o una situación de la vida cotidiana. Escojan la forma que mejor explique el concepto que les tocó.
+        </div>
+</div>
+<div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+<h2><i class="fa-solid fa-table-list mr-2" style="color:var(--accent-blue);"></i> Temas por exponer</h2>
+<p>Los temas se asignan a los equipos conformados en el <strong>Laboratorio 6</strong>. Cada grupo investiga y expone el tema que le corresponde.</p>
+<div class="overflow-x-auto">
+<table style="width:100%; border-collapse: collapse; font-size: 0.95rem; color: var(--text-muted);">
+<thead>
+<tr style="border-bottom: 2px solid var(--border-panel); text-align: left; color: var(--text-main);">
+<th style="padding: 0.6rem 0.7rem;">Grupo</th>
+<th style="padding: 0.6rem 0.7rem;">Tema</th>
+<th style="padding: 0.6rem 0.7rem;">Pregunta central</th>
+</tr>
+</thead>
+<tbody>
+<tr><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-red">1</span></td><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Normalización: 1FN, 2FN y 3FN</td><td style="padding: 0.5rem 0.7rem;">¿Qué problema resuelve cada forma normal y cómo se ve en un ejemplo?</td></tr>
+<tr><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-blue">2</span></td><td style="padding: 0.5rem 0.7rem; font-weight: 700;">PK, FK e integridad referencial</td><td style="padding: 0.5rem 0.7rem;">¿Cómo identifican y relacionan registros las claves?</td></tr>
+<tr><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-green">3</span></td><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Modelo de objetos vs. relacional</td><td style="padding: 0.5rem 0.7rem;">¿Por qué un objeto Java no es una fila “idéntica” a una tabla?</td></tr>
+<tr><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-gold">4</span></td><td style="padding: 0.5rem 0.7rem; font-weight: 700;">JDBC, driver y conexiones</td><td style="padding: 0.5rem 0.7rem;">¿Qué ocurre entre Java y MySQL cuando una aplicación accede a datos?</td></tr>
+<tr><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-purple">5</span></td><td style="padding: 0.5rem 0.7rem; font-weight: 700;">DDL, DML y CRUD/IMEC</td><td style="padding: 0.5rem 0.7rem;">¿Qué diferencia hay entre modificar la estructura y modificar los datos?</td></tr>
+<tr><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-red">6</span></td><td style="padding: 0.5rem 0.7rem; font-weight: 700;">DAO vs. Repository</td><td style="padding: 0.5rem 0.7rem;">¿Qué responsabilidad tiene cada patrón y por qué ayuda a separar el acceso a datos?</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
+<h2><i class="fa-solid fa-users mr-2" style="color: var(--accent-green);"></i> Conformación de grupos</h2>
+<p>Los equipos se mantienen como quedaron en el <strong>Laboratorio 6</strong>. Esta es la conformación y el tema que le corresponde a cada grupo.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
+<div class="group-card" style="border-top: 4px solid var(--una-red);">
+<span class="zone-chip red">Grupo 1</span>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--una-red);">Normalización: 1FN, 2FN y 3FN</h3>
+<p class="members">Mariano Martínez Alfaro<br>César Navarro Vásquez<br>Sebastián Arce Mejía</p>
+<p class="task"><strong>Pregunta central:</strong> ¿qué problema resuelve cada forma normal y cómo se ve en un ejemplo?</p>
+</div>
+<div class="group-card" style="border-top: 4px solid var(--accent-blue);">
+<span class="zone-chip blue">Grupo 2</span>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-blue);">PK, FK e integridad referencial</h3>
+<p class="members">Justin Gamboa Badilla<br>Carlo Méndez Barboza<br>Joshua Cascante Baltodano</p>
+<p class="task"><strong>Pregunta central:</strong> ¿cómo identifican y relacionan registros las claves?</p>
+</div>
+<div class="group-card" style="border-top: 4px solid var(--accent-green);">
+<span class="zone-chip green">Grupo 3</span>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-green);">Modelo de objetos vs. relacional</h3>
+<p class="members">Boris Arias Quintana<br>José Andia Chui<br>Juan Villagra Conejo</p>
+<p class="task"><strong>Pregunta central:</strong> ¿por qué un objeto Java no es una fila “idéntica” a una tabla?</p>
+</div>
+<div class="group-card" style="border-top: 4px solid var(--una-gold);">
+<span class="zone-chip gold">Grupo 4</span>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--una-gold);">JDBC, driver y conexiones</h3>
+<p class="members">Jander Briones López<br>Kendall Valencia Murillo<br>Eduardo Sánchez Montero</p>
+<p class="task"><strong>Pregunta central:</strong> ¿qué ocurre entre Java y MySQL cuando una aplicación accede a datos?</p>
+</div>
+<div class="group-card" style="border-top: 4px solid var(--accent-purple);">
+<span class="zone-chip purple">Grupo 5</span>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-purple);">DDL, DML y CRUD/IMEC</h3>
+<p class="members">Greivin Bermúdez Espinoza<br>Óscar Alvarado Méndez<br>Daniel Granados Pérez</p>
+<p class="task"><strong>Pregunta central:</strong> ¿qué diferencia hay entre modificar la estructura y modificar los datos?</p>
+</div>
+<div class="group-card" style="border-top: 4px solid var(--accent-peach);">
+<span class="zone-chip" style="background:rgba(234,88,12,0.12); color: var(--accent-peach);">Grupo 6</span>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-peach);">DAO vs. Repository</h3>
+<p class="members">Johnny Chaves Vega<br>Ángel Arana Taleno</p>
+<p class="task"><strong>Pregunta central:</strong> ¿qué responsabilidad tiene cada patrón y por qué ayuda a separar el acceso a datos?</p>
+</div>
+</div>
+</div>
+<div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
+<h2><i class="fa-solid fa-magnifying-glass mr-2" style="color:var(--accent-green);"></i> Protocolo de investigación · 15 minutos</h2>
+<ol>
+<li><strong>Definan el concepto</strong> en una o dos frases. No copien una definición sin entenderla.</li>
+<li><strong>Identifiquen para qué sirve.</strong> ¿Qué problema intenta resolver?</li>
+<li><strong>Construyan un ejemplo.</strong> Debe ser pequeño y entendible. Puede ser código, una consulta de datos o una situación cotidiana: escojan la forma que mejor explique su concepto.</li>
+<li><strong>Expliquen dónde se usa.</strong> ¿En qué situación real aparece el concepto y por qué importa?</li>
+<li><strong>Encuentren una fuente técnica.</strong> Puede ser documentación oficial, un libro digital, una universidad o una fuente técnica reconocida.</li>
+<li><strong>Preparen una exposición de máximo 3 minutos.</strong> Todos los integrantes deben participar.</li>
+</ol>
+<div class="highlight-box">
+<strong>Eviten:</strong> llenar una diapositiva de texto, leer la pantalla, usar ejemplos gigantes o explicar conceptos que nadie del grupo puede defender.
+        </div>
+</div>
+<div class="glass-panel" style="border-left: 4px solid var(--una-gold);">
+<h2><i class="fa-solid fa-file-lines mr-2" style="color:var(--una-gold);"></i> Producto esperado</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
+<div class="group-card"><h3>1. Definición</h3><p>Una explicación corta en palabras del grupo.</p></div>
+<div class="group-card"><h3>2. Problema</h3><p>Qué situación resuelve o qué riesgo evita.</p></div>
+<div class="group-card"><h3>3. Ejemplo</h3><p>Un caso concreto y pequeño: código, una consulta de datos o una situación cotidiana. El que mejor explique el concepto.</p></div>
+<div class="group-card"><h3>4. Dónde se usa</h3><p>En qué situación real aparece el concepto y por qué importa.</p></div>
+<div class="group-card"><h3>5. Fuente</h3><p>Nombre y enlace de la fuente consultada.</p></div>
+<div class="group-card"><h3>6. Pregunta al grupo</h3><p>Una pregunta para comprobar si sus compañeros entendieron.</p></div>
+</div>
+</div>
+<div class="glass-panel" style="border-left: 4px solid var(--accent-purple);">
+<h2><i class="fa-solid fa-list-check mr-2" style="color:var(--accent-purple);"></i> Criterios de valoración</h2>
+<p>Cada exposición se valora con la siguiente rúbrica:</p>
+<div class="overflow-x-auto">
+<table style="width:100%; border-collapse: collapse; font-size: 0.95rem; color: var(--text-muted);">
+<thead>
+<tr style="border-bottom: 2px solid var(--border-panel); text-align: left; color: var(--text-main);">
+<th style="padding: 0.6rem 0.7rem;">Criterio</th>
+<th style="padding: 0.6rem 0.7rem;">Qué se espera</th>
+</tr>
+</thead>
+<tbody>
+<tr><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Comprensión</td><td style="padding: 0.5rem 0.7rem;">El grupo explica el concepto sin depender de leer la fuente.</td></tr>
+<tr><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Ejemplo</td><td style="padding: 0.5rem 0.7rem;">El ejemplo (código, consulta o caso cotidiano) es correcto, pequeño y ayuda a entender.</td></tr>
+<tr><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Aplicación</td><td style="padding: 0.5rem 0.7rem;">Explica en qué situación real se usa el concepto.</td></tr>
+<tr><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Fuente</td><td style="padding: 0.5rem 0.7rem;">Presenta una fuente técnica identificable.</td></tr>
+<tr><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Participación</td><td style="padding: 0.5rem 0.7rem;">Los integrantes participan de forma equilibrada.</td></tr>
+<tr><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Comunicación</td><td style="padding: 0.5rem 0.7rem;">La exposición es clara y respeta los 3 minutos.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+<h2><i class="fa-solid fa-link mr-2" style="color:var(--accent-blue);"></i> Referencias sugeridas</h2>
+<ul>
+<li>Documentación oficial de MySQL 8.4 para SQL, claves y restricciones.</li>
+<li>Documentación oficial de IntelliJ IDEA Database Tools &amp; SQL.</li>
+<li>Material bibliográfico del curso.</li>
+</ul>
+<p style="color:var(--text-muted);">La fuente debe ser consultada por el grupo y citada en su producto.</p>
+</div>
+<div class="glass-panel" style="border-left:5px solid var(--una-red);">
+<h2><i class="fa-solid fa-circle-check" style="color:var(--una-red);"></i> Cierre</h2>
+<p>Después de las exposiciones, cada estudiante debe poder responder: <strong>¿cómo pasa una aplicación Java de un objeto en memoria a un dato persistido en una base de datos relacional?</strong></p>
+<p class="mb-0">Esa pregunta será el hilo conductor de las siguientes clases.</p>
+</div>
+</div>
+<script>
+    function toggleTheme() {
+        const root = document.documentElement;
+        const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        const icon = document.getElementById('theme-icon');
+        if (icon) {
+            const nuevo = document.createElement('i');
+            nuevo.id = 'theme-icon';
+            nuevo.className = next === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+            icon.replaceWith(nuevo);
+            if (window.FontAwesome && FontAwesome.dom) FontAwesome.dom.i2svg();
+        }
+    }
+</script>
+</body>
+</html>
