@@ -226,33 +226,31 @@
 </div>
 <h2 class="text-3xl font-extrabold">Laboratorio 7</h2>
 <p class="text-xl" style="color: var(--una-red); font-weight: 700;">Investigación: Persistencia y SABD</p>
-<p class="text-sm" style="color: var(--text-muted);">Programación III — Semana 11: SABD · Modelo relacional · Normalización · Acceso a datos y JDBC</p>
+<p class="text-sm" style="color: var(--text-muted);">Programación III — Semana 11: SABD · Transacciones · JOINs · Índices · Procedimientos y vistas · Seguridad · NoSQL</p>
 <div class="flex flex-wrap justify-center gap-3 mt-3">
-<span class="badge badge-red">SABD y modelo relacional</span>
-<span class="badge badge-blue">Normalización</span>
-<span class="badge badge-green">Acceso a datos y JDBC</span>
-<span class="badge badge-purple">Exposición en clase</span>
+<span class="badge badge-red">Transacciones y ACID</span>
+<span class="badge badge-blue">JOINs e índices</span>
+<span class="badge badge-green">Procedimientos, triggers y vistas</span>
+<span class="badge badge-purple">Seguridad y pool de conexiones</span>
 <span class="badge badge-gold">Grupo 40 - Kristel Duarte Pérez</span>
 </div>
 <div class="mt-4 text-sm" style="color: var(--text-muted);">
-<i class="fa-regular fa-clock mr-1"></i> Duración: 15 min de investigación y preparación + 3 min por exposición &nbsp;·&nbsp;
-<i class="fa-regular fa-users mr-1"></i> 6 equipos de 2 a 3 personas
+<i class="fa-regular fa-clock mr-1"></i> Duración: 20 min de investigación y preparación + 5 min por exposición &nbsp;·&nbsp;
+<i class="fa-regular fa-users mr-1"></i> 8 equipos de 2 personas
 </div>
 </div>
 <div class="glass-panel" style="border-left: 4px solid var(--una-red);">
 <h2><i class="fa-regular fa-compass mr-2" style="color:var(--una-red);"></i> Introducción</h2>
-<p>En esta actividad no vamos a programar todavía. La meta es que ustedes investiguen un concepto del nuevo bloque y sean capaces de explicárselo a sus compañeros con sus propias palabras.</p>
-<p>La actividad conecta directamente con los contenidos oficiales del tema 6: fundamentos relacionales, normalización, modelo de objetos, acceso a datos, conexiones, DDL/DML, mapeo y patrones de acceso a datos.</p>
+<p>La meta es que ustedes investiguen un concepto del nuevo bloque y sean capaces de explicárselo a sus compañeros con sus propias palabras.</p>
+<p>La actividad conecta directamente con los contenidos del tema 6: transacciones y ACID, tipos de JOIN, índices, procedimientos y triggers, vistas, seguridad y permisos, pool de conexiones y el contraste NoSQL vs. relacional.</p>
 <div class="highlight-box">
-<strong>Regla principal:</strong> no gana el grupo que copie más información. Gana el grupo que logre explicar el concepto con claridad y un buen ejemplo.
-        </div>
-<div class="highlight-box">
-<strong>El ejemplo es libre:</strong> puede ser código, una consulta de datos o una situación de la vida cotidiana. Escojan la forma que mejor explique el concepto que les tocó.
+<strong>El ejemplo debe mostrar el script:</strong> todo grupo debe enseñar cómo se ve el script del tema que investigó; 
+no basta con explicarlo con palabras. En <strong>Pool de conexiones</strong> el ejemplo debe incluir código y, en <strong>NoSQL vs. relacional</strong>, una comparación entre ambos modelos.
         </div>
 </div>
 <div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
 <h2><i class="fa-solid fa-table-list mr-2" style="color:var(--accent-blue);"></i> Temas por exponer</h2>
-<p>Los temas se asignan a los equipos conformados en el <strong>Laboratorio 6</strong>. Cada grupo investiga y expone el tema que le corresponde.</p>
+<p>Se trabajan <strong>ocho temas</strong> y cada uno se asigna a una pareja. Cada grupo investiga y expone el tema que le corresponde.</p>
 <div class="overflow-x-auto">
 <table style="width:100%; border-collapse: collapse; font-size: 0.95rem; color: var(--text-muted);">
 <thead>
@@ -263,67 +261,81 @@
 </tr>
 </thead>
 <tbody>
-<tr><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-red">1</span></td><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Normalización: 1FN, 2FN y 3FN</td><td style="padding: 0.5rem 0.7rem;">¿Qué problema resuelve cada forma normal y cómo se ve en un ejemplo?</td></tr>
-<tr><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-blue">2</span></td><td style="padding: 0.5rem 0.7rem; font-weight: 700;">PK, FK e integridad referencial</td><td style="padding: 0.5rem 0.7rem;">¿Cómo identifican y relacionan registros las claves?</td></tr>
-<tr><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-green">3</span></td><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Modelo de objetos vs. relacional</td><td style="padding: 0.5rem 0.7rem;">¿Por qué un objeto Java no es una fila “idéntica” a una tabla?</td></tr>
-<tr><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-gold">4</span></td><td style="padding: 0.5rem 0.7rem; font-weight: 700;">JDBC, driver y conexiones</td><td style="padding: 0.5rem 0.7rem;">¿Qué ocurre entre Java y MySQL cuando una aplicación accede a datos?</td></tr>
-<tr><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-purple">5</span></td><td style="padding: 0.5rem 0.7rem; font-weight: 700;">DDL, DML y CRUD/IMEC</td><td style="padding: 0.5rem 0.7rem;">¿Qué diferencia hay entre modificar la estructura y modificar los datos?</td></tr>
-<tr><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-red">6</span></td><td style="padding: 0.5rem 0.7rem; font-weight: 700;">DAO vs. Repository</td><td style="padding: 0.5rem 0.7rem;">¿Qué responsabilidad tiene cada patrón y por qué ayuda a separar el acceso a datos?</td></tr>
+<tr><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-red">1</span></td><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Transacciones y ACID</td><td style="padding: 0.5rem 0.7rem;">¿Cómo se garantiza que un conjunto de operaciones se complete por entero o no ocurra nada?</td></tr>
+<tr><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-blue">2</span></td><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Tipos de JOIN</td><td style="padding: 0.5rem 0.7rem;">¿Cómo se combinan los datos de dos o más tablas según sus relaciones?</td></tr>
+<tr><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-green">3</span></td><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Índices en bases de datos</td><td style="padding: 0.5rem 0.7rem;">¿Por qué una consulta es rápida y cuándo un índice deja de ayudar?</td></tr>
+<tr><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-gold">4</span></td><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Procedimientos y triggers</td><td style="padding: 0.5rem 0.7rem;">¿Qué lógica vive dentro de la base de datos y cuándo se ejecuta sola?</td></tr>
+<tr><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-purple">5</span></td><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Vistas (VIEWs)</td><td style="padding: 0.5rem 0.7rem;">¿Qué gana una aplicación al consultar una tabla virtual en lugar de las tablas originales?</td></tr>
+<tr><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-red">6</span></td><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Seguridad y permisos</td><td style="padding: 0.5rem 0.7rem;">¿Quién puede ver o modificar cada dato y cómo se controla?</td></tr>
+<tr><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-blue">7</span></td><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Pool de conexiones</td><td style="padding: 0.5rem 0.7rem;">¿Por qué reutilizar conexiones abiertas es mejor que abrir una por operación?</td></tr>
+<tr><td style="padding: 0.5rem 0.7rem; text-align: center;"><span class="badge badge-green">8</span></td><td style="padding: 0.5rem 0.7rem; font-weight: 700;">NoSQL vs. relacional</td><td style="padding: 0.5rem 0.7rem;">¿Qué problemas resuelve cada modelo y cómo se elige?</td></tr>
 </tbody>
 </table>
 </div>
 </div>
 <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
 <h2><i class="fa-solid fa-users mr-2" style="color: var(--accent-green);"></i> Conformación de grupos</h2>
-<p>Los equipos se mantienen como quedaron en el <strong>Laboratorio 6</strong>. Esta es la conformación y el tema que le corresponde a cada grupo.</p>
+<p>Los equipos se reorganizaron <strong>de dos en dos</strong>. Esta es la conformación y el tema que le corresponde a cada grupo.</p>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
 <div class="group-card" style="border-top: 4px solid var(--una-red);">
 <span class="zone-chip red">Grupo 1</span>
-<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--una-red);">Normalización: 1FN, 2FN y 3FN</h3>
-<p class="members">Mariano Martínez Alfaro<br>César Navarro Vásquez<br>Sebastián Arce Mejía</p>
-<p class="task"><strong>Pregunta central:</strong> ¿qué problema resuelve cada forma normal y cómo se ve en un ejemplo?</p>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--una-red);">Transacciones y ACID</h3>
+<p class="members">Mariano Martínez Alfaro<br>Joshua Cascante Baltodano</p>
+<p class="task"><strong>Pregunta central:</strong> ¿cómo se garantiza que un conjunto de operaciones se complete por entero o no ocurra nada?</p>
 </div>
 <div class="group-card" style="border-top: 4px solid var(--accent-blue);">
 <span class="zone-chip blue">Grupo 2</span>
-<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-blue);">PK, FK e integridad referencial</h3>
-<p class="members">Justin Gamboa Badilla<br>Carlo Méndez Barboza<br>Joshua Cascante Baltodano</p>
-<p class="task"><strong>Pregunta central:</strong> ¿cómo identifican y relacionan registros las claves?</p>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-blue);">Tipos de JOIN</h3>
+<p class="members">Sebastián Arce Mejía<br>Justin Gamboa Badilla</p>
+<p class="task"><strong>Pregunta central:</strong> ¿cómo se combinan los datos de dos o más tablas según sus relaciones?</p>
 </div>
 <div class="group-card" style="border-top: 4px solid var(--accent-green);">
 <span class="zone-chip green">Grupo 3</span>
-<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-green);">Modelo de objetos vs. relacional</h3>
-<p class="members">Boris Arias Quintana<br>José Andia Chui<br>Juan Villagra Conejo</p>
-<p class="task"><strong>Pregunta central:</strong> ¿por qué un objeto Java no es una fila “idéntica” a una tabla?</p>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-green);">Índices en bases de datos</h3>
+<p class="members">Carlo Méndez Barboza<br>Ángel Arana Taleno</p>
+<p class="task"><strong>Pregunta central:</strong> ¿por qué una consulta es rápida y cuándo un índice deja de ayudar?</p>
 </div>
 <div class="group-card" style="border-top: 4px solid var(--una-gold);">
 <span class="zone-chip gold">Grupo 4</span>
-<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--una-gold);">JDBC, driver y conexiones</h3>
-<p class="members">Jander Briones López<br>Kendall Valencia Murillo<br>Eduardo Sánchez Montero</p>
-<p class="task"><strong>Pregunta central:</strong> ¿qué ocurre entre Java y MySQL cuando una aplicación accede a datos?</p>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--una-gold);">Procedimientos y triggers</h3>
+<p class="members">Boris Arias Quintana<br>José Andia Chui</p>
+<p class="task"><strong>Pregunta central:</strong> ¿qué lógica vive dentro de la base de datos y cuándo se ejecuta sola?</p>
 </div>
 <div class="group-card" style="border-top: 4px solid var(--accent-purple);">
 <span class="zone-chip purple">Grupo 5</span>
-<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-purple);">DDL, DML y CRUD/IMEC</h3>
-<p class="members">Greivin Bermúdez Espinoza<br>Óscar Alvarado Méndez<br>Daniel Granados Pérez</p>
-<p class="task"><strong>Pregunta central:</strong> ¿qué diferencia hay entre modificar la estructura y modificar los datos?</p>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-purple);">Vistas (VIEWs)</h3>
+<p class="members">Juan Villagra Conejo<br>Jander Briones López</p>
+<p class="task"><strong>Pregunta central:</strong> ¿qué gana una aplicación al consultar una tabla virtual en lugar de las tablas originales?</p>
 </div>
 <div class="group-card" style="border-top: 4px solid var(--accent-peach);">
 <span class="zone-chip" style="background:rgba(234,88,12,0.12); color: var(--accent-peach);">Grupo 6</span>
-<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-peach);">DAO vs. Repository</h3>
-<p class="members">Johnny Chaves Vega<br>Ángel Arana Taleno</p>
-<p class="task"><strong>Pregunta central:</strong> ¿qué responsabilidad tiene cada patrón y por qué ayuda a separar el acceso a datos?</p>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-peach);">Seguridad y permisos</h3>
+<p class="members">Kendall Valencia Murillo<br>Eduardo Sánchez Montero</p>
+<p class="task"><strong>Pregunta central:</strong> ¿quién puede ver o modificar cada dato y cómo se controla?</p>
+</div>
+<div class="group-card" style="border-top: 4px solid var(--una-red);">
+<span class="zone-chip red">Grupo 7</span>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--una-red);">Pool de conexiones</h3>
+<p class="members">Greivin Bermúdez Espinoza<br>Óscar Alvarado Méndez</p>
+<p class="task"><strong>Pregunta central:</strong> ¿por qué reutilizar conexiones abiertas es mejor que abrir una por operación?</p>
+</div>
+<div class="group-card" style="border-top: 4px solid var(--accent-blue);">
+<span class="zone-chip blue">Grupo 8</span>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-blue);">NoSQL vs. relacional</h3>
+<p class="members">Daniel Granados Pérez<br>Johnny Chaves Vega</p>
+<p class="task"><strong>Pregunta central:</strong> ¿qué problemas resuelve cada modelo y cómo se elige?</p>
 </div>
 </div>
 </div>
 <div class="glass-panel" style="border-left: 4px solid var(--accent-green);">
-<h2><i class="fa-solid fa-magnifying-glass mr-2" style="color:var(--accent-green);"></i> Protocolo de investigación · 15 minutos</h2>
+<h2><i class="fa-solid fa-magnifying-glass mr-2" style="color:var(--accent-green);"></i> Protocolo de investigación · 20 minutos</h2>
 <ol>
 <li><strong>Definan el concepto</strong> en una o dos frases. No copien una definición sin entenderla.</li>
 <li><strong>Identifiquen para qué sirve.</strong> ¿Qué problema intenta resolver?</li>
-<li><strong>Construyan un ejemplo.</strong> Debe ser pequeño y entendible. Puede ser código, una consulta de datos o una situación cotidiana: escojan la forma que mejor explique su concepto.</li>
+<li><strong>Construyan un ejemplo con el script a la vista.</strong> Debe ser pequeño y entendible y <strong>siempre</strong> debe mostrar cómo se ve el script (código o consulta SQL) del tema. Para <strong>Pool de conexiones</strong> y <strong>NoSQL vs. relacional</strong> incluyan código; en <strong>NoSQL vs. relacional</strong> presenten además una comparación entre ambos modelos.</li>
 <li><strong>Expliquen dónde se usa.</strong> ¿En qué situación real aparece el concepto y por qué importa?</li>
 <li><strong>Encuentren una fuente técnica.</strong> Puede ser documentación oficial, un libro digital, una universidad o una fuente técnica reconocida.</li>
-<li><strong>Preparen una exposición de máximo 3 minutos.</strong> Todos los integrantes deben participar.</li>
+<li><strong>Preparen una exposición de máximo 5 minutos.</strong> Todos los integrantes deben participar.</li>
 </ol>
 <div class="highlight-box">
 <strong>Eviten:</strong> llenar una diapositiva de texto, leer la pantalla, usar ejemplos gigantes o explicar conceptos que nadie del grupo puede defender.
@@ -334,7 +346,7 @@
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
 <div class="group-card"><h3>1. Definición</h3><p>Una explicación corta en palabras del grupo.</p></div>
 <div class="group-card"><h3>2. Problema</h3><p>Qué situación resuelve o qué riesgo evita.</p></div>
-<div class="group-card"><h3>3. Ejemplo</h3><p>Un caso concreto y pequeño: código, una consulta de datos o una situación cotidiana. El que mejor explique el concepto.</p></div>
+<div class="group-card"><h3>3. Ejemplo con el script</h3><p>Un caso concreto y pequeño que <strong>muestre cómo se ve el script</strong> (código o consulta SQL) del tema. En Pool de conexiones y NoSQL vs. relacional incluyan código; en NoSQL, además, una comparación.</p></div>
 <div class="group-card"><h3>4. Dónde se usa</h3><p>En qué situación real aparece el concepto y por qué importa.</p></div>
 <div class="group-card"><h3>5. Fuente</h3><p>Nombre y enlace de la fuente consultada.</p></div>
 <div class="group-card"><h3>6. Pregunta al grupo</h3><p>Una pregunta para comprobar si sus compañeros entendieron.</p></div>
@@ -353,11 +365,11 @@
 </thead>
 <tbody>
 <tr><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Comprensión</td><td style="padding: 0.5rem 0.7rem;">El grupo explica el concepto sin depender de leer la fuente.</td></tr>
-<tr><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Ejemplo</td><td style="padding: 0.5rem 0.7rem;">El ejemplo (código, consulta o caso cotidiano) es correcto, pequeño y ayuda a entender.</td></tr>
+<tr><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Ejemplo</td><td style="padding: 0.5rem 0.7rem;">El ejemplo muestra el script del tema, es correcto, pequeño y ayuda a entender.</td></tr>
 <tr><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Aplicación</td><td style="padding: 0.5rem 0.7rem;">Explica en qué situación real se usa el concepto.</td></tr>
 <tr><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Fuente</td><td style="padding: 0.5rem 0.7rem;">Presenta una fuente técnica identificable.</td></tr>
 <tr><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Participación</td><td style="padding: 0.5rem 0.7rem;">Los integrantes participan de forma equilibrada.</td></tr>
-<tr><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Comunicación</td><td style="padding: 0.5rem 0.7rem;">La exposición es clara y respeta los 3 minutos.</td></tr>
+<tr><td style="padding: 0.5rem 0.7rem; font-weight: 700;">Comunicación</td><td style="padding: 0.5rem 0.7rem;">La exposición es clara y respeta los 5 minutos.</td></tr>
 </tbody>
 </table>
 </div>
@@ -370,11 +382,6 @@
 <li>Material bibliográfico del curso.</li>
 </ul>
 <p style="color:var(--text-muted);">La fuente debe ser consultada por el grupo y citada en su producto.</p>
-</div>
-<div class="glass-panel" style="border-left:5px solid var(--una-red);">
-<h2><i class="fa-solid fa-circle-check" style="color:var(--una-red);"></i> Cierre</h2>
-<p>Después de las exposiciones, cada estudiante debe poder responder: <strong>¿cómo pasa una aplicación Java de un objeto en memoria a un dato persistido en una base de datos relacional?</strong></p>
-<p class="mb-0">Esa pregunta será el hilo conductor de las siguientes clases.</p>
 </div>
 </div>
 <script>
