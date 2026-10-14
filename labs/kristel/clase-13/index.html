@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+
+<html data-theme="light" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Laboratorio 8 — Programación III (Semana 13)</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+<style>
+        :root {
+            --bg-main: #f8fafc;
+            --bg-panel: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-panel: #e2e8f0;
+            --una-red: #c8102e;
+            --una-gold: #d4ac0d;
+            --accent-blue: #2563eb;
+            --accent-green: #16a34a;
+            --accent-purple: #7c3aed;
+            --accent-peach: #ea580c;
+        }
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --bg-panel: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-panel: #334155;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .glass-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .glass-panel h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.75rem; }
+        .glass-panel h3 { font-size: 1.3rem; font-weight: 700; margin: 1.2rem 0 0.6rem 0; }
+        .glass-panel h4 { font-size: 1.1rem; font-weight: 700; margin: 1rem 0 0.4rem 0; }
+        .glass-panel h2 code { font-size: 1.4rem; }
+        .glass-panel p { color: var(--text-muted); margin-bottom: 0.75rem; }
+        .glass-panel p:not([class*="text-"]) { font-size: 1.15rem; }
+        .glass-panel ul, .glass-panel ol { color: var(--text-muted); padding-left: 1.5rem; margin-bottom: 0.75rem; }
+        .glass-panel li { margin-bottom: 0.3rem; font-size: 1.1rem; }
+
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .badge-red { background: rgba(200,16,46,0.12); color: var(--una-red); }
+        .badge-blue { background: rgba(37,99,235,0.12); color: var(--accent-blue); }
+        .badge-green { background: rgba(22,163,74,0.12); color: var(--accent-green); }
+        .badge-purple { background: rgba(124,58,237,0.12); color: var(--accent-purple); }
+        .badge-gold { background: rgba(212,172,13,0.12); color: var(--una-gold); }
+
+        .code-fragment {
+            background: #2b2b2b;
+            border-radius: 0.6rem;
+            padding: 1rem 1.2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.02rem;
+            color: #a9b7c6;
+            margin: 0.5rem 0;
+            border: 1px solid #323232;
+            display: block;
+            white-space: pre;
+            overflow-x: auto;
+            width: 100%;
+            line-height: 1.55;
+        }
+
+        code.text-sm { font-size: 1.15rem; }
+        code.text-xs { font-size: 1.05rem; }
+        code:not([class*="text-"]) { font-size: 1.15rem; }
+
+        /* Bloques largos: fuente algo menor para que las líneas quepan mejor */
+        .code-fragment.compact { font-size: 0.84rem; line-height: 1.5; }
+
+        .d-comment { color: #808080; font-style: italic; }
+        .d-keyword { color: #cc7832; font-weight: bold; }
+        .d-string { color: #6a8759; }
+        .d-number { color: #6897bb; }
+        .d-annotation { color: #bbb529; }
+        .d-method { color: #ffc66d; }
+        .d-field { color: #9876aa; }
+        .d-type { color: #a9b7c6; font-weight: bold; }
+        .d-bad { color: #e06c75; font-weight: bold; }
+        .d-good { color: #98c379; font-weight: bold; }
+        .d-focus { background: rgba(224,108,117,0.2); border-radius: 4px; }
+
+        .step-sub {
+            border-left: 3px solid var(--accent-blue);
+            padding-left: 1rem;
+            margin: 1.4rem 0 1.2rem 0;
+        }
+        .step-sub h5 {
+            font-weight: 800;
+            font-size: 1.22rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.2rem;
+        }
+        .step-sub p { font-size: 1.12rem; color: var(--text-muted); margin-bottom: 0.3rem; }
+
+        .highlight-box {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--una-gold);
+            background: rgba(212,172,13,0.06);
+            margin: 0.75rem 0;
+        }
+        .highlight-box strong { color: var(--una-gold); }
+
+        .error-box {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--una-red);
+            background: rgba(200,16,46,0.06);
+            margin: 0.75rem 0;
+        }
+        .error-box strong { color: var(--una-red); }
+
+        .ok-box {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--accent-green);
+            background: rgba(22,163,74,0.06);
+            margin: 0.75rem 0;
+        }
+        .ok-box strong { color: var(--accent-green); }
+
+        .file-tag {
+            display: inline-block;
+            background: rgba(37,99,235,0.1);
+            color: var(--accent-blue);
+            border-radius: 0.5rem;
+            padding: 0.1rem 0.6rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+        .file-tag.new { background: rgba(22,163,74,0.12); color: var(--accent-green); }
+        .file-tag.edit { background: rgba(234,88,12,0.12); color: var(--accent-peach); }
+
+        .float-btn {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 9999px;
+            padding: 0.65rem 1rem;
+            font-size: 1rem;
+            color: var(--text-main);
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transition: transform 0.15s, background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .float-btn:hover { transform: scale(1.05); background: var(--border-panel); }
+
+        .mini-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 1rem;
+            padding: 1rem 1.1rem;
+            height: 100%;
+        }
+        .mini-card h4 { margin-top: 0.2rem; }
+        .mini-card p { font-size: 1.02rem; margin-bottom: 0; }
+
+        details {
+            margin-top: 1rem;
+            background: rgba(0,0,0,0.02);
+            padding: 0.6rem 1rem;
+            border-radius: 0.6rem;
+            border: 1px solid var(--border-panel);
+        }
+        [data-theme="dark"] details { background: rgba(255,255,255,0.03); }
+        details summary {
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 1.06rem;
+        }
+        details summary:hover { color: var(--accent-blue); }
+        details > p, details > ul, details > ol { margin-top: 0.6rem; }
+
+        .toc a {
+            display: block;
+            padding: 0.3rem 0;
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.03rem;
+        }
+        .toc a:hover { text-decoration: underline; }
+        .part-label {
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-top: 0.9rem;
+        }
+
+        table.grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.98rem;
+            color: var(--text-muted);
+            margin: 0.6rem 0;
+        }
+        table.grid-table th {
+            text-align: left;
+            padding: 0.55rem 0.7rem;
+            font-weight: 800;
+            color: var(--text-main);
+            border-bottom: 2px solid var(--border-panel);
+        }
+        table.grid-table td {
+            padding: 0.5rem 0.7rem;
+            border-bottom: 1px solid var(--border-panel);
+            vertical-align: top;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+        table.grid-table tr:last-child td { border-bottom: 0; }
+        table.grid-table code { overflow-wrap: anywhere; word-break: break-word; }
+
+        .callout-list { list-style: none; padding-left: 0; }
+        .callout-list li {
+            background: rgba(37,99,235,0.05);
+            border-left: 3px solid var(--accent-blue);
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+        .callout-list code { word-break: break-word; }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .glass-panel { padding: 1rem; }
+            .glass-panel h2 { font-size: 1.4rem; }
+            .code-fragment { font-size: 0.8rem; padding: 0.6rem 0.8rem; }
+            .code-fragment.compact { font-size: 0.72rem; }
+        }
+    </style>
+</head>
+<body>
+<button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar modo claro/oscuro">
+<i class="fa-solid fa-moon" id="theme-icon"></i>
+</button>
+
+<div class="container">
+
+<!-- ==================== PORTADA ==================== -->
+<div class="glass-panel text-center" style="border-top: 6px solid var(--una-red);">
+<div class="flex justify-center mb-4">
+<img alt="Logo UNA" class="h-20 object-contain" src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png"/>
+</div>
+<h2 class="text-3xl font-extrabold">Laboratorio 8</h2>
+<p class="text-xl" style="color: var(--una-red); font-weight: 700;">Persistencia segura de la flota vehicular con Java, JDBC y MySQL</p>
+<p class="text-sm" style="color: var(--text-muted);">Programación III — Semana 13: MySQL Workbench · Usuarios y privilegios mínimos · Procedimientos almacenados · JDBC con CallableStatement · Variables de entorno</p>
+<div class="flex flex-wrap justify-center gap-3 mt-3">
+<span class="badge badge-red">MySQL + Workbench</span>
+<span class="badge badge-blue">Usuarios y GRANT</span>
+<span class="badge badge-green">Procedimientos almacenados</span>
+<span class="badge badge-purple">JDBC / CallableStatement</span>
+<span class="badge badge-gold">Grupo 40 - Kristel Duarte Pérez</span>
+</div>
+<div class="mt-4 text-sm" style="color: var(--text-muted);">
+<i class="fa-regular fa-clock mr-1"></i> Duración: 2 sesiones de laboratorio
+</div>
+</div>
+
+<!-- ==================== ÍNDICE ==================== -->
+<div class="glass-panel" style="border-left: 4px solid var(--accent-purple);">
+<h2><i class="fa-solid fa-list-ol mr-2" style="color: var(--accent-purple);"></i> Ruta de la práctica</h2>
+<div class="toc grid grid-cols-1 md:grid-cols-2 gap-x-6">
+<a href="#proyecto-hoy">Su proyecto hoy · qué falta y qué se cambia</a>
+<a href="#mapa">El mapa completo</a>
+<div class="part-label">Parte A · La base de datos (Workbench)</div>
+<a href="#paso-1">Paso 1 · Crear el archivo del script</a>
+<a href="#paso-2">Paso 2 · Conectarse a Workbench</a>
+<a href="#paso-3">Paso 3 · Sección 1: la base de datos y la tabla</a>
+<a href="#paso-4">Paso 4 · Sección 2: los usuarios</a>
+<a href="#paso-5">Paso 5 · Sección 3: los procedimientos</a>
+<a href="#paso-6">Paso 6 · Sección 4: los permisos de la aplicación</a>
+<div class="part-label">Parte B · El proyecto Java</div>
+<a href="#paso-7">Paso 7 · Añadir el driver y los módulos</a>
+<a href="#paso-8">Paso 8 · Cambiar el contrato del repositorio</a>
+<a href="#paso-9">Paso 9 · Crear el repositorio MySQL</a>
+<a href="#paso-10">Paso 10 · Ajustar el FlotaService</a>
+<a href="#paso-11">Paso 11 · Cambiar UNA línea del Controller</a>
+<a href="#paso-12">Paso 12 · Configurar las variables de entorno</a>
+<div class="part-label">Parte C · Probar</div>
+<a href="#paso-13">Paso 13 · Ejecutar y probar</a>
+<a href="#acordeon">Acordeón de dudas frecuentes</a>
+</div>
+</div>
+
+<!-- ==================== TU PROYECTO HOY ==================== -->
+<div class="glass-panel" id="proyecto-hoy" style="border-left: 4px solid var(--accent-blue);">
+<h2><i class="fa-regular fa-folder-open mr-2" style="color: var(--accent-blue);"></i> Su proyecto hoy</h2>
+<p>Abra IntelliJ y abra <strong>su proyecto de la flota vehicular</strong> (el mismo con el que trabajó las semanas anteriores). Verifique que tiene esta estructura:</p>
+<div class="code-fragment">SuProyecto/
+├── pom.xml
+└── src/main/java/
+    ├── module-info.java
+    └── lab/flotavehicular/
+        ├── Main.java
+        ├── model/            <span class="d-comment"># Vehiculo, subclases, enums, ColaMantenimiento</span>
+        ├── dto/              <span class="d-comment"># DatosVehiculo</span>
+        ├── factory/          <span class="d-comment"># VehiculoFactory</span>
+        ├── service/          <span class="d-comment"># FlotaService</span>
+        ├── repository/       <span class="d-comment"># RepositorioVehiculo + RepositorioVehiculoTxt</span>
+        └── controller/       <span class="d-comment"># FlotaController</span></div>
+<p class="text-sm">Si algún archivo no aparece, revise su proyecto antes de continuar: esta práctica se apoya en esas clases.</p>
+
+<h3>Todo lo que vamos a tocar, de un vistazo</h3>
+<table class="grid-table">
+<thead>
+<tr><th style="width: 32%;">Archivo</th><th style="width: 14%;">Acción</th><th>Qué le hacemos</th></tr>
+</thead>
+<tbody>
+<tr><td><code>database/01_flota_segura.sql</code></td><td><span class="file-tag new">NUEVO</span></td><td>Lo creamos y lo escribimos <strong>por secciones</strong> (Pasos 3 a 6).</td></tr>
+<tr><td><code>pom.xml</code></td><td><span class="file-tag edit">EDITAR</span></td><td>Agregamos la dependencia del driver <code>mysql-connector-j</code>.</td></tr>
+<tr><td><code>module-info.java</code></td><td><span class="file-tag edit">EDITAR</span></td><td>Agregamos <code>requires java.sql;</code> y <code>requires com.mysql.cj;</code></td></tr>
+<tr><td><code>repository/RepositorioVehiculo.java</code></td><td><span class="file-tag edit">EDITAR</span></td><td>El contrato pasa de 2 métodos a 4 (operaciones por vehículo).</td></tr>
+<tr><td><code>repository/RepositorioVehiculoMySQL.java</code></td><td><span class="file-tag new">NUEVO</span></td><td><strong>La clase protagonista</strong>: la implementación con JDBC.</td></tr>
+<tr><td><code>service/FlotaService.java</code></td><td><span class="file-tag edit">EDITAR</span></td><td>Ajustamos 3 llamadas al repositorio (el contrato cambió).</td></tr>
+<tr><td><code>controller/FlotaController.java</code></td><td><span class="file-tag edit">EDITAR</span></td><td><strong>Una sola línea</strong>: qué repositorio se usa.</td></tr>
+</tbody>
+</table>
+<div class="error-box">
+<strong><i class="fa-solid fa-triangle-exclamation mr-1"></i> Muy importante:</strong>
+en ninguna clase Java se escribe la contraseña de MySQL. Las credenciales se configuran fuera del código (Paso 12).
+</div>
+</div>
+
+<!-- ==================== MAPA ==================== -->
+<div class="glass-panel" id="mapa" style="border-left: 4px solid var(--accent-purple);">
+<h2><i class="fa-solid fa-diagram-project mr-2" style="color: var(--accent-purple);"></i> El mapa completo</h2>
+<p>Guarde este diagrama: <strong>todo</strong> lo que haremos está aquí.</p>
+<div class="code-fragment">    [ JavaFX ]        [ Java ]          [ Java ]            [ Java ]
+      Vista    -->   Controller   -->   FlotaService   -->   RepositorioVehiculoMySQL
+                                                                     |
+                                                                     v
+                                                              [ JDBC + Connector/J ]
+                                                                     |
+                                                                     v
+                                                              [ Procedimiento sp_* ]
+                                                                     |
+                                                                     v
+                                                              [ Tabla vehiculo ]</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+<div class="mini-card" style="border-top: 4px solid var(--accent-blue);">
+<h4>Lado Java</h4>
+<p>Objetos, Controller, Service y Repository. Aquí <strong>no</strong> hay SQL escrito.</p>
+</div>
+<div class="mini-card" style="border-top: 4px solid var(--accent-green);">
+<h4>Puente</h4>
+<p>JDBC + el driver. Traducen llamadas Java en llamadas al servidor.</p>
+</div>
+<div class="mini-card" style="border-top: 4px solid var(--una-gold);">
+<h4>Lado MySQL</h4>
+<p>Procedimientos, tabla, claves, restricciones y <strong>permisos</strong>.</p>
+</div>
+</div>
+</div>
+
+<!-- ==================== PARTE A ==================== -->
+<div class="glass-panel text-center" style="border-top: 6px solid var(--accent-blue); margin-bottom: 1.5rem;">
+<h2 class="mb-0"><i class="fa-solid fa-database mr-2" style="color: var(--accent-blue);"></i> Parte A · La base de datos</h2>
+<p class="text-lg mb-0">Primero creamos el servidor de base de datos. Todavía no tocamos Java.</p>
+</div>
+
+<!-- ==================== PASO 1 ==================== -->
+<div class="glass-panel" id="paso-1" style="border-left: 4px solid var(--accent-blue);">
+<h2><i class="fa-solid fa-file-code mr-2" style="color: var(--accent-blue);"></i> Paso 1 · Crear el archivo del script</h2>
+<p>Vamos a guardar el script de la base de datos <strong>dentro de su proyecto</strong>, para que quede versionado. Todavía no se ejecuta nada.</p>
+
+<div class="step-sub">
+<h5>1.1 Crear la carpeta <code>database</code></h5>
+<p>En el panel <em>Project</em> de IntelliJ, haga <strong>clic derecho sobre la raíz del proyecto</strong> (el nombre de su proyecto, al mismo nivel que <code>pom.xml</code>) → <em>New → Directory</em> → escriba <code>database</code>.</p>
+<p>Debe quedar al mismo nivel que <code>pom.xml</code> y <code>src</code>, <strong>no</strong> dentro de <code>src</code>.</p>
+</div>
+
+<div class="step-sub">
+<h5>1.2 Crear el archivo <code>01_flota_segura.sql</code></h5>
+<p>Dentro de <code>database</code>: clic derecho → <em>New → File</em> → escriba <code>01_flota_segura.sql</code> (con la extensión incluida).</p>
+</div>
+
+<div class="step-sub">
+<h5>1.3 El archivo tendrá cuatro secciones</h5>
+<p>Lo vamos a escribir <strong>sección por sección</strong>: en cada paso siguiente le damos el código completo de esa sección y su explicación. El archivo queda así:</p>
+<div class="code-fragment"><span class="d-comment">-- Ejecutar en MySQL Workbench con una cuenta administradora de laboratorio.</span>
+
+<span class="d-comment">-- ============================================================</span>
+<span class="d-comment">-- SECCION 1 · La base de datos y la tabla     --&gt; Paso 3</span>
+<span class="d-comment">-- ============================================================</span>
+
+<span class="d-comment">-- ============================================================</span>
+<span class="d-comment">-- SECCION 2 · Los usuarios                    --&gt; Paso 4</span>
+<span class="d-comment">-- ============================================================</span>
+
+<span class="d-comment">-- ============================================================</span>
+<span class="d-comment">-- SECCION 3 · Los procedimientos almacenados  --&gt; Paso 5</span>
+<span class="d-comment">-- ============================================================</span>
+
+<span class="d-comment">-- ============================================================</span>
+<span class="d-comment">-- SECCION 4 · Los permisos de la aplicación   --&gt; Paso 6</span>
+<span class="d-comment">-- ============================================================</span></div>
+<p>Empiece escribiendo la primera línea y las cuatro bandas de comentarios: así tiene el esqueleto listo.</p>
+</div>
+
+<div class="error-box">
+<strong><i class="fa-solid fa-triangle-exclamation mr-1"></i> Aviso importante desde ya:</strong>
+en la <strong>Sección 2 (Paso 4)</strong> hay <strong>dos contraseñas</strong> que usted debe inventar. Nunca se dejan con el texto de ejemplo.
+</div>
+
+<details>
+<summary><strong>¿Por qué guardar el script dentro del proyecto?</strong></summary>
+<p>Porque la base de datos es <strong>parte del proyecto</strong>. Si el script viaja junto al código, cualquiera puede reconstruir la base desde cero en otra máquina. Se versiona en Git y hace la práctica <strong>reproducible</strong>.</p>
+</details>
+
+<details>
+<summary><strong>¿Qué es un “script SQL”?</strong></summary>
+<p>Es un archivo de texto con sentencias SQL que se ejecutan <strong>en orden, de arriba a abajo</strong>. Nosotros lo escribimos una vez y lo podemos volver a ejecutar cuando queramos: todas las sentencias están protegidas (<code>IF NOT EXISTS</code>, <code>DROP ... IF EXISTS</code>) para que no fallen al repetirse.</p>
+</details>
+</div>
+
+<!-- ==================== PASO 2 ==================== -->
+<div class="glass-panel" id="paso-2" style="border-left: 4px solid var(--una-gold);">
+<h2><i class="fa-solid fa-database mr-2" style="color: var(--una-gold);"></i> Paso 2 · Conectarse a Workbench</h2>
+
+<div class="step-sub">
+<h5>2.1 Abrir MySQL Workbench</h5>
+<p>Busque <strong>MySQL Workbench</strong> en el menú de inicio y ábralo. Aparece la pantalla <strong>Welcome</strong> con la lista <strong>MySQL Connections</strong>.</p>
+<p>Ahí verá un recuadro con un nombre como <code>Local instance MySQL80</code> y debajo <code>root</code> con <code>localhost:3306</code>. Esa es la conexión que se usa <strong>para administrar</strong>.</p>
+</div>
+
+<div class="step-sub">
+<h5>2.2 Conectarse</h5>
+<p>Haga clic sobre <code>Local instance MySQL80</code>. Se abre una ventana pidiendo <strong>Password</strong>: escriba la contraseña de su usuario <code>root</code> (la que definió al instalar MySQL Server).</p>
+<p>Si entra, verá la pantalla en dos columnas: a la izquierda el <strong>Navigator</strong> (esquemas, tablas) y a la derecha un área de trabajo.</p>
+</div>
+
+<div class="step-sub">
+<h5>2.3 Abrir una pestaña de SQL y cargar su script</h5>
+<ol>
+<li>Haga clic en el ícono <strong><code>+ SQL</code></strong> de la barra superior (o <em>File → New Query Tab</em>).</li>
+<li>Con esa pestaña activa, vaya a <em>File → Open SQL Script…</em> y abra <strong>el archivo que usted creó</strong>: <code>database/01_flota_segura.sql</code>.</li>
+</ol>
+<p>Ahora tiene el archivo abierto dentro de Workbench. Cada vez que agregue una sección en IntelliJ, guárdela y vuelva a abrirla aquí (o corte y pegue lo nuevo).</p>
+</div>
+
+<div class="step-sub">
+<h5>2.4 Cómo se ejecuta (esto se usa en todos los pasos siguientes)</h5>
+<ul>
+<li><strong><code>Ctrl + Shift + Enter</code></strong> → ejecuta <strong>todo</strong> el archivo. <strong>Use siempre este.</strong></li>
+<li><strong>Rayo ⚡ con el cursor dentro de una sentencia</strong> → ejecuta <strong>solo esa</strong> sentencia. Úselo cuando quiera probar una línea suelta.</li>
+</ul>
+<p>La salida se ve en el panel <strong>Action Output</strong>, abajo. Los mensajes verdes o neutros (<em>“N row(s) affected”</em>) son normales. Lo que importa es que <strong>no aparezca nada en rojo</strong>.</p>
+</div>
+
+<div class="highlight-box">
+<strong><i class="fa-solid fa-circle-info mr-1"></i> Recuerde la distinción:</strong>
+<strong>MySQL Workbench no es la base de datos</strong>. Workbench es el <strong>cliente</strong> (la ventana desde donde damos órdenes). El <strong>SABD</strong> es <strong>MySQL Server</strong>, el programa que realmente guarda los datos y aplica las reglas. Si cierra Workbench, la base sigue viva.
+</div>
+
+<details>
+<summary><strong>No me aparece ninguna conexión en la pantalla Welcome</strong></summary>
+<p>Haga clic en el <strong><code>+</code></strong> junto a <em>MySQL Connections</em> y rellene:</p>
+<ul>
+<li><em>Connection Name</em>: <code>Local</code> (el nombre que quiera).</li>
+<li><em>Connection Method</em>: <code>Standard (TCP/IP)</code>.</li>
+<li><em>Hostname</em>: <code>127.0.0.1</code> &nbsp;·&nbsp; <em>Port</em>: <code>3306</code>.</li>
+<li><em>Username</em>: <code>root</code>.</li>
+</ul>
+<p>Luego <em>Test Connection</em> e ingrese la contraseña. Si dice <em>Successfully made the MySQL connection</em>, guarde con <em>OK</em>.</p>
+</details>
+
+<details>
+<summary><strong>Olvidé la contraseña de <code>root</code></strong></summary>
+<p>Es la que usted definió al instalar MySQL Server (no es la de Workbench ni la del sistema operativo). Si no la recuerda, reinstale MySQL Server con la opción de restablecer la clave o consulte a la docente. <strong>No</strong> la deje en blanco ni ponga una trivial: es la cuenta más poderosa del servidor.</p>
+</details>
+
+<details>
+<summary><strong>¿Tengo que instalar algo más para que Java hable con MySQL?</strong></summary>
+<p>No instala nada aparte del servidor: el “traductor” que usa Java es el <strong>driver JDBC</strong> (<code>mysql-connector-j</code>) y se agrega al <code>pom.xml</code> en el Paso 7. Maven lo descarga solo.</p>
+</details>
+</div>
+
+<!-- ==================== PASO 3 ==================== -->
+<div class="glass-panel" id="paso-3" style="border-left: 4px solid var(--accent-blue);">
+<h2><i class="fa-solid fa-table mr-2" style="color: var(--accent-blue);"></i> Paso 3 · Sección 1 · La base de datos y la tabla</h2>
+<p>Esta es la primera sección del script. <strong>Cópiela tal cual</strong> en <code>database/01_flota_segura.sql</code>, debajo de la banda de comentarios de la sección 1.</p>
+
+<div class="step-sub">
+<h5>3.1 <code>CREATE DATABASE</code> — crear la base de datos</h5>
+<div class="code-fragment"><span class="d-keyword">CREATE DATABASE IF NOT EXISTS</span> flota_vehicular
+  <span class="d-keyword">CHARACTER SET</span> utf8mb4 <span class="d-keyword">COLLATE</span> utf8mb4_0900_ai_ci;</div>
+<ul>
+<li><code>CREATE DATABASE flota_vehicular</code> → crea un <strong>esquema</strong>: una “carpeta” que contiene tablas y procedimientos.</li>
+<li><code>IF NOT EXISTS</code> → si ya existe, no da error. Así el script se puede ejecutar muchas veces.</li>
+<li><code>CHARACTER SET utf8mb4</code> → guarda bien <strong>acentos, ñ y emojis</strong>. Con un juego viejo como <code>latin1</code> los acentos se verían como <code>Ã±</code>.</li>
+</ul>
+</div>
+
+<div class="step-sub">
+<h5>3.2 <code>USE</code> — seleccionar la base activa</h5>
+<div class="code-fragment"><span class="d-keyword">USE</span> flota_vehicular;</div>
+<p>Todas las sentencias siguientes se aplican a esa base, sin repetir <code>flota_vehicular.</code> delante de cada nombre. <strong>Sin esta línea nada funcionaría</strong>, porque MySQL no sabría en qué base trabajar.</p>
+</div>
+
+<div class="step-sub">
+<h5>3.3 <code>CREATE TABLE vehiculo</code> — escribirla completa</h5>
+<div class="code-fragment compact"><span class="d-keyword">CREATE TABLE IF NOT EXISTS</span> vehiculo (
+  placa VARCHAR(12) <span class="d-keyword">PRIMARY KEY</span>,
+  marca VARCHAR(80) <span class="d-keyword">NOT NULL</span>,
+  kilometraje INT <span class="d-keyword">NOT NULL</span>,
+  estado ENUM(<span class="d-string">'DISPONIBLE'</span>,<span class="d-string">'EN_RUTA'</span>,<span class="d-string">'TALLER'</span>) <span class="d-keyword">NOT NULL</span>,
+  tipo ENUM(<span class="d-string">'COMBUSTION'</span>,<span class="d-string">'ELECTRICO'</span>,<span class="d-string">'PESADO'</span>) <span class="d-keyword">NOT NULL</span>,
+  nivel_energia DECIMAL(5,2) <span class="d-keyword">NOT NULL</span>,
+  ciclos_carga INT <span class="d-keyword">NOT NULL DEFAULT</span> 0,
+  tonelaje_maximo DECIMAL(8,2) <span class="d-keyword">NULL</span>,
+  carga_actual DECIMAL(8,2) <span class="d-keyword">NULL</span>,
+  tipo_carga ENUM(<span class="d-string">'NORMAL'</span>,<span class="d-string">'PELIGROSA'</span>,<span class="d-string">'REFRIGERADA'</span>) <span class="d-keyword">NULL</span>,
+  <span class="d-keyword">CONSTRAINT</span> chk_kilometraje CHECK (kilometraje &gt;= 0),
+  <span class="d-keyword">CONSTRAINT</span> chk_energia <span class="d-keyword">CHECK</span> (nivel_energia &gt;= 0 <span class="d-keyword">AND</span> nivel_energia &lt;= 100),
+  <span class="d-keyword">CONSTRAINT</span> chk_ciclos <span class="d-keyword">CHECK</span> (ciclos_carga &gt;= 0),
+  <span class="d-keyword">CONSTRAINT</span> chk_pesado <span class="d-keyword">CHECK</span> ((tipo = <span class="d-string">'PESADO'</span> <span class="d-keyword">AND</span> tonelaje_maximo &gt; 0 AND carga_actual &gt;= 0 AND tipo_carga <span class="d-keyword">IS NOT NULL</span>)
+      <span class="d-keyword">OR</span> (tipo &lt;&gt; <span class="d-string">'PESADO'</span> <span class="d-keyword">AND</span> tonelaje_maximo <span class="d-keyword">IS NULL</span> AND carga_actual <span class="d-keyword">IS NULL</span> AND tipo_carga <span class="d-keyword">IS NULL</span>))
+);</div>
+<p>Ahora, columna por columna, qué significa cada una:</p>
+<table class="grid-table">
+<thead>
+<tr><th style="width: 22%;">Columna</th><th style="width: 18%;">Tipo</th><th>Por qué existe</th></tr>
+</thead>
+<tbody>
+<tr><td><code>placa</code></td><td><code>VARCHAR(12)</code></td><td>Identifica cada vehículo. Es la <strong>clave primaria</strong>.</td></tr>
+<tr><td><code>marca</code></td><td><code>VARCHAR(80)</code></td><td>Texto libre, pero obligatorio (<code>NOT NULL</code>).</td></tr>
+<tr><td><code>kilometraje</code></td><td><code>INT</code></td><td>Entero: no tiene sentido un kilómetro con decimales.</td></tr>
+<tr><td><code>estado</code></td><td><code>ENUM(...)</code></td><td>Solo permite los tres valores del enum <code>EstadoVehiculo</code> de su modelo.</td></tr>
+<tr><td><code>tipo</code></td><td><code>ENUM(...)</code></td><td>Corresponde a <code>TipoVehiculo</code>. Es la columna que decide <strong>qué subclase</strong> reconstruir.</td></tr>
+<tr><td><code>nivel_energia</code></td><td><code>DECIMAL(5,2)</code></td><td>Combustible <em>o</em> batería, según el tipo. Hasta 999.99 con 2 decimales.</td></tr>
+<tr><td><code>ciclos_carga</code></td><td><code>INT DEFAULT 0</code></td><td>Solo lo usa el <strong>eléctrico</strong>. El valor por defecto evita enviarlo siempre.</td></tr>
+<tr><td><code>tonelaje_maximo</code></td><td><code>DECIMAL(8,2) NULL</code></td><td>Solo lo usa el <strong>pesado</strong>. Por eso admite <code>NULL</code>.</td></tr>
+<tr><td><code>carga_actual</code></td><td><code>DECIMAL(8,2) NULL</code></td><td>Solo lo usa el <strong>pesado</strong>.</td></tr>
+<tr><td><code>tipo_carga</code></td><td><code>ENUM(...) NULL</code></td><td>Solo lo usa el <strong>pesado</strong>.</td></tr>
+</tbody>
+</table>
+<div class="highlight-box">
+<strong>Observe el patrón:</strong> las tres últimas columnas son <code>NULL</code> porque <strong>no todos los vehículos tienen esos datos</strong>. En objetos eso lo resuelven la herencia y las subclases; en una tabla plana, columnas opcionales. Ese es el <strong>desfase objeto–relacional</strong> que vimos en clase.
+</div>
+</div>
+
+<div class="step-sub">
+<h5>3.4 <code>placa PRIMARY KEY</code> — la clave primaria</h5>
+<p>Una clave primaria hace dos cosas a la vez: <strong>identifica</strong> la fila y <strong>prohíbe duplicados</strong>.</p>
+<p>Es decir: aunque Java olvide validar, <strong>la base no aceptará dos vehículos con la misma placa</strong>. Y eso importa porque dos personas podrían registrar la misma placa al mismo tiempo: la validación en memoria de cada programa no basta.</p>
+</div>
+
+<div class="step-sub">
+<h5>3.5 Las cuatro restricciones <code>CHECK</code></h5>
+<p>Van al final, dentro del mismo <code>CREATE TABLE</code>. Ya están incluidas en el bloque de arriba; esto es lo que hace cada una:</p>
+<table class="grid-table">
+<thead>
+<tr><th style="width: 30%;">Restricción</th><th>Qué impide</th></tr>
+</thead>
+<tbody>
+<tr><td><code>chk_kilometraje</code></td><td>Que el kilometraje sea <strong>negativo</strong>.</td></tr>
+<tr><td><code>chk_energia</code></td><td>Que el nivel de energía (o batería) se salga del rango <strong>0 a 100</strong>.</td></tr>
+<tr><td><code>chk_ciclos</code></td><td>Que los ciclos de carga sean <strong>negativos</strong>.</td></tr>
+<tr><td><code>chk_pesado</code></td><td>La parte más interesante: <strong>si</strong> el tipo es <code>PESADO</code>, las tres columnas de pesado son obligatorias; <strong>si no</strong> lo es, esas tres columnas <strong>deben ser <code>NULL</code></strong>. Así la tabla no queda incoherente.</td></tr>
+</tbody>
+</table>
+<div class="highlight-box">
+<strong><i class="fa-solid fa-circle-info mr-1"></i> ¿Por qué validamos en Java <em>y</em> en MySQL?</strong>
+Java da mensajes amigables (“El nivel de combustible debe estar entre 0 y 100”). La base protege la integridad <strong>aunque alguien se salte la interfaz</strong>, use otra herramienta o haya varios usuarios a la vez. Cada capa cumple su papel.
+</div>
+</div>
+
+<div class="step-sub">
+<h5>3.6 Ejecutar y verificar</h5>
+<p>Ejecute todo el archivo con <strong><code>Ctrl + Shift + Enter</code></strong>. Luego, en el <strong>Navigator</strong>, haga clic en el ícono de <strong>refrescar</strong> (dos flechas circulares).</p>
+<p>Debe aparecer el esquema <code>flota_vehicular</code>. Despliéguelo: <strong>Tables → vehiculo</strong>. Si la ve, esta sección quedó bien.</p>
+</div>
+
+<details>
+<summary><strong>¿Por qué la tabla se llama <code>vehiculo</code> y no <code>Vehiculo</code>?</strong></summary>
+<p>Por convención: en el mundo de las bases de datos los nombres van <strong>en minúscula y sin acentos ni mayúsculas intercaladas</strong>, y las palabras se separan con guion bajo (<code>nivel_energia</code>). Es una convención distinta a la de Java (donde las clases van en <em>PascalCase</em> y los atributos en <em>camelCase</em>). Esa diferencia también forma parte del desfase objeto–relacional.</p>
+</details>
+
+<details>
+<summary><strong><em>Unknown database 'flota_vehicular'</em> al ejecutar el resto</strong></summary>
+<p>Significa que la línea <code>CREATE DATABASE</code> no se ejecutó. Revise el orden: el <code>CREATE DATABASE</code> y el <code>USE</code> van <strong>primero</strong>. Ejecute todo el archivo otra vez con <code>Ctrl + Shift + Enter</code> y revise el panel <em>Action Output</em>.</p>
+</details>
+
+<details>
+<summary><strong>Los acentos se ven como <code>Ã±</code> o <code>??</code></strong></summary>
+<p>La base se creó con un juego de caracteres incorrecto. Nuestro script usa <code>utf8mb4</code>, que es el correcto. Si ya la había creado con otro <em>charset</em>, bórrela y vuelva a ejecutar el script:</p>
+<div class="code-fragment"><span class="d-keyword">DROP DATABASE</span> flota_vehicular;   <span class="d-comment"># ¡borra todo! hágalo solo en su laboratorio</span></div>
+</details>
+</div>
+
+<!-- ==================== PASO 4 ==================== -->
+<div class="glass-panel" id="paso-4" style="border-left: 4px solid var(--una-red);">
+<h2><i class="fa-solid fa-users mr-2" style="color: var(--una-red);"></i> Paso 4 · Sección 2 · Los usuarios</h2>
+<p>Esta es <strong>la sección más importante de la Parte A</strong>. Léala completa antes de escribir el código.</p>
+
+<div class="error-box">
+<strong><i class="fa-solid fa-triangle-exclamation mr-1"></i> Antes de nada: las DOS contraseñas.</strong>
+El código de esta sección trae dos textos de relleno: <code>ESCRIBE_TU_CLAVE_DEL_DEFINER</code> y <code>ESCRIBE_TU_CLAVE_DE_LA_APP</code>. <strong>Reemplácelos por sus propias contraseñas antes de ejecutar la sección.</strong>
+</div>
+
+<div class="step-sub">
+<h5>4.1 Cómo debe ser cada contraseña</h5>
+<ul>
+<li><strong>Mínimo 8 caracteres</strong> (recomendado 12 o más).</li>
+<li>Mezcle <strong>mayúsculas, minúsculas, números y algún símbolo</strong>.</li>
+<li><strong>Distintas entre sí</strong> y distintas también de la de <code>root</code>.</li>
+<li><strong>No</strong> use su nombre, su cédula, ni <code>1234</code>, <code>admin</code>, <code>mysql</code>.</li>
+<li>Evite la comilla simple <code>'</code> y el punto y coma <code>;</code>: rompen el SQL.</li>
+</ul>
+<p><strong>Anótelas fuera del proyecto</strong> (gestor de contraseñas o un archivo local). La de <code>flota_app</code> la va a necesitar en el <a href="#paso-12">Paso 12</a>.</p>
+</div>
+
+<div class="step-sub">
+<h5>4.2 ¿Qué es un “usuario” en MySQL?</h5>
+<p>Un usuario de MySQL <strong>no es solo un nombre</strong>. Su identidad tiene <strong>dos partes</strong>:</p>
+<div class="code-fragment"><span class="d-string">'nombre_de_usuario'</span>@<span class="d-string">'host_desde_donde_se_conecta'</span>
+        ^                                          ^
+        el nombre                                  el origen permitido</div>
+<p>Por eso escribimos <code>'flota_app'@'localhost'</code> y no simplemente <code>flota_app</code>:</p>
+<ul>
+<li><code>'flota_app'</code> → <strong>quién</strong>.</li>
+<li><code>'localhost'</code> → <strong>desde dónde</strong>. <code>localhost</code> significa “solo desde la misma máquina donde corre MySQL”.</li>
+</ul>
+<div class="highlight-box">
+<strong>Consecuencia práctica:</strong> si copia el proyecto a otra computadora y se conecta a <em>su</em> MySQL local, todo funciona igual, porque <code>localhost</code> es “esa” máquina. En cambio, una cuenta <code>'flota_app'@'localhost'</code> <strong>no</strong> puede conectarse desde otra PC de la red.
+</div>
+</div>
+
+<div class="step-sub">
+<h5>4.3 Escribir la sección completa</h5>
+<p>Copie esto debajo de la banda de comentarios de la sección 2, <strong>reemplazando los dos textos de relleno por sus contraseñas</strong>:</p>
+<div class="code-fragment compact"><span class="d-comment">-- Cuenta definidora de privilegios mínimos. No usar root como DEFINER.</span>
+<span class="d-focus"><span class="d-keyword">CREATE USER IF NOT EXISTS</span> <span class="d-string">'flota_definer'</span>@<span class="d-string">'localhost'</span> <span class="d-keyword">IDENTIFIED BY</span> <span class="d-string">'ESCRIBE_TU_CLAVE_DEL_DEFINER'</span>;</span>
+<span class="d-keyword">GRANT SELECT</span>, <span class="d-keyword">INSERT</span>, <span class="d-keyword">UPDATE</span>, <span class="d-keyword">DELETE</span> <span class="d-keyword">ON</span> flota_vehicular.vehiculo <span class="d-keyword">TO</span> <span class="d-string">'flota_definer'</span>@<span class="d-string">'localhost'</span>;
+<span class="d-focus"><span class="d-keyword">CREATE USER IF NOT EXISTS</span> <span class="d-string">'flota_app'</span>@<span class="d-string">'localhost'</span> <span class="d-keyword">IDENTIFIED BY</span> <span class="d-string">'ESCRIBE_TU_CLAVE_DE_LA_APP'</span>;</span>
+<span class="d-keyword">REVOKE ALL PRIVILEGES</span>, <span class="d-keyword">GRANT OPTION FROM</span> <span class="d-string">'flota_app'</span>@<span class="d-string">'localhost'</span>;</div>
+<p>Cuando el archivo esté completo, estas dos líneas serán las <strong>líneas 33 y 35</strong> (las dos que empiezan con <code>CREATE USER</code>). Son las únicas que debe cambiar.</p>
+</div>
+
+<div class="step-sub">
+<h5>4.4 Qué hace cada una de las cuatro sentencias</h5>
+<h4><code>CREATE USER IF NOT EXISTS 'flota_definer'@'localhost' IDENTIFIED BY '...'</code></h4>
+<ul>
+<li><code>CREATE USER</code> → crea la cuenta.</li>
+<li><code>IF NOT EXISTS</code> → no falla si ya existe (pero <strong>no</strong> cambia la clave; si necesita cambiarla use <code>ALTER USER</code>, ver acordeón).</li>
+<li><code>IDENTIFIED BY '...'</code> → aquí se define la contraseña. MySQL la guarda <strong>cifrada</strong>, no en texto plano.</li>
+</ul>
+<p><strong>Recién creada, la cuenta todavía no puede hacer nada.</strong> Solo puede conectarse; no tiene permisos sobre ninguna tabla.</p>
+
+<h4><code>GRANT SELECT, INSERT, UPDATE, DELETE ON flota_vehicular.vehiculo TO 'flota_definer'@'localhost'</code></h4>
+<p><code>GRANT</code> se lee: <em>“otorga estas acciones, sobre este objeto, a este usuario”</em>.</p>
+<table class="grid-table">
+<thead><tr><th style="width: 36%;">Parte de la sentencia</th><th>Qué significa</th></tr></thead>
+<tbody>
+<tr><td><code>SELECT, INSERT, UPDATE, DELETE</code></td><td>Las cuatro operaciones sobre datos (leer, insertar, modificar, borrar).</td></tr>
+<tr><td><code>ON flota_vehicular.vehiculo</code></td><td><strong>Solo esa tabla.</strong> No toda la base, no otros esquemas.</td></tr>
+<tr><td><code>TO 'flota_definer'@'localhost'</code></td><td>El usuario exacto, incluido el host.</td></tr>
+</tbody>
+</table>
+<div class="highlight-box">
+<strong>Fíjese lo que NO aparece:</strong> no aparece <code>CREATE USER</code>, ni <code>DROP</code>, ni <code>ALTER</code>, ni ningún privilegio de administración del servidor. <strong>Eso es el principio de mínimo privilegio.</strong>
+</div>
+
+<h4><code>CREATE USER IF NOT EXISTS 'flota_app'@'localhost' IDENTIFIED BY '...'</code></h4>
+<p><strong>Esta es la cuenta que usará su aplicación Java.</strong> Guárdela: la escribirá en el Paso 12.</p>
+
+<h4><code>REVOKE ALL PRIVILEGES, GRANT OPTION FROM 'flota_app'@'localhost'</code></h4>
+<p><code>REVOKE</code> es lo contrario de <code>GRANT</code>: <strong>retira</strong> permisos.</p>
+<ul>
+<li><code>ALL PRIVILEGES</code> → todos los permisos que tuviera.</li>
+<li><code>GRANT OPTION</code> → le quita también la capacidad de <strong>otorgar permisos a otros</strong>.</li>
+</ul>
+<p><strong>¿Por qué, si la cuenta acaba de nacer?</strong> Porque MySQL le deja el privilegio <code>USAGE</code> (puede conectarse y nada más). Esta línea <strong>garantiza</strong> que no quede ningún resto, incluso si el script se ejecuta sobre una base donde el usuario ya existía con permisos previos. Es defensa en profundidad.</p>
+</div>
+
+<div class="step-sub">
+<h5>4.5 Ejecutar y comprobar los permisos</h5>
+<p>Ejecute todo el archivo con <strong><code>Ctrl + Shift + Enter</code></strong> y luego ejecute estas dos sentencias para ver qué quedó:</p>
+<div class="code-fragment compact"><span class="d-keyword">SHOW GRANTS FOR</span> <span class="d-string">'flota_definer'</span>@<span class="d-string">'localhost'</span>;
+<span class="d-keyword">SHOW GRANTS FOR</span> <span class="d-string">'flota_app'</span>@<span class="d-string">'localhost'</span>;</div>
+<p>Salida esperada (aproximada):</p>
+<div class="code-fragment compact">GRANT USAGE ON *.* TO `flota_definer`@`localhost`                          <span class="d-comment"># puede conectarse</span>
+GRANT SELECT, INSERT, UPDATE, DELETE ON `flota_vehicular`.`vehiculo` TO ... <span class="d-comment"># y operar esa tabla</span>
+
+GRANT USAGE ON *.* TO `flota_app`@`localhost`                              <span class="d-comment"># solo conectarse</span></div>
+<p><strong>Todavía no aparecen los <code>EXECUTE</code> de <code>flota_app</code></strong>: se otorgan en el <a href="#paso-6">Paso 6</a>, cuando ya existan los procedimientos.</p>
+<p>También puede comprobar las cuentas en el <strong>Navigator</strong>: menú <em>Users and Privileges</em>.</p>
+</div>
+
+<div class="step-sub">
+<h5>4.6 Resumen: las tres cuentas</h5>
+<table class="grid-table">
+<thead>
+<tr><th style="width: 20%;">Cuenta</th><th style="width: 26%;">Quién la usa</th><th>Qué puede hacer</th></tr>
+</thead>
+<tbody>
+<tr><td><code>root</code></td><td>Usted, desde Workbench</td><td><strong>Todo.</strong> Crear bases, usuarios, borrar el servidor. Por eso la aplicación <strong>no</strong> la usa.</td></tr>
+<tr><td><code>flota_definer</code></td><td>Nadie directamente: es el <strong>definidor</strong> de los procedimientos</td><td><code>SELECT, INSERT, UPDATE, DELETE</code> sobre <code>flota_vehicular.vehiculo</code>, más el <code>EXECUTE</code> que recibe en el <a href="#paso-6">Paso 6</a>. Nada de administración del servidor.</td></tr>
+<tr><td><code>flota_app</code></td><td><strong>Su aplicación Java</strong></td><td>Ejecutar (<code>EXECUTE</code>) los cuatro procedimientos. <strong>No</strong> puede leer la tabla directamente.</td></tr>
+</tbody>
+</table>
+</div>
+
+<details>
+<summary><strong>¿Qué significa el privilegio <code>USAGE</code>?</strong></summary>
+<p>Significa “puede iniciar sesión, y nada más”. MySQL lo crea automáticamente con cada usuario. Cuando en <code>SHOW GRANTS</code> solo ve <code>USAGE ON *.*</code>, la cuenta <strong>no tiene ningún permiso real</strong>: es exactamente lo que queremos para <code>flota_app</code> antes de darle los <code>EXECUTE</code>.</p>
+</details>
+
+<details>
+<summary><strong>¿Por qué dos cuentas y no una sola?</strong></summary>
+<p>Porque cumplen <strong>funciones distintas</strong>:</p>
+<ul>
+<li>Los procedimientos necesitan <strong>tocar la tabla</strong> → para eso existe <code>flota_definer</code>, con permisos de tabla pero sin permisos de administración.</li>
+<li>La aplicación solo necesita <strong>pedir operaciones</strong> → para eso existe <code>flota_app</code>, que no sabe hacer <code>SELECT</code> ni <code>DELETE</code> por su cuenta.</li>
+</ul>
+<p>Si usáramos una sola cuenta con permisos de tabla, la aplicación podría ejecutar cualquier <code>DELETE FROM vehiculo</code> que apareciera en el código (por un error o por un ataque). Separando las cuentas, el servidor <strong>impone</strong> el límite.</p>
+</details>
+
+<details>
+<summary><strong>¿Puedo conectarme con <code>root</code> desde la aplicación “solo para probar”?</strong></summary>
+<p>Técnicamente sí, y funcionaría. <strong>No lo haga.</strong> Si se acostumbra, el día que el código llegue a un servidor real la aplicación tendrá permisos administrativos y un simple error podría borrar toda la base. Además, en este laboratorio se revisa que la aplicación se conecte como <code>flota_app</code>.</p>
+</details>
+
+<details>
+<summary><strong>Ya ejecuté la sección con las claves de relleno… ¿qué hago?</strong></summary>
+<p>Cambie las claves con <code>ALTER USER</code> (no con <code>CREATE USER</code>, porque el usuario ya existe):</p>
+<div class="code-fragment">ALTER USER 'flota_app'@'localhost' IDENTIFIED BY 'MiClave.App2026!';
+ALTER USER 'flota_definer'@'localhost' IDENTIFIED BY 'MiClave.Definer2026';</div>
+<p>Y corrija también el texto del script para que quede documentado.</p>
+</details>
+
+<details>
+<summary><strong>¿Cómo elimino una cuenta si me equivoqué al crearla?</strong></summary>
+<div class="code-fragment"><span class="d-keyword">DROP USER IF EXISTS</span> <span class="d-string">'flota_app'</span>@<span class="d-string">'localhost'</span>;
+<span class="d-comment"># luego vuelva a ejecutar el script completo para recrearla</span></div>
+</details>
+</div>
+
+<!-- ==================== PASO 5 ==================== -->
+<div class="glass-panel" id="paso-5" style="border-left: 4px solid var(--accent-green);">
+<h2><i class="fa-solid fa-cubes mr-2" style="color: var(--accent-green);"></i> Paso 5 · Sección 3 · Los procedimientos almacenados</h2>
+<p>Aquí es donde Java y MySQL se ponen de acuerdo. Escriba esta sección debajo de la banda de comentarios de la sección 3.</p>
+
+<div class="step-sub">
+<h5>5.1 <code>DROP PROCEDURE IF EXISTS</code> — borrar los anteriores</h5>
+<div class="code-fragment"><span class="d-keyword">DROP PROCEDURE IF EXISTS</span> sp_listar_vehiculos;
+<span class="d-keyword">DROP PROCEDURE IF EXISTS</span> sp_insertar_vehiculo;
+<span class="d-keyword">DROP PROCEDURE IF EXISTS</span> sp_actualizar_vehiculo;
+<span class="d-keyword">DROP PROCEDURE IF EXISTS</span> sp_eliminar_vehiculo;</div>
+<p>Es la misma idea que <code>CREATE DATABASE IF NOT EXISTS</code>, pero al revés: <strong>borramos lo que hubiera</strong> y lo volvemos a crear limpio. Así, si modifica un procedimiento, el script lo reemplaza en lugar de fallar con “ya existe”.</p>
+</div>
+
+<div class="step-sub">
+<h5>5.2 <code>DELIMITER</code> — la trampa clásica</h5>
+<div class="code-fragment"><span class="d-keyword">DELIMITER</span> $$      <span class="d-comment"># cambiamos el terminador a $$</span>
+   ... aquí van los CREATE PROCEDURE ...
+<span class="d-keyword">DELIMITER</span> ;       <span class="d-comment"># lo devolvemos a ;</span></div>
+<ul>
+<li>Normalmente <strong><code>;</code> termina una sentencia</strong>.</li>
+<li>El cuerpo de un procedimiento va entre <code>BEGIN</code> y <code>END</code> y <strong>contiene varios <code>;</code> adentro</strong>.</li>
+<li>Si el terminador siguiera siendo <code>;</code>, el cliente enviaría al servidor solo la mitad del procedimiento: error de sintaxis.</li>
+<li>Solución: <strong>cambiar temporalmente el terminador</strong> a <code>$$</code>. Ahora el cliente corta la sentencia solo cuando encuentra <code>$$</code>, es decir en <code>END$$</code>.</li>
+</ul>
+<div class="error-box">
+<strong>Si olvida el <code>DELIMITER</code></strong> verá errores de sintaxis 1064 en medio del procedimiento. Además, <code>DELIMITER</code> es una <strong>directiva del cliente</strong> (Workbench), no una sentencia de MySQL: por eso esa línea <strong>no</strong> lleva punto y coma al final.
+</div>
+</div>
+
+<div class="step-sub">
+<h5>5.3 Líneas comunes: <code>DEFINER</code> y <code>SQL SECURITY DEFINER</code></h5>
+<p>Los cuatro procedimientos empiezan igual:</p>
+<div class="code-fragment"><span class="d-keyword">CREATE DEFINER</span>=<span class="d-string">'flota_definer'</span>@<span class="d-string">'localhost'</span> <span class="d-keyword">PROCEDURE</span> sp_nombre(...)
+SQL SECURITY DEFINER
+<span class="d-keyword">BEGIN</span>
+  ...
+<span class="d-keyword">END</span>$$</div>
+<table class="grid-table">
+<thead><tr><th style="width: 34%;">Concepto</th><th>Qué significa</th></tr></thead>
+<tbody>
+<tr><td><code>DEFINER = 'flota_definer'</code></td><td><strong>Quién es el dueño</strong> del procedimiento. Lo crea <em>root</em>, pero queda a nombre de <code>flota_definer</code>.</td></tr>
+<tr><td><code>SQL SECURITY DEFINER</code></td><td>Al ejecutarse, usa <strong>los permisos del definidor</strong>, no los de quien lo llama. Por eso <code>flota_app</code> puede leer la tabla <em>a través</em> del procedimiento aunque no tenga <code>SELECT</code>.</td></tr>
+<tr><td><code>SQL SECURITY INVOKER</code></td><td>Lo contrario: usaría los permisos de quien invoca. Con <code>flota_app</code> esto <strong>fallaría</strong>.</td></tr>
+</tbody>
+</table>
+<div class="highlight-box">
+<strong>¿Por qué no dejar <code>root</code> como DEFINER?</strong>
+Porque entonces <code>root</code> sería el contexto privilegiado de todas las rutinas: si alguien lograra modificar un procedimiento, lo modificaría <strong>con permisos de administrador</strong>. Con <code>flota_definer</code>, el peor caso queda limitado a esa tabla.
+</div>
+</div>
+
+<div class="step-sub">
+<h5>5.4 Procedimiento 1 · <code>sp_listar_vehiculos</code> (leer toda la flota)</h5>
+<div class="code-fragment compact"><span class="d-keyword">CREATE DEFINER</span>=<span class="d-string">'flota_definer'</span>@<span class="d-string">'localhost'</span> <span class="d-keyword">PROCEDURE</span> sp_listar_vehiculos()
+SQL SECURITY DEFINER
+<span class="d-keyword">BEGIN</span>
+  <span class="d-keyword">SELECT</span> placa, marca, kilometraje, estado, tipo, nivel_energia, ciclos_carga,
+         tonelaje_maximo, carga_actual, tipo_carga
+  <span class="d-keyword">FROM</span> vehiculo <span class="d-keyword">ORDER BY</span> placa;
+<span class="d-keyword">END</span>$$</div>
+<ul>
+<li><strong>No recibe parámetros</strong>: los paréntesis van vacíos.</li>
+<li>Devuelve <strong>todas las columnas</strong> de todos los vehículos, ordenados por placa.</li>
+<li><code>ORDER BY placa</code> hace que la tabla se vea siempre en el mismo orden.</li>
+<li>Al devolver filas, Java lo llamará con <code>executeQuery()</code>.</li>
+</ul>
+</div>
+
+<div class="step-sub">
+<h5>5.5 Procedimiento 2 · <code>sp_insertar_vehiculo</code> (registrar)</h5>
+<div class="code-fragment compact"><span class="d-keyword">CREATE DEFINER</span>=<span class="d-string">'flota_definer'</span>@<span class="d-string">'localhost'</span> <span class="d-keyword">PROCEDURE</span> sp_insertar_vehiculo(
+  <span class="d-keyword">IN</span> p_placa VARCHAR(12), <span class="d-keyword">IN</span> p_marca VARCHAR(80), <span class="d-keyword">IN</span> p_kilometraje INT,
+  <span class="d-keyword">IN</span> p_estado VARCHAR(20), <span class="d-keyword">IN</span> p_tipo VARCHAR(20), <span class="d-keyword">IN</span> p_energia DECIMAL(5,2),
+  <span class="d-keyword">IN</span> p_ciclos INT, <span class="d-keyword">IN</span> p_tonelaje DECIMAL(8,2), <span class="d-keyword">IN</span> p_carga DECIMAL(8,2), <span class="d-keyword">IN</span> p_tipo_carga VARCHAR(20))
+SQL SECURITY DEFINER
+<span class="d-keyword">BEGIN</span>
+  <span class="d-keyword">INSERT INTO</span> vehiculo(placa,marca,kilometraje,estado,tipo,nivel_energia,ciclos_carga,tonelaje_maximo,carga_actual,tipo_carga)
+  <span class="d-keyword">VALUES</span> (p_placa,p_marca,p_kilometraje,p_estado,p_tipo,p_energia,p_ciclos,p_tonelaje,p_carga,p_tipo_carga);
+<span class="d-keyword">END</span>$$</div>
+<p><code>IN</code> significa <strong>parámetro de entrada</strong> (solo entra, no devuelve). El prefijo <code>p_</code> es una convención: deja claro que es un parámetro y no una columna.</p>
+<p><strong>El orden es sagrado.</strong> Este es el “contrato” entre Java y la base de datos:</p>
+<table class="grid-table">
+<thead><tr><th style="width: 10%;">#</th><th style="width: 32%;">Parámetro</th><th>Valor esperado</th></tr></thead>
+<tbody>
+<tr><td><span class="badge badge-blue">1</span></td><td><code>p_placa</code></td><td><code>"ABC123"</code></td></tr>
+<tr><td><span class="badge badge-blue">2</span></td><td><code>p_marca</code></td><td><code>"Toyota"</code></td></tr>
+<tr><td><span class="badge badge-blue">3</span></td><td><code>p_kilometraje</code></td><td><code>15000</code></td></tr>
+<tr><td><span class="badge badge-blue">4</span></td><td><code>p_estado</code></td><td><code>'DISPONIBLE'</code> / <code>'EN_RUTA'</code> / <code>'TALLER'</code></td></tr>
+<tr><td><span class="badge badge-blue">5</span></td><td><code>p_tipo</code></td><td><code>'COMBUSTION'</code> / <code>'ELECTRICO'</code> / <code>'PESADO'</code></td></tr>
+<tr><td><span class="badge badge-blue">6</span></td><td><code>p_energia</code></td><td>Combustible o batería (0 a 100)</td></tr>
+<tr><td><span class="badge badge-blue">7</span></td><td><code>p_ciclos</code></td><td>Ciclos de carga (0 si no es eléctrico)</td></tr>
+<tr><td><span class="badge badge-blue">8</span></td><td><code>p_tonelaje</code></td><td>Tonelaje máximo, o <code>NULL</code> si no es pesado</td></tr>
+<tr><td><span class="badge badge-blue">9</span></td><td><code>p_carga</code></td><td>Carga actual, o <code>NULL</code> si no es pesado</td></tr>
+<tr><td><span class="badge badge-blue">10</span></td><td><code>p_tipo_carga</code></td><td><code>'NORMAL'</code> / <code>'PELIGROSA'</code> / <code>'REFRIGERADA'</code>, o <code>NULL</code></td></tr>
+</tbody>
+</table>
+<p class="text-sm">Guarde esta tabla: en el <a href="#paso-9">Paso 9</a> veremos que Java llena los parámetros <strong>exactamente</strong> en este orden con <code>cs.setString(1, ...)</code>, <code>cs.setInt(3, ...)</code>, etc.</p>
+</div>
+
+<div class="step-sub">
+<h5>5.6 Procedimiento 3 · <code>sp_actualizar_vehiculo</code> (editar)</h5>
+<div class="code-fragment compact"><span class="d-keyword">CREATE DEFINER</span>=<span class="d-string">'flota_definer'</span>@<span class="d-string">'localhost'</span> <span class="d-keyword">PROCEDURE</span> sp_actualizar_vehiculo(
+  <span class="d-keyword">IN</span> p_placa VARCHAR(12), <span class="d-keyword">IN</span> p_marca VARCHAR(80), <span class="d-keyword">IN</span> p_kilometraje INT,
+  <span class="d-keyword">IN</span> p_estado VARCHAR(20), <span class="d-keyword">IN</span> p_tipo VARCHAR(20), <span class="d-keyword">IN</span> p_energia DECIMAL(5,2),
+  <span class="d-keyword">IN</span> p_ciclos INT, <span class="d-keyword">IN</span> p_tonelaje DECIMAL(8,2), <span class="d-keyword">IN</span> p_carga DECIMAL(8,2), <span class="d-keyword">IN</span> p_tipo_carga VARCHAR(20))
+SQL SECURITY DEFINER
+<span class="d-keyword">BEGIN</span>
+  <span class="d-keyword">UPDATE</span> vehiculo <span class="d-keyword">SET</span> marca=p_marca, kilometraje=p_kilometraje, estado=p_estado, tipo=p_tipo,
+    nivel_energia=p_energia, ciclos_carga=p_ciclos, tonelaje_maximo=p_tonelaje,
+    carga_actual=p_carga, tipo_carga=p_tipo_carga <span class="d-keyword">WHERE</span> placa=p_placa;
+  <span class="d-keyword">IF</span> <span class="d-method">ROW_COUNT</span>() = 0 <span class="d-keyword">AND NOT EXISTS</span> (<span class="d-keyword">SELECT</span> 1 <span class="d-keyword">FROM</span> vehiculo <span class="d-keyword">WHERE</span> placa=p_placa) <span class="d-keyword">THEN</span>
+    <span class="d-keyword">SIGNAL</span> SQLSTATE <span class="d-string">'45000'</span> <span class="d-keyword">SET</span> MESSAGE_TEXT=<span class="d-string">'No existe un vehículo con esa placa'</span>;
+  <span class="d-keyword">END IF</span>;
+<span class="d-keyword">END</span>$$</div>
+<ul>
+<li>Recibe <strong>los mismos 10 parámetros</strong> que el de insertar, en el mismo orden.</li>
+<li><code>UPDATE ... WHERE placa = p_placa</code> → modifica <strong>solo ese vehículo</strong>. Sin el <code>WHERE</code> actualizaría <strong>todos</strong>: por eso es tan importante.</li>
+<li><code>ROW_COUNT()</code> devuelve <strong>cuántas filas</strong> afectó la sentencia anterior.</li>
+<li>Si ninguna fila se actualizó hay dos posibilidades: (a) la placa no existe, o (b) la fila existía pero los valores eran idénticos (MySQL no cuenta eso como cambio). El <code>AND NOT EXISTS (...)</code> distingue el caso (a) del (b).</li>
+<li><code>SIGNAL SQLSTATE '45000'</code> <strong>lanza un error deliberado</strong> con un mensaje en español. Ese error viaja hasta Java y se convierte en un <code>SQLException</code> que el programa muestra a la persona usuaria.</li>
+</ul>
+</div>
+
+<div class="step-sub">
+<h5>5.7 Procedimiento 4 · <code>sp_eliminar_vehiculo</code> (borrar)</h5>
+<div class="code-fragment compact"><span class="d-keyword">CREATE DEFINER</span>=<span class="d-string">'flota_definer'</span>@<span class="d-string">'localhost'</span> <span class="d-keyword">PROCEDURE</span> sp_eliminar_vehiculo(<span class="d-keyword">IN</span> p_placa VARCHAR(12))
+SQL SECURITY DEFINER
+<span class="d-keyword">BEGIN</span>
+  <span class="d-keyword">DELETE FROM</span> vehiculo <span class="d-keyword">WHERE</span> placa=p_placa;
+  <span class="d-keyword">IF</span> <span class="d-method">ROW_COUNT</span>() = 0 <span class="d-keyword">THEN</span> <span class="d-keyword">SIGNAL</span> SQLSTATE <span class="d-string">'45000'</span> <span class="d-keyword">SET</span> MESSAGE_TEXT=<span class="d-string">'No existe un vehículo con esa placa'</span>; <span class="d-keyword">END IF</span>;
+<span class="d-keyword">END</span>$$</div>
+<p>Un solo parámetro (la placa). Mismo patrón que el anterior: borra y, si no borró nada, avisa con un error. Gracias a eso, si Java intenta eliminar una placa que ya no existe, <strong>la aplicación se entera</strong> en lugar de creer que todo salió bien.</p>
+</div>
+
+<div class="step-sub">
+<h5>5.8 <code>DELIMITER ;</code> — devolver el terminador</h5>
+<p>Después del último <code>END$$</code> va la línea <code>DELIMITER ;</code>. Es obligatoria: si no la pone, todo lo que venga después en el archivo (la sección 4) intentaría cortarse con <code>$$</code> y fallaría.</p>
+</div>
+
+<div class="step-sub">
+<h5>5.9 Ejecutar y verificar</h5>
+<p>Ejecute todo con <strong><code>Ctrl + Shift + Enter</code></strong> y refresque el <strong>Navigator</strong>. Despliegue <code>flota_vehicular</code> → <strong>Stored Procedures</strong>: deben aparecer los cuatro <code>sp_</code>.</p>
+<p>Si quiere ver el código de uno: clic derecho sobre el procedimiento → <em>Alter Stored Procedure…</em></p>
+</div>
+
+<details>
+<summary><strong>¿Qué es <code>SQLSTATE '45000'</code>?</strong></summary>
+<p>Es un código reservado por el estándar SQL para <strong>errores definidos por el usuario</strong>, o sea “un error que yo decidí lanzar”. El <code>MESSAGE_TEXT</code> es el texto que verá la persona usuaria. Java lo recibe dentro de la <code>SQLException</code>.</p>
+</details>
+
+<details>
+<summary><strong>¿Por qué los parámetros empiezan con <code>p_</code> y las columnas no?</strong></summary>
+<p>Para que no haya ambigüedad. Dentro del procedimiento existen a la vez la columna <code>placa</code> (de la tabla) y el parámetro <code>p_placa</code>. Si ambos se llamaran igual, el <code>WHERE placa = placa</code> siempre sería verdadero: ¡actualizaría o borraría <strong>todas</strong> las filas!</p>
+</details>
+
+<details>
+<summary><strong>¿Puedo editar un procedimiento ya creado sin volver a escribir todo?</strong></summary>
+<p>Sí. En el <strong>Navigator</strong>: <em>flota_vehicular → Stored Procedures</em>, clic derecho → <strong>Alter Stored Procedure…</strong> Workbench abre el <code>CREATE</code> completo para editarlo. Cámbielo y ejecute. Otra opción: modificar el script y ejecutarlo completo otra vez (los <code>DROP</code> borran la versión anterior).</p>
+</details>
+
+<details>
+<summary><strong>¿Los procedimientos son “mágicamente seguros”?</strong></summary>
+<p><strong>No.</strong> Son una herramienta, no una solución completa. Si dentro de un procedimiento se construyera SQL dinámico concatenando datos de entrada, volvería el riesgo de inyección. La seguridad aquí sale de <strong>combinar</strong>: parámetros (<code>CallableStatement</code>), procedimientos, un definidor con permisos limitados, una cuenta de aplicación sin permisos de tabla y credenciales fuera del código.</p>
+</details>
+</div>
+
+<!-- ==================== PASO 6 ==================== -->
+<div class="glass-panel" id="paso-6" style="border-left: 4px solid var(--accent-green);">
+<h2><i class="fa-solid fa-key mr-2" style="color: var(--accent-green);"></i> Paso 6 · Sección 4 · Los permisos de la aplicación</h2>
+<p>Última sección del script. Escriba esto debajo de la banda de comentarios de la sección 4. Primero aseguramos los permisos del <strong>definidor</strong> y después los de la <strong>cuenta de la aplicación</strong>.</p>
+
+<div class="step-sub">
+<h5>6.1 Los permisos del <code>DEFINER</code></h5>
+<p>Antes de darle permisos a la aplicación, nos aseguramos de que <code>flota_definer</code> tenga <strong>todo lo que necesitan los procedimientos</strong>:</p>
+<div class="code-fragment compact"><span class="d-comment">-- Dar permisos sobre las tablas al DEFINER</span>
+<span class="d-keyword">GRANT SELECT</span>, <span class="d-keyword">INSERT</span>, <span class="d-keyword">UPDATE</span>, <span class="d-keyword">DELETE</span> <span class="d-keyword">ON</span> flota_vehicular.vehiculo <span class="d-keyword">TO</span> <span class="d-string">'flota_definer'</span>@<span class="d-string">'localhost'</span>;
+
+<span class="d-comment">-- IMPORTANTE: El DEFINER también necesita permiso EXECUTE para invocar procedimientos SQL SECURITY DEFINER</span>
+<span class="d-keyword">GRANT EXECUTE ON</span> flota_vehicular.* <span class="d-keyword">TO</span> <span class="d-string">'flota_definer'</span>@<span class="d-string">'localhost'</span>;</div>
+<ul>
+<li><strong>La primera línea</strong> le da al definidor las cuatro operaciones sobre la tabla. Los cuerpos de los procedimientos hacen <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code> y <code>DELETE</code>, y como se ejecutan con <em>sus</em> permisos, él necesita tenerlos.</li>
+<li><strong>La segunda línea es la que suele olvidarse.</strong> En un procedimiento <code>SQL SECURITY DEFINER</code>, MySQL exige que <strong>el definidor también tenga <code>EXECUTE</code></strong> sobre la rutina. Sin este permiso, las llamadas fallan con <em>execute command denied to user 'flota_definer'</em>, aunque <code>flota_app</code> sí tenga el suyo.</li>
+</ul>
+<div class="highlight-box">
+<strong>Note la diferencia de alcance:</strong> al definidor se le da <code>EXECUTE ON flota_vehicular.*</code> (todo el esquema) porque es una <strong>cuenta interna</strong> del servidor, dueña de las rutinas. A <code>flota_app</code>, en cambio, se le dará <strong>uno por uno</strong>, porque es la cuenta que usa la aplicación y debe tener el mínimo.
+</div>
+<p class="text-sm">La primera línea ya apareció en la <a href="#paso-4">sección 2</a>. Repetirla aquí no molesta (otorgar dos veces el mismo permiso no cambia nada) y deja esta sección completa por sí sola.</p>
+</div>
+
+<div class="step-sub">
+<h5>6.2 Los cuatro <code>GRANT EXECUTE</code> de la aplicación</h5>
+<div class="code-fragment compact"><span class="d-keyword">GRANT EXECUTE ON PROCEDURE</span> flota_vehicular.sp_listar_vehiculos    <span class="d-keyword">TO</span> <span class="d-string">'flota_app'</span>@<span class="d-string">'localhost'</span>;
+<span class="d-keyword">GRANT EXECUTE ON PROCEDURE</span> flota_vehicular.sp_insertar_vehiculo   <span class="d-keyword">TO</span> <span class="d-string">'flota_app'</span>@<span class="d-string">'localhost'</span>;
+<span class="d-keyword">GRANT EXECUTE ON PROCEDURE</span> flota_vehicular.sp_actualizar_vehiculo  <span class="d-keyword">TO</span> <span class="d-string">'flota_app'</span>@<span class="d-string">'localhost'</span>;
+<span class="d-keyword">GRANT EXECUTE ON PROCEDURE</span> flota_vehicular.sp_eliminar_vehiculo    <span class="d-keyword">TO</span> <span class="d-string">'flota_app'</span>@<span class="d-string">'localhost'</span>;
+<span class="d-keyword">FLUSH PRIVILEGES</span>;</div>
+<p>Se otorgan <strong>uno por uno</strong>, a propósito. Podríamos escribir <code>GRANT EXECUTE ON flota_vehicular.*</code> y sería más corto, pero entonces cualquier procedimiento futuro quedaría accesible automáticamente. Al enumerarlos, <strong>la cuenta solo puede ejecutar exactamente estos cuatro</strong>.</p>
+</div>
+
+<div class="step-sub">
+<h5>6.3 <code>FLUSH PRIVILEGES</code></h5>
+<p>Recarga la tabla de permisos en memoria del servidor. <strong>Dato honesto:</strong> cuando se usan <code>CREATE USER</code> y <code>GRANT</code>, MySQL ya recarga los permisos solo, así que <strong>no es estrictamente necesario</strong>. Se incluye por costumbre y no hace daño. Sí es obligatorio cuando se modifican las tablas de permisos directamente con <code>INSERT</code> o <code>UPDATE</code>.</p>
+</div>
+
+<div class="step-sub">
+<h5>6.4 Ejecutar</h5>
+<p>Ejecute todo el archivo con <strong><code>Ctrl + Shift + Enter</code></strong>. Con esto el script queda terminado y su base de datos está completa.</p>
+</div>
+
+<div class="step-sub">
+<h5>6.5 Verificación A · Un <code>CALL</code> como <code>flota_app</code> (debe FUNCIONAR)</h5>
+<p>Cree una <strong>conexión nueva</strong> en Workbench para no confundirse con la de administrador:</p>
+<ol>
+<li>En la pantalla <em>Welcome</em>, clic en <strong><code>+</code></strong> junto a <em>MySQL Connections</em>.</li>
+<li><em>Connection Name</em>: <code>Flota App</code>.</li>
+<li><em>Hostname</em>: <code>127.0.0.1</code> &nbsp;·&nbsp; <em>Port</em>: <code>3306</code>.</li>
+<li><em>Username</em>: <code>flota_app</code> &nbsp;·&nbsp; <em>Password</em>: <em>Store in Vault…</em> → la clave que le puso a <code>flota_app</code>.</li>
+<li><em>Test Connection</em> → debe decir <em>Successfully made the MySQL connection</em>.</li>
+</ol>
+<p>Abra una pestaña SQL en esa conexión y ejecute:</p>
+<div class="code-fragment"><span class="d-keyword">CALL</span> flota_vehicular.sp_listar_vehiculos();</div>
+<div class="ok-box">
+<strong><i class="fa-solid fa-circle-check mr-1"></i> Debe funcionar.</strong>
+Devuelve una tabla vacía (0 filas). Aunque parezca “nada”, es la prueba de que <code>flota_app</code> <strong>sí</strong> tiene <code>EXECUTE</code>.
+</div>
+</div>
+
+<div class="step-sub">
+<h5>6.6 Verificación B · Un <code>SELECT</code> directo (debe FALLAR)</h5>
+<p>En esa <strong>misma</strong> conexión de <code>flota_app</code>, ejecute:</p>
+<div class="code-fragment"><span class="d-keyword">SELECT</span> * <span class="d-keyword">FROM</span> flota_vehicular.vehiculo;</div>
+<div class="error-box">
+<strong>Error que debe aparecer (¡y esto es lo correcto!):</strong>
+<div class="code-fragment compact">Error Code: 1142. SELECT command denied to user 'flota_app'@'localhost' for table 'vehiculo'</div>
+</div>
+<p>Ese mensaje <strong>no es un problema</strong>: es exactamente el resultado que buscábamos. Significa que el servidor se niega a entregar los datos directamente y <strong>obliga</strong> a pasar por los procedimientos.</p>
+<div class="highlight-box">
+<strong>La idea que debe quedar clara:</strong> no confiamos en que el programador “prometa” no ejecutar SQL directo. El diseño de permisos hace que <strong>la base de datos imponga la frontera</strong>. Aunque alguien escriba un <code>DELETE FROM vehiculo</code> en el código, el servidor lo rechazará.
+</div>
+</div>
+
+<details>
+<summary><strong>Error 1142 aparece también cuando hago <code>CALL</code></strong></summary>
+<p>Entonces <code>flota_app</code> no tiene el <code>EXECUTE</code> de ese procedimiento. Verifique con el administrador:</p>
+<div class="code-fragment"><span class="d-keyword">SHOW GRANTS FOR</span> <span class="d-string">'flota_app'</span>@<span class="d-string">'localhost'</span>;</div>
+<p>y vuelva a ejecutar las cuatro líneas <code>GRANT EXECUTE</code>. Recuerde que el nombre debe coincidir <strong>exactamente</strong>, incluido <code>@'localhost'</code>.</p>
+<p>Si el error menciona a <code>flota_definer</code> en lugar de <code>flota_app</code>, lo que falta es el <code>EXECUTE</code> del <strong>definidor</strong>: revise la segunda línea del sub-paso <a href="#paso-6">6.1</a>.</p>
+</details>
+</div>
+
+<!-- ==================== PARTE B ==================== -->
+<div class="glass-panel text-center" style="border-top: 6px solid var(--accent-green); margin-bottom: 1.5rem;">
+<h2 class="mb-0"><i class="fa-brands fa-java mr-2" style="color: var(--accent-green);"></i> Parte B · El proyecto Java</h2>
+<p class="text-lg mb-0">Ahora sí: abrimos nuestro proyecto y le hacemos los cambios.</p>
+</div>
+
+<!-- ==================== PASO 7 ==================== -->
+<div class="glass-panel" id="paso-7" style="border-left: 4px solid var(--accent-blue);">
+<h2><i class="fa-solid fa-plug mr-2" style="color: var(--accent-blue);"></i> Paso 7 · Añadir el driver y declarar los módulos</h2>
+
+<div class="step-sub">
+<h5>7.1 <span class="file-tag edit">EDITAR</span> <code>pom.xml</code> — agregar el driver JDBC</h5>
+<p>Abra <code>pom.xml</code> (está en la raíz de su proyecto). Busque el bloque <code>&lt;dependencies&gt;</code> y <strong>agregue dentro</strong> este bloque, junto a las dependencias de JavaFX:</p>
+<div class="code-fragment">&lt;<span class="d-keyword">dependency</span>&gt;
+    &lt;<span class="d-keyword">groupId</span>&gt;com.mysql&lt;/<span class="d-keyword">groupId</span>&gt;
+    &lt;<span class="d-keyword">artifactId</span>&gt;mysql-connector-j&lt;/<span class="d-keyword">artifactId</span>&gt;
+    &lt;<span class="d-keyword">version</span>&gt;9.4.0&lt;/<span class="d-keyword">version</span>&gt;
+&lt;/<span class="d-keyword">dependency</span>&gt;</div>
+<ul>
+<li><strong>JDBC</strong> es la <em>API</em> de Java para bases de datos: las clases <code>Connection</code>, <code>PreparedStatement</code>, <code>CallableStatement</code>, <code>ResultSet</code>.</li>
+<li><strong>mysql-connector-j</strong> es el <em>driver</em>: la implementación concreta de esa API para MySQL. Sin él, Java no sabe “hablar MySQL”.</li>
+<li>Maven lo descarga automáticamente. <strong>Esto no crea la base ni configura credenciales</strong>: solo agrega el componente de comunicación.</li>
+</ul>
+</div>
+
+<div class="step-sub">
+<h5>7.2 Recargar Maven</h5>
+<p>En el panel derecho, abra la pestaña <strong>Maven</strong> y haga clic en el ícono de <strong>recargar</strong> (dos flechas circulares) o en <em>Reload All Maven Projects</em>.</p>
+<p>Luego despliegue <em>Dependencies</em>: debe aparecer <code>com.mysql:mysql-connector-j:9.4.0</code>.</p>
+</div>
+
+<div class="step-sub">
+<h5>7.3 <span class="file-tag edit">EDITAR</span> <code>module-info.java</code> — declarar los módulos</h5>
+<p>Abra <code>src/main/java/module-info.java</code>. Su archivo ya tiene los <code>requires</code> de JavaFX; debe quedar así:</p>
+<div class="code-fragment"><span class="d-keyword">module</span> lab.flotavehicular {
+    <span class="d-keyword">requires</span> javafx.controls;
+    <span class="d-keyword">requires</span> javafx.fxml;
+    <span class="d-focus"><span class="d-keyword">requires</span> java.sql;        <span class="d-comment">// AGREGAR: habilita JDBC (Connection, CallableStatement...)</span></span>
+    <span class="d-focus"><span class="d-keyword">requires</span> com.mysql.cj;     <span class="d-comment">// AGREGAR: habilita el driver de MySQL</span></span>
+    <span class="d-keyword">opens</span> lab.flotavehicular.controller <span class="d-keyword">to</span> javafx.fxml;
+    <span class="d-keyword">exports</span> lab.flotavehicular;
+    <span class="d-keyword">exports</span> lab.flotavehicular.model;
+}</div>
+<p>En un proyecto <strong>modular</strong> (con <code>module-info.java</code>) hay que declarar explícitamente qué módulos se usan:</p>
+<ul>
+<li>Sin <code>requires java.sql;</code> → no existen las clases <code>Connection</code>, <code>CallableStatement</code>, etc.</li>
+<li>Sin <code>requires com.mysql.cj;</code> → el driver queda fuera y al conectar obtendría un error de módulo o <code>ClassNotFoundException</code>.</li>
+</ul>
+</div>
+
+<details>
+<summary><strong>Mi equipo tiene JDK 21 (o 17), no JDK 25</strong></summary>
+<p>Revise el bloque <code>maven-compiler-plugin</code> de su <code>pom.xml</code>: ahí están <code>&lt;source&gt;</code> y <code>&lt;target&gt;</code>. Ajústelos a su versión (por ejemplo <code>21</code>) y verifique el SDK en <em>File → Project Structure</em>. Si tiene dudas, consulte a la docente.</p>
+</details>
+
+<details>
+<summary><strong>Error: <em>module not found: com.mysql.cj</em> o <em>package com.mysql.cj.jdbc is not visible</em></strong></summary>
+<p>Falta la línea <code>requires com.mysql.cj;</code> en <code>module-info.java</code>, o Maven todavía no descargó el driver. Revise el Paso 7.3 y recargue Maven.</p>
+</details>
+
+<details>
+<summary><strong><em>No suitable driver found for jdbc:mysql://...</em></strong></summary>
+<p>El driver no está en el <em>classpath</em>. Revise que la dependencia <code>com.mysql:mysql-connector-j:9.4.0</code> esté en su <code>pom.xml</code> y aparezca en <em>Maven → Dependencies</em>. Si no está, <em>Reload All Maven Projects</em>.</p>
+</details>
+</div>
+
+<!-- ==================== PASO 8 ==================== -->
+<div class="glass-panel" id="paso-8" style="border-left: 4px solid var(--accent-peach);">
+<h2><i class="fa-solid fa-arrows-rotate mr-2" style="color: var(--accent-peach);"></i> Paso 8 · Cambiar el contrato del repositorio</h2>
+<p>Su interfaz <code>RepositorioVehiculo</code> hoy guarda <strong>toda la lista completa</strong>. Eso venía del TXT. Con una base de datos compartida eso es una mala estrategia, y ahora veremos por qué.</p>
+
+<div class="step-sub">
+<h5>8.1 <span class="file-tag edit">EDITAR</span> <code>repository/RepositorioVehiculo.java</code></h5>
+<p>Ese archivo está en <code>src/main/java/lab/flotavehicular/repository/</code>. Hoy se ve así:</p>
+<div class="code-fragment"><span class="d-comment">// ANTES: contrato de la etapa del TXT</span>
+<span class="d-keyword">public interface</span> <span class="d-type">RepositorioVehiculo</span> {
+    <span class="d-type">List</span>&lt;<span class="d-type">Vehiculo</span>&gt; <span class="d-method">cargarTodos</span>();
+    <span class="d-keyword">void</span> <span class="d-method">guardarTodos</span>(<span class="d-type">List</span>&lt;<span class="d-type">Vehiculo</span>&gt; vehiculos);
+}</div>
+<p><strong>Reemplácelo</strong> por esta versión:</p>
+<div class="code-fragment"><span class="d-keyword">package</span> lab.flotavehicular.repository;
+
+<span class="d-keyword">import</span> lab.flotavehicular.model.Vehiculo;
+<span class="d-keyword">import</span> java.util.List;
+
+<span class="d-comment">/**</span>
+<span class="d-comment"> * Contrato de persistencia. El Service no sabe si los datos están en TXT o MySQL.</span>
+<span class="d-comment"> * Cada operación expresa una intención de dominio y no una reescritura total de la tabla.</span>
+<span class="d-comment"> */</span>
+<span class="d-keyword">public interface</span> <span class="d-type">RepositorioVehiculo</span> {
+    <span class="d-type">List</span>&lt;<span class="d-type">Vehiculo</span>&gt; <span class="d-method">cargarTodos</span>();
+    <span class="d-keyword">void</span> <span class="d-method">insertar</span>(<span class="d-type">Vehiculo</span> vehiculo);
+    <span class="d-keyword">void</span> <span class="d-method">actualizar</span>(<span class="d-type">Vehiculo</span> vehiculo);
+    <span class="d-keyword">void</span> <span class="d-method">eliminar</span>(<span class="d-type">String</span> placa);
+}</div>
+</div>
+
+<div class="step-sub">
+<h5>8.2 ¿Por qué cambia el contrato?</h5>
+<ul>
+<li>Antes, para guardar <strong>un</strong> cambio había que reescribir <strong>toda</strong> la lista. Eso funcionaba porque el archivo era solo nuestro.</li>
+<li>En una base de datos <strong>compartida</strong>, borrar y reinsertar toda la tabla en cada cambio puede <strong>afectar datos de otros usuarios</strong>, generar <strong>condiciones de carrera</strong> y <strong>perder actualizaciones</strong> hechas al mismo tiempo.</li>
+<li>Por eso pasamos a <strong>una operación por vehículo</strong>: <code>insertar</code>, <code>actualizar</code> y <code>eliminar</code>.</li>
+</ul>
+<div class="highlight-box">
+<strong>La lista que mantiene el <code>FlotaService</code> es una vista de trabajo en memoria.</strong>
+El almacenamiento persistente es <strong>MySQL</strong>. Si una operación falla en la base, no queremos fingir que se guardó.
+</div>
+</div>
+
+<div class="error-box">
+<strong><i class="fa-solid fa-triangle-exclamation mr-1"></i> Aviso: su proyecto dejará de compilar.</strong>
+Al cambiar la interfaz, las clases que la implementaban o la usaban con el contrato viejo darán error. Es <strong>esperado</strong>. Los arreglamos en los Pasos 9, 10 y 11:
+<div class="code-fragment">RepositorioVehiculoTxt   <span class="d-comment">// implementaba el contrato viejo</span>
+FlotaService            <span class="d-comment">// llamaba a guardarTodos(...)</span></div>
+</div>
+
+<details>
+<summary><strong>¿Qué hago con <code>RepositorioVehiculoTxt</code>?</strong></summary>
+<p>Ese archivo implementaba el contrato anterior, así que ahora no compila. Tiene dos caminos:</p>
+<ul>
+<li><strong>Opción recomendada (la más simple):</strong> <strong>elimínelo</strong> del proyecto (clic derecho → <em>Delete</em>). MySQL ocupa su lugar y la idea ya quedó demostrada. Nota: no es “botar” trabajo; es <strong>reemplazar una implementación por otra mejor</strong>, que es justamente lo que permite tener una interfaz.</li>
+<li><strong>Opción conservadora:</strong> consérvelo y agregue los tres métodos nuevos (<code>insertar</code>, <code>actualizar</code>, <code>eliminar</code>) escribiendo el archivo TXT completo cada vez. Funciona, pero es más trabajo.</li>
+</ul>
+</details>
+</div>
+
+<!-- ==================== PASO 9 ==================== -->
+<div class="glass-panel" id="paso-9" style="border-left: 4px solid var(--accent-green);">
+<h2><i class="fa-solid fa-code mr-2" style="color: var(--accent-green);"></i> Paso 9 · Crear el repositorio MySQL</h2>
+<p>Esta es <strong>la clase protagonista</strong> del laboratorio. La vamos a escribir <strong>por partes</strong>: cada sub-paso muestra el código y lo explica. Al terminar los once sub-pasos, el archivo queda completo.</p>
+<p>Para empezar: en el paquete <code>lab.flotavehicular.repository</code>, clic derecho → <em>New → Java Class</em> → nombre <code>RepositorioVehiculoMySQL</code>.</p>
+
+<div class="step-sub">
+<h5>9.1 La cabecera del archivo: paquete, imports y declaración de la clase</h5>
+<div class="code-fragment compact"><span class="d-keyword">package</span> lab.flotavehicular.repository;
+
+<span class="d-keyword">import</span> lab.flotavehicular.model.*;
+<span class="d-keyword">import</span> java.sql.*;
+<span class="d-keyword">import</span> java.util.ArrayList;
+<span class="d-keyword">import</span> java.util.List;
+
+<span class="d-comment">/**</span>
+<span class="d-comment"> * Implementación JDBC. La aplicación únicamente llama procedimientos almacenados.</span>
+<span class="d-comment"> * No se construye SQL concatenando entradas; cada dato se envía como parámetro.</span>
+<span class="d-comment"> */</span>
+<span class="d-keyword">public class</span> <span class="d-type">RepositorioVehiculoMySQL</span> <span class="d-keyword">implements</span> <span class="d-type">RepositorioVehiculo</span> {</div>
+<ul>
+<li><code>import lab.flotavehicular.model.*;</code> → trae <code>Vehiculo</code> y sus subclases (<code>VehiculoCombustion</code>, <code>VehiculoElectrico</code>, <code>VehiculoPesado</code>) y los enums (<code>TipoVehiculo</code>, <code>EstadoVehiculo</code>, <code>TipoCarga</code>).</li>
+<li><code>import java.sql.*;</code> → trae todas las clases de JDBC: <code>Connection</code>, <code>CallableStatement</code>, <code>ResultSet</code>, <code>SQLException</code>, <code>DriverManager</code>, <code>Types</code>.</li>
+<li><code>implements RepositorioVehiculo</code> → se compromete a cumplir el contrato del Paso 8. Si se olvida un método, IntelliJ se lo marca.</li>
+</ul>
+</div>
+
+<div class="step-sub">
+<h5>9.2 Los tres datos de la conexión (atributos)</h5>
+<div class="code-fragment">    <span class="d-keyword">private final</span> <span class="d-type">String</span> url;
+    <span class="d-keyword">private final</span> <span class="d-type">String</span> usuario;
+    <span class="d-keyword">private final</span> <span class="d-type">String</span> clave;</div>
+<p>Son <code>private final</code>: nadie fuera de la clase los modifica y no cambian después de construirse. <strong>Fíjese: aquí NO hay ninguna contraseña escrita</strong>, solo los nombres de tres variables que se llenan en el constructor.</p>
+</div>
+
+<div class="step-sub">
+<h5>9.3 El constructor: leer las credenciales del entorno</h5>
+<div class="code-fragment compact">    <span class="d-keyword">public</span> <span class="d-method">RepositorioVehiculoMySQL</span>() {
+        <span class="d-comment">// Los secretos no se escriben aquí: se leen del entorno (Run Configuration).</span>
+        <span class="d-keyword">this</span>.url     = <span class="d-method">variable</span>(<span class="d-string">"FLOTA_DB_URL"</span>,      <span class="d-string">"jdbc:mysql://localhost:3306/flota_vehicular?serverTimezone=UTC"</span>);
+        <span class="d-keyword">this</span>.usuario = <span class="d-method">variable</span>(<span class="d-string">"FLOTA_DB_USER"</span>,     <span class="d-keyword">null</span>);
+        <span class="d-keyword">this</span>.clave   = <span class="d-method">variable</span>(<span class="d-string">"FLOTA_DB_PASSWORD"</span>, <span class="d-keyword">null</span>);
+        <span class="d-keyword">if</span> (usuario == <span class="d-keyword">null</span> || usuario.isBlank() || clave == <span class="d-keyword">null</span>) {
+            <span class="d-keyword">throw new</span> <span class="d-type">PersistenciaException</span>(
+                <span class="d-string">"Configure FLOTA_DB_USER y FLOTA_DB_PASSWORD como variables de entorno."</span>, <span class="d-keyword">null</span>);
+        }
+    }</div>
+<ul>
+<li>La <strong>URL</strong> tiene un valor por defecto porque <strong>no es un secreto</strong>: si nadie la configura, se usa esa.</li>
+<li>El <strong>usuario</strong> y la <strong>clave</strong> tienen <code>null</code> como valor por defecto → <strong>es obligatorio configurarlos</strong>.</li>
+<li>La validación <strong>falla rápido</strong>: si falta la configuración, el error aparece al abrir la aplicación, con un mensaje claro en lugar de un error raro más adelante.</li>
+<li>Lanza su excepción <code>PersistenciaException</code> (la que ya tiene en el proyecto), no una <code>SQLException</code>.</li>
+</ul>
+</div>
+
+<div class="step-sub">
+<h5>9.4 El método auxiliar <code>variable()</code></h5>
+<div class="code-fragment">    <span class="d-keyword">private static</span> <span class="d-type">String</span> <span class="d-method">variable</span>(<span class="d-type">String</span> nombre, <span class="d-type">String</span> predeterminado) {
+        <span class="d-type">String</span> valor = <span class="d-type">System</span>.<span class="d-method">getenv</span>(nombre);
+        <span class="d-keyword">return</span> valor == <span class="d-keyword">null</span> || valor.isBlank() ? predeterminado : valor;
+    }</div>
+<ul>
+<li><code>System.getenv("FLOTA_DB_USER")</code> es la instrucción de Java que <strong>lee una variable de entorno del sistema operativo</strong>. Es la pieza que conecta el Paso 12 con el programa.</li>
+<li>Si la variable no existe o está vacía, devuelve el <strong>valor por defecto</strong> que le pasaron.</li>
+<li>Es <code>static</code> porque no depende del objeto: solo de lo que le pasan por parámetro.</li>
+</ul>
+</div>
+
+<div class="step-sub">
+<h5>9.5 <code>conectar()</code>: abrir la conexión</h5>
+<div class="code-fragment">    <span class="d-keyword">private</span> <span class="d-type">Connection</span> <span class="d-method">conectar</span>() <span class="d-keyword">throws</span> <span class="d-type">SQLException</span> {
+        <span class="d-keyword">return</span> <span class="d-type">DriverManager</span>.<span class="d-method">getConnection</span>(url, usuario, clave);
+    }</div>
+<ul>
+<li><code>DriverManager.getConnection(...)</code> abre el canal de comunicación con el servidor usando los tres datos.</li>
+<li>Una <code>Connection</code> <strong>es una sesión</strong>: incluye el usuario con el que se conectó y, por lo tanto, <strong>sus permisos</strong>. Aquí es donde se aplica todo lo del Paso 4: por eso la aplicación no puede hacer <code>SELECT</code>.</li>
+<li><code>throws SQLException</code> avisa que este método puede fallar; quien lo llame decide qué hacer.</li>
+</ul>
+<div class="highlight-box">
+<strong>Nota de diseño:</strong> aquí abrimos una conexión nueva por operación. Es lo correcto para aprender, porque deja ver el ciclo de vida de JDBC. En una aplicación de mucho tráfico se usaría un <strong>pool de conexiones</strong> para reutilizarlas.
+</div>
+</div>
+
+<div class="step-sub">
+<h5>9.6 <code>cargarTodos()</code>: llamar al procedimiento y leer las filas</h5>
+<div class="code-fragment compact">    <span class="d-annotation">@Override</span>
+    <span class="d-keyword">public</span> <span class="d-type">List</span>&lt;<span class="d-type">Vehiculo</span>&gt; <span class="d-method">cargarTodos</span>() {
+        <span class="d-type">List</span>&lt;<span class="d-type">Vehiculo</span>&gt; resultado = <span class="d-keyword">new</span> <span class="d-type">ArrayList</span>&lt;&gt;();
+        <span class="d-keyword">try</span> (<span class="d-type">Connection</span> c = <span class="d-method">conectar</span>();
+             <span class="d-type">CallableStatement</span> cs = c.<span class="d-method">prepareCall</span>(<span class="d-string">"{CALL sp_listar_vehiculos()}"</span>);
+             <span class="d-type">ResultSet</span> rs = cs.<span class="d-method">executeQuery</span>()) {
+            <span class="d-keyword">while</span> (rs.<span class="d-method">next</span>()) resultado.<span class="d-method">add</span>(<span class="d-method">mapear</span>(rs));
+            <span class="d-keyword">return</span> resultado;
+        } <span class="d-keyword">catch</span> (<span class="d-type">SQLException</span> e) {
+            <span class="d-keyword">throw</span> <span class="d-method">fallo</span>(<span class="d-string">"consultar la flota"</span>, e);
+        }
+    }</div>
+<ul>
+<li><code>prepareCall("{CALL sp_listar_vehiculos()}")</code> → prepara una <strong>llamada a un procedimiento</strong>. Las llaves <code>{ }</code> son la sintaxis de escape de JDBC; por dentro, el driver lo traduce a <code>CALL</code>.</li>
+<li><code>executeQuery()</code> se usa cuando el procedimiento <strong>devuelve filas</strong> (como este, que hace un <code>SELECT</code>).</li>
+<li><code>rs.next()</code> avanza fila por fila y devuelve <code>false</code> cuando se acaban; por cada fila, <code>mapear(rs)</code> construye un objeto Java.</li>
+<li>Al final se devuelve la lista completa (o vacía, si no había vehículos).</li>
+</ul>
+</div>
+
+<div class="step-sub">
+<h5>9.7 <code>insertar()</code> y <code>actualizar()</code>: registrar y editar</h5>
+<div class="code-fragment compact"><span class="d-annotation">    @Override</span>
+    <span class="d-keyword">public void</span> <span class="d-method">insertar</span>(<span class="d-type">Vehiculo</span> v) {
+        <span class="d-method">ejecutarGuardar</span>(<span class="d-string">"{CALL sp_insertar_vehiculo(?,?,?,?,?,?,?,?,?,?)}"</span>, v);
+    }
+
+    <span class="d-annotation">@Override</span>
+    <span class="d-keyword">public void</span> <span class="d-method">actualizar</span>(<span class="d-type">Vehiculo</span> v) {
+        <span class="d-method">ejecutarGuardar</span>(<span class="d-string">"{CALL sp_actualizar_vehiculo(?,?,?,?,?,?,?,?,?,?)}"</span>, v);
+    }</div>
+<ul>
+<li>Los dos hacen exactamente lo mismo salvo <strong>el nombre del procedimiento</strong>, así que comparten un método privado: <code>ejecutarGuardar</code>.</li>
+<li><strong>Cada <code>?</code> es un parámetro.</strong> Cuente: hay <strong>10 signos de interrogación</strong> → los mismos 10 parámetros del Paso 5.5.</li>
+<li>El orden de los <code>?</code> debe ser el orden de los parámetros del procedimiento. Si se equivoca, MySQL recibiría datos en el lugar equivocado.</li>
+</ul>
+</div>
+
+<div class="step-sub">
+<h5>9.8 <code>ejecutarGuardar()</code>: el método que comparten</h5>
+<div class="code-fragment compact">    <span class="d-keyword">private void</span> <span class="d-method">ejecutarGuardar</span>(<span class="d-type">String</span> llamada, <span class="d-type">Vehiculo</span> v) {
+        <span class="d-keyword">try</span> (<span class="d-type">Connection</span> c = <span class="d-method">conectar</span>(); <span class="d-type">CallableStatement</span> cs = c.<span class="d-method">prepareCall</span>(llamada)) {
+            <span class="d-method">llenarParametros</span>(cs, v);
+            cs.<span class="d-method">executeUpdate</span>();
+        } <span class="d-keyword">catch</span> (<span class="d-type">SQLException</span> e) {
+            <span class="d-keyword">throw</span> <span class="d-method">fallo</span>(<span class="d-string">"guardar el vehículo"</span>, e);
+        }
+    }</div>
+<ul>
+<li>Recibe <strong>la llamada</strong> (un texto) y <strong>el vehículo</strong>. Así sirve para insertar y para actualizar sin repetir código.</li>
+<li><code>llenarParametros(cs, v)</code> escribe los 10 valores dentro de los <code>?</code> (lo vemos en el sub-paso 9.10).</li>
+<li><code>executeUpdate()</code> se usa cuando la operación <strong>no devuelve filas</strong> (insert, update, delete). Devuelve cuántas filas afectó, pero aquí no lo usamos.</li>
+</ul>
+<div class="highlight-box">
+<strong>Esto es lo esencial:</strong> el texto de la llamada está <strong>escrito y fijo</strong>. Los valores <strong>no</strong> se pegan al texto: viajan por separado con <code>setString</code>, <code>setInt</code>, etc. Por eso un valor malicioso <u>no puede</u> alterar el significado de la sentencia. <strong>Esa separación es la defensa contra la inyección SQL.</strong>
+</div>
+</div>
+
+<div class="step-sub">
+<h5>9.9 <code>eliminar()</code>: borrar por placa</h5>
+<div class="code-fragment compact">    <span class="d-annotation">@Override</span>
+    <span class="d-keyword">public void</span> <span class="d-method">eliminar</span>(<span class="d-type">String</span> placa) {
+        <span class="d-keyword">try</span> (<span class="d-type">Connection</span> c = <span class="d-method">conectar</span>(); <span class="d-type">CallableStatement</span> cs = c.<span class="d-method">prepareCall</span>(<span class="d-string">"{CALL sp_eliminar_vehiculo(?)}"</span>)) {
+            cs.<span class="d-method">setString</span>(1, placa);
+            cs.<span class="d-method">executeUpdate</span>();
+        } <span class="d-keyword">catch</span> (<span class="d-type">SQLException</span> e) {
+            <span class="d-keyword">throw</span> <span class="d-method">fallo</span>(<span class="d-string">"eliminar el vehículo"</span>, e);
+        }
+    }</div>
+<ul>
+<li>Un solo <code>?</code> → un solo parámetro: la placa.</li>
+<li><code>setString(1, placa)</code> coloca el valor de Java en el primer <code>?</code>.</li>
+<li>La placa llega desde la vista, pasa por el Controller y el Service, y aquí se envía <strong>como valor</strong>, nunca concatenada.</li>
+</ul>
+</div>
+
+<div class="step-sub">
+<h5>9.10 <code>llenarParametros()</code>: el puente entre el objeto y el procedimiento</h5>
+<div class="code-fragment compact">    <span class="d-keyword">private void</span> <span class="d-method">llenarParametros</span>(<span class="d-type">CallableStatement</span> cs, <span class="d-type">Vehiculo</span> v) <span class="d-keyword">throws</span> <span class="d-type">SQLException</span> {
+        cs.<span class="d-method">setString</span>(1, v.<span class="d-method">getPlaca</span>());
+        cs.<span class="d-method">setString</span>(2, v.<span class="d-method">getMarca</span>());
+        cs.<span class="d-method">setInt</span>(3, v.<span class="d-method">getKilometraje</span>());
+        cs.<span class="d-method">setString</span>(4, v.<span class="d-method">getEstado</span>().<span class="d-method">name</span>());
+        cs.<span class="d-method">setString</span>(5, v.<span class="d-method">getTipo</span>().<span class="d-method">name</span>());
+        <span class="d-keyword">double</span> energia = 0; <span class="d-keyword">int</span> ciclos = 0; <span class="d-keyword">double</span> tonelaje = 0; <span class="d-keyword">double</span> carga = 0; <span class="d-type">String</span> tipoCarga = <span class="d-keyword">null</span>;
+        <span class="d-keyword">if</span> (v <span class="d-keyword">instanceof</span> <span class="d-type">VehiculoPesado</span> p) {
+            energia = p.<span class="d-method">getNivelCombustible</span>(); tonelaje = p.<span class="d-method">getTonelajeMaximo</span>(); carga = p.<span class="d-method">getCargaActual</span>(); tipoCarga = p.<span class="d-method">getTipoCarga</span>().<span class="d-method">name</span>();
+        } <span class="d-keyword">else if</span> (v <span class="d-keyword">instanceof</span> <span class="d-type">VehiculoElectrico</span> e) {
+            energia = e.<span class="d-method">getPorcentajeBateria</span>(); ciclos = e.<span class="d-method">getCiclosDeCarga</span>();
+        } <span class="d-keyword">else if</span> (v <span class="d-keyword">instanceof</span> <span class="d-type">VehiculoCombustion</span> c) {
+            energia = c.<span class="d-method">getNivelCombustible</span>();
+        }
+        cs.<span class="d-method">setDouble</span>(6, energia); cs.<span class="d-method">setInt</span>(7, ciclos);
+        <span class="d-keyword">if</span> (v <span class="d-keyword">instanceof</span> <span class="d-type">VehiculoPesado</span>) cs.<span class="d-method">setDouble</span>(8, tonelaje); <span class="d-keyword">else</span> cs.<span class="d-method">setNull</span>(8, <span class="d-type">Types</span>.DECIMAL);
+        <span class="d-keyword">if</span> (v <span class="d-keyword">instanceof</span> <span class="d-type">VehiculoPesado</span>) cs.<span class="d-method">setDouble</span>(9, carga);    <span class="d-keyword">else</span> cs.<span class="d-method">setNull</span>(9, <span class="d-type">Types</span>.DECIMAL);
+        <span class="d-keyword">if</span> (tipoCarga == <span class="d-keyword">null</span>) cs.<span class="d-method">setNull</span>(10, <span class="d-type">Types</span>.VARCHAR); <span class="d-keyword">else</span> cs.<span class="d-method">setString</span>(10, tipoCarga);
+    }</div>
+<p>Aquí se traduce un <strong>objeto</strong> a la lista de <strong>valores</strong> que espera el procedimiento, <strong>en el orden exacto</strong> del Paso 5.5. Línea por línea:</p>
+<table class="grid-table">
+<thead><tr><th style="width: 30%;">Código</th><th>Qué pasa</th></tr></thead>
+<tbody>
+<tr><td><code>setString(1, v.getPlaca())</code></td><td>Parámetro 1 = placa.</td></tr>
+<tr><td><code>setString(2, ...)</code>, <code>setInt(3, ...)</code></td><td>Parámetros 2 y 3. Fíjese en el tipo: <code>setInt</code> para un número entero.</td></tr>
+<tr><td><code>setString(4, v.getEstado().name())</code></td><td>Convierte el <strong>enum</strong> de Java al texto que espera la columna <code>ENUM</code> de MySQL. <code>.name()</code> devuelve, por ejemplo, <code>"DISPONIBLE"</code>.</td></tr>
+<tr><td><code>setString(5, v.getTipo().name())</code></td><td>Igual, con <code>TipoVehiculo</code>.</td></tr>
+<tr><td><code>if (v instanceof VehiculoPesado p) { ... }</code></td><td><strong>Pattern matching</strong>: si el vehículo es pesado, saca nivel de combustible, tonelaje, carga y tipo de carga.</td></tr>
+<tr><td><code>else if (... VehiculoElectrico e)</code></td><td>Si es eléctrico, saca porcentaje de batería y ciclos de carga.</td></tr>
+<tr><td><code>else if (... VehiculoCombustion c)</code></td><td>Si es de combustión, solo el nivel de combustible.</td></tr>
+<tr><td><code>setDouble(6, energia); setInt(7, ciclos);</code></td><td>Parámetros 6 y 7, con los valores que dejó el <code>if/else</code> de arriba. Un eléctrico nunca tiene ciclos si no lo es → queda en <code>0</code>.</td></tr>
+<tr><td><code>setNull(8, Types.DECIMAL)</code></td><td><strong>Muy importante:</strong> si el vehículo <u>no</u> es pesado, hay que enviar <code>NULL</code> <strong>explícito</strong> (no <code>0</code>), porque la restricción <code>chk_pesado</code> exige que esas columnas sean <code>NULL</code> para los demás tipos.</td></tr>
+<tr><td><code>setNull(9, ...)</code> y <code>setNull(10, ...)</code></td><td>Lo mismo para carga actual y tipo de carga.</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="step-sub">
+<h5>9.11 <code>mapear()</code>: convertir una fila en un objeto</h5>
+<div class="code-fragment compact">    <span class="d-keyword">private</span> <span class="d-type">Vehiculo</span> <span class="d-method">mapear</span>(<span class="d-type">ResultSet</span> rs) <span class="d-keyword">throws</span> <span class="d-type">SQLException</span> {
+        <span class="d-type">String</span> placa = rs.<span class="d-method">getString</span>(<span class="d-string">"placa"</span>); <span class="d-type">String</span> marca = rs.<span class="d-method">getString</span>(<span class="d-string">"marca"</span>);
+        <span class="d-keyword">int</span> km = rs.<span class="d-method">getInt</span>(<span class="d-string">"kilometraje"</span>); <span class="d-keyword">double</span> energia = rs.<span class="d-method">getDouble</span>(<span class="d-string">"nivel_energia"</span>);
+        <span class="d-type">TipoVehiculo</span> tipo = <span class="d-type">TipoVehiculo</span>.<span class="d-method">valueOf</span>(rs.<span class="d-method">getString</span>(<span class="d-string">"tipo"</span>));
+        <span class="d-type">Vehiculo</span> v = <span class="d-keyword">switch</span> (tipo) {
+            <span class="d-keyword">case</span> COMBUSTION -&gt; <span class="d-keyword">new</span> <span class="d-type">VehiculoCombustion</span>(placa, marca, km, energia);
+            <span class="d-keyword">case</span> ELECTRICO  -&gt; <span class="d-keyword">new</span> <span class="d-type">VehiculoElectrico</span>(placa, marca, km, energia, rs.<span class="d-method">getInt</span>(<span class="d-string">"ciclos_carga"</span>));
+            <span class="d-keyword">case</span> PESADO -&gt; {
+                <span class="d-type">VehiculoPesado</span> p = <span class="d-keyword">new</span> <span class="d-type">VehiculoPesado</span>(placa, marca, km, energia,
+                        rs.<span class="d-method">getDouble</span>(<span class="d-string">"tonelaje_maximo"</span>), <span class="d-type">TipoCarga</span>.<span class="d-method">valueOf</span>(rs.<span class="d-method">getString</span>(<span class="d-string">"tipo_carga"</span>)));
+                <span class="d-keyword">double</span> carga = rs.<span class="d-method">getDouble</span>(<span class="d-string">"carga_actual"</span>); <span class="d-keyword">if</span> (carga &gt; 0) p.<span class="d-method">cargarMercancia</span>(carga);
+                <span class="d-keyword">yield</span> p;
+            }
+        };
+        v.<span class="d-method">setEstado</span>(<span class="d-type">EstadoVehiculo</span>.<span class="d-method">valueOf</span>(rs.<span class="d-method">getString</span>(<span class="d-string">"estado"</span>)));
+        <span class="d-keyword">return</span> v;
+    }</div>
+<p>El <code>ResultSet</code> trae <strong>filas y columnas</strong>, no objetos <code>Vehiculo</code>. Esta traducción es manual y se llama <strong>mapeo objeto–relacional</strong>:</p>
+<ul>
+<li><code>rs.getString("placa")</code> lee una columna <strong>por su nombre</strong>. Si es numérica se usa <code>getInt</code> o <code>getDouble</code>.</li>
+<li>La columna <code>tipo</code> <strong>decide qué subclase construir</strong>: es la herencia del modelo reconstruida desde una tabla plana. Es un <code>switch</code> de expresión, que devuelve el objeto.</li>
+<li>En el caso <code>PESADO</code>, además se vuelve a cargar la mercancía si había carga (<code>cargarMercancia</code>). El <code>yield</code> devuelve el objeto construido dentro del bloque <code>{ }</code>.</li>
+<li>Al final se restaura el <strong>estado</strong>, un dato que comparten todos los subtipos.</li>
+</ul>
+</div>
+
+<div class="step-sub">
+<h5>9.12 <code>fallo()</code>: errores técnicos vs. mensajes amigables</h5>
+<div class="code-fragment compact">    <span class="d-keyword">private</span> <span class="d-type">PersistenciaException</span> <span class="d-method">fallo</span>(<span class="d-type">String</span> operacion, <span class="d-type">SQLException</span> e) {
+        <span class="d-comment">// El detalle técnico se conserva como causa; la interfaz recibe un mensaje genérico.</span>
+        <span class="d-keyword">return new</span> <span class="d-type">PersistenciaException</span>(<span class="d-string">"No fue posible "</span> + operacion + <span class="d-string">". Verifique conexión, permisos y datos."</span>, e);
+    }</div>
+<ul>
+<li>Recibe <strong>qué operación</strong> se estaba haciendo y <strong>el error real</strong> de MySQL.</li>
+<li>Devuelve <strong>una excepción</strong> (no la lanza): por eso los métodos de arriba escriben <code>throw fallo(...)</code>, que se lee muy claro.</li>
+<li>El <strong>detalle técnico</strong> (<code>e</code>) se guarda como <em>causa</em> para poder depurar; la ventana muestra un <strong>mensaje genérico y entendible</strong>.</li>
+<li>Nota: aquí se concatena <strong>texto de la aplicación</strong> (no datos de la persona usuaria) para armar un mensaje de error; eso no es SQL y no representa riesgo.</li>
+</ul>
+</div>
+
+<div class="step-sub">
+<h5>9.13 Cerrar la clase y comprobar</h5>
+<p>Agregue la llave final <code>}</code> para cerrar la clase. La estructura del archivo, en orden, debe quedar así:</p>
+<ul class="callout-list">
+<li><code>package</code> + <code>import</code> + <code>public class RepositorioVehiculoMySQL implements RepositorioVehiculo {</code></li>
+<li>Campos <code>url</code>, <code>usuario</code>, <code>clave</code></li>
+<li><code>RepositorioVehiculoMySQL()</code> — el constructor</li>
+<li><code>variable(String, String)</code></li>
+<li><code>conectar()</code></li>
+<li><code>cargarTodos()</code></li>
+<li><code>insertar(Vehiculo)</code></li>
+<li><code>actualizar(Vehiculo)</code></li>
+<li><code>ejecutarGuardar(String, Vehiculo)</code></li>
+<li><code>eliminar(String)</code></li>
+<li><code>llenarParametros(CallableStatement, Vehiculo)</code></li>
+<li><code>mapear(ResultSet)</code></li>
+<li><code>fallo(String, SQLException)</code></li>
+<li><code>}</code> — cierre de la clase</li>
+</ul>
+<p><strong>Revisión rápida:</strong> el archivo <strong>no debe abrir en rojo</strong>. Todos los métodos de la interfaz (<code>cargarTodos</code>, <code>insertar</code>, <code>actualizar</code>, <code>eliminar</code>) llevan <code>@Override</code>; si le falta alguno, IntelliJ le avisa que la clase es abstracta o que no implementa la interfaz.</p>
+</div>
+
+<div class="step-sub">
+<h5>9.14 El ciclo de JDBC, visible en un solo vistazo</h5>
+<div class="code-fragment"><span class="d-keyword">try</span> (<span class="d-type">Connection</span> c = <span class="d-method">conectar</span>();                       <span class="d-comment">// 1. conexión</span>
+     <span class="d-type">CallableStatement</span> cs = c.<span class="d-method">prepareCall</span>(llamada); <span class="d-comment">// 2. sentencia</span>
+     <span class="d-type">ResultSet</span> rs = cs.<span class="d-method">executeQuery</span>()) {            <span class="d-comment">// 3. resultado</span>
+    ...
+}                                                        <span class="d-comment">// 4. cierre automático</span></div>
+<p>El <code>try ( ... )</code> es <strong>try-with-resources</strong>: al salir del bloque cierra <code>Connection</code>, <code>CallableStatement</code> y <code>ResultSet</code>, <strong>incluso si ocurre una excepción</strong>. No es solo estilo: es administrar bien los recursos del servidor. Si no los cerráramos, el servidor iría acumulando conexiones abiertas hasta quedarse sin capacidad.</p>
+</div>
+
+<details>
+<summary><strong>¿Qué significa el <code>@Override</code>?</strong></summary>
+<p>Le dice a Java: “este método <strong>implementa</strong> uno declarado en la interfaz”. Si usted se equivoca en el nombre (por ejemplo escribe <code>insertarVehiculo</code> en vez de <code>insertar</code>), el compilador marca error inmediatamente. Es una red de seguridad.</p>
+</details>
+
+<details>
+<summary><strong>¿Por qué <code>executeQuery()</code> en un caso y <code>executeUpdate()</code> en otro?</strong></summary>
+<ul>
+<li><code>executeQuery()</code> → cuando el procedimiento <strong>devuelve filas</strong> (un <code>SELECT</code>). Devuelve un <code>ResultSet</code>.</li>
+<li><code>executeUpdate()</code> → cuando <strong>no devuelve filas</strong> (insert, update, delete). Devuelve un entero con las filas afectadas.</li>
+</ul>
+<p>Si los intercambia, obtiene un error de tipo: el primero necesita un <code>ResultSet</code> y el segundo un <code>int</code>.</p>
+</details>
+
+<details>
+<summary><strong>¿Por qué <code>setNull(8, Types.DECIMAL)</code> y no <code>setDouble(8, 0)</code>?</strong></summary>
+<p>Porque la restricción <code>chk_pesado</code> de la tabla exige que, si el tipo <u>no</u> es <code>PESADO</code>, esas columnas sean <code>NULL</code>. Con <code>0</code> el <code>INSERT</code> sería rechazado por la base. <code>Types.DECIMAL</code> le indica a JDBC <strong>de qué tipo</strong> es el <code>NULL</code> que se está enviando.</p>
+</details>
+</div>
+
+<!-- ==================== PASO 10 ==================== -->
+<div class="glass-panel" id="paso-10" style="border-left: 4px solid var(--accent-peach);">
+<h2><i class="fa-solid fa-gears mr-2" style="color: var(--accent-peach);"></i> Paso 10 · Ajustar el <code>FlotaService</code></h2>
+<p>El contrato del repositorio cambió, así que su <code>FlotaService</code> dejó de compilar. Son <strong>tres llamadas</strong> las que hay que ajustar.</p>
+
+<div class="step-sub">
+<h5>10.1 <span class="file-tag edit">EDITAR</span> <code>service/FlotaService.java</code> — las tres llamadas</h5>
+<p>Abra el archivo y busque las llamadas al repositorio. Cámbielas así:</p>
+<ul class="callout-list">
+<li>En <code>agregarVehiculo</code>: <code>repositorio.guardarTodos(vehiculos)</code> → <strong><code>repositorio.insertar(v)</code></strong></li>
+<li>En <code>actualizarVehiculo</code>: <code>repositorio.guardarTodos(vehiculos)</code> → <strong><code>repositorio.actualizar(nuevo)</code></strong></li>
+<li>En <code>eliminarVehiculo</code>: <code>repositorio.guardarTodos(vehiculos)</code> → <strong><code>repositorio.eliminar(placa)</code></strong></li>
+</ul>
+</div>
+
+<div class="step-sub">
+<h5>10.2 Así debe quedar el archivo completo</h5>
+<p>Si prefiere reemplazarlo entero (o comparar), esta es la versión final:</p>
+<div class="code-fragment compact"><span class="d-keyword">package</span> lab.flotavehicular.service;
+
+<span class="d-keyword">import</span> lab.flotavehicular.model.EstadoVehiculo;
+<span class="d-keyword">import</span> lab.flotavehicular.model.Vehiculo;
+<span class="d-keyword">import</span> lab.flotavehicular.repository.RepositorioVehiculo;
+<span class="d-keyword">import</span> java.util.ArrayList;
+<span class="d-keyword">import</span> java.util.List;
+
+<span class="d-comment">/** Reglas de aplicación y coordinación. No conoce SQL, JDBC ni credenciales. */</span>
+<span class="d-keyword">public class</span> <span class="d-type">FlotaService</span> {
+    <span class="d-keyword">private final</span> <span class="d-type">List</span>&lt;<span class="d-type">Vehiculo</span>&gt; vehiculos;
+    <span class="d-keyword">private final</span> <span class="d-type">RepositorioVehiculo</span> repositorio;
+
+    <span class="d-keyword">public</span> <span class="d-method">FlotaService</span>(<span class="d-type">RepositorioVehiculo</span> repositorio) {
+        <span class="d-keyword">this</span>.repositorio = repositorio;
+        <span class="d-keyword">this</span>.vehiculos = <span class="d-keyword">new</span> <span class="d-type">ArrayList</span>&lt;&gt;(repositorio.<span class="d-method">cargarTodos</span>());
+    }
+
+    <span class="d-keyword">public void</span> <span class="d-method">agregarVehiculo</span>(<span class="d-type">Vehiculo</span> v) {
+        <span class="d-keyword">if</span> (vehiculos.<span class="d-method">stream</span>().<span class="d-method">anyMatch</span>(x -&gt; x.<span class="d-method">getPlaca</span>().<span class="d-method">equalsIgnoreCase</span>(v.<span class="d-method">getPlaca</span>())))
+            <span class="d-keyword">throw new</span> <span class="d-type">IllegalArgumentException</span>(<span class="d-string">"Ya existe un vehículo con esa placa."</span>);
+        repositorio.<span class="d-method">insertar</span>(v); <span class="d-comment">// Primero persistimos; si falla, no alteramos la lista local.</span>
+        vehiculos.<span class="d-method">add</span>(v);
+    }
+
+    <span class="d-keyword">public</span> <span class="d-type">List</span>&lt;<span class="d-type">Vehiculo</span>&gt; <span class="d-method">obtenerVehiculos</span>() { <span class="d-keyword">return new</span> <span class="d-type">ArrayList</span>&lt;&gt;(vehiculos); }
+
+    <span class="d-keyword">public void</span> <span class="d-method">actualizarVehiculo</span>(<span class="d-type">Vehiculo</span> nuevo) {
+        <span class="d-keyword">for</span> (<span class="d-keyword">int</span> i = 0; i &lt; vehiculos.<span class="d-method">size</span>(); i++) {
+            <span class="d-type">Vehiculo</span> actual = vehiculos.<span class="d-method">get</span>(i);
+            <span class="d-keyword">if</span> (actual.<span class="d-method">getPlaca</span>().<span class="d-method">equalsIgnoreCase</span>(nuevo.<span class="d-method">getPlaca</span>())) {
+                <span class="d-keyword">if</span> (actual.<span class="d-method">getEstado</span>() != <span class="d-type">EstadoVehiculo</span>.DISPONIBLE)
+                    <span class="d-keyword">throw new</span> <span class="d-type">IllegalStateException</span>(<span class="d-string">"Solo se puede editar un vehículo disponible."</span>);
+                repositorio.<span class="d-method">actualizar</span>(nuevo);
+                vehiculos.<span class="d-method">set</span>(i, nuevo);
+                <span class="d-keyword">return</span>;
+            }
+        }
+        <span class="d-keyword">throw new</span> <span class="d-type">IllegalArgumentException</span>(<span class="d-string">"No se encontró el vehículo."</span>);
+    }
+
+    <span class="d-keyword">public void</span> <span class="d-method">eliminarVehiculo</span>(<span class="d-type">String</span> placa) {
+        <span class="d-type">Vehiculo</span> encontrado = vehiculos.<span class="d-method">stream</span>().<span class="d-method">filter</span>(v -&gt; v.<span class="d-method">getPlaca</span>().<span class="d-method">equalsIgnoreCase</span>(placa))
+                .<span class="d-method">findFirst</span>().<span class="d-method">orElseThrow</span>(() -&gt; <span class="d-keyword">new</span> <span class="d-type">IllegalArgumentException</span>(<span class="d-string">"No se encontró el vehículo."</span>));
+        <span class="d-keyword">if</span> (encontrado.<span class="d-method">getEstado</span>() != <span class="d-type">EstadoVehiculo</span>.DISPONIBLE)
+            <span class="d-keyword">throw new</span> <span class="d-type">IllegalStateException</span>(<span class="d-string">"Solo se puede eliminar un vehículo disponible."</span>);
+        repositorio.<span class="d-method">eliminar</span>(placa);
+        vehiculos.<span class="d-method">remove</span>(encontrado);
+    }
+
+    <span class="d-comment">/** Persiste los cambios de estado/energía realizados por las operaciones de la flota. */</span>
+    <span class="d-keyword">public void</span> <span class="d-method">guardarCambios</span>(<span class="d-type">Vehiculo</span> v) { repositorio.<span class="d-method">actualizar</span>(v); }
+}</div>
+<div class="highlight-box">
+<strong>Fíjese en el orden en <code>agregarVehiculo</code>:</strong> primero <code>repositorio.insertar(v)</code> y <strong>solo después</strong> <code>vehiculos.add(v)</code>. Si la base falla, <strong>la lista en memoria no se altera</strong> y la aplicación no “finge” que guardó.
+</div>
+<p class="text-sm">Si su <code>FlotaService</code> tiene alguna regla extra que agregó usted, <strong>consérvela</strong>: lo único obligatorio es ajustar las tres llamadas al repositorio.</p>
+</div>
+</div>
+
+<!-- ==================== PASO 11 ==================== -->
+<div class="glass-panel" id="paso-11" style="border-left: 4px solid var(--accent-green);">
+<h2><i class="fa-solid fa-pen-to-square mr-2" style="color: var(--accent-green);"></i> Paso 11 · Cambiar UNA línea del Controller</h2>
+<p>Aquí está la gran lección de arquitectura: para pasar de archivo a base de datos, en el Controller <strong>solo cambia la línea que elige la implementación</strong>.</p>
+
+<div class="step-sub">
+<h5>11.1 <span class="file-tag edit">EDITAR</span> <code>controller/FlotaController.java</code></h5>
+<p>Abra el archivo y busque <strong>el constructor</strong>. Ahí debe tener una línea donde se crea el repositorio, parecida a esta:</p>
+<div class="code-fragment compact"><span class="d-comment">// ANTES: apuntaba al archivo de texto</span>
+<span class="d-type">RepositorioVehiculo</span> repositorio = <span class="d-keyword">new</span> <span class="d-type">RepositorioVehiculoTxt</span>(<span class="d-type">Path</span>.<span class="d-method">of</span>(<span class="d-string">"vehiculos.txt"</span>));
+<span class="d-keyword">this</span>.flota = <span class="d-keyword">new</span> <span class="d-type">FlotaService</span>(repositorio);</div>
+<p><strong>Cámbiela</strong> por:</p>
+<div class="code-fragment compact"><span class="d-comment">// AHORA: apunta al SABD MySQL</span>
+<span class="d-type">RepositorioVehiculo</span> repositorio = <span class="d-keyword">new</span> <span class="d-type">RepositorioVehiculoMySQL</span>();
+<span class="d-keyword">this</span>.flota = <span class="d-keyword">new</span> <span class="d-type">FlotaService</span>(repositorio);</div>
+</div>
+
+<div class="step-sub">
+<h5>11.2 Ajustar los import</h5>
+<p>Arriba del archivo, quite el import que ya no usa y agregue el nuevo:</p>
+<div class="code-fragment"><span class="d-comment">// QUITAR (si ya no usa el repositorio TXT)</span>
+<span class="d-keyword">import</span> lab.flotavehicular.repository.RepositorioVehiculoTxt;
+
+<span class="d-comment">// AGREGAR</span>
+<span class="d-keyword">import</span> lab.flotavehicular.repository.RepositorioVehiculoMySQL;</div>
+<p class="text-sm">Conserve el import de <code>RepositorioVehiculo</code> (la interfaz) y el de <code>PersistenciaException</code> si ya lo tenía en los <code>catch</code>. Si IntelliJ le muestra imports en gris, son los que ya no se usan: puede quitarlos.</p>
+</div>
+
+<div class="step-sub">
+<h5>11.3 ¿Por qué esto demuestra que la arquitectura está bien?</h5>
+<p>Ambas clases implementan la <strong>misma interfaz</strong> <code>RepositorioVehiculo</code>. El <code>FlotaService</code> recibe la interfaz y <strong>no sabe</strong> cuál implementación le tocó:</p>
+<div class="code-fragment"><span class="d-keyword">public</span> <span class="d-method">FlotaService</span>(<span class="d-type">RepositorioVehiculo</span> repositorio) {
+    <span class="d-keyword">this</span>.repositorio = repositorio;
+    <span class="d-keyword">this</span>.vehiculos = <span class="d-keyword">new</span> <span class="d-type">ArrayList</span>&lt;&gt;(repositorio.<span class="d-method">cargarTodos</span>());
+}</div>
+<div class="ok-box">
+<strong>Esta es la lección del laboratorio:</strong> cambiar el mecanismo de persistencia <strong>no</strong> obligó a tocar el modelo, ni la vista, ni las reglas de negocio. Solo la línea que elige la implementación. <strong>Eso es tener la arquitectura bien separada.</strong>
+</div>
+</div>
+</div>
+
+<!-- ==================== PASO 12 ==================== -->
+<div class="glass-panel" id="paso-12" style="border-left: 4px solid var(--una-gold);">
+<h2><i class="fa-solid fa-user-secret mr-2" style="color: var(--una-gold);"></i> Paso 12 · Configurar las variables de entorno</h2>
+<p>La contraseña <strong>no se escribe en ninguna clase Java</strong>. Se configura fuera del código, en la <em>Run Configuration</em> de IntelliJ.</p>
+
+<div class="step-sub">
+<h5>12.1 Abrir la configuración de ejecución</h5>
+<ol>
+<li>Menú <strong>Run → Edit Configurations…</strong></li>
+<li>En la lista izquierda, seleccione la configuración que ejecuta su <code>Main</code>. Si no aparece ninguna, cree una: <strong>+ → Application</strong>, <em>Main class</em> = <code>lab.flotavehicular.Main</code>, <em>Use classpath of module</em> = su módulo.</li>
+<li>Busque el campo <strong>Environment variables</strong> (si está colapsado, haga clic en la flechita).</li>
+<li>Ingrese en el campo de texto, <strong>separado por ;</strong>, estos nombres <em>exactos</em>:</li>
+</ol>
+<div class="code-fragment compact">FLOTA_DB_URL=jdbc:mysql://localhost:3306/flota_vehicular?serverTimezone=UTC
+FLOTA_DB_USER=flota_app
+FLOTA_DB_PASSWORD=MiClave.App2026!</div>
+<table class="grid-table">
+<thead><tr><th style="width: 30%;">Variable</th><th>Qué es y de dónde sale</th></tr></thead>
+<tbody>
+<tr><td><code>FLOTA_DB_URL</code></td><td>La dirección del servidor y la base. <code>localhost:3306</code> es su MySQL local; <code>flota_vehicular</code> es la base del Paso 3. Déjelo como está.</td></tr>
+<tr><td><code>FLOTA_DB_USER</code></td><td>El usuario con el que se conecta Java. Debe ser <strong><code>flota_app</code></strong>, <u>no</u> <code>root</code>.</td></tr>
+<tr><td><code>FLOTA_DB_PASSWORD</code></td><td><strong>La clave que le puso a <code>flota_app</code> en el Paso 4.</strong> Es personal: no la copie de un compañero ni la suba al repositorio.</td></tr>
+</tbody>
+</table>
+<p>Presione <strong>Apply</strong> y luego <strong>OK</strong>.</p>
+</div>
+
+<div class="step-sub">
+<h5>12.2 ¿Por qué aquí y no dentro del código?</h5>
+<p>Si la contraseña estuviera escrita en una clase Java, terminaría en <strong>Git, en una captura de pantalla o en un repositorio compartido</strong>. Con las variables de entorno, el código viaja sin secretos y cada persona configura los suyos. A esto se le llama <strong>separar la configuración del código</strong>.</p>
+<p>Recuerde el código del Paso 9 que lo hace posible:</p>
+<div class="code-fragment compact"><span class="d-keyword">this</span>.usuario = <span class="d-method">variable</span>(<span class="d-string">"FLOTA_DB_USER"</span>, <span class="d-keyword">null</span>);
+<span class="d-keyword">this</span>.clave   = <span class="d-method">variable</span>(<span class="d-string">"FLOTA_DB_PASSWORD"</span>, <span class="d-keyword">null</span>);
+<span class="d-keyword">if</span> (usuario == <span class="d-keyword">null</span> || usuario.isBlank() || clave == <span class="d-keyword">null</span>) {
+    <span class="d-keyword">throw new</span> <span class="d-type">PersistenciaException</span>(
+        <span class="d-string">"Configure FLOTA_DB_USER y FLOTA_DB_PASSWORD como variables de entorno."</span>, <span class="d-keyword">null</span>);
+}</div>
+<div class="ok-box">
+<strong><i class="fa-solid fa-circle-check mr-1"></i> Ese mensaje es intencional.</strong>
+Es mejor que la aplicación <strong>falle con un mensaje claro</strong> a que traiga una contraseña de respaldo escondida en el código. Si ve ese texto en pantalla, significa que las variables no llegaron al proceso: revise el Paso 12.1.
+</div>
+</div>
+
+<details>
+<summary><strong>Ejecuto <code>mvn</code> desde la terminal, no desde IntelliJ</strong></summary>
+<p>Entonces exporte las variables en la sesión de la terminal antes de ejecutar:</p>
+<div class="code-fragment compact"><span class="d-comment"># PowerShell (Windows)</span>
+$env:FLOTA_DB_URL = <span class="d-string">"jdbc:mysql://localhost:3306/flota_vehicular?serverTimezone=UTC"</span>
+$env:FLOTA_DB_USER = <span class="d-string">"flota_app"</span>
+$env:FLOTA_DB_PASSWORD = <span class="d-string">"MiClave.App2026!"</span>
+mvn clean javafx:run
+
+<span class="d-comment"># Bash (Linux / macOS)</span>
+export FLOTA_DB_URL=<span class="d-string">"jdbc:mysql://localhost:3306/flota_vehicular?serverTimezone=UTC"</span>
+export FLOTA_DB_USER=<span class="d-string">"flota_app"</span>
+export FLOTA_DB_PASSWORD=<span class="d-string">"MiClave.App2026!"</span>
+mvn clean javafx:run</div>
+</details>
+
+<details>
+<summary><strong>¿Puedo dejar un recordatorio de los nombres en el repositorio?</strong></summary>
+<p>Sí, es una buena práctica: cree un archivo <code>.env.example</code> en la raíz con <strong>los nombres pero sin la clave real</strong>:</p>
+<div class="code-fragment"><span class="d-comment"># Estos son los nombres que espera la aplicación.</span>
+<span class="d-comment"># Las variables se configuran en Run → Edit Configurations → Environment variables.</span>
+FLOTA_DB_URL=jdbc:mysql://localhost:3306/flota_vehicular?serverTimezone=UTC
+FLOTA_DB_USER=flota_app
+FLOTA_DB_PASSWORD=ESCRIBE_TU_CLAVE_AQUI</div>
+<div class="error-box">
+<strong>Atención:</strong> Java <strong>no lee</strong> ese archivo automáticamente. Es solo un recordatorio para quien llegue al proyecto. Si espera que la aplicación lo lea, no va a funcionar.
+</div>
+</details>
+</div>
+
+<!-- ==================== PARTE C ==================== -->
+<div class="glass-panel text-center" style="border-top: 6px solid var(--una-gold); margin-bottom: 1.5rem;">
+<h2 class="mb-0"><i class="fa-solid fa-flask mr-2" style="color: var(--una-gold);"></i> Parte C · Probar</h2>
+</div>
+
+<!-- ==================== PASO 13 ==================== -->
+<div class="glass-panel" id="paso-13" style="border-left: 4px solid var(--accent-green);">
+<h2><i class="fa-solid fa-play mr-2" style="color: var(--accent-green);"></i> Paso 13 · Ejecutar y probar</h2>
+<p>Ejecute la aplicación con su configuración (<strong>Run</strong>) y realice las tres pruebas.</p>
+
+<div class="step-sub">
+<h5>Prueba A · CRUD funcional (que todo funcione)</h5>
+<ol>
+<li>Registre un vehículo de <strong>combustión</strong>: placa, marca, kilometraje y nivel de combustible.</li>
+<li>En Workbench (conexión de administrador) ejecute <code>SELECT * FROM flota_vehicular.vehiculo;</code> y confirme que la fila aparece.</li>
+<li><strong>Cierre y vuelva a abrir</strong> la aplicación: el vehículo debe cargarse otra vez desde MySQL.</li>
+<li>Seleccione el vehículo, cámbiele el kilometraje y pulse <em>Actualizar</em>. Verifique el cambio en la tabla.</li>
+<li>Registre un vehículo <strong>eléctrico</strong> y confirme que los ciclos de carga se recuperan bien.</li>
+<li>Registre un vehículo <strong>pesado</strong> con tonelaje, carga actual y tipo de carga.</li>
+<li>Elimine uno de los vehículos de prueba y confirme que desaparece de la tabla.</li>
+</ol>
+</div>
+
+<div class="step-sub">
+<h5>Prueba B · Seguridad de permisos (que NO todo esté permitido)</h5>
+<ol>
+<li>Con la conexión <code>Flota App</code>: <code>CALL flota_vehicular.sp_listar_vehiculos();</code> → <strong>debe funcionar</strong>.</li>
+<li>Con esa misma conexión: <code>SELECT * FROM flota_vehicular.vehiculo;</code> → <strong>debe fallar con Error 1142</strong>.</li>
+</ol>
+<div class="highlight-box">
+<strong>Lo que se demuestra:</strong> la aplicación <strong>puede</strong> hacer su trabajo y <strong>no puede</strong> hacer más de lo que necesita. El límite lo impone el servidor, no la buena voluntad del programador.
+</div>
+</div>
+
+<div class="step-sub">
+<h5>Prueba C · Integridad y manejo de errores</h5>
+<ol>
+<li>Intente registrar <strong>dos vehículos con la misma placa</strong>: la aplicación debe mostrar un mensaje comprensible y la base impedir el duplicado.</li>
+<li>Intente registrar <strong>kilometraje negativo</strong> o <strong>energía mayor a 100</strong>: Java lo rechaza. Pruebe además a insertarlo directamente en Workbench: la restricción <code>CHECK</code> también lo bloquea. Son <strong>dos barreras</strong>.</li>
+<li>Seleccione un vehículo y cámbiele el estado a <em>TALLER</em> (o use uno que ya esté en taller) e intente editarlo o eliminarlo: el <code>FlotaService</code> debe impedirlo con su regla de negocio.</li>
+<li><strong>Apague el servicio de MySQL</strong> (o escriba mal la contraseña) e intente registrar un vehículo: la aplicación <strong>no</strong> debe decir que guardó; debe mostrar el error general conservando la causa técnica.</li>
+</ol>
+</div>
+
+<details>
+<summary><strong>¿Por qué en la prueba C.4 hay que apagar MySQL?</strong></summary>
+<p>Porque es la forma de comprobar que la aplicación <strong>reporta la verdad</strong>. Un error común al migrar de archivo a base de datos es “fingir” que se guardó: la lista en memoria se actualiza y la persona usuaria cree que todo salió bien, aunque la base esté caída. Por eso <code>FlotaService.agregarVehiculo</code> hace <strong>primero</strong> <code>repositorio.insertar(v)</code> y <strong>solo después</strong> <code>vehiculos.add(v)</code>: si la base falla, la lista local <strong>no</strong> se altera.</p>
+</details>
+</div>
+
+<!-- ==================== ACORDEÓN ==================== -->
+<div class="glass-panel" id="acordeon" style="border-left: 4px solid var(--una-red);">
+<h2><i class="fa-solid fa-circle-question mr-2" style="color: var(--una-red);"></i> Acordeón · Dudas frecuentes</h2>
+<p>Haga clic en cada pregunta. Están ordenadas de “concepto” a “error concreto”.</p>
+
+<h3>Conceptos</h3>
+
+<details>
+<summary><strong>¿MySQL Workbench <em>es</em> la base de datos?</strong></summary>
+<p><strong>No.</strong> La base de datos la administra <strong>MySQL Server</strong> (el SABD). Workbench es un <strong>cliente</strong>: una ventana desde la que damos órdenes. IntelliJ Database Tools es otro cliente del mismo servidor. Si cierra Workbench, la base sigue funcionando.</p>
+</details>
+
+<details>
+<summary><strong>¿Qué diferencia hay entre JDBC y el driver <code>mysql-connector-j</code>?</strong></summary>
+<p><strong>JDBC</strong> es el conjunto de <em>reglas</em> (la API): define qué significa <code>Connection</code>, <code>CallableStatement</code>, <code>ResultSet</code>. Viene con Java (<code>java.sql</code>). <strong>mysql-connector-j</strong> es la <em>implementación</em> concreta de esas reglas para MySQL: el “traductor” real. Se agrega como dependencia Maven.</p>
+</details>
+
+<details>
+<summary><strong>¿Por qué <code>CallableStatement</code> y no <code>PreparedStatement</code>?</strong></summary>
+<p>Porque llamamos <strong>procedimientos almacenados</strong>. <code>PreparedStatement</code> sirve para enviar una sentencia SQL directa; <code>CallableStatement</code> está hecho para invocar procedimientos con <code>CALL</code>. Ambos parametrizan los valores, así que ambos protegen de la inyección SQL.</p>
+</details>
+
+<details>
+<summary><strong>¿Por qué la aplicación no puede conectarse como <code>root</code>?</strong></summary>
+<p>Porque <code>root</code> puede crear usuarios, borrar bases y cambiar la configuración del servidor. Si un error de programación o una vulnerabilidad lograra usar esa conexión, el daño sería total en lugar de limitado. La aplicación solo necesita ejecutar cuatro operaciones: se le da exactamente eso y nada más. Es el <strong>principio de mínimo privilegio</strong>.</p>
+</details>
+
+<details>
+<summary><strong>¿Qué significa que un procedimiento sea <code>SQL SECURITY DEFINER</code>?</strong></summary>
+<p>Que al ejecutarse usa los permisos de <strong>quien lo definió</strong> (<code>flota_definer</code>), no los de quien lo llama. Gracias a eso <code>flota_app</code> puede obtener datos de la tabla sin tener permiso de <code>SELECT</code>: el permiso efectivo es el del definidor, y el definidor solo tiene permisos sobre <code>flota_vehicular.vehiculo</code>. Con <code>INVOKER</code> sería al revés y la llamada fallaría.</p>
+</details>
+
+<details>
+<summary><strong>Los procedimientos almacenados, ¿ya me hacen 100% seguro?</strong></summary>
+<p><strong>No.</strong> Son una herramienta. Si dentro de un procedimiento se concatenara SQL dinámico, volvería el riesgo. La seguridad de esta práctica es la <strong>combinación</strong>: parámetros + procedimientos + definidor limitado + cuenta de aplicación sin permisos de tabla + credenciales fuera del código + restricciones <code>CHECK</code> en la tabla.</p>
+</details>
+
+<details>
+<summary><strong>¿Por qué tuve que cambiar el contrato del repositorio?</strong></summary>
+<p>Porque el contrato anterior (<code>cargarTodos</code> + <code>guardarTodos(List)</code>) reescribía <strong>toda</strong> la información en cada cambio. Eso funcionaba con un archivo propio, pero con una base compartida puede afectar datos de otras personas y perder cambios hechos al mismo tiempo. Ahora cada operación (<code>insertar</code>, <code>actualizar</code>, <code>eliminar</code>) toca <strong>solo lo necesario</strong>.</p>
+</details>
+
+<h3>Ejecución del script</h3>
+
+<details>
+<summary><strong>Error 1064: “You have an error in your SQL syntax… near <code>END</code>”</strong></summary>
+<p>Casi siempre es el <code>DELIMITER</code>. Verifique que <code>DELIMITER $$</code> esté <strong>antes</strong> de los <code>CREATE PROCEDURE</code>, que <code>DELIMITER ;</code> esté <strong>después</strong>, y que <strong>cada <code>END</code> termine con <code>$$</code></strong> (<code>END$$</code>) y no con <code>;</code>.</p>
+</details>
+
+<details>
+<summary><strong>Error 1305: <em>PROCEDURE flota_vehicular.sp_x does not exist</em></strong></summary>
+<p>El procedimiento no se creó. Causas típicas:</p>
+<ul>
+<li>Ejecutó la sección de procedimientos <strong>antes</strong> de crear la base (ejecute todo de nuevo, de arriba a abajo).</li>
+<li>Ejecutó solo una sentencia con el cursor dentro de ella: use <code>Ctrl + Shift + Enter</code> para ejecutar todo.</li>
+<li>El error de <code>DELIMITER</code> cortó el procedimiento a la mitad: revise el panel <em>Action Output</em> en busca de un error anterior.</li>
+</ul>
+<p>Compruebe lo que existe con:</p>
+<div class="code-fragment compact"><span class="d-keyword">SHOW PROCEDURE STATUS WHERE</span> Db = <span class="d-string">'flota_vehicular'</span>;</div>
+</details>
+
+<details>
+<summary><strong>Error 1449: <em>The user specified as a DEFINER ('flota_definer'@'localhost') does not exist</em></strong></summary>
+<p>Los procedimientos apuntan a una cuenta que no existe. Ocurre si se crearon los procedimientos y luego se borró <code>flota_definer</code>. Solución: vuelva a ejecutar el script completo (recrea la cuenta y los procedimientos en el orden correcto).</p>
+</details>
+
+<details>
+<summary><strong>Error 1044/1045: <em>Access denied for user 'flota_app'@'localhost'</em></strong></summary>
+<p>Revise, en este orden:</p>
+<ol>
+<li><strong>La contraseña</strong>: ¿es la misma que puso en la sección de usuarios? Recuerde que <code>CREATE USER IF NOT EXISTS</code> <strong>no la actualiza</strong> si el usuario ya existía.</li>
+<li><strong>El host</strong>: la cuenta es <code>'flota_app'@'localhost'</code>; si se conecta desde otra máquina, no coincidirá.</li>
+<li><strong>Los permisos</strong>: <code>SHOW GRANTS FOR 'flota_app'@'localhost';</code> debe mostrar los cuatro <code>EXECUTE</code>.</li>
+</ol>
+<p><strong>Nunca</strong> resuelva esto dándole privilegios globales a <code>flota_app</code>: eso rompe el objetivo del laboratorio.</p>
+</details>
+
+<details>
+<summary><strong>Error 1142 al hacer <code>SELECT</code>: ¿está mal?</strong></summary>
+<p><strong>No, está perfecto.</strong> Es la prueba de que el diseño funciona: la cuenta de la aplicación no puede leer la tabla directamente, tiene que pasar por los procedimientos.</p>
+</details>
+
+<details>
+<summary><strong><em>Unknown database 'flota_vehicular'</em></strong></summary>
+<p>La base no existe o el nombre está mal escrito. Verifique con <code>SHOW DATABASES;</code> y, si no aparece, ejecute de nuevo el script. Cuidado con la ortografía: <code>flota_vehicular</code> (con guion bajo), igual en el script y en la variable <code>FLOTA_DB_URL</code>.</p>
+</details>
+
+<details>
+<summary><strong><em>Can't connect to MySQL server on 'localhost:3306'</em> / <em>Communications link failure</em></strong></summary>
+<ul>
+<li>El servicio de MySQL <strong>no está iniciado</strong> (revise los <em>Servicios</em> de Windows: busque “MySQL80” y arránquelo).</li>
+<li>El <strong>puerto</strong> no es 3306 (pasa si tiene dos versiones instaladas).</li>
+<li>Un <strong>firewall</strong> está bloqueando la conexión local.</li>
+</ul>
+</details>
+
+<h3>Java / IntelliJ</h3>
+
+<details>
+<summary><strong>La aplicación dice: <em>Configure FLOTA_DB_USER y FLOTA_DB_PASSWORD como variables de entorno</em></strong></summary>
+<p>Significa que el proceso Java no recibió las variables. Verifique que las escribió en la <strong>Run Configuration correcta</strong> (<em>Run → Edit Configurations</em> → la que usa <code>lab.flotavehicular.Main</code> → <em>Environment variables</em>), que los <strong>nombres son exactos</strong> (mayúsculas incluidas) y que pulsó <strong>OK y Apply</strong>. Si ejecuta desde la terminal, expórtelas antes (Paso 12).</p>
+</details>
+
+<details>
+<summary><strong><em>Public Key Retrieval is not allowed</em></strong></summary>
+<p>Es un tema de autenticación del conector. Solución recomendada: use una contraseña con autenticación estándar, o agregue <code>&amp;allowPublicKeyRetrieval=true</code> a la <code>FLOTA_DB_URL</code>. <strong>No</strong> cambie el usuario a <code>root</code> para “arreglarlo”.</p>
+</details>
+
+<details>
+<summary><strong><em>The server time zone value '...' is unrecognized</em></strong></summary>
+<p>Añada <code>?serverTimezone=UTC</code> a la URL (ya viene así en el código del Paso 9 y en las variables del Paso 12).</p>
+</details>
+
+<details>
+<summary><strong><em>RepositorioVehiculoTxt cannot be resolved</em> o errores en rojo por todas partes</strong></summary>
+<p>Es esperado después del Paso 8. Revise, en este orden:</p>
+<ol>
+<li>¿Eliminó <code>RepositorioVehiculoTxt.java</code> o le agregó los tres métodos nuevos? (Paso 8)</li>
+<li>¿Ajustó las tres llamadas en <code>FlotaService</code>? (Paso 10)</li>
+<li>¿Cambió la línea del constructor de <code>FlotaController</code> y sus <em>imports</em>? (Paso 11)</li>
+</ol>
+</details>
+
+<details>
+<summary><strong>¿Dónde veo la causa real de un error? La ventana muestra un mensaje genérico</strong></summary>
+<p>En el panel <strong>Run</strong> de IntelliJ, debajo del mensaje, aparece el <em>stack trace</em>. Busque la línea <code>Caused by:</code> — ahí está el mensaje original de MySQL (por ejemplo el <code>MESSAGE_TEXT</code> que lanzamos con <code>SIGNAL</code>).</p>
+</details>
+
+<h3>Gestión de las cuentas</h3>
+
+<details>
+<summary><strong>¿Cómo cambio la contraseña de una cuenta ya creada?</strong></summary>
+<div class="code-fragment"><span class="d-keyword">ALTER USER</span> <span class="d-string">'flota_app'</span>@<span class="d-string">'localhost'</span> <span class="d-keyword">IDENTIFIED BY</span> <span class="d-string">'NuevaClave.App2026!'</span>;</div>
+<p>Después actualice también <code>FLOTA_DB_PASSWORD</code> en la Run Configuration, o la aplicación dejará de conectar.</p>
+</details>
+
+<details>
+<summary><strong>¿Cómo veo qué usuarios existen?</strong></summary>
+<div class="code-fragment"><span class="d-keyword">SELECT</span> user, host <span class="d-keyword">FROM</span> mysql.user;   <span class="d-comment"># requiere permisos de administrador</span></div>
+</details>
+
+<details>
+<summary><strong>¿Puedo probar todo esto sin abrir la aplicación Java?</strong></summary>
+<p><strong>Sí, y es muy recomendable.</strong> En Workbench puede simular lo que hará Java:</p>
+<div class="code-fragment compact"><span class="d-comment"># con la conexión de flota_app</span>
+<span class="d-keyword">CALL</span> flota_vehicular.sp_insertar_vehiculo(
+  <span class="d-string">'ABC123'</span>, <span class="d-string">'Toyota'</span>, 15000, <span class="d-string">'DISPONIBLE'</span>, <span class="d-string">'COMBUSTION'</span>, 60,
+  0, <span class="d-keyword">NULL</span>, <span class="d-keyword">NULL</span>, <span class="d-keyword">NULL</span>);
+
+<span class="d-keyword">CALL</span> flota_vehicular.sp_listar_vehiculos();</div>
+<p>Si esto funciona aquí, en Java también funcionará. Es una buena forma de aislar errores: primero la base, después el código.</p>
+</details>
+
+<details>
+<summary><strong>¿Por qué hay que enviar <code>NULL</code> explícito para un vehículo de combustión?</strong></summary>
+<p>Porque la restricción <code>chk_pesado</code> exige que, si el tipo <u>no</u> es <code>PESADO</code>, las columnas <code>tonelaje_maximo</code>, <code>carga_actual</code> y <code>tipo_carga</code> sean <code>NULL</code>. Si Java enviara <code>0</code> en lugar de <code>NULL</code>, la base rechazaría el insert. Por eso en el código aparecen las líneas <code>cs.setNull(8, Types.DECIMAL)</code>, etc.</p>
+</details>
+
+<details>
+<summary><strong>¿Esto sirve si mi base está en un servidor remoto?</strong></summary>
+<p>Sí, pero cambiarían dos cosas: (1) la <code>FLOTA_DB_URL</code> apuntaría al host remoto en lugar de <code>localhost</code>, y (2) las cuentas tendrían que existir para <strong>ese</strong> origen (<code>'flota_app'@'192.168.1.%'</code>, por ejemplo), porque la parte después de la <code>@</code> forma parte de la identidad. Y en producción no se expone MySQL directamente a Internet: normalmente hay una API o un backend en medio.</p>
+</details>
+</div>
+
+<!-- ==================== CIERRE ==================== -->
+<div class="glass-panel text-center" style="border-top: 6px solid var(--una-gold);">
+<h2>Para terminar</h2>
+<p>Asegúrese de poder explicar <strong>en voz alta</strong> el recorrido de un registro:</p>
+<p><em>“El Controller construye el objeto con el DTO y la Factory → el Service aplica las reglas → el Repository llama al procedimiento con <code>CallableStatement</code> → JDBC y el driver envían la llamada → MySQL la ejecuta con los privilegios de <code>flota_definer</code> → la fila queda en <code>vehiculo</code>.”</em></p>
+<p>Y recuerde la idea central: <strong>no basta con que la aplicación guarde</strong>. Debe guardar de forma consistente, no convertir datos de entrada en código SQL, no usar una cuenta con permisos excesivos y no exponer secretos. La seguridad sale de <strong>combinar</strong> decisiones correctas.</p>
+<p class="text-sm" style="color: var(--text-muted);">Programación III · Semana 13 · Grupo 40 — Prof. Kristel Duarte Pérez</p>
+</div>
+
+</div>
+
+<script>
+    function toggleTheme() {
+        const root = document.documentElement;
+        const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        const icon = document.getElementById('theme-icon');
+        if (icon) {
+            const nuevo = document.createElement('i');
+            nuevo.id = 'theme-icon';
+            nuevo.className = next === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+            icon.replaceWith(nuevo);
+            if (window.FontAwesome && FontAwesome.dom) FontAwesome.dom.i2svg();
+        }
+    }
+</script>
+</body>
+</html>

@@ -182,12 +182,15 @@
         /* --- Alineación de columnas ---
            Ambas profes comparten las mismas filas: la columna 1 y la columna 2
            colocan sus tarjetas en la misma fila, así que cada tarjeta adopta la
-           altura de la más alta de su fila. Requiere 12 filas (1 encabezado + 11 clases). */
+           altura de la más alta de su fila. Requiere 14 filas (1 encabezado + 13 clases).
+           OJO: si una columna tiene menos filas que la otra, hay que agregarle
+           filas vacías (<div class="clase-row"></div>) para que ambas queden iguales;
+           de lo contrario las tarjetas sobran y saltan a una tercera columna. */
         @media (min-width: 768px) {
             #clases-grid {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                grid-template-rows: repeat(12, auto);
+                grid-template-rows: repeat(14, auto);
                 grid-auto-flow: column;
                 column-gap: 1.5rem;
                 row-gap: 0.5rem;
@@ -390,6 +393,12 @@
                         </a>
                         <div class="lab-spacer"></div>
                     </div>
+
+                    <!-- Filas de alineación: la columna de Siandi todavía no tiene
+                         material para estas semanas. Ocupan su celda del grid para
+                         que las filas sigan coincidiendo con la otra columna. -->
+                    <div class="clase-row" aria-hidden="true"></div>
+                    <div class="clase-row" aria-hidden="true"></div>
                 </div>
             </div>
 
@@ -528,7 +537,7 @@
                                 <h4 class="text-sm font-bold">Clase 9 — Exposiciones y defensa del Proyecto 1</h4>
                                 <p class="text-xs text-gray-500">Defensa del Proyecto 1 · El curso contempla 2 proyectos.</p>
                             </div>
-                            <i class="fa-solid fa-lock text-gray-300 text-xs"></i>
+                            <i class="fa-solid fa-person-chalkboard text-gray-300 text-xs"></i>
                         </div>
                         <div class="lab-spacer"></div>
                     </div>
@@ -541,7 +550,7 @@
                                 <h4 class="text-sm font-bold">Clase 10 — Examen 1</h4>
                                 <p class="text-xs text-gray-500">Prueba escrita del Primer Parcial.</p>
                             </div>
-                            <i class="fa-solid fa-lock text-gray-300 text-xs"></i>
+                            <i class="fa-solid fa-person-chalkboard text-gray-300 text-xs"></i>
                         </div>
                         <div class="lab-spacer"></div>
                     </div>
@@ -557,6 +566,35 @@
                             <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
                         </a>
                         <a href="labs/kristel/clase-11/" class="lab-btn unlocked" data-lab="kristel-11" data-lab-url="labs/kristel/clase-11/">
+                            <i class="fa-solid fa-flask lab-icon"></i>
+                            <span class="lab-label">LAB</span>
+                        </a>
+                    </div>
+                    <div class="clase-row">
+                        <div class="clase-card pendiente">
+                            <div class="clase-icon" style="background: rgba(148,163,184,0.12); color: #94a3b8;">
+                                <span style="font-weight: 800; font-size: 1.2rem; line-height: 1;">12</span>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold">Clase 12 — Laboratorios en Clase</h4>
+                                <p class="text-xs text-gray-500">Clase Práctica · ejercicios resueltos en clase.</p>
+                            </div>
+                            <i class="fa-solid fa-person-chalkboard text-gray-300 text-xs"></i>
+                        </div>
+                        <div class="lab-spacer"></div>
+                    </div>
+                    <div class="clase-row">
+                        <a href="clases/kristel/clase-13/" class="clase-card">
+                            <div class="clase-icon" style="background: rgba(93,173,226,0.12); color: var(--accent-blue);">
+                                <span style="font-weight: 800; font-size: 1.2rem; line-height: 1;">13</span>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold">Clase 13 — Persistencia segura con MySQL</h4>
+                                <p class="text-xs text-gray-500">Procedimientos almacenados, usuarios, privilegios mínimos y JDBC.</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                        </a>
+                        <a href="labs/kristel/clase-13/" class="lab-btn unlocked" data-lab="kristel-13" data-lab-url="labs/kristel/clase-13/">
                             <i class="fa-solid fa-flask lab-icon"></i>
                             <span class="lab-label">LAB</span>
                         </a>

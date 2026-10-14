@@ -1,0 +1,1333 @@
+<!doctype html>
+
+<html data-theme="light" lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Clase 13 — Programación III</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    <!-- Recursos compartidos del proyecto -->
+    <link
+      href="../../../assets/img/favicon.svg"
+      rel="icon"
+      type="image/svg+xml"
+    />
+    <link href="../../../assets/css/presentacion.css" rel="stylesheet" />
+    <!-- Tooltips interactivos para palabras clave -->
+    <style>
+      .keyword {
+        position: relative;
+        cursor: help;
+        border-bottom: 2px dotted var(--una-red);
+        font-weight: 700;
+        color: var(--una-red);
+      }
+      .keyword::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: calc(100% + 8px);
+        left: 50%;
+        transform: translateX(-50%);
+        background: #2b2b2b;
+        color: #a9b7c6;
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: 1px solid #555555;
+        font-size: 0.85rem;
+        font-family: "Nunito", sans-serif;
+        font-weight: 400;
+        white-space: normal;
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          opacity 0.25s ease,
+          transform 0.25s ease;
+        z-index: 999;
+        width: max-content;
+        max-width: 320px;
+        text-align: left;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        line-height: 1.5;
+      }
+      .keyword:hover::after,
+      .keyword:focus::after {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-4px);
+      }
+
+      /* Tema Darcula (IntelliJ Default Dark) para bloques de código */
+      .darcula-bg {
+        background-color: #2b2b2b;
+        color: #a9b7c6;
+      }
+      .darcula-kw {
+        color: #cc7832;
+        font-weight: bold;
+      }
+      .darcula-str {
+        color: #6a8759;
+      }
+      .darcula-num {
+        color: #6897bb;
+      }
+      .darcula-com {
+        color: #808080;
+        font-style: italic;
+      }
+      .darcula-func {
+        color: #ffc66d;
+      }
+      .darcula-class {
+        color: #a9b7c6;
+      }
+      .darcula-anno {
+        color: #bbb529;
+      }
+
+      .chip {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        margin: 0.2rem;
+        border-radius: 9999px;
+        font-size: 0.8rem;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+      }
+      .flow-box {
+        background: var(--bg-panel);
+        border: 2px solid var(--border-panel);
+        border-radius: 1rem;
+        padding: 0.9rem 1.1rem;
+        text-align: center;
+        box-shadow: var(--shadow-panel);
+      }
+      .flow-arrow {
+        color: var(--una-red);
+        font-size: 1.6rem;
+        align-self: center;
+      }
+      table.deck {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95rem;
+        color: var(--text-muted);
+      }
+      table.deck th {
+        text-align: left;
+        padding: 0.6rem 0.7rem;
+        font-weight: 800;
+        color: var(--una-red);
+        border-bottom: 2px solid var(--border-panel);
+        background: rgba(230, 106, 106, 0.08);
+      }
+      table.deck td {
+        padding: 0.6rem 0.7rem;
+        border-bottom: 1px solid var(--border-panel);
+        vertical-align: top;
+      }
+      table.deck tr:last-child td {
+        border-bottom: 0;
+      }
+
+      /* --- Bloques de código (tema Darcula, estándar del proyecto) --- */
+      .code-block {
+        background-color: #2b2b2b;
+        color: #a9b7c6;
+        border: 1px solid #4a4a55;
+        border-radius: 0.9rem;
+        padding: clamp(0.7rem, 1.4vh, 1rem) clamp(0.9rem, 1.6vw, 1.25rem);
+        margin: 0.7rem 0 0;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.82rem;
+        line-height: 1.55;
+        overflow-x: auto;
+        box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.45);
+      }
+      .code-block code {
+        background: none;
+        border: 0;
+        padding: 0;
+        color: inherit;
+        font-family: inherit;
+        font-size: inherit;
+      }
+
+      /* --- Espaciado vertical dentro de las tarjetas ---
+         Tailwind Preflight elimina los margenes de h*, p, ul y pre con
+         especificidad 0-0-1. El contenedor va en :where() (especificidad 0)
+         y los elementos internos en :is() (0-0-1), de forma que la regla
+         queda en 0-0-2: suficiente para vencer al reset de Preflight, pero
+         por debajo de cualquier utilidad mt-* o mb-* escrita en el HTML. */
+      :where(
+          .glass-panel,
+          .interactive-card,
+          .bg-white,
+          .bg-gray-50,
+          .bg-gray-100
+        )
+        > :is(h3, h4, h5, p, ul, ol, pre, table)
+        + :is(h3, h4, h5, p, ul, ol, pre, table) {
+        margin-top: 0.65rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Botones flotantes -->
+    <button
+      class="float-btn"
+      id="downloadBtn"
+      onclick="downloadPresentation()"
+      title="Descargar presentación para ver sin internet"
+    >
+      <i class="fa-solid fa-download"></i>
+    </button>
+    <button
+      class="float-btn"
+      id="theme-toggle"
+      onclick="toggleTheme()"
+      title="Alternar modo claro/oscuro"
+    >
+      <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+    <button class="float-btn" id="prevBtn" onclick="changeSlide(-1)">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <button class="float-btn" id="nextBtn" onclick="changeSlide(1)">
+      <i class="fa-solid fa-arrow-right"></i>
+    </button>
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <!-- ========== CONTENEDOR DE SLIDES ========== -->
+    <div class="slides-container" id="slides-container">
+      <!-- ===== 1 · PORTADA ===== -->
+      <div class="slide active">
+        <div class="text-center w-full max-w-6xl z-10 relative">
+          <i
+            class="fa-solid fa-shield-halved bg-icon text-[350px] -top-20 -left-20"
+            style="color: var(--una-red)"
+          ></i>
+          <i
+            class="fa-solid fa-database bg-icon text-[250px] -bottom-10 right-10"
+            style="color: var(--accent-blue)"
+          ></i>
+          <div
+            class="bg-white px-8 py-4 rounded-3xl inline-block mb-6 shadow-md border border-gray-100 relative z-10"
+          >
+            <img
+              alt="Logo UNA"
+              class="h-28 object-contain"
+              src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png"
+            />
+          </div>
+          <h2
+            class="text-lg md:text-xl font-bold tracking-[0.2em] mb-4 uppercase"
+            style="color: var(--text-muted)"
+          >
+            Sección Regional Central Occidente, UNA
+          </h2>
+          <h1 class="text-3xl md:text-4xl font-extrabold mb-4 tracking-tight">
+            Programación <span style="color: var(--una-red)">III</span>
+          </h1>
+          <h2
+            class="text-5xl md:text-7xl font-extrabold mb-2"
+            style="color: var(--text-main)"
+          >
+            Semana 13
+          </h2>
+          <h3
+            class="text-3xl md:text-5xl font-bold mb-6"
+            style="color: var(--una-red)"
+          >
+            Persistencia segura de la flota vehicular
+          </h3>
+          <p class="text-xl mb-2" style="color: var(--text-muted)">
+            Procedimientos almacenados · Privilegios mínimos · Credenciales
+          </p>
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-6 relative z-10"
+          >
+            <div
+              class="glass-panel text-left flex items-center gap-5 border-l-4"
+              style="border-left-color: var(--accent-blue)"
+            >
+              <div
+                class="w-14 h-14 shrink-0 rounded-full tint-blue flex items-center justify-center text-2xl"
+              >
+                <i class="fa-solid fa-chalkboard-user"></i>
+              </div>
+              <div>
+                <p
+                  class="text-xs uppercase tracking-wider mb-1"
+                  style="color: var(--text-muted)"
+                >
+                  Docente — Grupo 40
+                </p>
+                <p class="text-lg font-bold" data-curso="40-docente">
+                  Kristel Duarte Pérez
+                </p>
+                <p
+                  class="text-xs mt-1"
+                  style="color: var(--text-muted)"
+                  data-curso="40-horario"
+                >
+                  Miércoles 08:00 - 11:20
+                </p>
+              </div>
+            </div>
+            <div
+              class="glass-panel text-left flex items-center gap-5 border-l-4"
+              style="border-left-color: var(--una-gold)"
+            >
+              <div
+                class="w-14 h-14 shrink-0 rounded-full tint-gold flex items-center justify-center text-2xl"
+              >
+                <i class="fa-solid fa-clock"></i>
+              </div>
+              <div>
+                <p
+                  class="text-xs uppercase tracking-wider mb-1"
+                  style="color: var(--text-muted)"
+                >
+                  Atención a Estudiantes
+                </p>
+                <p class="text-lg font-bold" data-curso="40-atencion">
+                  Miércoles 13:00 - 14:00
+                </p>
+                <p class="text-xs mt-1" style="color: var(--text-muted)">
+                  Consultas y tutorías
+                </p>
+              </div>
+            </div>
+          </div>
+          <p
+            class="text-sm animate-pulse mt-6"
+            style="color: var(--text-muted)"
+          >
+            <i class="fa-solid fa-keyboard mr-2"></i>Usa las flechas del teclado
+            para navegar
+          </p>
+        </div>
+      </div>
+
+      <!-- ===== 2 · AGENDA ===== -->
+      <div class="slide">
+        <div class="w-full max-w-[92%] mx-auto relative z-10">
+          <i
+            class="fa-solid fa-map-location-dot bg-icon text-[350px] top-10 right-0 opacity-5"
+            style="color: var(--una-gold)"
+          ></i>
+          <div class="text-center mb-8">
+            <h2 class="text-5xl font-bold mb-2">¿Qué vamos a ver hoy?</h2>
+            <p class="text-sm mt-2" style="color: var(--text-muted)">
+              <i class="fa-solid fa-hand-pointer mr-1"></i> Persistencia segura
+              · Haz clic en cada punto para ir directo.
+            </p>
+          </div>
+
+          <div class="relative max-w-2xl mx-auto">
+            <div
+              class="absolute border-l-2 border-dashed border-gray-300 h-full"
+              style="left: 50%; transform: translateX(-50%)"
+            ></div>
+
+            <!-- 1. Del TXT al SABD -->
+            <div class="flex items-center mb-4 relative">
+              <div class="w-1/2"></div>
+              <div
+                class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-gold font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3"
+              >
+                1
+              </div>
+              <div
+                class="w-1/2 cursor-pointer hover:scale-105 transition-transform"
+                onclick="goToSlide(2)"
+              >
+                <div
+                  class="glass-panel py-3 px-5 border-r-4"
+                  style="border-right-color: var(--una-gold)"
+                >
+                  <h3 class="font-bold text-base md:text-lg text-right">
+                    Del TXT al SABD
+                  </h3>
+                  <p class="text-xs text-right text-gray-500 mt-1">
+                    Qué cambia y qué se conserva
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Mapa de seguridad -->
+            <div class="flex items-center mb-4 relative">
+              <div
+                class="w-1/2 cursor-pointer hover:scale-105 transition-transform"
+                onclick="goToSlide(5)"
+              >
+                <div
+                  class="glass-panel py-3 px-5 border-l-4"
+                  style="border-left-color: var(--accent-blue)"
+                >
+                  <h3 class="font-bold text-base md:text-lg text-left">
+                    Mapa de seguridad
+                  </h3>
+                  <p class="text-xs text-left text-gray-500 mt-1">
+                    Concatenar, parametrizar y restringir
+                  </p>
+                </div>
+              </div>
+              <div
+                class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-blue font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3"
+              >
+                2
+              </div>
+              <div class="w-1/2"></div>
+            </div>
+
+            <!-- 3. Cuentas y privilegios -->
+            <div class="flex items-center mb-4 relative">
+              <div class="w-1/2"></div>
+              <div
+                class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-red font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3"
+              >
+                3
+              </div>
+              <div
+                class="w-1/2 cursor-pointer hover:scale-105 transition-transform"
+                onclick="goToSlide(8)"
+              >
+                <div
+                  class="glass-panel py-3 px-5 border-r-4"
+                  style="border-right-color: var(--una-red)"
+                >
+                  <h3 class="font-bold text-base md:text-lg text-right">
+                    Cuentas y privilegios
+                  </h3>
+                  <p class="text-xs text-right text-gray-500 mt-1">
+                    Administradora, definidor y aplicación
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. Procedimientos almacenados -->
+            <div class="flex items-center mb-4 relative">
+              <div
+                class="w-1/2 cursor-pointer hover:scale-105 transition-transform"
+                onclick="goToSlide(10)"
+              >
+                <div
+                  class="glass-panel py-3 px-5 border-l-4"
+                  style="border-left-color: var(--accent-green)"
+                >
+                  <h3 class="font-bold text-base md:text-lg text-left">
+                    Procedimientos almacenados
+                  </h3>
+                  <p class="text-xs text-left text-gray-500 mt-1">
+                    El contrato, la llamada y el definidor
+                  </p>
+                </div>
+              </div>
+              <div
+                class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-green font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3"
+              >
+                4
+              </div>
+              <div class="w-1/2"></div>
+            </div>
+
+            <!-- 5. JDBC y capas -->
+            <div class="flex items-center relative">
+              <div class="w-1/2"></div>
+              <div
+                class="z-10 flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full tint-purple font-bold text-base md:text-lg border-2 border-white shadow shrink-0 mx-3"
+              >
+                5
+              </div>
+              <div
+                class="w-1/2 cursor-pointer hover:scale-105 transition-transform"
+                onclick="goToSlide(13)"
+              >
+                <div
+                  class="glass-panel py-3 px-5 border-r-4"
+                  style="border-right-color: var(--accent-purple)"
+                >
+                  <h3 class="font-bold text-base md:text-lg text-right">
+                    JDBC y capas
+                  </h3>
+                  <p class="text-xs text-right text-gray-500 mt-1">
+                    Driver, configuración y recorrido completo
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 3 · ¿DÓNDE QUEDAMOS? ===== -->
+      <div class="slide">
+        <div class="w-full max-w-[92%] mx-auto relative z-10">
+          <i
+            class="fa-solid fa-clock-rotate-left bg-icon text-[300px] -left-10 opacity-5"
+            style="color: var(--accent-purple)"
+          ></i>
+          <div class="text-center mb-7">
+            <h2 class="text-5xl font-bold mb-2">¿Dónde quedamos?</h2>
+            <p class="text-xl" style="color: var(--text-muted)">
+              La Semana 11 dejó el terreno preparado.
+            </p>
+          </div>
+          <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div class="glass-panel text-center">
+                <div
+                  class="w-11 h-11 rounded-full tint-blue flex items-center justify-center text-lg mb-2 mx-auto"
+                >
+                  <i class="fa-solid fa-floppy-disk"></i>
+                </div>
+                <h4 class="font-bold">Persistencia</h4>
+                <p class="text-sm text-gray-500">
+                  El estado sobrevive al cierre del programa.
+                </p>
+              </div>
+              <div class="glass-panel text-center">
+                <div
+                  class="w-11 h-11 rounded-full tint-green flex items-center justify-center text-lg mb-2 mx-auto"
+                >
+                  <i class="fa-solid fa-table"></i>
+                </div>
+                <h4 class="font-bold">Modelo relacional</h4>
+                <p class="text-sm text-gray-500">
+                  Tablas, claves, integridad y normalización.
+                </p>
+              </div>
+              <div class="glass-panel text-center">
+                <div
+                  class="w-11 h-11 rounded-full tint-purple flex items-center justify-center text-lg mb-2 mx-auto"
+                >
+                  <i class="fa-solid fa-plug"></i>
+                </div>
+                <h4 class="font-bold">Ciclo JDBC</h4>
+                <p class="text-sm text-gray-500">
+                  Connection, sentencia, ResultSet y cierre.
+                </p>
+              </div>
+              <div class="glass-panel text-center">
+                <div
+                  class="w-11 h-11 rounded-full tint-gold flex items-center justify-center text-lg mb-2 mx-auto"
+                >
+                  <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h4 class="font-bold">Parámetros</h4>
+                <p class="text-sm text-gray-500">
+                  Marcadores frente a la inyección SQL.
+                </p>
+              </div>
+            </div>
+            <div
+              class="glass-panel mt-5 border-l-4"
+              style="border-left-color: var(--una-red)"
+            >
+              <p class="text-lg mb-0">
+                <strong>El siguiente paso:</strong> dejar de practicar JDBC
+                sentencia por sentencia y organizar el acceso con
+                <strong>operaciones con nombre</strong> y
+                <strong>permisos mínimos</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 4 · LA MISMA INTERFAZ, DOS IMPLEMENTACIONES ===== -->
+      <div class="slide">
+        <div class="w-full max-w-[92%] mx-auto relative z-10">
+          <i
+            class="fa-solid fa-code-branch bg-icon text-[300px] -right-10 opacity-5"
+            style="color: var(--accent-blue)"
+          ></i>
+          <div class="text-center mb-7">
+            <h2 class="text-5xl font-bold mb-2">
+              La misma interfaz, dos implementaciones
+            </h2>
+            <p class="text-xl" style="color: var(--text-muted)">
+              El Service no sabe si los datos están en un archivo o en un SABD.
+            </p>
+          </div>
+          <div class="max-w-5xl mx-auto glass-panel">
+            <pre class="code-block"><code><span class="darcula-kw">public interface</span> <span class="darcula-class">RepositorioVehiculo</span> {
+    <span class="darcula-class">List</span>&lt;<span class="darcula-class">Vehiculo</span>&gt; cargarTodos();
+    <span class="darcula-kw">void</span> insertar(<span class="darcula-class">Vehiculo</span> v);
+    <span class="darcula-kw">void</span> actualizar(<span class="darcula-class">Vehiculo</span> v);
+    <span class="darcula-kw">void</span> eliminar(<span class="darcula-class">String</span> placa);
+}</code></pre>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div class="p-4 rounded-xl bg-gray-50 border">
+                <h4 class="font-bold">
+                  <i class="fa-solid fa-file-lines mr-2"></i>RepositorioVehiculoTxt
+                </h4>
+                <p class="text-sm text-gray-500 mb-0">
+                  Persistencia en archivo. Ya lo teníamos.
+                </p>
+              </div>
+              <div class="p-4 rounded-xl bg-gray-50 border">
+                <h4 class="font-bold">
+                  <i class="fa-solid fa-database mr-2"></i>RepositorioVehiculoMySQL
+                </h4>
+                <p class="text-sm text-gray-500 mb-0">
+                  Persistencia en el SABD. Es lo que agregamos hoy.
+                </p>
+              </div>
+            </div>
+            <p class="text-sm mb-0">
+              <strong>Idea clave:</strong> la aplicación pidió “guardar”, no “un
+              TXT”. Por eso cambiar el medio de almacenamiento no obliga a
+              reescribir el modelo ni la vista.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 5 · QUÉ CAMBIÓ Y QUÉ NO ===== -->
+      <div class="slide">
+        <div class="w-full max-w-[92%] mx-auto relative z-10">
+          <i
+            class="fa-solid fa-scale-balanced bg-icon text-[300px] -left-20 -top-16 opacity-5"
+            style="color: var(--accent-green)"
+          ></i>
+          <div class="text-center mb-7">
+            <h2 class="text-5xl font-bold mb-2">¿Qué cambió y qué no?</h2>
+            <p class="text-xl" style="color: var(--text-muted)">
+              Cambiamos dónde se guarda, no lo que el sistema sabe hacer.
+            </p>
+          </div>
+          <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div
+              class="glass-panel border-l-4"
+              style="border-left-color: var(--accent-green)"
+            >
+              <div
+                class="w-11 h-11 rounded-full tint-green flex items-center justify-center text-lg mb-2"
+              >
+                <i class="fa-solid fa-circle-check"></i>
+              </div>
+              <h4 class="font-bold text-xl">Se conserva</h4>
+              <ul class="list-disc list-inside text-gray-700">
+                <li>El modelo <code>Vehiculo</code> y sus subclases</li>
+                <li><code>VehiculoFactory</code> y el DTO <code>DatosVehiculo</code></li>
+                <li><code>FlotaService</code> y las reglas de negocio</li>
+                <li>La vista y el Controller</li>
+              </ul>
+            </div>
+            <div
+              class="glass-panel border-l-4"
+              style="border-left-color: var(--una-red)"
+            >
+              <div
+                class="w-11 h-11 rounded-full tint-red flex items-center justify-center text-lg mb-2"
+              >
+                <i class="fa-solid fa-arrows-rotate"></i>
+              </div>
+              <h4 class="font-bold text-xl">Cambia</h4>
+              <ul class="list-disc list-inside text-gray-700">
+                <li>La implementación del Repository</li>
+                <li>El contrato de persistencia (más granular)</li>
+                <li>La configuración de arranque y las credenciales</li>
+                <li>Dónde se declaran las restricciones</li>
+              </ul>
+            </div>
+          </div>
+          <div
+            class="glass-panel max-w-6xl mx-auto mt-5 border-l-4"
+            style="border-left-color: var(--accent-blue)"
+          >
+            <p class="text-lg mb-0">
+              <strong>Si eso es lo único que cambia, la arquitectura está bien
+              separada.</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 6 · MÍNIMO PRIVILEGIO ===== -->
+      <div class="slide">
+        <div class="w-full max-w-[92%] mx-auto relative z-10">
+          <i
+            class="fa-solid fa-user-lock bg-icon text-[300px] -right-10 opacity-5"
+            style="color: var(--una-red)"
+          ></i>
+          <div class="text-center mb-7">
+            <h2 class="text-5xl font-bold mb-2">
+              Una conexión no es solo usuario y contraseña
+            </h2>
+            <p class="text-xl" style="color: var(--text-muted)">
+              La pregunta real es: ¿con cuántos privilegios se conecta Java?
+            </p>
+          </div>
+          <div class="max-w-6xl mx-auto glass-panel">
+            <p class="text-lg">
+              <strong>Mínimo privilegio:</strong> dar a cada parte únicamente
+              los permisos que necesita para cumplir su trabajo.
+            </p>
+          </div>
+          <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
+            <div class="glass-panel text-center border-t-4" style="border-top-color: var(--una-gold)">
+              <div
+                class="w-11 h-11 rounded-full tint-gold flex items-center justify-center text-lg mb-2 mx-auto"
+              >
+                <i class="fa-solid fa-user-gear"></i>
+              </div>
+              <h4 class="font-bold">Cuenta administradora</h4>
+              <p class="text-sm text-gray-500">
+                Crea el esquema y las cuentas. Se usa una sola vez, desde una
+                instancia local de laboratorio.
+              </p>
+            </div>
+            <div class="glass-panel text-center border-t-4" style="border-top-color: var(--accent-blue)">
+              <div
+                class="w-11 h-11 rounded-full tint-blue flex items-center justify-center text-lg mb-2 mx-auto"
+              >
+                <i class="fa-solid fa-user-shield"></i>
+              </div>
+              <h4 class="font-bold">flota_definer</h4>
+              <p class="text-sm text-gray-500">
+                Contexto de ejecución de los procedimientos. Permisos limitados
+                sobre la tabla.
+              </p>
+            </div>
+            <div class="glass-panel text-center border-t-4" style="border-top-color: var(--accent-green)">
+              <div
+                class="w-11 h-11 rounded-full tint-green flex items-center justify-center text-lg mb-2 mx-auto"
+              >
+                <i class="fa-solid fa-plug"></i>
+              </div>
+              <h4 class="font-bold">flota_app</h4>
+              <p class="text-sm text-gray-500">
+                La cuenta que usa Java. Solo recibe permiso para ejecutar
+                procedimientos concretos.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 7 · TRES FORMAS ===== -->
+      <div class="slide">
+        <div class="w-full max-w-[92%] mx-auto relative z-10">
+          <i
+            class="fa-solid fa-triangle-exclamation bg-icon text-[300px] -left-10 opacity-5"
+            style="color: var(--una-gold)"
+          ></i>
+          <div class="text-center mb-7">
+            <h2 class="text-5xl font-bold mb-2">Tres formas de resolverlo</h2>
+            <p class="text-xl" style="color: var(--text-muted)">
+              La misma operación, con tres niveles de cuidado.
+            </p>
+          </div>
+          <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="glass-panel border-t-4" style="border-top-color: var(--una-red)">
+              <span class="inline-flex w-9 h-9 rounded-full tint-red items-center justify-center font-extrabold mb-2">A</span>
+              <h4 class="font-bold">Concatenar el dato</h4>
+              <p class="text-sm text-gray-500">
+                El dato se confunde con el código SQL.
+              </p>
+              <pre class="code-block"><code><span class="darcula-class">String</span> sql = <span class="darcula-str">"SELECT * FROM vehiculo
+  WHERE placa = '"</span> + placa + <span class="darcula-str">"'"</span>;</code></pre>
+              <p class="text-xs mb-0" style="color: var(--una-red)">
+                <strong>Insegura</strong> · inyección SQL
+              </p>
+            </div>
+            <div class="glass-panel border-t-4" style="border-top-color: var(--accent-blue)">
+              <span class="inline-flex w-9 h-9 rounded-full tint-blue items-center justify-center font-extrabold mb-2">B</span>
+              <h4 class="font-bold">Parametrizar</h4>
+              <p class="text-sm text-gray-500">
+                Los valores viajan por separado del texto.
+              </p>
+              <pre class="code-block"><code><span class="darcula-class">String</span> sql = <span class="darcula-str">"SELECT * FROM vehiculo
+  WHERE placa = ?"</span>;
+ps.setString(<span class="darcula-num">1</span>, placa);</code></pre>
+              <p class="text-xs mb-0" style="color: var(--accent-blue)">
+                <strong>Mejor</strong> · se rompe la inyección
+              </p>
+            </div>
+            <div class="glass-panel border-t-4" style="border-top-color: var(--accent-green)">
+              <span class="inline-flex w-9 h-9 rounded-full tint-green items-center justify-center font-extrabold mb-2">C</span>
+              <h4 class="font-bold">Parametrizar y restringir</h4>
+              <p class="text-sm text-gray-500">
+                Además, la cuenta de la aplicación tiene menos capacidades.
+              </p>
+              <pre class="code-block"><code><span class="darcula-com">-- La app no toca la tabla:
+-- solo puede ejecutar</span>
+<span class="darcula-kw">CALL</span> sp_listar_vehiculos();</code></pre>
+              <p class="text-xs mb-0" style="color: var(--accent-green)">
+                <strong>Controlada</strong> · es lo que buscamos
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 8 · LOS PROCEDIMIENTOS NO SON MÁGICOS ===== -->
+      <div class="slide">
+        <div class="w-full max-w-[92%] mx-auto relative z-10">
+          <i
+            class="fa-solid fa-quote-left bg-icon text-[300px] -right-20 -bottom-10 opacity-5"
+            style="color: var(--accent-purple)"
+          ></i>
+          <div class="text-center mb-7">
+            <h2 class="text-5xl font-bold mb-2">
+              Un procedimiento no es una solución mágica
+            </h2>
+            <p class="text-xl" style="color: var(--text-muted)">
+              Es una herramienta más dentro del mapa de seguridad.
+            </p>
+          </div>
+          <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div
+              class="glass-panel border-l-4"
+              style="border-left-color: var(--accent-green)"
+            >
+              <div
+                class="w-11 h-11 rounded-full tint-green flex items-center justify-center text-lg mb-2"
+              >
+                <i class="fa-solid fa-circle-check"></i>
+              </div>
+              <h4 class="font-bold text-xl">Lo que sí aporta</h4>
+              <ul class="list-disc list-inside text-gray-700">
+                <li>Reduce la superficie de acceso a operaciones concretas</li>
+                <li>Java no necesita conocer el SQL interno de la tabla</li>
+                <li>Centraliza la operación en el servidor</li>
+              </ul>
+            </div>
+            <div
+              class="glass-panel border-l-4"
+              style="border-left-color: var(--una-red)"
+            >
+              <div
+                class="w-11 h-11 rounded-full tint-red flex items-center justify-center text-lg mb-2"
+              >
+                <i class="fa-solid fa-ban"></i>
+              </div>
+              <h4 class="font-bold text-xl">Lo que no evita</h4>
+              <ul class="list-disc list-inside text-gray-700">
+                <li>SQL dinámico concatenado dentro del procedimiento</li>
+                <li>Un definidor con permisos excesivos</li>
+                <li>Falta de validación y de credenciales bien manejadas</li>
+              </ul>
+            </div>
+          </div>
+          <div
+            class="glass-panel max-w-6xl mx-auto mt-5 border-l-4"
+            style="border-left-color: var(--una-red)"
+          >
+            <p class="text-lg mb-0">
+              <strong>Recuerden:</strong> parametrizar y usar procedimientos
+              <em>no sustituyen</em> la autorización. La seguridad sale de
+              combinar varias decisiones correctas.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 9 · POR QUÉ NO ROOT + SECRETOS ===== -->
+      <div class="slide">
+        <div class="w-full max-w-[92%] mx-auto relative z-10">
+          <i
+            class="fa-solid fa-key bg-icon text-[300px] -left-10 opacity-5"
+            style="color: var(--accent-blue)"
+          ></i>
+          <div class="text-center mb-7">
+            <h2 class="text-5xl font-bold mb-2">
+              ¿Por qué Java no se conecta como root?
+            </h2>
+            <p class="text-xl" style="color: var(--text-muted)">
+              Dos decisiones que se toman antes de escribir la primera línea de
+              JDBC.
+            </p>
+          </div>
+          <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div
+              class="glass-panel border-l-4"
+              style="border-left-color: var(--una-red)"
+            >
+              <div
+                class="w-11 h-11 rounded-full tint-red flex items-center justify-center text-lg mb-2"
+              >
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              </div>
+              <h4 class="font-bold text-xl">El daño posible</h4>
+              <p>
+                Con <code>root</code> la aplicación puede crear usuarios, borrar
+                bases o cambiar el servidor completo. Un error o una
+                vulnerabilidad deja de ser un problema local.
+              </p>
+              <p class="mb-0">
+                <strong>La aplicación no necesita eso.</strong>
+              </p>
+            </div>
+            <div
+              class="glass-panel border-l-4"
+              style="border-left-color: var(--accent-purple)"
+            >
+              <div
+                class="w-11 h-11 rounded-full tint-purple flex items-center justify-center text-lg mb-2"
+              >
+                <i class="fa-solid fa-user-secret"></i>
+              </div>
+              <h4 class="font-bold text-xl">El secreto fuera del código</h4>
+              <p>
+                Una contraseña escrita en una clase Java termina en Git, en un
+                ZIP o en una captura de pantalla.
+              </p>
+              <p class="mb-0">
+                Se lee del entorno; el archivo <code>.env.example</code> es solo
+                una plantilla de nombres.
+              </p>
+            </div>
+          </div>
+          <div class="max-w-6xl mx-auto glass-panel mt-5">
+            <p class="text-sm mb-0">
+              <strong>Variables que configuramos:</strong>
+              <span class="chip" style="background: rgba(214, 158, 46, 0.16); color: var(--una-gold)">FLOTA_DB_URL</span>
+              <span class="chip" style="background: rgba(59, 130, 246, 0.16); color: var(--accent-blue)">FLOTA_DB_USER</span>
+              <span class="chip" style="background: rgba(16, 185, 129, 0.16); color: var(--accent-green)">FLOTA_DB_PASSWORD</span>
+              — Java <em>no</em> lee el archivo <code>.env</code> por su cuenta.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 10 · EL ROOT DE LA SEMANA 11 ===== -->
+      <div class="slide">
+        <div class="w-full max-w-[92%] mx-auto relative z-10">
+          <i
+            class="fa-solid fa-arrows-rotate bg-icon text-[300px] -right-10 opacity-5"
+            style="color: var(--accent-green)"
+          ></i>
+          <div class="text-center mb-7">
+            <h2 class="text-5xl font-bold mb-2">El root de la Semana 11</h2>
+            <p class="text-xl" style="color: var(--text-muted)">
+              Corregimos una decisión que en ese momento era solo didáctica.
+            </p>
+          </div>
+          <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="glass-panel border-l-4" style="border-left-color: var(--una-gold)">
+              <span class="chip" style="background: rgba(148, 163, 184, 0.2); color: var(--text-muted)">Semana 11</span>
+              <h4 class="font-bold text-xl">Aprendimos el ciclo JDBC</h4>
+              <pre class="code-block"><code>Host       : localhost
+Puerto     : 3306
+Usuario    : root
+Driver     : MySQL Connector/J</code></pre>
+              <p class="text-sm mb-0">
+                Servía para practicar: una sola cuenta, sin ceremonias.
+              </p>
+            </div>
+            <div class="glass-panel border-l-4" style="border-left-color: var(--accent-green)">
+              <span class="chip" style="background: rgba(16, 185, 129, 0.16); color: var(--accent-green)">Semana 13</span>
+              <h4 class="font-bold text-xl">La aplicación usa su propia cuenta</h4>
+              <pre class="code-block"><code>Host       : localhost
+Puerto     : 3306
+Usuario    : flota_app
+Driver     : MySQL Connector/J</code></pre>
+              <p class="text-sm mb-0">
+                <code>flota_app</code> solo ejecuta procedimientos.
+              </p>
+            </div>
+          </div>
+          <div
+            class="glass-panel max-w-5xl mx-auto mt-5 border-l-4"
+            style="border-left-color: var(--una-red)"
+          >
+            <p class="text-lg mb-0">
+              <strong>No confundir:</strong> <code>root</code> sirve para
+              <em>administrar</em> el servidor; la aplicación <em>trabaja</em>
+              con una cuenta dedicada.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 11 · ¿QUÉ ES UN PROCEDIMIENTO ALMACENADO? ===== -->
+      <div class="slide">
+        <div class="w-full max-w-[92%] mx-auto relative z-10">
+          <i
+            class="fa-solid fa-cubes bg-icon text-[300px] -left-10 opacity-5"
+            style="color: var(--accent-green)"
+          ></i>
+          <div class="text-center mb-7">
+            <h2 class="text-5xl font-bold mb-2">
+              ¿Qué es un procedimiento almacenado?
+            </h2>
+            <p class="text-xl" style="color: var(--text-muted)">
+              Una operación definida en el servidor, a la que llamamos por su
+              nombre.
+            </p>
+          </div>
+          <div class="max-w-6xl mx-auto glass-panel">
+            <p class="text-lg">
+              En vez de darle a la cuenta de Java permiso para ejecutar
+              cualquier <code>SELECT</code>, <code>INSERT</code>,
+              <code>UPDATE</code> o <code>DELETE</code>, le damos permiso para
+              ejecutar <strong>operaciones específicas</strong>.
+            </p>
+            <pre class="code-block"><code><span class="darcula-kw">CALL</span> flota_vehicular.sp_listar_vehiculos();</code></pre>
+          </div>
+          <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
+            <div class="glass-panel text-center">
+              <i class="fa-solid fa-list text-lg" style="color: var(--accent-blue)"></i>
+              <h4 class="font-bold text-sm mt-1">sp_listar_vehiculos</h4>
+            </div>
+            <div class="glass-panel text-center">
+              <i class="fa-solid fa-plus text-lg" style="color: var(--accent-green)"></i>
+              <h4 class="font-bold text-sm mt-1">sp_insertar_vehiculo</h4>
+            </div>
+            <div class="glass-panel text-center">
+              <i class="fa-solid fa-pen text-lg" style="color: var(--una-gold)"></i>
+              <h4 class="font-bold text-sm mt-1">sp_actualizar_vehiculo</h4>
+            </div>
+            <div class="glass-panel text-center">
+              <i class="fa-solid fa-trash text-lg" style="color: var(--una-red)"></i>
+              <h4 class="font-bold text-sm mt-1">sp_eliminar_vehiculo</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 12 · EL CONTRATO Y LA LLAMADA ===== -->
+      <div class="slide">
+        <div class="w-full max-w-[92%] mx-auto relative z-10">
+          <i
+            class="fa-solid fa-handshake bg-icon text-[300px] -right-10 opacity-5"
+            style="color: var(--accent-purple)"
+          ></i>
+          <div class="text-center mb-7">
+            <h2 class="text-5xl font-bold mb-2">El contrato y la llamada</h2>
+            <p class="text-xl" style="color: var(--text-muted)">
+              Java no necesita el SQL interno: necesita el nombre y los
+              parámetros en orden.
+            </p>
+          </div>
+          <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="glass-panel">
+              <h4 class="font-bold text-lg">
+                <i class="fa-solid fa-file-contract mr-2" style="color: var(--accent-blue)"></i>CallableStatement
+              </h4>
+              <pre class="code-block"><code>cs = cn.prepareCall(
+  <span class="darcula-str">"{CALL sp_insertar_vehiculo(?,?,?,?,?,?,?,?,?,?)}"</span>);
+cs.setString(<span class="darcula-num">1</span>, datos.placa());
+cs.setInt(<span class="darcula-num">3</span>, datos.kilometraje());</code></pre>
+            </div>
+            <div class="glass-panel">
+              <h4 class="font-bold text-lg">
+                <i class="fa-solid fa-arrow-right-arrow-left mr-2" style="color: var(--accent-green)"></i>Qué sí y qué no hacemos
+              </h4>
+              <ul class="list-disc list-inside text-gray-700 text-sm">
+                <li>Cada <code>?</code> es un parámetro tipado</li>
+                <li>El texto de la llamada permanece <strong>fijo</strong></li>
+                <li>Los valores viajan <strong>por separado</strong></li>
+                <li>No pegamos la placa dentro del texto de la sentencia</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 13 · PERMISOS: DE LA TABLA AL PROCEDIMIENTO ===== -->
+      <div class="slide">
+        <div class="w-full max-w-[92%] mx-auto relative z-10">
+          <i
+            class="fa-solid fa-user-shield bg-icon text-[300px] -left-20 -bottom-10 opacity-5"
+            style="color: var(--una-gold)"
+          ></i>
+          <div class="text-center mb-7">
+            <h2 class="text-5xl font-bold mb-2">
+              Permisos: de la tabla al procedimiento
+            </h2>
+            <p class="text-xl" style="color: var(--text-muted)">
+              Dos preguntas: ¿quién otorga el permiso? y ¿quién ejecuta la
+              operación?
+            </p>
+          </div>
+          <div class="max-w-6xl mx-auto glass-panel">
+            <table class="deck">
+              <thead>
+                <tr>
+                  <th style="width: 22%">Cláusula</th>
+                  <th>El procedimiento se ejecuta…</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>SQL SECURITY DEFINER</strong></td>
+                  <td>
+                    con los privilegios de quien lo <strong>definió</strong>
+                    (<code>flota_definer</code>). Es la opción segura cuando el
+                    definidor tiene permisos limitados.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>SQL SECURITY INVOKER</strong></td>
+                  <td>
+                    con los privilegios de quien lo <strong>invoca</strong>. Si
+                    el invocador es la app, la app necesita permisos sobre la
+                    tabla.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="max-w-6xl mx-auto glass-panel mt-5">
+            <h4 class="font-bold text-lg">
+              <i class="fa-solid fa-key mr-2" style="color: var(--una-red)"></i>Lo único que recibe la aplicación
+            </h4>
+            <pre class="code-block"><code><span class="darcula-kw">GRANT EXECUTE ON PROCEDURE</span> flota_vehicular.sp_insertar_vehiculo
+  <span class="darcula-kw">TO</span> <span class="darcula-str">'flota_app'</span>@<span class="darcula-str">'localhost'</span>;</code></pre>
+            <p class="text-sm mb-0">
+              Sin <code>SELECT</code>, sin <code>INSERT</code>, sin
+              <code>DROP</code>. Solo permiso para ejecutar.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 14 · MAPA DE EXTREMO A EXTREMO ===== -->
+      <div class="slide">
+        <div class="w-full max-w-[92%] mx-auto relative z-10">
+          <i
+            class="fa-solid fa-route bg-icon text-[300px] -right-10 opacity-5"
+            style="color: var(--accent-blue)"
+          ></i>
+          <div class="text-center mb-7">
+            <h2 class="text-5xl font-bold mb-2">El recorrido completo</h2>
+            <p class="text-xl" style="color: var(--text-muted)">
+              Del botón Guardar hasta la fila en la tabla.
+            </p>
+          </div>
+          <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div class="flow-box">
+                <i class="fa-solid fa-window-maximize" style="color: var(--accent-blue)"></i>
+                <h4 class="font-bold text-sm mt-1">Vista</h4>
+              </div>
+              <div class="flow-box">
+                <i class="fa-solid fa-gamepad" style="color: var(--accent-purple)"></i>
+                <h4 class="font-bold text-sm mt-1">Controller</h4>
+              </div>
+              <div class="flow-box">
+                <i class="fa-solid fa-gears" style="color: var(--accent-green)"></i>
+                <h4 class="font-bold text-sm mt-1">FlotaService</h4>
+              </div>
+              <div class="flow-box">
+                <i class="fa-solid fa-box-archive" style="color: var(--una-gold)"></i>
+                <h4 class="font-bold text-sm mt-1">Repository</h4>
+              </div>
+            </div>
+            <div class="text-center text-3xl my-3" style="color: var(--una-red)">
+              ↓
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div class="flow-box">
+                <i class="fa-solid fa-plug" style="color: var(--accent-blue)"></i>
+                <h4 class="font-bold text-sm mt-1">JDBC / Connector-J</h4>
+              </div>
+              <div class="flow-box">
+                <i class="fa-solid fa-cubes" style="color: var(--accent-green)"></i>
+                <h4 class="font-bold text-sm mt-1">Procedimiento</h4>
+              </div>
+              <div class="flow-box">
+                <i class="fa-solid fa-database" style="color: var(--una-red)"></i>
+                <h4 class="font-bold text-sm mt-1">Tabla</h4>
+              </div>
+            </div>
+            <div class="glass-panel mt-4 border-l-4" style="border-left-color: var(--una-red)">
+              <p class="text-lg mb-0">
+                <strong>El Controller no tiene un <code>Connection</code> ni un
+                <code>CALL</code>.</strong> Si cambia la persistencia, la
+                decisión queda aislada en el Repository.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 15 · DRIVERMANAGER HOY, POOL DESPUÉS ===== -->
+      <div class="slide">
+        <div class="w-full max-w-[92%] mx-auto relative z-10">
+          <i
+            class="fa-solid fa-network-wired bg-icon text-[300px] -left-10 opacity-5"
+            style="color: var(--accent-purple)"
+          ></i>
+          <div class="text-center mb-7">
+            <h2 class="text-5xl font-bold mb-2">
+              DriverManager hoy, pool de conexiones después
+            </h2>
+            <p class="text-xl" style="color: var(--text-muted)">
+              Abrir una conexión cuesta; cerrar recursos no es opcional.
+            </p>
+          </div>
+          <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="glass-panel border-t-4" style="border-top-color: var(--accent-blue)">
+              <h4 class="font-bold">
+                <i class="fa-solid fa-plug mr-2"></i>DriverManager
+              </h4>
+              <p class="text-sm text-gray-500 mb-0">
+                Una conexión nueva por operación. Deja visible el ciclo de vida
+                de JDBC: ideal para aprender.
+              </p>
+            </div>
+            <div class="glass-panel border-t-4" style="border-top-color: var(--accent-green)">
+              <h4 class="font-bold">
+                <i class="fa-solid fa-layer-group mr-2"></i>Pool de conexiones
+              </h4>
+              <p class="text-sm text-gray-500 mb-0">
+                Reutiliza conexiones abiertas. Lo esperable en una aplicación de
+                mayor tráfico.
+              </p>
+            </div>
+            <div class="glass-panel border-t-4" style="border-top-color: var(--una-gold)">
+              <h4 class="font-bold">
+                <i class="fa-solid fa-broom mr-2"></i>try-with-resources
+              </h4>
+              <pre class="code-block"><code><span class="darcula-kw">try</span> (<span class="darcula-class">Connection</span> cn = conectar();
+     <span class="darcula-class">CallableStatement</span> cs =
+       cn.prepareCall(llamada)) {
+  ...
+}</code></pre>
+            </div>
+          </div>
+          <div class="max-w-6xl mx-auto glass-panel mt-5">
+            <p class="text-lg mb-0">
+              <strong>No es solo estilo:</strong> <code>Connection</code>,
+              <code>CallableStatement</code> y <code>ResultSet</code> son
+              recursos del servidor. El bloque los cierra incluso si ocurre una
+              excepción.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 16 · EL CONTRATO DEL REPOSITORY CAMBIÓ ===== -->
+      <div class="slide">
+        <div class="w-full max-w-[92%] mx-auto relative z-10">
+          <i
+            class="fa-solid fa-box-archive bg-icon text-[300px] -right-10 opacity-5"
+            style="color: var(--accent-green)"
+          ></i>
+          <div class="text-center mb-7">
+            <h2 class="text-5xl font-bold mb-2">
+              El contrato del Repository cambió
+            </h2>
+            <p class="text-xl" style="color: var(--text-muted)">
+              Antes guardábamos la lista completa; ahora hacemos una operación
+              por vehículo.
+            </p>
+          </div>
+          <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="glass-panel border-l-4" style="border-left-color: var(--una-red)">
+              <span class="chip" style="background: rgba(148, 163, 184, 0.2); color: var(--text-muted)">Antes</span>
+              <h4 class="font-bold text-xl">Reescribir todo</h4>
+              <ul class="list-disc list-inside text-gray-700">
+                <li>Se guardaba la lista entera</li>
+                <li>Funciona cuando el archivo es solo nuestro</li>
+                <li>No funciona bien con varios usuarios</li>
+              </ul>
+            </div>
+            <div class="glass-panel border-l-4" style="border-left-color: var(--accent-green)">
+              <span class="chip" style="background: rgba(16, 185, 129, 0.16); color: var(--accent-green)">Ahora</span>
+              <h4 class="font-bold text-xl">Una operación por vehículo</h4>
+              <ul class="list-disc list-inside text-gray-700">
+                <li><code>insertar</code>, <code>actualizar</code>, <code>eliminar</code></li>
+                <li>Cada llamada expresa una intención</li>
+                <li>Si la base falla, no fingimos que se guardó</li>
+              </ul>
+            </div>
+          </div>
+          <div
+            class="glass-panel max-w-6xl mx-auto mt-5 border-l-4"
+            style="border-left-color: var(--una-red)"
+          >
+            <p class="text-lg mb-0">
+              <strong>¿Por qué no borrar y reinsertar toda la tabla?</strong>
+              Afectaría datos de otros usuarios y podría perder actualizaciones
+              concurrentes. La lista en memoria es una vista de trabajo;
+              <strong>MySQL es el almacenamiento persistente</strong>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 17 · CIERRE ===== -->
+      <div class="slide">
+        <div class="w-full max-w-[92%] mx-auto relative z-10">
+          <i
+            class="fa-solid fa-circle-check bg-icon text-[300px] -right-10 opacity-5"
+            style="color: var(--una-red)"
+          ></i>
+          <div class="text-center mb-7">
+            <h2 class="text-5xl font-bold mb-2">Cierre: el mapa completo</h2>
+            <p class="text-xl" style="color: var(--text-muted)">
+              Cada práctica insegura tiene su alternativa.
+            </p>
+          </div>
+          <div class="max-w-6xl mx-auto glass-panel">
+            <table class="deck">
+              <thead>
+                <tr>
+                  <th style="width: 42%">Práctica insegura</th>
+                  <th>Lo que hacemos en el laboratorio</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Concatenar datos dentro del SQL</td>
+                  <td>Parámetros en <code>CallableStatement</code></td>
+                </tr>
+                <tr>
+                  <td>Conectarse como <code>root</code></td>
+                  <td><code>flota_app</code>, con mínimo privilegio</td>
+                </tr>
+                <tr>
+                  <td>Contraseñas en el código fuente</td>
+                  <td>Variables de entorno</td>
+                </tr>
+                <tr>
+                  <td>Permisos directos sobre la tabla</td>
+                  <td><code>EXECUTE</code> solo en procedimientos concretos</td>
+                </tr>
+                <tr>
+                  <td>SQL dentro del Controller</td>
+                  <td>Repository como frontera de acceso a datos</td>
+                </tr>
+                <tr>
+                  <td>Reescribir toda la tabla en cada cambio</td>
+                  <td>Operaciones específicas por vehículo</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div
+            class="glass-panel max-w-6xl mx-auto mt-5 border-l-4"
+            style="border-left-color: var(--una-red)"
+          >
+            <p class="text-lg mb-0">
+              <strong>Y recuerden:</strong> los procedimientos almacenados no
+              son una solución mágica. Son una herramienta. La seguridad sale de
+              combinar decisiones correctas y de comprobarlas.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- fin slides-container -->
+    <!-- Scripts compartidos del proyecto — NO borrar ni agregar scripts abajo -->
+    <script src="../../../assets/js/curso-info.js"></script>
+    <script src="../../../assets/js/presentacion.js"></script>
+  </body>
+</html>
