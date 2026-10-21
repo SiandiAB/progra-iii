@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+
+<html data-theme="light" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Laboratorio 9 — Programación III (Semana 14)</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+<style>
+        :root {
+            --bg-main: #f8fafc;
+            --bg-panel: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-panel: #e2e8f0;
+            --una-red: #c8102e;
+            --una-gold: #d4ac0d;
+            --accent-blue: #2563eb;
+            --accent-green: #16a34a;
+            --accent-purple: #7c3aed;
+            --accent-peach: #ea580c;
+        }
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --bg-panel: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-panel: #334155;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .glass-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .glass-panel h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.75rem; }
+        .glass-panel h3 { font-size: 1.3rem; font-weight: 700; margin: 1.2rem 0 0.6rem 0; }
+        .glass-panel h4 { font-size: 1.1rem; font-weight: 700; margin: 1rem 0 0.4rem 0; }
+        .glass-panel h2 code { font-size: 1.4rem; }
+        .glass-panel p { color: var(--text-muted); margin-bottom: 0.75rem; }
+        .glass-panel p:not([class*="text-"]) { font-size: 1.15rem; }
+        .glass-panel ul, .glass-panel ol { color: var(--text-muted); padding-left: 1.5rem; margin-bottom: 0.75rem; }
+        .glass-panel li { margin-bottom: 0.3rem; font-size: 1.1rem; }
+        /* Tailwind Preflight quita los marcadores; aquí los recuperamos para pasos y listas */
+        .glass-panel ol { list-style: decimal; }
+        .glass-panel ul:not(.callout-list) { list-style: disc; }
+        .glass-panel ol > li::marker, .glass-panel ul > li::marker { color: var(--accent-blue); font-weight: 800; }
+
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .badge-red { background: rgba(200,16,46,0.12); color: var(--una-red); }
+        .badge-blue { background: rgba(37,99,235,0.12); color: var(--accent-blue); }
+        .badge-green { background: rgba(22,163,74,0.12); color: var(--accent-green); }
+        .badge-purple { background: rgba(124,58,237,0.12); color: var(--accent-purple); }
+        .badge-gold { background: rgba(212,172,13,0.12); color: var(--una-gold); }
+        .badge-peach { background: rgba(234,88,12,0.12); color: var(--accent-peach); }
+
+        .code-fragment {
+            background: #2b2b2b;
+            border-radius: 0.6rem;
+            padding: 1rem 1.2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.02rem;
+            color: #a9b7c6;
+            margin: 0.5rem 0;
+            border: 1px solid #323232;
+            display: block;
+            white-space: pre;
+            overflow-x: auto;
+            width: 100%;
+            line-height: 1.55;
+        }
+
+        code.text-sm { font-size: 1.15rem; }
+        code.text-xs { font-size: 1.05rem; }
+        code:not([class*="text-"]) { font-size: 1.15rem; }
+
+        /* Bloques largos: fuente algo menor para que las líneas quepan mejor */
+        .code-fragment.compact { font-size: 0.84rem; line-height: 1.5; }
+
+        .d-comment { color: #808080; font-style: italic; }
+        .d-keyword { color: #cc7832; font-weight: bold; }
+        .d-string { color: #6a8759; }
+        .d-number { color: #6897bb; }
+        .d-annotation { color: #bbb529; }
+        .d-method { color: #ffc66d; }
+        .d-field { color: #9876aa; }
+        .d-type { color: #a9b7c6; font-weight: bold; }
+        .d-bad { color: #e06c75; font-weight: bold; }
+        .d-good { color: #98c379; font-weight: bold; }
+        .d-focus { background: rgba(224,108,117,0.2); border-radius: 4px; }
+
+        .step-sub {
+            border-left: 3px solid var(--accent-blue);
+            padding-left: 1rem;
+            margin: 1.4rem 0 1.2rem 0;
+        }
+        .step-sub h5 {
+            font-weight: 800;
+            font-size: 1.22rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.2rem;
+        }
+        .step-sub p { font-size: 1.12rem; color: var(--text-muted); margin-bottom: 0.3rem; }
+
+        .highlight-box {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--una-gold);
+            background: rgba(212,172,13,0.06);
+            margin: 0.75rem 0;
+        }
+        .highlight-box strong { color: var(--una-gold); }
+
+        .error-box {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--una-red);
+            background: rgba(200,16,46,0.06);
+            margin: 0.75rem 0;
+        }
+        .error-box strong { color: var(--una-red); }
+
+        .ok-box {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--accent-green);
+            background: rgba(22,163,74,0.06);
+            margin: 0.75rem 0;
+        }
+        .ok-box strong { color: var(--accent-green); }
+
+        .file-tag {
+            display: inline-block;
+            background: rgba(37,99,235,0.1);
+            color: var(--accent-blue);
+            border-radius: 0.5rem;
+            padding: 0.1rem 0.6rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+        .file-tag.new { background: rgba(22,163,74,0.12); color: var(--accent-green); }
+        .file-tag.edit { background: rgba(234,88,12,0.12); color: var(--accent-peach); }
+
+        .float-btn {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 9999px;
+            padding: 0.65rem 1rem;
+            font-size: 1rem;
+            color: var(--text-main);
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transition: transform 0.15s, background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .float-btn:hover { transform: scale(1.05); background: var(--border-panel); }
+
+        .mini-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 1rem;
+            padding: 1rem 1.1rem;
+            height: 100%;
+        }
+        .mini-card h4 { margin-top: 0.2rem; }
+        .mini-card p { font-size: 1.02rem; margin-bottom: 0; }
+
+        .group-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .group-card .members { color: var(--text-muted); font-size: 1.02rem; line-height: 1.55; margin-bottom: 0.6rem; }
+        .group-card .task { color: var(--text-muted); font-size: 1.05rem; }
+        .group-card .task strong { color: var(--text-main); }
+
+        .zone-chip {
+            display: inline-block;
+            border-radius: 9999px;
+            padding: 0.2rem 0.7rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin: 0.15rem 0.1rem;
+        }
+        .zone-chip.green { background: rgba(22,163,74,0.12); color: var(--accent-green); }
+        .zone-chip.blue { background: rgba(37,99,235,0.12); color: var(--accent-blue); }
+        .zone-chip.purple { background: rgba(124,58,237,0.12); color: var(--accent-purple); }
+        .zone-chip.gold { background: rgba(212,172,13,0.12); color: var(--una-gold); }
+        .zone-chip.red { background: rgba(200,16,46,0.12); color: var(--una-red); }
+        .zone-chip.peach { background: rgba(234,88,12,0.12); color: var(--accent-peach); }
+
+        details {
+            margin-top: 1rem;
+            background: rgba(0,0,0,0.02);
+            padding: 0.6rem 1rem;
+            border-radius: 0.6rem;
+            border: 1px solid var(--border-panel);
+        }
+        [data-theme="dark"] details { background: rgba(255,255,255,0.03); }
+        details summary {
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 1.06rem;
+        }
+        details summary:hover { color: var(--accent-blue); }
+        details > p, details > ul, details > ol { margin-top: 0.6rem; }
+
+        .toc a {
+            display: block;
+            padding: 0.3rem 0;
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.03rem;
+        }
+        .toc a:hover { text-decoration: underline; }
+        .part-label {
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-top: 0.9rem;
+        }
+
+        table.grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.98rem;
+            color: var(--text-muted);
+            margin: 0.6rem 0;
+        }
+        table.grid-table th {
+            text-align: left;
+            padding: 0.55rem 0.7rem;
+            font-weight: 800;
+            color: var(--text-main);
+            border-bottom: 2px solid var(--border-panel);
+        }
+        table.grid-table td {
+            padding: 0.5rem 0.7rem;
+            border-bottom: 1px solid var(--border-panel);
+            vertical-align: top;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+        table.grid-table tr:last-child td { border-bottom: 0; }
+        table.grid-table code { overflow-wrap: anywhere; word-break: break-word; }
+
+        .callout-list { list-style: none; padding-left: 0; }
+        .callout-list li {
+            background: rgba(37,99,235,0.05);
+            border-left: 3px solid var(--accent-blue);
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+        .callout-list code { word-break: break-word; }
+
+        /* ---------- Diagrama del mapa completo ---------- */
+        .diagram-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: start;
+            gap: 1rem;
+            margin: 1rem 0 0.5rem;
+        }
+        .diagram-lane {
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-panel);
+            border-radius: 1rem;
+            padding: 0.9rem 1rem 1rem;
+            background: linear-gradient(180deg, rgba(37,99,235,0.06), rgba(37,99,235,0) 60%);
+        }
+        .diagram-lane.lane-net {
+            background: linear-gradient(180deg, rgba(22,163,74,0.07), rgba(22,163,74,0) 60%);
+        }
+        .lane-head {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 0.74rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--accent-blue);
+            margin-bottom: 0.85rem;
+        }
+        .lane-net .lane-head { color: var(--accent-green); }
+
+        .dnode {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-left: 4px solid var(--node, var(--accent-blue));
+            border-radius: 0.8rem;
+            padding: 0.6rem 0.75rem;
+            box-shadow: 0 2px 10px rgba(15,23,42,0.05);
+        }
+        .dnode-icon {
+            flex: 0 0 auto;
+            width: 1.35rem;
+            text-align: center;
+            font-size: 1.02rem;
+            color: var(--node, var(--accent-blue));
+            margin-top: 0.15rem;
+        }
+        .dnode h5 {
+            font-size: 1rem;
+            font-weight: 800;
+            margin: 0 0 0.1rem 0;
+            color: var(--text-main);
+            line-height: 1.3;
+        }
+        .glass-panel .dnode p {
+            font-size: 0.9rem;
+            line-height: 1.45;
+            margin: 0;
+            color: var(--text-muted);
+        }
+        .dnode-tags { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.35rem; }
+        .dnode-tags span {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border-radius: 9999px;
+            padding: 0.05rem 0.45rem;
+            background: rgba(37,99,235,0.1);
+            color: var(--accent-blue);
+        }
+        .dnode-tags span.gold { background: rgba(212,172,13,0.14); color: var(--una-gold); }
+        .dnode-tags span.green { background: rgba(22,163,74,0.12); color: var(--accent-green); }
+        .dnode-tags span.purple { background: rgba(124,58,237,0.12); color: var(--accent-purple); }
+
+        .dlink {
+            --conn-strong: var(--accent-blue);
+            --conn-soft: rgba(37,99,235,0.16);
+            --conn-border: rgba(37,99,235,0.32);
+            position: relative;
+            height: 4.6rem;
+        }
+        .lane-net .dlink {
+            --conn-strong: var(--accent-green);
+            --conn-soft: rgba(22,163,74,0.16);
+            --conn-border: rgba(22,163,74,0.32);
+        }
+        .dlink > span:not(.dlink-arrow) {
+            position: absolute;
+            top: 0.15rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            color: var(--conn-strong);
+            background: var(--bg-panel);
+            border: 1px solid var(--conn-border);
+            border-radius: 9999px;
+            padding: 0.08rem 0.6rem;
+            white-space: nowrap;
+        }
+        .dlink::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 1.55rem;
+            bottom: 1.75rem;
+            width: 2px;
+            border-radius: 2px;
+            background: linear-gradient(to bottom, var(--conn-soft), var(--conn-strong));
+        }
+        .dlink-arrow {
+            position: absolute;
+            bottom: 0.05rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1.7rem;
+            height: 1.7rem;
+            border-radius: 9999px;
+            background: var(--bg-panel);
+            border: 1.5px solid var(--conn-border);
+            box-shadow: 0 2px 6px rgba(15,23,42,0.07);
+        }
+        .dlink-arrow::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 46%;
+            width: 7px;
+            height: 7px;
+            border-right: 2px solid var(--conn-strong);
+            border-bottom: 2px solid var(--conn-strong);
+            border-bottom-right-radius: 2px;
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        .branch-list { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.3rem; }
+        .branch-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.45rem;
+            font-size: 0.88rem;
+            line-height: 1.4;
+            color: var(--text-muted);
+        }
+        .branch-item i { color: var(--una-gold); font-size: 0.78rem; margin-top: 0.2rem; }
+        .branch-item strong { color: var(--text-main); }
+
+        .lane-foot {
+            margin-top: 0.85rem;
+            font-size: 0.82rem;
+            line-height: 1.45;
+            color: var(--text-muted);
+            border-top: 1px dashed var(--border-panel);
+            padding-top: 0.6rem;
+        }
+        .lane-foot code { font-size: 0.8rem; }
+
+        .diagram-note {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.55rem;
+            margin-top: 0.9rem;
+            padding: 0.6rem 0.8rem;
+            border: 1px dashed var(--border-panel);
+            border-radius: 0.8rem;
+            font-size: 0.9rem;
+            line-height: 1.45;
+            color: var(--text-muted);
+        }
+        .diagram-note i { color: var(--accent-purple); margin-top: 0.15rem; }
+        .diagram-note strong { color: var(--text-main); }
+
+        @media (max-width: 1023px) {
+            .diagram-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .glass-panel { padding: 1rem; }
+            .glass-panel h2 { font-size: 1.4rem; }
+            .code-fragment { font-size: 0.8rem; padding: 0.6rem 0.8rem; }
+            .code-fragment.compact { font-size: 0.72rem; }
+        }
+    </style>
+</head>
+<body>
+<button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar modo claro/oscuro">
+<i class="fa-solid fa-moon" id="theme-icon"></i>
+</button>
+
+<div class="container">
+
+<!-- ==================== PORTADA ==================== -->
+<div class="glass-panel text-center" style="border-top: 6px solid var(--una-red);">
+<div class="flex justify-center mb-4">
+<img alt="Logo UNA" class="h-20 object-contain" src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png"/>
+</div>
+<h2 class="text-3xl font-extrabold">Laboratorio 9</h2>
+<p class="text-xl" style="color: var(--una-red); font-weight: 700;">Análisis y diseño de soluciones concurrentes y comunicación entre aplicaciones</p>
+<p class="text-sm" style="color: var(--text-muted);">Programación III — Semana 14: Hilos · <code>synchronized</code> · Clases activas · Mensajes · Sockets TCP · Servidores concurrentes</p>
+<div class="flex flex-wrap justify-center gap-3 mt-3">
+<span class="badge badge-red">Hilos y concurrencia</span>
+<span class="badge badge-blue">Clases activas</span>
+<span class="badge badge-green">Comunicación por mensajes</span>
+<span class="badge badge-purple">Sockets TCP</span>
+<span class="badge badge-gold">Grupo 40 - Kristel Duarte Pérez</span>
+</div>
+<div class="mt-4 text-sm" style="color: var(--text-muted);">
+<i class="fa-regular fa-clock mr-1"></i> Una sesión de laboratorio: análisis y preparación + 5 min de exposición por grupo &nbsp;·&nbsp;
+<i class="fa-regular fa-users mr-1"></i> 17 estudiantes: 7 parejas y 1 grupo de 3
+</div>
+</div>
+
+<!-- ==================== OBJETIVO ==================== -->
+<div class="glass-panel" id="objetivo" style="border-left: 4px solid var(--una-red);">
+<h2><i class="fa-solid fa-bullseye mr-2" style="color: var(--una-red);"></i> Objetivo del laboratorio</h2>
+<p>Aplicar los conceptos estudiados sobre <strong>hilos, clases activas, comunicación mediante mensajes, sockets y concurrencia</strong> para analizar situaciones prácticas y proponer soluciones que respondan a las necesidades de una aplicación.</p>
+<div class="highlight-box">
+<strong>La idea central:</strong> en este laboratorio no se investiga un tema nuevo ni se repite la presentación de la clase. Se toma un caso concreto y se demuestra <strong>cómo</strong> se usarían las piezas del Tema 7 para resolverlo, justificando cada decisión.
+</div>
+<p class="text-sm">Cada grupo recibe un caso distinto. Al final, las ocho propuestas se ponen en común y entre todas cubren el tema completo.</p>
+</div>
+
+<!-- ==================== INDICACIONES ==================== -->
+<div class="glass-panel" id="indicaciones" style="border-left: 4px solid var(--accent-blue);">
+<h2><i class="fa-solid fa-list-check mr-2" style="color: var(--accent-blue);"></i> Indicaciones generales</h2>
+<ol>
+<li>La docente asignará a cada grupo <strong>uno de los ocho casos</strong> de este documento.</li>
+<li>Lean la situación asignada y analicen el problema <strong>antes</strong> de proponer una solución.</li>
+<li>Usen la presentación de la clase como referencia para aplicar los conceptos correspondientes.</li>
+<li>No se limiten a copiar definiciones: expliquen <strong>cómo se usarían</strong> los conceptos en el caso específico.</li>
+<li>Pueden elaborar diagramas, esquemas, tablas, pseudocódigo o fragmentos breves de código Java cuando ayuden a explicar la solución.</li>
+<li><strong>No es necesario</strong> desarrollar una aplicación completa ni construir una interfaz gráfica. El propósito es analizar, diseñar y justificar.</li>
+<li>Todos los integrantes participan en el análisis, la preparación y la exposición.</li>
+<li>Al finalizar, cada grupo explicará su propuesta ante la clase y responderá preguntas de la docente y de sus compañeros.</li>
+</ol>
+</div>
+
+<!-- ==================== CONCEPTOS ==================== -->
+<div class="glass-panel" id="conceptos" style="border-left: 4px solid var(--una-gold);">
+<h2><i class="fa-solid fa-book-open mr-2" style="color: var(--una-gold);"></i> Conceptos a mano</h2>
+<p>Antes de analizar el caso, ubiquen las piezas que van a necesitar. Esta tabla es un <strong>recordatorio</strong>: la explicación completa está en la presentación de la clase.</p>
+<div class="overflow-x-auto">
+<table class="grid-table">
+<thead>
+<tr><th style="width: 19%;">Concepto</th><th style="width: 45%;">Recordatorio</th><th>Sirve para…</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Proceso e hilo</strong></td><td>El proceso tiene su propia memoria; los hilos de un proceso comparten la memoria del proceso.</td><td>Entender por qué el trabajo simultáneo puede pisarse.</td></tr>
+<tr><td><strong>Hilo de fondo</strong></td><td>Flujo de ejecución que corre en paralelo al principal (por ejemplo, la interfaz).</td><td>Mover tareas lentas sin congelar la ventana.</td></tr>
+<tr><td><code>join()</code></td><td>Hace que un hilo espere a que otro termine.</td><td>Respetar el orden cuando un paso depende del anterior.</td></tr>
+<tr><td><code>synchronized</code></td><td>Permite que un solo hilo a la vez ejecute una sección crítica.</td><td>Evitar actualizaciones perdidas sobre un recurso compartido.</td></tr>
+<tr><td><strong>Clase activa</strong></td><td>Objeto con actividad propia: recibe solicitudes, las encola y las procesa en su flujo o en un pool de trabajadores.</td><td>Encapsular el trabajo y desacoplar al emisor del procesamiento.</td></tr>
+<tr><td><strong>Mensaje</strong></td><td>Información que un componente entrega a otro: identidad, datos y resultado esperado.</td><td>Comunicar componentes sin exponer sus detalles internos.</td></tr>
+<tr><td><strong>Síncrono / asíncrono</strong></td><td>Síncrono: el emisor espera el resultado. Asíncrono: el emisor continúa y lo recibe después.</td><td>Decidir si se puede bloquear al usuario o no.</td></tr>
+<tr><td><strong>Socket TCP</strong></td><td>Extremo de comunicación. <code>ServerSocket</code> escucha en un puerto; <code>accept()</code> devuelve un socket conectado.</td><td>Comunicar aplicaciones que corren en equipos distintos.</td></tr>
+<tr><td><strong>Puerto</strong></td><td>Identifica el servicio que escucha en el servidor. El socket conectado identifica una conversación concreta.</td><td>Saber a dónde se conecta el cliente.</td></tr>
+<tr><td><strong>Servidor concurrente</strong></td><td>Aceptar, leer, procesar, responder y cerrar; cada conexión se atiende sin bloquear a las demás.</td><td>Atender varios clientes con recursos controlados.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- ==================== MAPA ==================== -->
+<div class="glass-panel" id="mapa" style="border-left: 4px solid var(--accent-purple);">
+<h2><i class="fa-solid fa-diagram-project mr-2" style="color: var(--accent-purple);"></i> El mapa completo</h2>
+<p>Guarden este esquema: <strong>todo</strong> lo que van a proponer está aquí. La columna izquierda ocurre <strong>dentro</strong> de una aplicación; la derecha, <strong>entre</strong> aplicaciones.</p>
+
+<div class="diagram-grid">
+
+<!-- ---------- Dentro de la aplicación ---------- -->
+<div class="diagram-lane">
+<div class="lane-head"><i class="fa-solid fa-window-maximize"></i> Dentro de la aplicación</div>
+
+<div class="dnode" style="--node: var(--accent-blue);">
+<div class="dnode-icon"><i class="fa-solid fa-display"></i></div>
+<div>
+<h5>Vista / UI</h5>
+<p>La persona solicita el reporte. La ventana debe seguir respondiendo.</p>
+<div class="dnode-tags"><span>solicitud</span></div>
+</div>
+</div>
+
+<div class="dlink"><span>entrega la solicitud</span><span class="dlink-arrow" aria-hidden="true"></span></div>
+
+<div class="dnode" style="--node: var(--accent-purple);">
+<div class="dnode-icon"><i class="fa-solid fa-inbox"></i></div>
+<div>
+<h5>Clase activa</h5>
+<p>Recibe la solicitud y la procesa en su propio flujo, sin que la vista espere.</p>
+<div class="dnode-tags"><span class="purple">cola</span><span class="purple">pool de hilos</span></div>
+</div>
+</div>
+
+<div class="dlink"><span>encola el trabajo</span><span class="dlink-arrow" aria-hidden="true"></span></div>
+
+<div class="dnode" style="--node: var(--accent-blue);">
+<div class="dnode-icon"><i class="fa-solid fa-gears"></i></div>
+<div>
+<h5>Hilo de fondo</h5>
+<p>Ejecuta el trabajo largo. Solo se espera con <code>join()</code> si el resultado es imprescindible.</p>
+<div class="dnode-tags"><span>join()</span></div>
+</div>
+</div>
+
+<div class="dlink"><span>produce dos cosas</span><span class="dlink-arrow" aria-hidden="true"></span></div>
+
+<div class="dnode" style="--node: var(--una-gold);">
+<div class="dnode-icon"><i class="fa-solid fa-code-branch"></i></div>
+<div>
+<h5>Recurso compartido y mensaje</h5>
+<div class="branch-list">
+<div class="branch-item"><i class="fa-solid fa-lock"></i><span><strong>Recurso compartido</strong> — se modifica con <code>synchronized</code>: un hilo a la vez.</span></div>
+<div class="branch-item"><i class="fa-solid fa-envelope"></i><span><strong>Mensaje</strong> — identidad, datos y resultado esperado.</span></div>
+</div>
+</div>
+</div>
+
+<div class="dlink"><span>avisa cuando termina</span><span class="dlink-arrow" aria-hidden="true"></span></div>
+
+<div class="dnode" style="--node: var(--accent-green);">
+<div class="dnode-icon"><i class="fa-solid fa-reply"></i></div>
+<div>
+<h5>Respuesta a la interfaz</h5>
+<p>Llega cuando el trabajo termina, sin haber bloqueado la ventana.</p>
+</div>
+</div>
+</div>
+
+<!-- ---------- Entre aplicaciones ---------- -->
+<div class="diagram-lane lane-net">
+<div class="lane-head"><i class="fa-solid fa-network-wired"></i> Entre aplicaciones</div>
+
+<div class="dnode" style="--node: var(--accent-purple);">
+<div class="dnode-icon"><i class="fa-solid fa-plug"></i></div>
+<div>
+<h5>Cliente</h5>
+<p>Abre un <code>Socket</code> hacia la dirección y el puerto del servidor, y envía la solicitud.</p>
+<div class="dnode-tags"><span class="purple">Socket</span><span class="purple">host : puerto</span></div>
+</div>
+</div>
+
+<div class="dlink"><span>conexión TCP</span><span class="dlink-arrow" aria-hidden="true"></span></div>
+
+<div class="dnode" style="--node: var(--accent-green);">
+<div class="dnode-icon"><i class="fa-solid fa-server"></i></div>
+<div>
+<h5>Servidor</h5>
+<p>Un <code>ServerSocket</code> escucha en el puerto y espera conexiones.</p>
+<div class="dnode-tags"><span class="green">ServerSocket</span><span class="green">accept()</span></div>
+</div>
+</div>
+
+<div class="dlink"><span>accept() entrega un socket conectado</span><span class="dlink-arrow" aria-hidden="true"></span></div>
+
+<div class="dnode" style="--node: var(--una-gold);">
+<div class="dnode-icon"><i class="fa-solid fa-circle-nodes"></i></div>
+<div>
+<h5>Hilo o trabajador</h5>
+<p>Lee la solicitud, la procesa, responde y cierra esa conexión.</p>
+<div class="dnode-tags"><span class="gold">leer</span><span class="gold">procesar</span><span class="gold">responder</span><span class="gold">cerrar</span></div>
+</div>
+</div>
+
+<div class="dlink"><span>la respuesta viaja de vuelta</span><span class="dlink-arrow" aria-hidden="true"></span></div>
+
+<div class="dnode" style="--node: var(--accent-purple);">
+<div class="dnode-icon"><i class="fa-solid fa-download"></i></div>
+<div>
+<h5>Cliente recibe la respuesta</h5>
+<p>La lee por la misma conexión y actualiza la interfaz.</p>
+</div>
+</div>
+
+<div class="lane-foot">
+<i class="fa-solid fa-circle-info mr-1" style="color: var(--accent-green);"></i>
+El <code>ServerSocket</code> sigue escuchando: cada conexión obtiene <strong>su propio socket</strong> y se atiende sin bloquear a las demás.
+</div>
+</div>
+
+</div>
+
+<div class="diagram-note">
+<i class="fa-solid fa-share-nodes"></i>
+<div><strong>Lo que se comparte:</strong> el recurso protegido, el puerto que escucha, el pool de hilos y el estado del servicio. Todo lo compartido exige coordinación.</div>
+</div>
+
+</div>
+
+<!-- ==================== SINTAXIS ==================== -->
+<div class="glass-panel" id="sintaxis" style="border-left: 4px solid var(--accent-peach);">
+<h2><i class="fa-solid fa-code mr-2" style="color: var(--accent-peach);"></i> Recordatorio de sintaxis</h2>
+<p>No hace falta programar la solución, pero si van a mostrar código en la exposición, estas tres piezas son las que se usan en los casos. Son <strong>referencias mínimas</strong>, no una plantilla completa.</p>
+
+<div class="step-sub">
+<h5>1. Trabajo de fondo y espera controlada</h5>
+<div class="code-fragment compact"><span class="d-comment">// El reporte se genera fuera del hilo de la interfaz</span>
+<span class="d-type">Thread</span> tarea = <span class="d-keyword">new</span> <span class="d-type">Thread</span>(() -&gt; generarReporte());
+tarea.<span class="d-method">start</span>();     <span class="d-comment">// la ventana sigue respondiendo</span>
+tarea.<span class="d-method">join</span>();      <span class="d-comment">// espera solo si el resultado es imprescindible</span></div>
+</div>
+
+<div class="step-sub">
+<h5>2. Sección crítica sobre un recurso compartido</h5>
+<div class="code-fragment compact"><span class="d-comment">// Un solo hilo a la vez consulta y actualiza el inventario</span>
+<span class="d-keyword">public synchronized void</span> <span class="d-method">registrarMovimiento</span>(<span class="d-keyword">int</span> cantidad) {
+    <span class="d-keyword">int</span> actual = inventario.<span class="d-method">consultar</span>();
+    inventario.<span class="d-method">actualizar</span>(actual + cantidad);
+}</div>
+</div>
+
+<div class="step-sub">
+<h5>3. Servidor que delega cada conexión</h5>
+<div class="code-fragment compact"><span class="d-keyword">try</span> (<span class="d-type">ServerSocket</span> servidor = <span class="d-keyword">new</span> <span class="d-type">ServerSocket</span>(<span class="d-number">5000</span>)) {
+    <span class="d-keyword">while</span> (<span class="d-keyword">true</span>) {
+        <span class="d-type">Socket</span> cliente = servidor.<span class="d-method">accept</span>();        <span class="d-comment">// llega una conexión</span>
+        workers.<span class="d-method">submit</span>(() -&gt; <span class="d-method">atender</span>(cliente));  <span class="d-comment">// se atiende en el pool</span>
+    }
+}</div>
+</div>
+
+<div class="highlight-box">
+<strong>Ojo:</strong> el código de arriba ilustra el mecanismo, no resuelve los casos. Cada grupo debe explicar <strong>qué</strong> protege, <strong>qué</strong> delega y <strong>quién</strong> espera a quién en su propuesta.
+</div>
+</div>
+
+<!-- ==================== PRODUCTO ==================== -->
+<div class="glass-panel" id="producto" style="border-left: 4px solid var(--accent-green);">
+<h2><i class="fa-solid fa-file-lines mr-2" style="color: var(--accent-green);"></i> Producto que entrega cada grupo</h2>
+<p>Cada grupo prepara una <strong>presentación breve</strong> o un <strong>documento de apoyo</strong> con estos seis elementos. Los seis se evalúan.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
+<div class="group-card" style="border-top: 4px solid var(--una-red);">
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--una-red);">A. Descripción del problema</h3>
+<ul>
+<li>¿Qué está ocurriendo en el caso asignado?</li>
+<li>¿Cuál es el problema principal que debe resolverse?</li>
+<li>¿Qué podría suceder si no se atiende correctamente?</li>
+</ul>
+</div>
+<div class="group-card" style="border-top: 4px solid var(--accent-blue);">
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-blue);">B. Análisis de la situación</h3>
+<ul>
+<li>¿Qué componentes, tareas, procesos o participantes intervienen?</li>
+<li>¿Cómo se relacionan entre sí?</li>
+<li>¿Qué conceptos del Tema 7 son útiles para analizarla?</li>
+</ul>
+</div>
+<div class="group-card" style="border-top: 4px solid var(--accent-green);">
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-green);">C. Propuesta de solución</h3>
+<ul>
+<li>Paso a paso, cómo funcionaría la solución.</li>
+<li><strong>Un diagrama</strong> que represente el funcionamiento.</li>
+<li>Qué clases, mecanismos o recursos usarían.</li>
+<li>Por qué esa solución es apropiada para el caso.</li>
+</ul>
+</div>
+<div class="group-card" style="border-top: 4px solid var(--una-gold);">
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--una-gold);">D. Riesgos y limitaciones</h3>
+<ul>
+<li>Al menos <strong>dos</strong> problemas que podrían presentarse.</li>
+<li>Cómo se podrían prevenir o manejar.</li>
+</ul>
+</div>
+<div class="group-card" style="border-top: 4px solid var(--accent-purple);">
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-purple);">E. Conclusión</h3>
+<ul>
+<li>La decisión técnica más importante del grupo.</li>
+<li>Qué ocurriría si se eligiera una solución diferente.</li>
+</ul>
+</div>
+<div class="group-card" style="border-top: 4px solid var(--accent-peach);">
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-peach);">F. Preguntas para la clase</h3>
+<ul>
+<li><strong>Dos preguntas</strong> relacionadas con el caso.</li>
+<li>Las respuestas esperadas, por escrito, en el material entregado.</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- ==================== PARTE A ==================== -->
+<div class="glass-panel text-center" style="border-top: 6px solid var(--accent-blue); margin-bottom: 1.5rem;">
+<h2 class="mb-0"><i class="fa-solid fa-layer-group mr-2" style="color: var(--accent-blue);"></i> Parte A · Los ocho casos</h2>
+<p class="text-lg mb-0">La docente asigna un caso por grupo. El caso completo de cada grupo está más abajo.</p>
+</div>
+
+<div class="glass-panel" style="border-left: 4px solid var(--accent-blue);">
+<h2><i class="fa-solid fa-table-list mr-2" style="color: var(--accent-blue);"></i> Casos y grupos</h2>
+<p>Son <strong>ocho casos y ocho equipos</strong>: siete parejas y un grupo de tres. Cada caso pone el acento en una parte distinta del Tema 7.</p>
+<div class="overflow-x-auto">
+<table class="grid-table">
+<thead>
+<tr><th style="width: 12%;">Grupo</th><th style="width: 44%;">Caso</th><th>Concepto que se pone en juego</th></tr>
+</thead>
+<tbody>
+<tr><td><span class="badge badge-red">1</span></td><td><a href="#caso-1" style="color: var(--accent-blue); font-weight: 700;">Una aplicación que ejecuta varias tareas</a></td><td>Hilo de fondo, interfaz que no se bloquea.</td></tr>
+<tr><td><span class="badge badge-blue">2</span></td><td><a href="#caso-2" style="color: var(--accent-blue); font-weight: 700;">Coordinación entre tarea principal y tarea de fondo</a></td><td>Orden de ejecución, <code>join()</code>, resultado disponible.</td></tr>
+<tr><td><span class="badge badge-green">3</span></td><td><a href="#caso-3" style="color: var(--accent-blue); font-weight: 700;">Dos tareas modifican el mismo recurso</a></td><td>Recurso compartido, sección crítica, <code>synchronized</code>.</td></tr>
+<tr><td><span class="badge badge-gold">4</span></td><td><a href="#caso-4" style="color: var(--accent-blue); font-weight: 700;">Comunicación entre componentes de una misma aplicación</a></td><td>Responsabilidades, mensajes y eventos.</td></tr>
+<tr><td><span class="badge badge-purple">5</span></td><td><a href="#caso-5" style="color: var(--accent-blue); font-weight: 700;">Diseñar una conexión entre cliente y servidor</a></td><td>Dirección, puerto, sockets, cierre.</td></tr>
+<tr><td><span class="badge badge-peach">6</span></td><td><a href="#caso-6" style="color: var(--accent-blue); font-weight: 700;">Mensajes claros para una comunicación por sockets</a></td><td>Formato, delimitación y validación de mensajes.</td></tr>
+<tr><td><span class="badge badge-blue">7</span></td><td><a href="#caso-7" style="color: var(--accent-blue); font-weight: 700;">Un servidor debe atender a varios clientes</a></td><td>Concurrencia, pool de trabajadores, recursos.</td></tr>
+<tr><td><span class="badge badge-green">8</span></td><td><a href="#caso-8" style="color: var(--accent-blue); font-weight: 700;">Aplicación distribuida y manejo de fallos</a></td><td>Síncrono vs. asíncrono, pérdida de conexión, duplicados.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="highlight-box">
+<strong>Recuerden:</strong> el caso se analiza, no se programa. Un diagrama claro y una justificación sólida valen más que mucho código sin explicación.
+</div>
+</div>
+
+<!-- ==================== EQUIPOS ==================== -->
+<div class="glass-panel" id="equipos" style="border-left: 4px solid var(--accent-green);">
+<h2><i class="fa-solid fa-users mr-2" style="color: var(--accent-green);"></i> Conformación de equipos</h2>
+<p>Los equipos se reorganizaron <strong>al azar</strong> para esta actividad: siete parejas y un grupo de tres. Esta es la conformación y el caso que le corresponde a cada grupo.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
+<div class="group-card" style="border-top: 4px solid var(--una-red);">
+<span class="zone-chip red">Grupo 1</span>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--una-red);">Una aplicación que ejecuta varias tareas</h3>
+<p class="members">Greivin Bermúdez Espinoza<br>Eduardo Sánchez Montero</p>
+<p class="task"><strong>Pregunta central:</strong> ¿qué tarea debe salir del hilo de la interfaz y cómo se devuelve el resultado?</p>
+</div>
+
+<div class="group-card" style="border-top: 4px solid var(--accent-blue);">
+<span class="zone-chip blue">Grupo 2</span>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-blue);">Coordinación entre tarea principal y tarea de fondo</h3>
+<p class="members">César Navarro Vásquez<br>Kendall Valencia Murillo</p>
+<p class="task"><strong>Pregunta central:</strong> ¿cómo se coordina la tarea de fondo con la principal sin bloquear de más?</p>
+</div>
+
+<div class="group-card" style="border-top: 4px solid var(--accent-green);">
+<span class="zone-chip green">Grupo 3</span>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-green);">Dos tareas modifican el mismo recurso</h3>
+<p class="members">Juan Villagra Conejo<br>Ángel Arana Taleno</p>
+<p class="task"><strong>Pregunta central:</strong> ¿cómo se evita que dos actualizaciones simultáneas corrompan el inventario?</p>
+</div>
+
+<div class="group-card" style="border-top: 4px solid var(--una-gold);">
+<span class="zone-chip gold">Grupo 4</span>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--una-gold);">Comunicación entre componentes de una misma aplicación</h3>
+<p class="members">Justin Gamboa Badilla<br>Daniel Granados Pérez</p>
+<p class="task"><strong>Pregunta central:</strong> ¿cómo se comunican los componentes sin acoplarse a sus detalles internos?</p>
+</div>
+
+<div class="group-card" style="border-top: 4px solid var(--accent-purple);">
+<span class="zone-chip purple">Grupo 5</span>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-purple);">Diseñar una conexión entre cliente y servidor</h3>
+<p class="members">Liseth Briones López<br>Mariano Martínez Alfaro</p>
+<p class="task"><strong>Pregunta central:</strong> ¿qué necesita el cliente para conectarse y qué hace cada extremo?</p>
+</div>
+
+<div class="group-card" style="border-top: 4px solid var(--accent-peach);">
+<span class="zone-chip peach">Grupo 6</span>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-peach);">Mensajes claros para una comunicación por sockets</h3>
+<p class="members">Sebastián Arce Mejía<br>Johnny Chaves Vega</p>
+<p class="task"><strong>Pregunta central:</strong> ¿cómo se delimita y valida un mensaje para que el servidor lo interprete bien?</p>
+</div>
+
+<div class="group-card" style="border-top: 4px solid var(--accent-blue);">
+<span class="zone-chip blue">Grupo 7</span>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-blue);">Un servidor debe atender a varios clientes</h3>
+<p class="members">Carlo Méndez Barboza<br>Boris Arias Quintana</p>
+<p class="task"><strong>Pregunta central:</strong> ¿cómo se atiende a varios clientes sin que uno lento bloquee a los demás?</p>
+</div>
+
+<div class="group-card" style="border-top: 4px solid var(--accent-green);">
+<span class="zone-chip green">Grupo 8</span>
+<h3 class="mt-0 mb-1 text-lg font-extrabold" style="color: var(--accent-green);">Aplicación distribuida y manejo de fallos</h3>
+<p class="members">Joshua Cascante Baltodano<br>José Andia Chui<br>Óscar Alvarado Méndez</p>
+<p class="task"><strong>Pregunta central:</strong> ¿cómo se manejan los fallos de conexión sin duplicar operaciones?</p>
+</div>
+</div>
+</div>
+
+<!-- ==================== CASO 1 ==================== -->
+<div class="glass-panel" id="caso-1" style="border-left: 4px solid var(--una-red);">
+<h2><span class="zone-chip red">Grupo 1</span> Una aplicación que ejecuta varias tareas</h2>
+<h3>Situación</h3>
+<p>Una aplicación de escritorio permite consultar información de estudiantes, guardar cambios y generar reportes. Cuando una persona solicita un reporte, la aplicación tarda varios segundos en procesarlo y durante ese tiempo <strong>la ventana deja de responder</strong>.</p>
+<h3>Trabajo por realizar</h3>
+<ol>
+<li>Identifiquen cuáles tareas podría realizar la aplicación y cuáles podrían ejecutarse como trabajo de fondo.</li>
+<li>Propongan cómo organizarían la ejecución para que la generación del reporte no bloquee innecesariamente la interfaz.</li>
+<li>Representen mediante un diagrama el recorrido desde que la persona solicita el reporte hasta que recibe el resultado.</li>
+<li>Expliquen qué información debería recibir la interfaz cuando el reporte termine.</li>
+<li>Analicen qué sucedería si la persona solicita dos reportes seguidos.</li>
+<li>Indiquen qué riesgos tendría ejecutar varias tareas simultáneamente sin coordinarlas.</li>
+</ol>
+<div class="step-sub">
+<h5>Preguntas que deben responder</h5>
+<ul>
+<li>¿Qué parte de la solución necesita ejecutarse en un hilo diferente y por qué?</li>
+<li>¿La utilización de varios hilos garantiza que el reporte se genere más rápido? Justifiquen.</li>
+<li>¿Cómo podría la aplicación informar que el reporte terminó sin bloquear la interfaz?</li>
+</ul>
+</div>
+<div class="ok-box">
+<strong>Resultado esperado:</strong> una propuesta de organización de tareas que permita mantener la interfaz disponible mientras se procesa el reporte.
+</div>
+</div>
+
+<!-- ==================== CASO 2 ==================== -->
+<div class="glass-panel" id="caso-2" style="border-left: 4px solid var(--accent-blue);">
+<h2><span class="zone-chip blue">Grupo 2</span> Coordinación entre una tarea principal y una tarea de fondo</h2>
+<h3>Situación</h3>
+<p>Un sistema debe generar un reporte estadístico. Para hacerlo, primero consulta varios registros, después calcula los resultados y finalmente muestra el reporte. El problema es que, en ocasiones, la aplicación <strong>intenta mostrar los resultados antes de que termine el cálculo</strong>.</p>
+<h3>Trabajo por realizar</h3>
+<ol>
+<li>Identifiquen cuáles pasos dependen de la finalización de otros.</li>
+<li>Propongan cómo organizarían las tareas para respetar el orden necesario.</li>
+<li>Representen el flujo de ejecución mediante un diagrama.</li>
+<li>Expliquen en qué momento sería necesario esperar a que una tarea terminara y en qué momento no sería conveniente bloquear la aplicación.</li>
+<li>Analicen qué debería ocurrir si la tarea de fondo falla o se interrumpe antes de producir el resultado.</li>
+</ol>
+<div class="step-sub">
+<h5>Preguntas que deben responder</h5>
+<ul>
+<li>¿Qué problema aparece si se intenta utilizar un resultado que todavía no está disponible?</li>
+<li>¿Cómo se podría coordinar la finalización de la tarea de fondo con el procesamiento principal?</li>
+<li>¿Qué diferencia existe entre esperar un resultado cuando es necesario y bloquear innecesariamente toda la aplicación?</li>
+</ul>
+</div>
+<div class="ok-box">
+<strong>Resultado esperado:</strong> una secuencia de ejecución justificada que garantice que el reporte se muestre cuando los datos necesarios estén disponibles.
+</div>
+</div>
+
+<!-- ==================== CASO 3 ==================== -->
+<div class="glass-panel" id="caso-3" style="border-left: 4px solid var(--accent-green);">
+<h2><span class="zone-chip green">Grupo 3</span> Dos tareas modifican el mismo recurso</h2>
+<h3>Situación</h3>
+<p>Un sistema administra las existencias de un almacén. Dos trabajadores registran movimientos sobre un mismo producto casi al mismo tiempo. Ambos procesos <strong>consultan la cantidad disponible y luego actualizan el inventario</strong>. En algunas ocasiones, el sistema termina mostrando una cantidad incorrecta.</p>
+<h3>Trabajo por realizar</h3>
+<ol>
+<li>Describan una posible secuencia de ejecución que produzca el error.</li>
+<li>Utilicen un ejemplo numérico para demostrar cómo podrían perderse actualizaciones.</li>
+<li>Identifiquen cuál es el recurso compartido y qué parte de la operación necesita protección.</li>
+<li>Propongan una solución que coordine el acceso al inventario.</li>
+<li>Expliquen cómo comprobarían que la solución funciona correctamente.</li>
+<li>Analicen qué podría suceder si se protege una sección demasiado amplia del programa.</li>
+</ol>
+<div class="step-sub">
+<h5>Preguntas que deben responder</h5>
+<ul>
+<li>¿Por qué dos operaciones individualmente correctas pueden producir un resultado incorrecto al ejecutarse simultáneamente?</li>
+<li>¿Qué función tendría la sincronización en este caso?</li>
+<li>¿La sincronización garantiza que todo el sistema esté libre de errores? Expliquen.</li>
+</ul>
+</div>
+<div class="ok-box">
+<strong>Resultado esperado:</strong> una representación del error y una propuesta que evite actualizaciones inconsistentes sobre el recurso compartido.
+</div>
+</div>
+
+<!-- ==================== CASO 4 ==================== -->
+<div class="glass-panel" id="caso-4" style="border-left: 4px solid var(--una-gold);">
+<h2><span class="zone-chip gold">Grupo 4</span> Comunicación entre componentes de una misma aplicación</h2>
+<h3>Situación</h3>
+<p>Una aplicación universitaria está organizada en tres componentes: una <strong>vista</strong> donde se registran las solicitudes, un <strong>servicio</strong> que valida los datos y un <strong>repositorio</strong> que almacena la información. Actualmente, la vista intenta realizar todas las tareas directamente, lo que dificulta mantener y modificar el sistema.</p>
+<h3>Trabajo por realizar</h3>
+<ol>
+<li>Identifiquen la responsabilidad de cada componente.</li>
+<li>Diseñen el recorrido de una solicitud desde que la persona introduce los datos hasta que el sistema confirma el registro.</li>
+<li>Expliquen cómo se comunicarían los componentes y qué información necesitaría recibir cada uno.</li>
+<li>Propongan un ejemplo de una llamada directa a un método y otro de un mensaje o evento que podría comunicarse entre componentes.</li>
+<li>Expliquen cómo evitarían que un componente dependiera innecesariamente de los detalles internos de otro.</li>
+<li>Analicen si la comunicación local implica obligatoriamente que todos los componentes se ejecuten en el mismo hilo.</li>
+</ol>
+<div class="step-sub">
+<h5>Preguntas que deben responder</h5>
+<ul>
+<li>¿Qué ventaja tiene separar las responsabilidades de los componentes?</li>
+<li>¿Cuándo podría ser conveniente utilizar un mensaje o evento en lugar de una llamada directa?</li>
+<li>¿Qué diferencia hay entre que dos componentes pertenezcan a la misma aplicación y que necesariamente se ejecuten en el mismo hilo?</li>
+</ul>
+</div>
+<div class="ok-box">
+<strong>Resultado esperado:</strong> un diagrama de componentes que muestre cómo se comunican y qué responsabilidad tiene cada uno.
+</div>
+</div>
+
+<!-- ==================== CASO 5 ==================== -->
+<div class="glass-panel" id="caso-5" style="border-left: 4px solid var(--accent-purple);">
+<h2><span class="zone-chip purple">Grupo 5</span> Diseñar una conexión entre cliente y servidor</h2>
+<h3>Situación</h3>
+<p>Una aplicación de escritorio necesita consultar información almacenada en un servidor. El cliente y el servidor se ejecutan en <strong>equipos distintos</strong> y deben intercambiar solicitudes y respuestas mediante una conexión de red.</p>
+<h3>Trabajo por realizar</h3>
+<ol>
+<li>Identifiquen qué información necesita conocer el cliente para intentar conectarse.</li>
+<li>Expliquen cuál es la responsabilidad del servidor antes de recibir una conexión.</li>
+<li>Representen mediante un diagrama los pasos desde que el servidor comienza a escuchar hasta que el cliente recibe una respuesta.</li>
+<li>Identifiquen el papel de la dirección del servidor, el puerto y los sockets.</li>
+<li>Expliquen qué información se intercambiaría durante la comunicación.</li>
+<li>Describan qué debería hacer cada parte si no se logra establecer la conexión.</li>
+</ol>
+<div class="step-sub">
+<h5>Preguntas que deben responder</h5>
+<ul>
+<li>¿Cuál es la función del puerto en la conexión?</li>
+<li>¿Qué diferencia existe entre el socket utilizado por el cliente y el socket conectado que obtiene el servidor al aceptar una conexión?</li>
+<li>¿Qué debería mostrar o hacer la aplicación si el servidor no está disponible?</li>
+</ul>
+</div>
+<div class="ok-box">
+<strong>Resultado esperado:</strong> un diagrama secuencial de conexión, intercambio de información y cierre, con las responsabilidades del cliente y del servidor claramente identificadas.
+</div>
+</div>
+
+<!-- ==================== CASO 6 ==================== -->
+<div class="glass-panel" id="caso-6" style="border-left: 4px solid var(--accent-peach);">
+<h2><span class="zone-chip peach">Grupo 6</span> Diseñar mensajes claros para una comunicación por sockets</h2>
+<h3>Situación</h3>
+<p>Un cliente envía solicitudes a un servidor mediante una conexión TCP. El servidor recibe información, pero no siempre logra identificar <strong>dónde termina una solicitud y comienza la siguiente</strong>. Además, algunos mensajes llegan incompletos o contienen datos que no cumplen el formato esperado.</p>
+<h3>Trabajo por realizar</h3>
+<ol>
+<li>Propongan un formato para una solicitud que permita registrar una solicitud universitaria.</li>
+<li>Definan qué campos debería incluir el mensaje y cuáles serían obligatorios.</li>
+<li>Diseñen un ejemplo de solicitud y uno de respuesta.</li>
+<li>Expliquen cómo podría identificar el servidor el final de cada mensaje.</li>
+<li>Comparen al menos dos alternativas para delimitar mensajes, por ejemplo, un salto de línea y una longitud prefijada.</li>
+<li>Indiquen cómo debería responder el servidor cuando recibe un mensaje incompleto, inválido o desconocido.</li>
+</ol>
+<div class="step-sub">
+<h5>Ejemplo para orientar el análisis</h5>
+<p>Una solicitud podría contener una operación, un identificador y una descripción. El grupo debe decidir cómo representar esos datos y cómo evitar que el servidor los interprete incorrectamente.</p>
+</div>
+<div class="step-sub">
+<h5>Preguntas que deben responder</h5>
+<ul>
+<li>¿Por qué TCP no garantiza por sí solo que cada lectura corresponda exactamente a un mensaje completo?</li>
+<li>¿Qué podría suceder si el cliente y el servidor utilizan reglas distintas para identificar el final de un mensaje?</li>
+<li>¿Por qué es importante validar los datos recibidos?</li>
+</ul>
+</div>
+<div class="ok-box">
+<strong>Resultado esperado:</strong> una propuesta de protocolo sencillo que defina el formato de los mensajes, su delimitación y el tratamiento de errores.
+</div>
+</div>
+
+<!-- ==================== CASO 7 ==================== -->
+<div class="glass-panel" id="caso-7" style="border-left: 4px solid var(--accent-blue);">
+<h2><span class="zone-chip blue">Grupo 7</span> Un servidor debe atender a varios clientes</h2>
+<h3>Situación</h3>
+<p>Un servidor recibe solicitudes de diferentes usuarios. Cuando un cliente realiza una operación lenta, los demás deben esperar demasiado tiempo para recibir atención. La aplicación necesita atender múltiples conexiones <strong>sin permitir que una solicitud lenta bloquee innecesariamente las demás</strong>.</p>
+<h3>Trabajo por realizar</h3>
+<ol>
+<li>Expliquen cómo funcionaría un servidor que atiende una conexión a la vez.</li>
+<li>Propongan una organización que permita atender varias conexiones de manera concurrente.</li>
+<li>Representen mediante un diagrama el proceso de aceptar conexiones y delegar su atención.</li>
+<li>Expliquen cómo podrían utilizarse hilos o un grupo de trabajadores para procesar las solicitudes.</li>
+<li>Identifiquen qué recursos podrían compartirse entre las solicitudes y qué problemas podrían aparecer.</li>
+<li>Propongan medidas para evitar que una cantidad excesiva de clientes agote los recursos del servidor.</li>
+</ol>
+<div class="step-sub">
+<h5>Preguntas que deben responder</h5>
+<ul>
+<li>¿Qué diferencia existe entre atender clientes secuencialmente y atenderlos de forma concurrente?</li>
+<li>¿Por qué no necesariamente conviene crear un hilo ilimitado por cada solicitud?</li>
+<li>¿Qué medidas tomarían si muchos clientes intentan conectarse al mismo tiempo?</li>
+</ul>
+</div>
+<div class="ok-box">
+<strong>Resultado esperado:</strong> un diseño de servidor concurrente que muestre cómo acepta conexiones, distribuye el trabajo y controla los recursos compartidos.
+</div>
+</div>
+
+<!-- ==================== CASO 8 ==================== -->
+<div class="glass-panel" id="caso-8" style="border-left: 4px solid var(--accent-green);">
+<h2><span class="zone-chip green">Grupo 8</span> Aplicación distribuida y manejo de fallos</h2>
+<h3>Situación</h3>
+<p>Una aplicación distribuida permite que varios usuarios registren solicitudes desde sus computadoras. El servidor recibe las solicitudes y las procesa. Algunas operaciones tardan varios segundos, algunos clientes pierden la conexión y, en ocasiones, <strong>una respuesta no llega aunque el servidor haya recibido la petición</strong>.</p>
+<h3>Trabajo por realizar</h3>
+<ol>
+<li>Dibujen la arquitectura general de la aplicación e identifiquen sus componentes.</li>
+<li>Expliquen cómo podría continuar trabajando el cliente mientras una operación se procesa en segundo plano.</li>
+<li>Comparen el comportamiento de una comunicación en la que el cliente espera inmediatamente la respuesta con una en la que puede continuar y recibir el resultado después.</li>
+<li>Describan qué debería ocurrir si se pierde la conexión durante una operación.</li>
+<li>Analicen qué podría pasar si el cliente vuelve a enviar una solicitud porque no recibió respuesta, aunque el servidor ya la haya procesado.</li>
+<li>Propongan medidas para informar al usuario del estado de la operación y reducir el riesgo de duplicar registros.</li>
+<li>Expliquen cómo se relacionan los mensajes, los sockets, los hilos y la concurrencia en la solución propuesta.</li>
+</ol>
+<div class="step-sub">
+<h5>Preguntas que deben responder</h5>
+<ul>
+<li>¿Qué diferencia práctica existe entre una operación síncrona y una asíncrona?</li>
+<li>¿Por qué no recibir una respuesta <strong>no</strong> significa necesariamente que el servidor no procesó la solicitud?</li>
+<li>¿Qué mecanismo podría ayudar a detectar solicitudes duplicadas?</li>
+</ul>
+</div>
+<div class="ok-box">
+<strong>Resultado esperado:</strong> un diseño de aplicación distribuida que contemple la comunicación entre componentes, el procesamiento de operaciones y el manejo de errores de conexión.
+</div>
+</div>
+
+<!-- ==================== PARTE B ==================== -->
+<div class="glass-panel text-center" style="border-top: 6px solid var(--una-gold); margin-bottom: 1.5rem;">
+<h2 class="mb-0"><i class="fa-solid fa-microphone-lines mr-2" style="color: var(--una-gold);"></i> Parte B · Exposición y evaluación</h2>
+<p class="text-lg mb-0">Cinco minutos para explicar la propuesta y dos para responder preguntas.</p>
+</div>
+
+<!-- ==================== EXPOSICIÓN ==================== -->
+<div class="glass-panel" id="exposicion" style="border-left: 4px solid var(--accent-blue);">
+<h2><i class="fa-solid fa-microphone mr-2" style="color: var(--accent-blue);"></i> Exposición de los resultados</h2>
+<p>Cada grupo contará con un máximo de <strong>5 minutos para presentar su solución</strong>.</p>
+<p>Durante la exposición deberán:</p>
+<ol>
+<li>Explicar brevemente el caso asignado.</li>
+<li>Presentar el diagrama o esquema elaborado.</li>
+<li>Justificar las decisiones técnicas.</li>
+<li>Mencionar los riesgos identificados y cómo los atenderían.</li>
+<li>Formular las dos preguntas preparadas para sus compañeros.</li>
+</ol>
+<div class="highlight-box">
+<strong>La exposición debe ser clara y centrarse en la solución propuesta.</strong> No es necesario leer el documento completo ni repetir las definiciones de la presentación.
+</div>
+</div>
+
+<!-- ==================== CRITERIOS ==================== -->
+<div class="glass-panel" id="criterios" style="border-left: 4px solid var(--accent-purple);">
+<h2><i class="fa-solid fa-list-check mr-2" style="color: var(--accent-purple);"></i> Criterios de evaluación</h2>
+<p>La docente evaluará el trabajo con base en la siguiente rúbrica.</p>
+<div class="overflow-x-auto">
+<table class="grid-table">
+<thead>
+<tr><th style="width: 42%;">Criterio</th><th style="width: 44%;">Qué se observa</th><th>Puntaje</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Comprensión y análisis del caso asignado</strong></td><td>Explican qué ocurre y cuál es el problema real del caso.</td><td><strong>20 puntos</strong></td></tr>
+<tr><td><strong>Aplicación correcta de los conceptos del Tema 7</strong></td><td>Usan hilos, sincronización, mensajes, sockets y concurrencia donde corresponde y no donde no corresponde.</td><td><strong>25 puntos</strong></td></tr>
+<tr><td><strong>Calidad y claridad de la solución propuesta</strong></td><td>La solución responde al caso y está justificada paso a paso.</td><td><strong>20 puntos</strong></td></tr>
+<tr><td><strong>Diagrama o representación del funcionamiento</strong></td><td>El diagrama coincide con la explicación y se entiende sin leer todo el texto.</td><td><strong>10 puntos</strong></td></tr>
+<tr><td><strong>Identificación de riesgos y propuesta de medidas</strong></td><td>Al menos dos riesgos reales, con una medida concreta para cada uno.</td><td><strong>10 puntos</strong></td></tr>
+<tr><td><strong>Exposición, respuestas y participación del grupo</strong></td><td>Todos participan, respetan el tiempo y responden con seguridad.</td><td><strong>10 puntos</strong></td></tr>
+<tr><td><strong>Calidad de las preguntas preparadas para la clase</strong></td><td>Las dos preguntas comprueban comprensión y traen respuesta esperada.</td><td><strong>5 puntos</strong></td></tr>
+<tr><td><strong>Total</strong></td><td></td><td><strong>100 puntos</strong></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- ==================== ENTREGA ==================== -->
+<div class="glass-panel" id="entrega" style="border-left: 4px solid var(--una-gold);">
+<h2><i class="fa-solid fa-file-arrow-up mr-2" style="color: var(--una-gold);"></i> Qué se entrega</h2>
+<p>Cada grupo entrega el material elaborado al finalizar la actividad, según las indicaciones de la docente. El material debe incluir:</p>
+<ul class="callout-list">
+<li><strong>Número del grupo e integrantes.</strong></li>
+<li><strong>Caso asignado.</strong></li>
+<li><strong>Respuestas a todas las indicaciones.</strong></li>
+<li><strong>Diagrama o esquema.</strong></li>
+<li><strong>Riesgos identificados y medidas propuestas.</strong></li>
+<li><strong>Dos preguntas para la clase y sus respuestas esperadas.</strong></li>
+<li><strong>Conclusión del grupo.</strong></li>
+</ul>
+<div class="ok-box">
+<strong>Antes de entregar, verifiquen que:</strong> la solución responde al caso asignado, los integrantes pueden justificar sus decisiones y el diagrama coincide con la explicación presentada.
+</div>
+</div>
+
+<!-- ==================== ACORDEÓN ==================== -->
+<div class="glass-panel" id="acordeon" style="border-left: 4px solid var(--una-red);">
+<h2><i class="fa-solid fa-circle-question mr-2" style="color: var(--una-red);"></i> Acordeón · Dudas frecuentes</h2>
+<p>Hagan clic en cada pregunta. Están ordenadas de “concepto” a “decisión de diseño”.</p>
+
+<h3>Hilos y sincronización</h3>
+
+<details>
+<summary><strong>¿Usar varios hilos hace que el trabajo salga más rápido?</strong></summary>
+<p><strong>No necesariamente.</strong> Los hilos permiten que la aplicación <strong>no se quede bloqueada</strong> mientras espera (por ejemplo, una consulta o una lectura de disco) y que varias tareas avancen. Pero si el trabajo es puro cálculo en un solo núcleo, repartirlo en varios hilos no lo acelera, y si todos compiten por el mismo recurso protegido, incluso puede tardar más. Añadir hilos no multiplica la capacidad del procesador.</p>
+</details>
+
+<details>
+<summary><strong>¿Qué diferencia hay entre un proceso y un hilo?</strong></summary>
+<p>El <strong>proceso</strong> tiene su propia memoria y sus propios recursos. Los <strong>hilos</strong> viven dentro de un proceso y <strong>comparten su memoria</strong>. Esa cercanía es lo que los hace útiles y, al mismo tiempo, peligrosos: dos hilos pueden leer y escribir la misma variable al mismo tiempo.</p>
+</details>
+
+<details>
+<summary><strong>¿Para qué sirve <code>join()</code>?</strong></summary>
+<p>Para que un hilo <strong>espere a que otro termine</strong>. Se usa cuando un paso necesita sí o sí el resultado del anterior. La clave está en esperar <em>solo</em> en el punto donde el resultado es imprescindible, no al inicio de toda la aplicación.</p>
+</details>
+
+<details>
+<summary><strong>¿Basta con <code>synchronized</code> para que todo esté bien?</strong></summary>
+<p><strong>No.</strong> <code>synchronized</code> garantiza que un solo hilo a la vez ejecute la sección crítica, y con eso evita actualizaciones perdidas. Pero no arregla un diseño mal separado: si se protege una sección demasiado amplia, se serializa el trabajo y se pierde la concurrencia; si se protege de menos, el error sigue. También hay que cuidar el orden en que se toman los bloqueos para no provocar un <em>deadlock</em>.</p>
+</details>
+
+<details>
+<summary><strong>¿Una clase activa es obligatoriamente un hilo nuevo?</strong></summary>
+<p><strong>No.</strong> Una clase activa es un objeto con actividad propia: recibe solicitudes, las encola y las procesa en su propio flujo de ejecución. Ese flujo puede ser un hilo dedicado o un <strong>pool de trabajadores</strong> compartido. Lo que la define es que el emisor no ejecuta el trabajo, solo lo solicita.</p>
+</details>
+
+<h3>Mensajes y componentes</h3>
+
+<details>
+<summary><strong>¿Cuándo conviene un mensaje en lugar de una llamada directa?</strong></summary>
+<p>Cuando se quiere <strong>desacoplar</strong> al emisor del receptor, no bloquear al emisor o permitir que el receptor procese más tarde. La llamada directa es más simple y adecuada cuando el resultado se necesita de inmediato. Un mensaje bien diseñado tiene <strong>identidad</strong> (qué se solicita), <strong>datos</strong> (lo necesario para procesarlo) y un <strong>resultado</strong> con significado definido.</p>
+</details>
+
+<details>
+<summary><strong>¿Comunicación local significa mismo hilo?</strong></summary>
+<p><strong>No.</strong> Que dos componentes pertenezcan a la misma aplicación no implica que se ejecuten en el mismo hilo. Pueden estar en hilos distintos y comunicarse por llamadas o mensajes. Lo local se refiere a que están en el mismo proceso, no a que compartan el flujo de ejecución.</p>
+</details>
+
+<h3>Sockets y servidores</h3>
+
+<details>
+<summary><strong>¿Cuál es la diferencia entre <code>ServerSocket</code> y el <code>Socket</code> que devuelve <code>accept()</code>?</strong></summary>
+<p>El <code>ServerSocket</code> <strong>escucha</strong> en un puerto y espera conexiones. Cuando llega una, <code>accept()</code> devuelve un <strong>socket conectado</strong> a ese cliente: con ese socket se lee y se escribe la conversación. El <code>ServerSocket</code> sigue escuchando para la siguiente conexión.</p>
+</details>
+
+<details>
+<summary><strong>¿Por qué TCP no garantiza que cada lectura sea un mensaje completo?</strong></summary>
+<p>Porque TCP entrega un <strong>flujo de bytes</strong> fiable y ordenado, no mensajes. Una lectura puede traer media solicitud o dos solicitudes juntas. Por eso el protocolo debe definir cómo se delimita cada mensaje: por ejemplo, con un salto de línea al final o con una longitud prefijada. Si el cliente y el servidor usan reglas distintas, el servidor interpretará mal los datos.</p>
+</details>
+
+<details>
+<summary><strong>¿Por qué no crear un hilo por cada cliente?</strong></summary>
+<p>Porque cada hilo consume memoria y tiempo de planificación. Con pocos clientes funciona; con miles, el servidor se queda sin recursos y todos van más lento. La alternativa es un <strong>pool de trabajadores con un límite</strong>, una cola de espera, tiempos máximos de atención y cierre correcto de las conexiones.</p>
+</details>
+
+<details>
+<summary><strong>¿Qué pasa si se pierde la conexión o no llega la respuesta?</strong></summary>
+<p>El cliente debe poder <strong>detectarlo y avisar</strong>, no quedarse esperando para siempre. Y hay que tener cuidado: no recibir respuesta <strong>no</strong> significa que el servidor no procesó la solicitud; la respuesta pudo perderse en el camino. Por eso conviene enviar un <strong>identificador de solicitud</strong> y registrar el estado de cada operación, para no duplicar registros al reintentar.</p>
+</details>
+
+<h3>Sobre el trabajo del grupo</h3>
+
+<details>
+<summary><strong>¿Tenemos que programar la solución?</strong></summary>
+<p><strong>No.</strong> Se evalúa el análisis, el diseño y la justificación. Pueden usar pseudocódigo o fragmentos breves de Java si ayudan a explicar, pero no se pide una aplicación completa ni una interfaz gráfica.</p>
+</details>
+
+<details>
+<summary><strong>¿Qué hace que un diagrama esté bien?</strong></summary>
+<p>Que se entienda <strong>sin leer todo el documento</strong>: quién solicita, quién procesa, qué se comparte, dónde se espera y por dónde viaja la respuesta. Si el diagrama y la explicación no coinciden, algo está mal en la propuesta.</p>
+</details>
+
+<details>
+<summary><strong>¿Podemos decir “usamos hilos” y nada más?</strong></summary>
+<p>No. Hay que decir <strong>qué</strong> se ejecuta en otro hilo, <strong>por qué</strong> ese trabajo y no otro, <strong>cómo</strong> se coordina con el resto y <strong>qué</strong> se comparte. Una respuesta sin justificación no demuestra comprensión.</p>
+</details>
+</div>
+
+<script>
+    function toggleTheme() {
+        const root = document.documentElement;
+        const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        const icon = document.getElementById('theme-icon');
+        if (icon) {
+            const nuevo = document.createElement('i');
+            nuevo.id = 'theme-icon';
+            nuevo.className = next === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+            icon.replaceWith(nuevo);
+            if (window.FontAwesome && FontAwesome.dom) FontAwesome.dom.i2svg();
+        }
+    }
+</script>
+</body>
+</html>
