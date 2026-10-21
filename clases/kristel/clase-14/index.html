@@ -369,7 +369,7 @@
             <div class="flex items-center mb-4 relative">
               <div
                 class="w-1/2 cursor-pointer hover:scale-105 transition-transform"
-                onclick="goToSlide(11)"
+                onclick="goToSlide(12)"
               >
                 <div
                   class="glass-panel py-3 px-5 border-l-4"
@@ -401,7 +401,7 @@
               </div>
               <div
                 class="w-1/2 cursor-pointer hover:scale-105 transition-transform"
-                onclick="goToSlide(14)"
+                onclick="goToSlide(17)"
               >
                 <div
                   class="glass-panel py-3 px-5 border-r-4"
@@ -421,7 +421,7 @@
             <div class="flex items-center relative">
               <div
                 class="w-1/2 cursor-pointer hover:scale-105 transition-transform"
-                onclick="goToSlide(20)"
+                onclick="goToSlide(22)"
               >
                 <div
                   class="glass-panel py-3 px-5 border-l-4"
@@ -1098,7 +1098,94 @@ hilo.<span class="darcula-func">start</span>();
         </div>
       </div>
 
-      <!-- ===== 12 · COMUNICACIÓN LOCAL ===== -->
+      <!-- ===== 12 · CLASES ACTIVAS ===== -->
+      <div class="slide">
+        <div class="w-full max-w-[92%] mx-auto relative z-10">
+          <i
+            class="fa-solid fa-bolt bg-icon text-[300px] -right-10 opacity-5"
+            style="color: var(--accent-purple)"
+          ></i>
+          <div class="text-center mb-7">
+            <h2 class="text-4xl md:text-5xl font-bold mb-2">
+              Clases activas: objetos con actividad propia
+            </h2>
+            <p class="text-lg" style="color: var(--text-muted)">
+              Reciben solicitudes y las procesan en su propio flujo de
+              ejecución.
+            </p>
+          </div>
+          <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+              <div
+                class="glass-panel border-l-4"
+                style="border-left-color: var(--accent-purple)"
+              >
+                <div
+                  class="w-11 h-11 rounded-full tint-purple flex items-center justify-center text-lg mb-2"
+                >
+                  <i class="fa-solid fa-bolt"></i>
+                </div>
+                <h4 class="font-bold text-xl">¿Qué es una clase activa?</h4>
+                <p class="text-base">
+                  Es un componente que tiene <strong>actividad propia</strong>:
+                  no solo guarda estado, también recibe solicitudes y las
+                  procesa mediante un hilo o una tarea de ejecución.
+                </p>
+                <ul class="list-disc list-inside text-gray-700 mb-0">
+                  <li>Recibe mensajes o llamadas.</li>
+                  <li>Administra una cola o trabajadores.</li>
+                  <li>Puede responder de inmediato o más tarde.</li>
+                </ul>
+              </div>
+              <div class="glass-panel">
+                <h4 class="font-bold text-xl">
+                  Objeto pasivo vs. clase activa
+                </h4>
+                <div class="flow-box mb-2">
+                  <strong>Objeto pasivo</strong><br />
+                  <span class="text-sm" style="color: var(--text-muted)"
+                    >Trabaja en el hilo del llamador</span
+                  >
+                </div>
+                <div class="text-center flow-arrow my-1">
+                  <i class="fa-solid fa-arrow-down"></i>
+                </div>
+                <div class="flow-box">
+                  <strong>Clase activa</strong><br />
+                  <span class="text-sm" style="color: var(--text-muted)"
+                    >Recibe, encola y procesa en su propio flujo</span
+                  >
+                </div>
+                <p class="text-sm mb-0" style="color: var(--text-muted)">
+                  La actividad no exige un hilo exclusivo: puede compartir un
+                  pool de trabajadores.
+                </p>
+              </div>
+            </div>
+            <pre class="code-block"><code><span class="darcula-kw">class</span> <span class="darcula-class">ServicioSolicitudes</span> {
+    <span class="darcula-kw">private final</span> <span class="darcula-class">ExecutorService</span> workers =
+        <span class="darcula-class">Executors</span>.<span class="darcula-func">newFixedThreadPool</span>(<span class="darcula-num">4</span>);
+
+    <span class="darcula-class">Future</span>&lt;<span class="darcula-class">Respuesta</span>&gt; <span class="darcula-func">recibir</span>(<span class="darcula-class">Solicitud</span> solicitud) {
+        <span class="darcula-kw">return</span> workers.<span class="darcula-func">submit</span>(() <span class="darcula-kw">-&gt;</span> <span class="darcula-func">procesar</span>(solicitud));
+    }
+}</code></pre>
+            <div
+              class="glass-panel mt-4 border-l-4"
+              style="border-left-color: var(--una-red)"
+            >
+              <p class="text-base mb-0">
+                <strong>Más adelante, en 7.3.2:</strong> el servidor de sockets
+                es una clase activa. Escucha en un puerto, recibe conexiones y
+                atiende cada solicitud en una tarea separada, mientras sigue
+                aceptando nuevas conexiones.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 13 · COMUNICACIÓN LOCAL ===== -->
       <div class="slide">
         <div class="w-full max-w-[92%] mx-auto relative z-10">
           <i
@@ -1185,7 +1272,7 @@ hilo.<span class="darcula-func">start</span>();
         </div>
       </div>
 
-      <!-- ===== 13 · MENSAJES ===== -->
+      <!-- ===== 14 · MENSAJES ===== -->
       <div class="slide">
         <div class="w-full max-w-[92%] mx-auto relative z-10">
           <i
@@ -1265,7 +1352,114 @@ hilo.<span class="darcula-func">start</span>();
         </div>
       </div>
 
-      <!-- ===== 14 · SÍNCRONO Y ASÍNCRONO ===== -->
+      <!-- ===== 15 · COMUNICACIÓN LOCAL: SOLICITUD Y RESPUESTA ===== -->
+      <div class="slide">
+        <div class="w-full max-w-[92%] mx-auto relative z-10">
+          <i
+            class="fa-solid fa-envelope-open-text bg-icon text-[300px] -left-10 opacity-5"
+            style="color: var(--accent-green)"
+          ></i>
+          <div class="text-center mb-7">
+            <h2 class="text-4xl md:text-5xl font-bold mb-2">
+              Comunicación local: solicitud y respuesta
+            </h2>
+            <p class="text-lg" style="color: var(--text-muted)">
+              Dos componentes de la misma aplicación intercambian mensajes.
+            </p>
+          </div>
+          <div class="max-w-6xl mx-auto">
+            <div
+              class="flex flex-col md:flex-row items-stretch md:items-center justify-center gap-3"
+            >
+              <div class="flow-box flex-1">
+                <strong>Vista</strong><br />
+                <span class="text-sm" style="color: var(--text-muted)"
+                  >Envía la solicitud</span
+                >
+              </div>
+              <i
+                class="fa-solid fa-arrow-right flow-arrow rotate-90 md:rotate-0"
+              ></i>
+              <div class="flow-box flex-1">
+                <strong>Bandeja</strong><br />
+                <span class="text-sm" style="color: var(--text-muted)"
+                  >Cola de mensajes</span
+                >
+              </div>
+              <i
+                class="fa-solid fa-arrow-right flow-arrow rotate-90 md:rotate-0"
+              ></i>
+              <div class="flow-box flex-1">
+                <strong>Servicio</strong><br />
+                <span class="text-sm" style="color: var(--text-muted)"
+                  >Procesa y responde</span
+                >
+              </div>
+              <i
+                class="fa-solid fa-arrow-right flow-arrow rotate-90 md:rotate-0"
+              ></i>
+              <div class="flow-box flex-1">
+                <strong>Respuesta</strong><br />
+                <span class="text-sm" style="color: var(--text-muted)"
+                  >Vuelve a la Vista</span
+                >
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
+              <div
+                class="glass-panel border-l-4"
+                style="border-left-color: var(--accent-blue)"
+              >
+                <h4 class="font-bold text-lg">Solicitud</h4>
+                <p class="text-sm mb-0">
+                  <code>RegistrarSolicitud(codigo, detalle)</code>. Indica qué se
+                  quiere hacer y con qué datos.
+                </p>
+              </div>
+              <div
+                class="glass-panel border-l-4"
+                style="border-left-color: var(--accent-gold)"
+              >
+                <h4 class="font-bold text-lg">Bandeja</h4>
+                <p class="text-sm mb-0">
+                  Una <strong>cola</strong> conserva los mensajes hasta que el
+                  servicio los consume.
+                </p>
+              </div>
+              <div
+                class="glass-panel border-l-4"
+                style="border-left-color: var(--accent-green)"
+              >
+                <h4 class="font-bold text-lg">Respuesta</h4>
+                <p class="text-sm mb-0">
+                  <code>RespuestaRegistro(codigo, estado)</code>. Confirma el
+                  resultado y permite correlacionarlo.
+                </p>
+              </div>
+            </div>
+            <pre class="code-block"><code><span class="darcula-kw">record</span> <span class="darcula-class">RegistrarSolicitud</span>(<span class="darcula-class">String</span> codigo, <span class="darcula-class">String</span> detalle) {}
+<span class="darcula-kw">record</span> <span class="darcula-class">RespuestaRegistro</span>(<span class="darcula-class">String</span> codigo, <span class="darcula-class">String</span> estado) {}
+
+<span class="darcula-kw">class</span> <span class="darcula-class">BandejaSolicitudes</span> {
+    <span class="darcula-kw">private final</span> <span class="darcula-class">BlockingQueue</span>&lt;<span class="darcula-class">RegistrarSolicitud</span>&gt; solicitudes = <span class="darcula-kw">new</span> <span class="darcula-class">LinkedBlockingQueue</span>&lt;&gt;();
+    <span class="darcula-kw">private final</span> <span class="darcula-class">BlockingQueue</span>&lt;<span class="darcula-class">RespuestaRegistro</span>&gt; respuestas = <span class="darcula-kw">new</span> <span class="darcula-class">LinkedBlockingQueue</span>&lt;&gt;();
+
+    <span class="darcula-kw">void</span> <span class="darcula-func">enviar</span>(<span class="darcula-class">RegistrarSolicitud</span> s) { solicitudes.<span class="darcula-func">offer</span>(s); }
+    <span class="darcula-kw">void</span> <span class="darcula-func">responder</span>(<span class="darcula-class">RespuestaRegistro</span> r) { respuestas.<span class="darcula-func">offer</span>(r); }
+
+    <span class="darcula-class">RegistrarSolicitud</span> <span class="darcula-func">recibir</span>() <span class="darcula-kw">throws</span> <span class="darcula-class">InterruptedException</span> { <span class="darcula-kw">return</span> solicitudes.<span class="darcula-func">take</span>(); }
+    <span class="darcula-class">RespuestaRegistro</span> <span class="darcula-func">esperar</span>() <span class="darcula-kw">throws</span> <span class="darcula-class">InterruptedException</span> { <span class="darcula-kw">return</span> respuestas.<span class="darcula-func">take</span>(); }
+}</code></pre>
+            <p class="text-sm mt-3 mb-0" style="color: var(--text-muted)">
+              El emisor usa <code>enviar</code> y <code>esperar</code>; el
+              servicio usa <code>recibir</code> y <code>responder</code>. La
+              cola desacopla tiempos: la vista no ejecuta el procesamiento.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 16 · SÍNCRONO Y ASÍNCRONO ===== -->
       <div class="slide">
         <div class="w-full max-w-[92%] mx-auto relative z-10">
           <i
@@ -1344,7 +1538,7 @@ hilo.<span class="darcula-func">start</span>();
         </div>
       </div>
 
-      <!-- ===== 15 · DE LO LOCAL A LO REMOTO ===== -->
+      <!-- ===== 17 · DE LO LOCAL A LO REMOTO ===== -->
       <div class="slide">
         <div class="w-full max-w-[92%] mx-auto relative z-10">
           <i
@@ -1424,7 +1618,7 @@ hilo.<span class="darcula-func">start</span>();
         </div>
       </div>
 
-      <!-- ===== 16 · SOCKETS ===== -->
+      <!-- ===== 18 · SOCKETS ===== -->
       <div class="slide">
         <div class="w-full max-w-[92%] mx-auto relative z-10">
           <i
@@ -1499,7 +1693,107 @@ hilo.<span class="darcula-func">start</span>();
         </div>
       </div>
 
-      <!-- ===== 17 · TCP Y PROTOCOLO ===== -->
+      <!-- ===== 19 · CONEXIÓN POR SOCKETS PASO A PASO ===== -->
+      <div class="slide">
+        <div class="w-full max-w-[92%] mx-auto relative z-10">
+          <i
+            class="fa-solid fa-route bg-icon text-[300px] -right-10 opacity-5"
+            style="color: var(--accent-blue)"
+          ></i>
+          <div class="text-center mb-7">
+            <h2 class="text-4xl md:text-5xl font-bold mb-2">
+              Conexión por sockets paso a paso
+            </h2>
+            <p class="text-lg" style="color: var(--text-muted)">
+              Del puerto que escucha hasta el cierre de la conexión.
+            </p>
+          </div>
+          <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div
+                class="glass-panel border-l-4"
+                style="border-left-color: var(--accent-blue)"
+              >
+                <span class="chip tint-blue">1</span>
+                <h4 class="font-bold text-lg">Abrir el puerto</h4>
+                <p class="text-sm mb-0" style="color: var(--text-muted)">
+                  El servidor crea un <code>ServerSocket</code> en un puerto y
+                  queda escuchando conexiones.
+                </p>
+              </div>
+              <div
+                class="glass-panel border-l-4"
+                style="border-left-color: var(--accent-green)"
+              >
+                <span class="chip tint-green">2</span>
+                <h4 class="font-bold text-lg">Conectarse</h4>
+                <p class="text-sm mb-0" style="color: var(--text-muted)">
+                  El cliente conoce el host y el puerto, y crea un
+                  <code>Socket</code> hacia el servidor.
+                </p>
+              </div>
+              <div
+                class="glass-panel border-l-4"
+                style="border-left-color: var(--accent-purple)"
+              >
+                <span class="chip tint-purple">3</span>
+                <h4 class="font-bold text-lg">Aceptar la conexión</h4>
+                <p class="text-sm mb-0" style="color: var(--text-muted)">
+                  <code>accept()</code> devuelve un <code>Socket</code>
+                  conectado con ese cliente.
+                </p>
+              </div>
+              <div
+                class="glass-panel border-l-4"
+                style="border-left-color: var(--una-gold)"
+              >
+                <span class="chip tint-gold">4</span>
+                <h4 class="font-bold text-lg">Intercambiar bytes</h4>
+                <p class="text-sm mb-0" style="color: var(--text-muted)">
+                  Ambos leen y escriben con flujos de entrada y salida:
+                  <code>InputStream</code> / <code>OutputStream</code>.
+                </p>
+              </div>
+              <div
+                class="glass-panel border-l-4"
+                style="border-left-color: var(--una-red)"
+              >
+                <span class="chip tint-red">5</span>
+                <h4 class="font-bold text-lg">Procesar y responder</h4>
+                <p class="text-sm mb-0" style="color: var(--text-muted)">
+                  El servidor interpreta la solicitud, ejecuta la lógica y
+                  escribe la respuesta.
+                </p>
+              </div>
+              <div
+                class="glass-panel border-l-4"
+                style="border-left-color: var(--accent-peach)"
+              >
+                <span class="chip tint-peach">6</span>
+                <h4 class="font-bold text-lg">Cerrar</h4>
+                <p class="text-sm mb-0" style="color: var(--text-muted)">
+                  Los flujos y el socket se cierran al terminar, incluso si hubo
+                  un error.
+                </p>
+              </div>
+            </div>
+            <div
+              class="glass-panel mt-5 border-l-4"
+              style="border-left-color: var(--una-red)"
+            >
+              <p class="text-base mb-0">
+                <strong>TCP transporta bytes, no mensajes.</strong> La
+                aplicación debe acordar cómo delimita cada mensaje: salto de
+                línea, longitud prefijada o una estructura explícita como JSON.
+                <code>readLine()</code> solo funciona si ambos lados usan el
+                mismo delimitador.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 20 · TCP Y PROTOCOLO ===== -->
       <div class="slide">
         <div class="w-full max-w-[92%] mx-auto relative z-10">
           <i
@@ -1570,7 +1864,7 @@ hilo.<span class="darcula-func">start</span>();
         </div>
       </div>
 
-      <!-- ===== 18 · SERVIDOR TCP ===== -->
+      <!-- ===== 21 · SERVIDOR TCP ===== -->
       <div class="slide">
         <div class="w-full max-w-[92%] mx-auto relative z-10">
           <i
@@ -1624,7 +1918,7 @@ hilo.<span class="darcula-func">start</span>();
         </div>
       </div>
 
-      <!-- ===== 19 · CLIENTE TCP ===== -->
+      <!-- ===== 22 · CLIENTE TCP ===== -->
       <div class="slide">
         <div class="w-full max-w-[92%] mx-auto relative z-10">
           <i
@@ -1696,7 +1990,7 @@ hilo.<span class="darcula-func">start</span>();
         </div>
       </div>
 
-      <!-- ===== 20 · SERVIDORES CONCURRENTES ===== -->
+      <!-- ===== 23 · SERVIDORES CONCURRENTES ===== -->
       <div class="slide">
         <div class="w-full max-w-[92%] mx-auto relative z-10">
           <i
@@ -1775,7 +2069,93 @@ hilo.<span class="darcula-func">start</span>();
         </div>
       </div>
 
-      <!-- ===== 21 · RIESGOS Y BUENAS PRÁCTICAS ===== -->
+      <!-- ===== 24 · CICLO DE ATENCIÓN ===== -->
+      <div class="slide">
+        <div class="w-full max-w-[92%] mx-auto relative z-10">
+          <i
+            class="fa-solid fa-arrows-spin bg-icon text-[300px] -left-10 opacity-5"
+            style="color: var(--una-gold)"
+          ></i>
+          <div class="text-center mb-7">
+            <h2 class="text-4xl md:text-5xl font-bold mb-2">
+              Ciclo de atención de un servidor concurrente
+            </h2>
+            <p class="text-lg" style="color: var(--text-muted)">
+              Aceptar, leer, procesar, responder y cerrar; sin bloquear a los
+              demás.
+            </p>
+          </div>
+          <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-2">
+              <div class="flow-box">
+                <strong>1. accept()</strong><br />
+                <span class="text-sm" style="color: var(--text-muted)"
+                  >Nueva conexión</span
+                >
+              </div>
+              <div class="flow-box">
+                <strong>2. Leer</strong><br />
+                <span class="text-sm" style="color: var(--text-muted)"
+                  >Solicitud</span
+                >
+              </div>
+              <div class="flow-box">
+                <strong>3. Procesar</strong><br />
+                <span class="text-sm" style="color: var(--text-muted)"
+                  >Reglas y datos</span
+                >
+              </div>
+              <div class="flow-box">
+                <strong>4. Responder</strong><br />
+                <span class="text-sm" style="color: var(--text-muted)"
+                  >Resultado</span
+                >
+              </div>
+              <div class="flow-box">
+                <strong>5. Cerrar</strong><br />
+                <span class="text-sm" style="color: var(--text-muted)"
+                  >Liberar recursos</span
+                >
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
+              <div
+                class="glass-panel border-l-4"
+                style="border-left-color: var(--accent-green)"
+              >
+                <h4 class="font-bold text-xl">Qué se comparte</h4>
+                <ul class="list-disc list-inside text-gray-700 mb-0">
+                  <li>El puerto que escucha.</li>
+                  <li>El pool de hilos o trabajadores.</li>
+                  <li>El estado del servicio y el repositorio.</li>
+                </ul>
+              </div>
+              <div
+                class="glass-panel border-l-4"
+                style="border-left-color: var(--accent-red)"
+              >
+                <h4 class="font-bold text-xl">Qué puede fallar</h4>
+                <ul class="list-disc list-inside text-gray-700 mb-0">
+                  <li>Cliente lento o desconectado.</li>
+                  <li>Hilos ilimitados y falta de recursos.</li>
+                  <li>Estado compartido sin sincronización.</li>
+                </ul>
+              </div>
+            </div>
+            <pre class="code-block"><code><span class="darcula-kw">while</span> (<span class="darcula-kw">true</span>) {
+    <span class="darcula-class">Socket</span> cliente = servidor.<span class="darcula-func">accept</span>();
+    trabajadores.<span class="darcula-func">submit</span>(() <span class="darcula-kw">-&gt;</span> <span class="darcula-func">atender</span>(cliente));
+}</code></pre>
+            <p class="text-sm mt-3 mb-0" style="color: var(--text-muted)">
+              Si <code>atender</code> se ejecuta en el hilo que acepta, el
+              servidor vuelve a ser secuencial. El pool limita los recursos y
+              permite atender varias conexiones.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 25 · RIESGOS Y BUENAS PRÁCTICAS ===== -->
       <div class="slide">
         <div class="w-full max-w-[92%] mx-auto relative z-10">
           <i
@@ -1858,7 +2238,7 @@ hilo.<span class="darcula-func">start</span>();
         </div>
       </div>
 
-      <!-- ===== 22 · ESCENARIOS DE APLICACIÓN ===== -->
+      <!-- ===== 26 · ESCENARIOS DE APLICACIÓN ===== -->
       <div class="slide">
         <div class="w-full max-w-[92%] mx-auto relative z-10">
           <i
@@ -1925,7 +2305,7 @@ hilo.<span class="darcula-func">start</span>();
         </div>
       </div>
 
-      <!-- ===== 23 · SELECCIÓN DE LA SOLUCIÓN ===== -->
+      <!-- ===== 27 · SELECCIÓN DE LA SOLUCIÓN ===== -->
       <div class="slide">
         <div class="w-full max-w-[92%] mx-auto relative z-10">
           <i
@@ -1990,155 +2370,121 @@ hilo.<span class="darcula-func">start</span>();
         </div>
       </div>
 
-      <!-- ===== 24 · ACTIVIDAD DE ANÁLISIS ===== -->
+      <!-- ===== 28 · CASO COMPLETO ===== -->
       <div class="slide">
         <div class="w-full max-w-[92%] mx-auto relative z-10">
           <i
-            class="fa-solid fa-pen-to-square bg-icon text-[300px] -left-10 opacity-5"
-            style="color: var(--accent-green)"
+            class="fa-solid fa-sitemap bg-icon text-[300px] -right-10 opacity-5"
+            style="color: var(--accent-purple)"
           ></i>
           <div class="text-center mb-7">
             <h2 class="text-4xl md:text-5xl font-bold mb-2">
-              Diseñemos una aplicación de solicitudes
+              Caso completo: aplicación distribuida de solicitudes
             </h2>
             <p class="text-lg" style="color: var(--text-muted)">
-              Un cliente registra, otro consulta y un servidor conserva los
-              datos.
+              Clientes, servidor, mensajes, hilos y concurrencia en una sola
+              historia.
             </p>
           </div>
-          <div class="max-w-5xl mx-auto">
-            <p class="text-base">
-              Una oficina recibe solicitudes de materiales. Se desea una
-              aplicación donde una persona registra la solicitud, otra consulta
-              su estado y un servidor central conserva los datos.
-            </p>
-            <div class="glass-panel mt-3">
-              <h4 class="font-bold text-xl">
-                <i class="fa-solid fa-users mr-2"></i>En equipos, respondan
-              </h4>
-              <ol class="list-decimal list-inside text-gray-700 mb-0">
-                <li>¿Qué parte sería cliente y qué parte servidor?</li>
-                <li>
-                  ¿Qué información tendría el mensaje para registrar una
-                  solicitud?
-                </li>
-                <li>
-                  ¿Qué respuesta debería recibir el cliente si la solicitud se
-                  registra o falla?
-                </li>
-                <li>
-                  ¿Qué tarea podría ejecutarse en un hilo separado para no
-                  bloquear la interfaz?
-                </li>
-                <li>
-                  Si llegan 20 clientes al mismo tiempo, ¿qué debería cambiar en
-                  el servidor?
-                </li>
-                <li>
-                  ¿Qué ocurre si el cliente se desconecta antes de recibir la
-                  respuesta?
-                </li>
-              </ol>
+          <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div class="glass-panel">
+                <h4 class="font-bold text-xl">
+                  <i class="fa-solid fa-users mr-2"></i>Clientes
+                </h4>
+                <div class="flow-box mb-2">
+                  Cliente A<br /><span
+                    class="text-sm"
+                    style="color: var(--text-muted)"
+                    >REGISTRAR</span
+                  >
+                </div>
+                <div class="flow-box mb-2">
+                  Cliente B<br /><span
+                    class="text-sm"
+                    style="color: var(--text-muted)"
+                    >CONSULTAR</span
+                  >
+                </div>
+                <div class="flow-box">
+                  Cliente C<br /><span
+                    class="text-sm"
+                    style="color: var(--text-muted)"
+                    >REGISTRAR</span
+                  >
+                </div>
+                <p class="text-sm mb-0" style="color: var(--text-muted)">
+                  <i class="fa-solid fa-right-left mr-1"></i>Cada cliente
+                  mantiene su propia conexión TCP.
+                </p>
+              </div>
+              <div class="glass-panel">
+                <h4 class="font-bold text-xl">
+                  <i class="fa-solid fa-server mr-2"></i>Servidor
+                </h4>
+                <div class="flow-box mb-2">
+                  1. <code>accept()</code> → nueva conexión
+                </div>
+                <div class="flow-box mb-2">
+                  2. Pool → trabajador por solicitud
+                </div>
+                <div class="flow-box mb-2">
+                  3. ServicioSolicitudes → valida y procesa
+                </div>
+                <div class="flow-box">
+                  4. Repositorio → guarda o consulta
+                </div>
+                <p class="text-sm mb-0" style="color: var(--text-muted)">
+                  La respuesta vuelve por la conexión del cliente.
+                </p>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+              <div
+                class="glass-panel border-l-4"
+                style="border-left-color: var(--accent-blue)"
+              >
+                <h4 class="font-bold text-lg">Concurrencia</h4>
+                <p class="text-sm mb-0" style="color: var(--text-muted)">
+                  A y B avanzan en paralelo; un cliente lento no bloquea a los
+                  demás.
+                </p>
+              </div>
+              <div
+                class="glass-panel border-l-4"
+                style="border-left-color: var(--accent-green)"
+              >
+                <h4 class="font-bold text-lg">Mensajes</h4>
+                <p class="text-sm mb-0" style="color: var(--text-muted)">
+                  Solicitud y respuesta usan un formato acordado y delimitado.
+                </p>
+              </div>
+              <div
+                class="glass-panel border-l-4"
+                style="border-left-color: var(--una-gold)"
+              >
+                <h4 class="font-bold text-lg">Sincronización</h4>
+                <p class="text-sm mb-0" style="color: var(--text-muted)">
+                  El estado compartido se protege con sincronización o
+                  estructuras concurrentes.
+                </p>
+              </div>
             </div>
             <div
               class="glass-panel mt-4 border-l-4"
-              style="border-left-color: var(--una-gold)"
+              style="border-left-color: var(--una-red)"
             >
               <p class="text-base mb-0">
-                <strong>Producto esperado:</strong> un diagrama cliente →
-                mensaje → servidor → respuesta y una justificación breve de dónde
-                usarían hilos y cómo manejarían errores.
+                <strong>Cierre del recorrido:</strong> el servidor acepta,
+                delega y responde; los clientes no comparten memoria con el
+                servidor y la comunicación ocurre por mensajes sobre TCP.
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ===== 25 · COMPROBACIÓN ===== -->
-      <div class="slide">
-        <div class="w-full max-w-[92%] mx-auto relative z-10">
-          <i
-            class="fa-solid fa-circle-question bg-icon text-[300px] -right-10 opacity-5"
-            style="color: var(--accent-purple)"
-          ></i>
-          <div class="text-center mb-7">
-            <h2 class="text-4xl md:text-5xl font-bold mb-2">
-              Preguntas para verificar la comprensión
-            </h2>
-            <p class="text-lg" style="color: var(--text-muted)">
-              Ocho preguntas para repasar antes de cerrar.
-            </p>
-          </div>
-          <div class="max-w-6xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div class="glass-panel">
-                <p class="text-base mb-0">
-                  <strong>1.</strong> ¿Cuál es la diferencia entre un proceso y un
-                  hilo?<br />
-                  <strong>2.</strong> ¿Qué diferencia hay entre llamar
-                  <code>run()</code> y <code>start()</code>?<br />
-                  <strong>3.</strong> ¿Qué es una condición de carrera?<br />
-                  <strong>4.</strong> ¿Qué función cumple
-                  <code>ServerSocket</code>?
-                </p>
-              </div>
-              <div class="glass-panel">
-                <p class="text-base mb-0">
-                  <strong>5.</strong> ¿Por qué TCP no define por sí solo el
-                  formato de los mensajes?<br />
-                  <strong>6.</strong> ¿Qué cambia entre un servidor secuencial y
-                  uno concurrente?<br />
-                  <strong>7.</strong> ¿Por qué deben cerrarse los sockets?<br />
-                  <strong>8.</strong> ¿Cuándo preferirían una comunicación
-                  asíncrona?
-                </p>
-              </div>
-            </div>
-            <details class="glass-panel mt-4">
-              <summary
-                class="text-base cursor-pointer font-bold"
-                style="color: var(--una-red)"
-              >
-                <i class="fa-solid fa-eye mr-2"></i>Mostrar respuestas
-                orientativas
-              </summary>
-              <ol class="list-decimal list-inside text-gray-700 mt-2 mb-0">
-                <li>
-                  Un proceso es una instancia en ejecución; un hilo es un flujo
-                  de ejecución dentro de un proceso.
-                </li>
-                <li>
-                  <code>start()</code> inicia otro flujo; llamar
-                  <code>run()</code> directamente ejecuta una llamada normal.
-                </li>
-                <li>
-                  El resultado depende del orden de acceso concurrente a datos
-                  compartidos.
-                </li>
-                <li>Escucha conexiones TCP y permite aceptar clientes.</li>
-                <li>
-                  TCP entrega un flujo de bytes; la aplicación define delimitación
-                  y significado.
-                </li>
-                <li>
-                  El concurrente permite progresar varias conexiones, si se
-                  gestionan los recursos.
-                </li>
-                <li>
-                  Para liberar recursos y evitar conexiones abiertas
-                  innecesariamente.
-                </li>
-                <li>
-                  Cuando el emisor puede continuar mientras el receptor procesa la
-                  solicitud.
-                </li>
-              </ol>
-            </details>
-          </div>
-        </div>
-      </div>
-
-      <!-- ===== 26 · CIERRE ===== -->
+      <!-- ===== 29 · CIERRE ===== -->
       <div class="slide">
         <div class="w-full max-w-[92%] mx-auto relative z-10">
           <i
