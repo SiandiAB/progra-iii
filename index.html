@@ -182,7 +182,8 @@
         /* --- Alineación de columnas ---
            Ambas profes comparten las mismas filas: la columna 1 y la columna 2
            colocan sus tarjetas en la misma fila, así que cada tarjeta adopta la
-           altura de la más alta de su fila. Requiere 14 filas (1 encabezado + 13 clases).
+           altura de la más alta de su fila. Requiere 15 filas (1 encabezado + 14 clases,
+           el máximo entre ambas columnas).
            OJO: si una columna tiene menos filas que la otra, hay que agregarle
            filas vacías (<div class="clase-row"></div>) para que ambas queden iguales;
            de lo contrario las tarjetas sobran y saltan a una tercera columna. */
@@ -190,7 +191,7 @@
             #clases-grid {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                grid-template-rows: repeat(14, auto);
+                grid-template-rows: repeat(15, auto);
                 grid-auto-flow: column;
                 column-gap: 1.5rem;
                 row-gap: 0.5rem;
@@ -419,6 +420,8 @@
                         </div>
                         <div class="lab-spacer"></div>
                     </div>
+                    <!-- Relleno: iguala las 15 filas de la columna de Kristel (encabezado + 14 clases) -->
+                    <div class="clase-row"></div>
                 </div>
             </div>
 
