@@ -182,7 +182,7 @@
         /* --- Alineación de columnas ---
            Ambas profes comparten las mismas filas: la columna 1 y la columna 2
            colocan sus tarjetas en la misma fila, así que cada tarjeta adopta la
-           altura de la más alta de su fila. Requiere 15 filas (1 encabezado + 14 clases,
+           altura de la más alta de su fila. Requiere 16 filas (1 encabezado + 15 clases,
            el máximo entre ambas columnas).
            OJO: si una columna tiene menos filas que la otra, hay que agregarle
            filas vacías (<div class="clase-row"></div>) para que ambas queden iguales;
@@ -191,7 +191,7 @@
             #clases-grid {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                grid-template-rows: repeat(15, auto);
+                grid-template-rows: repeat(16, auto);
                 grid-auto-flow: column;
                 column-gap: 1.5rem;
                 row-gap: 0.5rem;
@@ -665,6 +665,7 @@
                             <span class="lab-label">LAB</span>
                         </a>
                     </div>
+                    <div class="clase-row"></div>
                 </div>
             </div>
         </div>
