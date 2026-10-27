@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio Autoguiado — Mini-Discord en red (Hilos y Sockets)</title>
+
+    <link rel="icon" type="image/svg+xml" href="../../../assets/img/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --bg-panel: #ffffff;
+            --bg-terminal: #2b2b2b;
+            --text-main: #0f172a;
+            --text-muted: #334155;
+            --border-panel: #cbd5e1;
+            --una-red: #c8102e;
+            --una-gold: #b28900;
+            --accent-blue: #1d4ed8;
+            --accent-green: #15803d;
+            --accent-purple: #6d28d9;
+            --accent-peach: #c2410c;
+        }
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --bg-panel: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+            --border-panel: #334155;
+            --una-gold: #d4ac0d;
+            --accent-blue: #3b82f6;
+            --accent-green: #22c55e;
+            --accent-purple: #8b5cf6;
+            --accent-peach: #f97316;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .glass-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-panel);
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .glass-panel h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.75rem; }
+        .glass-panel h3 { font-size: 1.3rem; font-weight: 700; margin: 1.2rem 0 0.6rem 0; }
+        .glass-panel h4 { font-size: 1.1rem; font-weight: 700; margin: 1rem 0 0.4rem 0; }
+        .glass-panel p { color: var(--text-muted); margin-bottom: 0.75rem; }
+        .glass-panel p:not([class*="text-"]) { font-size: 1.15rem; }
+        .glass-panel ul, .glass-panel ol { color: var(--text-muted); padding-left: 1.5rem; margin-bottom: 0.75rem; }
+        .glass-panel li { margin-bottom: 0.3rem; font-size: 1.1rem; }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #ffffff;
+        }
+        .badge-red { background: var(--una-red); }
+        .badge-blue { background: var(--accent-blue); }
+        .badge-green { background: var(--accent-green); }
+        .badge-purple { background: var(--accent-purple); }
+        .badge-gold { background: var(--una-gold); }
+
+        .darcula-editor {
+            background-color: #2b2b2b !important;
+            border: 1px solid #1a1a1a !important;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+            margin: 1rem 0;
+        }
+        .darcula-header {
+            background-color: #313335;
+            border-bottom: 1px solid #1a1a1a;
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .darcula-tab {
+            background: #2b2b2b;
+            color: #a9b7c6;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 2px 10px;
+            border-radius: 4px 4px 0 0;
+            border-top: 2px solid #4a88c7;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .darcula-code {
+            color: #a9b7c6;
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.5;
+            white-space: pre;
+            overflow-x: auto;
+            display: block;
+            padding: 1rem 1.2rem;
+            margin: 0;
+        }
+
+        .d-comment { color: #808080; font-style: italic; }
+        .d-keyword { color: #cc7832; font-weight: bold; }
+        .d-string { color: #6a8759; }
+        .d-number { color: #6897bb; }
+        .d-annotation { color: #bbb529; }
+        .d-method { color: #ffc66d; }
+        .d-field { color: #9876aa; }
+        .d-type { color: #a9b7c6; font-weight: bold; }
+        .d-xml-tag { color: #e8bf6a; }
+        .d-xml-attr { color: #bababa; }
+        .d-sql { color: #cc7832; font-weight: bold; }
+        .d-new { color: #98c379; font-weight: bold; font-style: normal; }
+
+        .step-sub {
+            border-left: 4px solid var(--accent-blue);
+            padding-left: 1.2rem;
+            margin: 1.5rem 0;
+        }
+        .step-sub h5 {
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.4rem;
+        }
+        .step-sub p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight-box {
+            padding: 1rem 1.2rem;
+            border-radius: 0.5rem;
+            border-left: 5px solid var(--una-gold);
+            background: #fffbef;
+            color: #423500;
+            margin: 1rem 0;
+            border-top: 1px solid #fce895;
+            border-right: 1px solid #fce895;
+            border-bottom: 1px solid #fce895;
+        }
+        [data-theme="dark"] .highlight-box {
+            background: #332900;
+            color: #fef08a;
+            border-color: #856600;
+        }
+        .highlight-box strong { color: var(--una-gold); font-weight: 800; }
+
+        .pregunta-box {
+            background: #f0fdf4;
+            border-left: 5px solid var(--accent-green);
+            padding: 1rem 1.2rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            border-top: 1px solid #bbf7d0;
+            border-right: 1px solid #bbf7d0;
+            border-bottom: 1px solid #bbf7d0;
+            color: #14532d;
+        }
+        [data-theme="dark"] .pregunta-box {
+            background: #052e16;
+            color: #86efac;
+            border-color: #166534;
+        }
+        .pregunta-box p { margin-bottom: 0.5rem; }
+
+        .decision-box {
+            background: #f5f3ff;
+            border-left: 5px solid var(--accent-purple);
+            padding: 1rem 1.2rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            border-top: 1px solid #ddd6fe;
+            border-right: 1px solid #ddd6fe;
+            border-bottom: 1px solid #ddd6fe;
+            color: #3b0764;
+        }
+        [data-theme="dark"] .decision-box {
+            background: #2e1065;
+            color: #ddd6fe;
+            border-color: #6d28d9;
+        }
+        .decision-box p { margin-bottom: 0.5rem; }
+        .decision-box .decision-label {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 800;
+            color: var(--accent-purple);
+            margin-bottom: 0.4rem;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .float-btn {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50;
+            background: var(--bg-panel);
+            border: 2px solid var(--border-panel);
+            border-radius: 9999px;
+            padding: 0.65rem 1rem;
+            font-size: 1rem;
+            color: var(--text-main);
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            transition: transform 0.15s, background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .float-btn:hover { transform: scale(1.05); background: var(--border-panel); }
+
+        details {
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--bg-panel);
+            padding: 0.8rem 1.2rem;
+            border-radius: 0.5rem;
+            border: 2px solid var(--border-panel);
+        }
+        details summary {
+            cursor: pointer;
+            font-weight: 800;
+            color: var(--accent-blue);
+            font-size: 1.1rem;
+        }
+        details summary:hover { color: var(--accent-purple); }
+
+        .code-explanation {
+            margin-top: 1rem;
+            font-size: 1.05rem;
+            border-top: 1px solid var(--border-panel);
+            padding-top: 1rem;
+        }
+        .code-explanation p { margin-bottom: 0.8rem; }
+
+        .code-explanation code {
+            background: #2b2b2b;
+            color: #a9b7c6;
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.3rem;
+            font-family: 'JetBrains Mono', monospace;
+            border: 1px solid #1a1a1a;
+            font-size: 1rem;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .diagram-node {
+            background: var(--bg-panel);
+            border: 2px solid var(--border-panel);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 10;
+        }
+
+        .tabla-compare {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin: 0.8rem 0;
+        }
+        .tabla-compare th {
+            background: #2b2b2b;
+            color: #cdd6f4;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        .tabla-compare td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-panel);
+            color: var(--text-muted);
+        }
+        .tabla-compare tr:nth-child(even) { background: rgba(0,0,0,0.02); }
+        [data-theme="dark"] .tabla-compare tr:nth-child(even) { background: rgba(255,255,255,0.03); }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .glass-panel { padding: 1rem; }
+            .glass-panel h2 { font-size: 1.4rem; }
+        }
+    </style>
+    <style>
+        /* Botón para copiar el código completo */
+        .copy-btn {
+            margin-left: auto; background: #3c3f41; color: #a9b7c6; border: 1px solid #555;
+            border-radius: 6px; padding: 2px 10px; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace;
+            cursor: pointer; transition: background 0.2s, color 0.2s;
+        }
+        .copy-btn:hover { background: #4a88c7; color: #fff; }
+        .copy-btn.ok { background: #28c840; color: #1a1a1a; border-color: #28c840; }
+        .glass-panel ol { list-style: decimal; padding-left: 1.6rem; margin: 0.6rem 0; }
+        .glass-panel ul { list-style: disc; padding-left: 1.6rem; margin: 0.6rem 0; }
+        .glass-panel ol li, .glass-panel ul li { margin-bottom: 0.45rem; display: list-item; }
+        .glass-panel code { word-break: break-word; }
+    </style>
+</head>
+<body>
+
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar modo claro/oscuro">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+
+    <div class="container">
+
+        <!-- PORTADA -->
+        <div class="glass-panel text-center" style="border-top: 6px solid var(--una-red);">
+            <div class="flex justify-center mb-4">
+                <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png" alt="Logo UNA" class="h-20 object-contain"
+                     onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png';">
+            </div>
+            <h2 class="text-3xl font-extrabold">Laboratorio Autoguiado</h2>
+            <p class="text-xl" style="color: var(--una-red); font-weight: 800;">Mini-Discord en red: hilos y sockets</p>
+            <p class="text-sm font-semibold mt-2" style="color: var(--text-muted);">Programación III — Universidad Nacional de Costa Rica · Sección Regional Central Occidente (SRCO)</p>
+            <div class="flex flex-wrap justify-center gap-3 mt-4">
+                <span class="badge badge-red">Sockets</span>
+                <span class="badge badge-blue">Hilos</span>
+                <span class="badge badge-green">Task y runLater</span>
+                <span class="badge badge-purple">Sin MySQL</span>
+                <span class="badge badge-gold">IntelliJ IDEA</span>
+            </div>
+            <div class="mt-5 text-sm font-bold" style="color: var(--text-muted);">
+                <i class="fa-solid fa-user-graduate mr-1"></i> Práctica Académica — Semana 15
+            </div>
+        </div>
+
+        <!-- INTRODUCCIÓN -->
+        <div class="glass-panel" style="border-left: 5px solid var(--una-gold);">
+            <h2><i class="fa-solid fa-network-wired mr-2" style="color: var(--una-gold);"></i> Introducción al Laboratorio</h2>
+            <p>Hasta la Semana 13, Mini-Discord es una aplicación de una sola persona: la ventana guarda y lee los mensajes directamente en la base de datos de su propia computadora. En este laboratorio la van a convertir en un <strong>chat entre computadoras</strong>: un <strong>servidor</strong> que espera conexiones y reparte los mensajes, y varias <strong>ventanas cliente</strong> que se conectan a él.</p>
+            <p>Lo van a lograr con lo que vieron en la teoría: un <strong>hilo por cliente</strong> en el servidor, un <strong>hilo oyente</strong> en el cliente, una <strong>Task</strong> para conectar sin congelar la ventana, y <strong>Platform.runLater</strong> para mostrar los mensajes que llegan por la red.</p>
+            <div class="highlight-box"><strong><i class="fa-solid fa-chalkboard-user mr-1"></i> Enfoque pedagógico:</strong> cada paso trae una caja morada <strong>"¿Cómo se llega a esta decisión?"</strong> con el razonamiento, y un desplegable <strong>"Ver explicación del código, línea por línea"</strong>. Peguen el código tal como está y después lean la explicación: así avanzan sin errores y aprenden qué hace cada pieza.</div>
+        </div>
+
+        <!-- ANTES DE EMPEZAR -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-blue);">
+            <h2><i class="fa-solid fa-list-check mr-2" style="color: var(--accent-blue);"></i> Antes de empezar: qué necesitan y qué NO necesitan</h2>
+            <h3 style="color: var(--accent-green);"><i class="fa-solid fa-circle-check mr-1"></i> Sí necesitan</h3>
+            <ul><li><strong>IntelliJ IDEA</strong> instalado.</li><li><strong>Java 21 o superior</strong> (el proyecto usa Java 21). Para comprobar cuál tienen, abran una terminal y escriban <code class="font-mono text-sm">java --version</code>.</li><li><strong>Internet</strong> la primera vez, porque Maven descarga las librerías del proyecto (JavaFX y el driver de MySQL).</li><li><strong>El proyecto Mini-Discord de la semana 13</strong>, en su versión más reciente. El Paso 1 les dice cómo descargarlo.</li></ul>
+            <h3 style="color: var(--una-red);"><i class="fa-solid fa-circle-xmark mr-1"></i> NO necesitan</h3>
+            <ul><li><strong>MySQL ni MySQL Workbench.</strong> En este laboratorio el servidor guarda los mensajes en memoria. No necesitan crear ninguna base de datos ni ningún usuario.</li><li><strong>El archivo config.properties.</strong> La ventana ya no se conecta a la base de datos: habla con el servidor.</li><li><strong>Dos computadoras, si trabajan solos.</strong> Pueden probar todo en una sola, abriendo dos ventanas. Si tienen una segunda computadora en la misma red, el último paso les muestra cómo usarla.</li></ul>
+            <div class="highlight-box"><strong><i class="fa-solid fa-triangle-exclamation mr-1"></i> Importante:</strong> no usen el proyecto que ya tenían con cambios propios. Descarguen uno nuevo en el Paso 1, así todos parten exactamente del mismo código y nada falla por diferencias.</div>
+        </div>
+
+        <!-- PASO 1 -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-blue);">
+            <h2><i class="fa-solid fa-download mr-2" style="color: var(--accent-blue);"></i> Paso 1: Descargar y abrir el proyecto</h2>
+            <div class="step-sub"><h5>1.1 Descargar el ZIP</h5><ol><li>Abran en el navegador <code class="font-mono text-sm">https://github.com/SiandiAB/MiniDiscord</code>.</li><li>Pulsen el botón verde <strong>Code</strong> y después <strong>Download ZIP</strong>.</li><li>Cuando termine la descarga, hagan clic derecho sobre el archivo <code class="font-mono text-sm">MiniDiscord-main.zip</code> y escojan <strong>Extraer todo</strong>. Escojan una carpeta que recuerden, por ejemplo el Escritorio. Se crea una carpeta llamada <code class="font-mono text-sm">MiniDiscord-main</code>.</li><li>Entren a esa carpeta y comprueben que adentro ven el archivo <code class="font-mono text-sm">pom.xml</code> y una carpeta <code class="font-mono text-sm">src</code>. Si ven otra carpeta <code class="font-mono text-sm">MiniDiscord-main</code> adentro, esa es la que hay que abrir en el paso siguiente.</li></ol></div><div class="step-sub"><h5>1.2 Abrirlo en IntelliJ</h5><ol><li>Abran IntelliJ IDEA. En la pantalla de bienvenida, pulsen <strong>Open</strong>. Si ya hay un proyecto abierto, usen el menú <strong>File → Open</strong>.</li><li>Seleccionen la carpeta <code class="font-mono text-sm">MiniDiscord-main</code> (la que contiene <code class="font-mono text-sm">pom.xml</code>) y pulsen <strong>OK</strong>.</li><li>Si IntelliJ pregunta si confían en el proyecto, pulsen <strong>Trust Project</strong>.</li><li><strong>Esperen</strong>. Abajo, a la derecha, IntelliJ muestra una barra de progreso mientras Maven descarga las librerías. Puede tardar unos minutos la primera vez. No sigan hasta que desaparezca.</li><li>Si IntelliJ muestra un aviso que dice <code class="font-mono text-sm">Load Maven Project</code> o <code class="font-mono text-sm">Maven projects need to be imported</code>, pulsen ese enlace.</li></ol></div><div class="step-sub"><h5>1.3 Comprobar el Java del proyecto</h5><ol><li>Abran <strong>File → Project Structure</strong> (o presionen <strong>Ctrl+Alt+Shift+S</strong>).</li><li>En <strong>Project</strong>, en el campo <strong>SDK</strong>, tiene que decir un Java de versión <strong>21 o superior</strong>. Si dice otra cosa, o está vacío, desplieguen la lista y escojan uno de 21 o más. Si no hay ninguno, pulsen <strong>Add SDK → Download JDK</strong> y descarguen uno de versión 21 o superior.</li><li>Pulsen <strong>OK</strong>.</li></ol></div><div class="step-sub"><h5>1.4 Comprobar que se ve bien</h5><p>En el panel de la izquierda, desplieguen <code class="font-mono text-sm">src → main → java → cr.ac.una.est.minidiscord</code>. Deben ver estas carpetas:</p>
+  <div class="darcula-editor"><div class="darcula-header"><i class="fa-solid fa-folder-tree text-xs" style="color: #a9b7c6;"></i><span class="text-xs font-mono" style="color: #a9b7c6;">Project Explorer — estado inicial</span></div><pre class="darcula-code text-xs"><code><span class="d-comment">▼ src/main/java/cr.ac.una.est.minidiscord</span>
+  <span class="d-comment">▼ business</span>      <span class="d-comment">(dto, model, service)</span>
+  <span class="d-comment">▼ data.dao</span>      <span class="d-comment">(DataAccessException, DatabaseConfig, JdbcMessageRepository,</span>
+                    <span class="d-comment"> MessageDAO, MessageRepository, MessageXmlExporter, PersistenceManager)</span>
+  <span class="d-comment">▼ presentation</span>  <span class="d-comment">(component, controller)</span>
+  App</code></pre></div>
+  <p>Si ven eso, el proyecto está listo. <strong>No ejecuten App todavía</strong>: todavía intenta usar la base de datos y mostraría un error, que es lo que vamos a arreglar.</p></div>
+        </div>
+
+        <!-- PASO 2 -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-green);">
+            <h2><i class="fa-solid fa-folder-plus mr-2" style="color: var(--accent-green);"></i> Paso 2: Crear el paquete network</h2>
+            <p>Todo lo nuevo de la parte de red va en un paquete propio, para no mezclarlo con lo que ya existe.</p><ol><li>Hagan clic derecho sobre el paquete <code class="font-mono text-sm">cr.ac.una.est.minidiscord</code> (dentro de <code class="font-mono text-sm">src/main/java</code>).</li><li>Escojan <strong>New → Package</strong>.</li><li>Escriban exactamente: <code class="font-mono text-sm">cr.ac.una.est.minidiscord.network</code> y presionen <strong>Enter</strong>.</li></ol><p>Debe aparecer una carpeta nueva llamada <code class="font-mono text-sm">network</code> dentro de <code class="font-mono text-sm">cr.ac.una.est.minidiscord</code>.</p><div class="decision-box"><p class="decision-label"><i class="fa-solid fa-lightbulb"></i> ¿Cómo se llega a esta decisión?</p><p>El proyecto ya está dividido en capas: <code class="font-mono text-sm">business</code> son las reglas, <code class="font-mono text-sm">data</code> habla con el almacenamiento y <code class="font-mono text-sm">presentation</code> es la ventana. La comunicación por red es una responsabilidad distinta, así que va en su propio paquete. Así, si mañana se cambia el protocolo, solo se toca <code class="font-mono text-sm">network</code>.</p></div>
+        </div>
+
+        <!-- PASO 3 -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-purple);">
+            <h2><i class="fa-solid fa-scroll mr-2" style="color: var(--accent-purple);"></i> Paso 3: El protocolo: ChatProtocol</h2>
+            <p>Un <strong>protocolo</strong> son las reglas de la conversación entre dos programas. Cliente y servidor tienen que escribir y leer los mensajes exactamente igual. Por eso esa regla vive en un solo lugar.</p><div class="highlight-box"><strong><i class="fa-solid fa-circle-info mr-1"></i> Dónde se crea:</strong> en el paquete <code class="font-mono text-sm">network</code>.</div><ol><li>Clic derecho sobre el paquete <code class="font-mono text-sm">network</code>.</li><li><strong>New → Java Class</strong>. Escriban <code class="font-mono text-sm">ChatProtocol</code> y presionen <strong>Enter</strong>.</li><li>Con el archivo abierto, <strong>Ctrl+A</strong> y <strong>Delete</strong> para dejarlo vacío.</li><li>Copien el código de abajo con el botón <strong>Copiar</strong> y péguenlo con <strong>Ctrl+V</strong>. Incluye la línea <code class="font-mono text-sm">package</code> del principio.</li></ol><div class="darcula-editor"><div class="darcula-header"><span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span><div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> network/ChatProtocol.java</div><button class="copy-btn" onclick="copiar('cod1', this)" title="Copiar el código completo"><i class="fa-regular fa-copy"></i> Copiar</button></div><pre class="darcula-code text-xs"><code id="cod1"><span class="d-keyword">package</span> cr.ac.una.est.minidiscord.network;
+
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.model.Message;
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.model.User;
+<span class="d-keyword">import</span> java.time.LocalDateTime;
+
+<span class="d-comment">// Las reglas de la conversación (el protocolo): cada mensaje es una línea de texto.</span>
+<span class="d-comment">//   cliente -&gt; servidor:  HELLO|usuario     MSG|texto</span>
+<span class="d-comment">//   servidor -&gt; cliente:  MSG|usuario|fecha|texto     ERR|motivo</span>
+<span class="d-keyword">public</span> <span class="d-keyword">final</span> <span class="d-keyword">class</span> ChatProtocol {
+
+    <span class="d-keyword">public</span> <span class="d-keyword">static</span> <span class="d-keyword">final</span> <span class="d-keyword">int</span> PUERTO = <span class="d-number">5050</span>;
+
+    <span class="d-keyword">private</span> ChatProtocol() { }
+
+    <span class="d-keyword">public</span> <span class="d-keyword">static</span> String <span class="d-method">codificar</span>(Message mensaje) {
+        <span class="d-keyword">return</span> <span class="d-string">"MSG|"</span> + mensaje.<span class="d-method">getAuthor</span>().<span class="d-method">getUsername</span>() + <span class="d-string">"|"</span> + mensaje.<span class="d-method">getSentAt</span>() + <span class="d-string">"|"</span> + mensaje.<span class="d-method">getContent</span>();
+    }
+
+    <span class="d-comment">// El 4 en split hace que el texto del mensaje pueda llevar el carácter | sin romperse.</span>
+    <span class="d-keyword">public</span> <span class="d-keyword">static</span> Message <span class="d-method">decodificar</span>(String linea) {
+        String[] partes = linea.<span class="d-method">split</span>(<span class="d-string">"\\|"</span>, <span class="d-number">4</span>);
+        <span class="d-keyword">if</span> (partes.length &lt; <span class="d-number">4</span> || !partes[<span class="d-number">0</span>].<span class="d-method">equals</span>(<span class="d-string">"MSG"</span>)) {
+            <span class="d-keyword">throw</span> <span class="d-keyword">new</span> IllegalArgumentException(<span class="d-string">"Línea inválida: "</span> + linea);
+        }
+        <span class="d-keyword">return</span> <span class="d-keyword">new</span> Message(<span class="d-keyword">new</span> User(partes[<span class="d-number">1</span>]), partes[<span class="d-number">3</span>], LocalDateTime.<span class="d-method">parse</span>(partes[<span class="d-number">2</span>]));
+    }
+}</code></pre></div><details><summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código, línea por línea.</strong></summary><div class="code-explanation"><p><code>public final class ChatProtocol { private ChatProtocol() { } }</code> Una clase que solo tiene cosas estáticas. <code>final</code> impide heredarla y el constructor <code>private</code> impide crear objetos. Se usa así: <code>ChatProtocol.PUERTO</code>.</p><p><code>public static final int PUERTO = 5050;</code> El puerto vive en un solo lugar. El servidor y el cliente leen el mismo número, así que no pueden quedar desacordados.</p><p><code>codificar(Message mensaje)</code> Convierte un Message en una línea de texto con cuatro partes separadas por la barra vertical: <code>MSG|usuario|fecha|texto</code>. Se manda texto y no el objeto, porque reconstruir objetos que llegan por la red es un riesgo de seguridad conocido.</p><p><code>linea.split("\\|", 4)</code> Parte la línea por cada barra vertical. Se escribe con dos barras invertidas porque la barra vertical es un carácter especial en las expresiones regulares. El 4 significa "a lo sumo cuatro pedazos": así, si el texto del mensaje trae barras, todo lo que sigue a la tercera se queda junto y no se rompe.</p><p><code>throw new IllegalArgumentException(...)</code> Si la línea no tiene el formato esperado, se rechaza. Nunca hay que confiar en lo que llega por la red.</p><p><code>new Message(new User(partes[1]), partes[3], LocalDateTime.parse(partes[2]))</code> Reconstruye el mensaje con el constructor que recibe la fecha, el mismo que se usa al leer de la base de datos, para conservar el momento en que se escribió.</p></div></details><p>Es normal que, hasta crear las demás clases, IntelliJ no muestre errores aquí: esta clase solo usa <code class="font-mono text-sm">Message</code> y <code class="font-mono text-sm">User</code>, que ya existen.</p>
+        </div>
+
+        <!-- PASO 4 -->
+        <div class="glass-panel" style="border-left: 5px solid var(--una-red);">
+            <h2><i class="fa-solid fa-memory mr-2" style="color: var(--una-red);"></i> Paso 4: Un repositorio en memoria: InMemoryMessageRepository</h2>
+            <p>El servidor necesita un lugar donde guardar los mensajes. Para este laboratorio los guarda en una lista en memoria, así no hace falta MySQL.</p><div class="highlight-box"><strong><i class="fa-solid fa-circle-info mr-1"></i> Dónde se crea:</strong> en el paquete <code class="font-mono text-sm">cr.ac.una.est.minidiscord.data.dao</code>, <strong>no</strong> en <code class="font-mono text-sm">network</code>. Está junto a <code class="font-mono text-sm">MessageRepository</code>.</div><ol><li>Clic derecho sobre el paquete <code class="font-mono text-sm">data.dao</code> (desplieguen <code class="font-mono text-sm">data</code> para verlo).</li><li><strong>New → Java Class</strong>. Escriban <code class="font-mono text-sm">InMemoryMessageRepository</code> y <strong>Enter</strong>.</li><li><strong>Ctrl+A</strong> y <strong>Delete</strong> para vaciar el archivo.</li><li>Copien el código de abajo y péguenlo con <strong>Ctrl+V</strong>.</li></ol><div class="darcula-editor"><div class="darcula-header"><span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span><div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> data/dao/InMemoryMessageRepository.java</div><button class="copy-btn" onclick="copiar('cod2', this)" title="Copiar el código completo"><i class="fa-regular fa-copy"></i> Copiar</button></div><pre class="darcula-code text-xs"><code id="cod2"><span class="d-keyword">package</span> cr.ac.una.est.minidiscord.data.dao;
+
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.model.Message;
+<span class="d-keyword">import</span> java.util.List;
+<span class="d-keyword">import</span> java.util.concurrent.CopyOnWriteArrayList;
+
+<span class="d-comment">// Guarda los mensajes en memoria, sin base de datos. Sirve para probar el servidor</span>
+<span class="d-comment">// sin MySQL: como implementa la misma interfaz, el resto del programa no cambia.</span>
+<span class="d-keyword">public</span> <span class="d-keyword">class</span> InMemoryMessageRepository <span class="d-keyword">implements</span> MessageRepository {
+
+    <span class="d-keyword">private</span> <span class="d-keyword">final</span> List&lt;Message&gt; mensajes = <span class="d-keyword">new</span> CopyOnWriteArrayList&lt;&gt;();
+
+    <span class="d-annotation">@Override</span>
+    <span class="d-keyword">public</span> <span class="d-keyword">void</span> <span class="d-method">guardar</span>(Message mensaje) {
+        mensajes.<span class="d-method">add</span>(mensaje);
+    }
+
+    <span class="d-annotation">@Override</span>
+    <span class="d-keyword">public</span> List&lt;Message&gt; <span class="d-method">obtenerTodos</span>() {
+        <span class="d-keyword">return</span> List.<span class="d-method">copyOf</span>(mensajes);
+    }
+}</code></pre></div><details><summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código, línea por línea.</strong></summary><div class="code-explanation"><p><code>implements MessageRepository</code> Cumple el mismo contrato que <code>JdbcMessageRepository</code>: guardar y obtener todos. Por eso el servidor puede usar cualquiera de las dos sin enterarse de cuál es.</p><p><code>private final List&lt;Message&gt; mensajes = new CopyOnWriteArrayList&lt;&gt;();</code> La lista donde se guardan. Es una colección concurrente porque los hilos de todos los clientes guardan a la vez. Una <code>ArrayList</code> normal podría fallar.</p><p><code>return List.copyOf(mensajes);</code> Devuelve una copia de la lista, una foto del momento. Así quien la reciba puede recorrerla tranquilo aunque otros hilos sigan agregando mensajes.</p></div></details><div class="decision-box"><p class="decision-label"><i class="fa-solid fa-lightbulb"></i> ¿Cómo se llega a esta decisión?</p><p>Esto es posible porque <code class="font-mono text-sm">MessageRepository</code> es una <strong>interfaz</strong>. Cambiar de MySQL a la memoria no toca nada más: es la prueba de que separar el contrato de la implementación vale la pena.</p></div>
+        </div>
+
+        <!-- PASO 5 -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-blue);">
+            <h2><i class="fa-solid fa-user-gear mr-2" style="color: var(--accent-blue);"></i> Paso 5: Atender a un cliente: ClientHandler</h2>
+            <p>Cada persona que se conecta tiene su propio <strong>hilo</strong> en el servidor. <code class="font-mono text-sm">ClientHandler</code> es la tarea que ejecuta ese hilo.</p><div class="highlight-box"><strong><i class="fa-solid fa-circle-info mr-1"></i> Dónde se crea:</strong> en el paquete <code class="font-mono text-sm">network</code>.</div><ol><li>En el panel de la izquierda (Project), hagan clic derecho sobre el paquete <code class="font-mono text-sm">network</code>.</li><li>Escojan <strong>New</strong> y después <strong>Java Class</strong>.</li><li>Escriban exactamente <code class="font-mono text-sm">ClientHandler</code> y presionen <strong>Enter</strong>. Se abre el archivo <code class="font-mono text-sm">ClientHandler.java</code>.</li><li>Hagan clic dentro del archivo, presionen <strong>Ctrl+A</strong> para seleccionar todo y <strong>Delete</strong> para borrarlo. El archivo debe quedar completamente vacío.</li><li>Presionen el botón <strong>Copiar</strong> del código de abajo y péguenlo en el archivo con <strong>Ctrl+V</strong>. Incluye la primera línea, que empieza con <code class="font-mono text-sm">package</code>: no la borren.</li></ol><div class="darcula-editor"><div class="darcula-header"><span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span><div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> network/ClientHandler.java</div><button class="copy-btn" onclick="copiar('cod3', this)" title="Copiar el código completo"><i class="fa-regular fa-copy"></i> Copiar</button></div><pre class="darcula-code text-xs"><code id="cod3"><span class="d-keyword">package</span> cr.ac.una.est.minidiscord.network;
+
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.model.User;
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.service.ChatService;
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.data.dao.DataAccessException;
+<span class="d-keyword">import</span> java.io.BufferedReader;
+<span class="d-keyword">import</span> java.io.IOException;
+<span class="d-keyword">import</span> java.io.InputStreamReader;
+<span class="d-keyword">import</span> java.io.PrintWriter;
+<span class="d-keyword">import</span> java.net.Socket;
+
+<span class="d-comment">// Atiende a un solo cliente. El servidor crea un hilo con una de estas por cada conexión.</span>
+<span class="d-keyword">class</span> ClientHandler <span class="d-keyword">implements</span> Runnable {
+
+    <span class="d-keyword">private</span> <span class="d-keyword">final</span> Socket conexion;
+    <span class="d-keyword">private</span> <span class="d-keyword">final</span> ChatServer servidor;
+    <span class="d-keyword">private</span> <span class="d-keyword">final</span> ChatService servicio = <span class="d-keyword">new</span> ChatService();
+    <span class="d-keyword">private</span> PrintWriter salida;
+    <span class="d-keyword">private</span> String usuario = <span class="d-string">"?"</span>;
+
+    ClientHandler(Socket conexion, ChatServer servidor) {
+        <span class="d-keyword">this</span>.conexion = conexion;
+        <span class="d-keyword">this</span>.servidor = servidor;
+    }
+
+    String <span class="d-method">getUsuario</span>() {
+        <span class="d-keyword">return</span> usuario;
+    }
+
+    <span class="d-annotation">@Override</span>
+    <span class="d-keyword">public</span> <span class="d-keyword">void</span> <span class="d-method">run</span>() {
+        <span class="d-keyword">try</span> (conexion;
+             BufferedReader entrada = <span class="d-keyword">new</span> BufferedReader(<span class="d-keyword">new</span> InputStreamReader(conexion.<span class="d-method">getInputStream</span>()));
+             PrintWriter out = <span class="d-keyword">new</span> PrintWriter(conexion.<span class="d-method">getOutputStream</span>(), <span class="d-keyword">true</span>)) {
+
+            salida = out;
+            <span class="d-keyword">if</span> (!<span class="d-method">saludar</span>(entrada.<span class="d-method">readLine</span>())) {
+                <span class="d-keyword">return</span>;
+            }
+            <span class="d-keyword">try</span> {
+                servidor.<span class="d-method">registrar</span>(<span class="d-keyword">this</span>);   <span class="d-comment">// lee el historial en la base</span>
+            } <span class="d-keyword">catch</span> (DataAccessException e) {
+                <span class="d-method">enviar</span>(<span class="d-string">"ERR|"</span> + e.<span class="d-method">getMessage</span>());
+                <span class="d-keyword">return</span>;
+            }
+
+            String linea;
+            <span class="d-keyword">while</span> ((linea = entrada.<span class="d-method">readLine</span>()) != <span class="d-keyword">null</span>) {   <span class="d-comment">// null = el cliente se desconectó</span>
+                <span class="d-keyword">if</span> (linea.<span class="d-method">startsWith</span>(<span class="d-string">"MSG|"</span>)) {
+                    <span class="d-method">recibir</span>(linea.<span class="d-method">substring</span>(<span class="d-number">4</span>));
+                }
+            }
+        } <span class="d-keyword">catch</span> (IOException e) {
+            System.out.<span class="d-method">println</span>(usuario + <span class="d-string">": conexión terminada ("</span> + e.<span class="d-method">getMessage</span>() + <span class="d-string">")"</span>);
+        } <span class="d-keyword">finally</span> {
+            servidor.<span class="d-method">quitar</span>(<span class="d-keyword">this</span>);
+        }
+    }
+
+    <span class="d-comment">// La primera línea debe ser HELLO|usuario. Se valida con el mismo ChatService de siempre.</span>
+    <span class="d-keyword">private</span> <span class="d-keyword">boolean</span> <span class="d-method">saludar</span>(String linea) {
+        <span class="d-keyword">try</span> {
+            <span class="d-keyword">if</span> (linea == <span class="d-keyword">null</span> || !linea.<span class="d-method">startsWith</span>(<span class="d-string">"HELLO|"</span>)) {
+                <span class="d-keyword">throw</span> <span class="d-keyword">new</span> IllegalArgumentException(<span class="d-string">"Se esperaba HELLO|usuario."</span>);
+            }
+            String nombre = linea.<span class="d-method">substring</span>(<span class="d-number">6</span>);
+            <span class="d-keyword">if</span> (nombre.<span class="d-method">contains</span>(<span class="d-string">"|"</span>)) {
+                <span class="d-keyword">throw</span> <span class="d-keyword">new</span> IllegalArgumentException(<span class="d-string">"El nombre no puede llevar el carácter |."</span>);
+            }
+            usuario = servicio.<span class="d-method">createUser</span>(nombre).<span class="d-method">getUsername</span>();
+            <span class="d-keyword">return</span> <span class="d-keyword">true</span>;
+        } <span class="d-keyword">catch</span> (IllegalArgumentException e) {
+            <span class="d-method">enviar</span>(<span class="d-string">"ERR|"</span> + e.<span class="d-method">getMessage</span>());
+            <span class="d-keyword">return</span> <span class="d-keyword">false</span>;
+        }
+    }
+
+    <span class="d-keyword">private</span> <span class="d-keyword">void</span> <span class="d-method">recibir</span>(String texto) {
+        <span class="d-keyword">try</span> {
+            servidor.<span class="d-method">publicar</span>(servicio.<span class="d-method">processMessage</span>(<span class="d-keyword">new</span> User(usuario), texto));
+        } <span class="d-keyword">catch</span> (IllegalArgumentException | DataAccessException e) {
+            <span class="d-method">enviar</span>(<span class="d-string">"ERR|"</span> + e.<span class="d-method">getMessage</span>());
+        }
+    }
+
+    <span class="d-comment">// synchronized: varios hilos pueden mandarle líneas a este cliente al mismo tiempo.</span>
+    <span class="d-keyword">synchronized</span> <span class="d-keyword">void</span> <span class="d-method">enviar</span>(String linea) {
+        <span class="d-keyword">if</span> (salida != <span class="d-keyword">null</span>) {
+            salida.<span class="d-method">println</span>(linea);
+        }
+    }
+}</code></pre></div><div class="highlight-box"><strong><i class="fa-solid fa-triangle-exclamation mr-1"></i> Es normal:</strong> IntelliJ va a subrayar en rojo <code class="font-mono text-sm">ChatServer</code> y algunos métodos, porque esa clase todavía no existe. Se arregla sola en el Paso 6. No se preocupen.</div><details><summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código, línea por línea.</strong></summary><div class="code-explanation"><p><code>class ClientHandler implements Runnable</code> Es la tarea de un hilo. <code>Runnable</code> tiene un único método, <code>run()</code>, que es lo que el hilo ejecuta. El servidor crea un hilo por cada cliente y le entrega uno de estos.</p><p><code>private final ChatService servicio = new ChatService();</code> La misma capa de negocio que usa la ventana. El servidor valida el nombre y el texto con las mismas reglas.</p><p><code>try (conexion; BufferedReader entrada ...; PrintWriter out ...)</code> Abre los canales para leer y escribirle a ese cliente, y los cierra solos al terminar. El <code>true</code> del <code>PrintWriter</code> activa el autoflush: cada línea se envía de inmediato.</p><p><code>if (!saludar(entrada.readLine())) { return; }</code> La primera línea tiene que ser <code>HELLO|nombre</code>. Si no sirve, se termina.</p><p><code>servidor.registrar(this);</code> Le entrega este cliente al servidor, que le manda el historial y lo agrega a la lista de conectados.</p><p><code>while ((linea = entrada.readLine()) != null)</code> <code>readLine()</code> <strong>espera</strong> hasta que llegue una línea. Devuelve <code>null</code> solo cuando el cliente se desconectó, y esa es la señal de que se fue.</p><p><code>if (linea.startsWith("MSG|")) { recibir(linea.substring(4)); }</code> Solo se atienden las líneas del tipo <code>MSG</code>. <code>substring(4)</code> quita esos cuatro caracteres y deja el texto.</p><p><code>} finally { servidor.quitar(this); }</code> Pase lo que pase, el cliente sale de la lista de conectados.</p><p><code>saludar</code> Revisa el saludo y que el nombre no lleve el carácter <code>|</code>, porque rompería el formato. Usa <code>servicio.createUser</code>, el mismo método que valida el nombre en la ventana.</p><p><code>recibir</code> Valida el texto con <code>servicio.processMessage</code>. Si es válido, se lo da al servidor para guardarlo y repartirlo. Si no, le devuelve al cliente una línea <code>ERR|motivo</code>.</p><p><code>synchronized void enviar(String linea)</code> Manda una línea a este cliente. <code>synchronized</code> hace que, si dos hilos le escriben a la vez, entren de uno en uno.</p></div></details><div class="pregunta-box"><p><i class="fa-solid fa-circle-question mr-1"></i> <strong>Para pensar:</strong> ¿Por qué hace falta un hilo por cliente? ¿Qué pasaría con un solo hilo?</p><details><summary><i class="fa-solid fa-chevron-down mr-1"></i> Ver respuesta</summary><div class="code-explanation"><p>Porque <code>accept()</code> y <code>readLine()</code> esperan, y mientras un hilo está esperando no puede hacer otra cosa. Con un solo hilo, mientras el servidor espera a que el cliente 1 escriba, no puede atender al cliente 2 ni aceptar uno nuevo.</p></div></details></div>
+        </div>
+
+        <!-- PASO 6 -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-green);">
+            <h2><i class="fa-solid fa-server mr-2" style="color: var(--accent-green);"></i> Paso 6: El servidor: ChatServer</h2>
+            <p>Es el programa que se queda esperando conexiones. Por cada cliente que llega crea un <code class="font-mono text-sm">ClientHandler</code> en su propio hilo, guarda cada mensaje y lo reparte a todos.</p><div class="highlight-box"><strong><i class="fa-solid fa-circle-info mr-1"></i> Dónde se crea:</strong> en el paquete <code class="font-mono text-sm">network</code>.</div><ol><li>En el panel de la izquierda (Project), hagan clic derecho sobre el paquete <code class="font-mono text-sm">network</code>.</li><li>Escojan <strong>New</strong> y después <strong>Java Class</strong>.</li><li>Escriban exactamente <code class="font-mono text-sm">ChatServer</code> y presionen <strong>Enter</strong>. Se abre el archivo <code class="font-mono text-sm">ChatServer.java</code>.</li><li>Hagan clic dentro del archivo, presionen <strong>Ctrl+A</strong> para seleccionar todo y <strong>Delete</strong> para borrarlo. El archivo debe quedar completamente vacío.</li><li>Presionen el botón <strong>Copiar</strong> del código de abajo y péguenlo en el archivo con <strong>Ctrl+V</strong>. Incluye la primera línea, que empieza con <code class="font-mono text-sm">package</code>: no la borren.</li></ol><div class="darcula-editor"><div class="darcula-header"><span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span><div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> network/ChatServer.java</div><button class="copy-btn" onclick="copiar('cod4', this)" title="Copiar el código completo"><i class="fa-regular fa-copy"></i> Copiar</button></div><pre class="darcula-code text-xs"><code id="cod4"><span class="d-keyword">package</span> cr.ac.una.est.minidiscord.network;
+
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.model.Message;
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.data.dao.InMemoryMessageRepository;
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.data.dao.JdbcMessageRepository;
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.data.dao.MessageRepository;
+<span class="d-keyword">import</span> java.io.IOException;
+<span class="d-keyword">import</span> java.net.ServerSocket;
+<span class="d-keyword">import</span> java.net.Socket;
+<span class="d-keyword">import</span> java.util.List;
+<span class="d-keyword">import</span> java.util.concurrent.CopyOnWriteArrayList;
+
+<span class="d-comment">// El servidor guarda los mensajes (en la base) y los reparte a todos los clientes conectados.</span>
+<span class="d-keyword">public</span> <span class="d-keyword">class</span> ChatServer {
+
+    <span class="d-keyword">private</span> <span class="d-keyword">final</span> MessageRepository repositorio;
+
+    <span class="d-comment">// Varios hilos la modifican a la vez (entra y sale gente): por eso es una lista concurrente.</span>
+    <span class="d-keyword">private</span> <span class="d-keyword">final</span> List&lt;ClientHandler&gt; clientes = <span class="d-keyword">new</span> CopyOnWriteArrayList&lt;&gt;();
+
+    <span class="d-keyword">public</span> ChatServer(MessageRepository repositorio) {
+        <span class="d-keyword">this</span>.repositorio = repositorio;
+    }
+
+    <span class="d-keyword">public</span> <span class="d-keyword">void</span> <span class="d-method">iniciar</span>() <span class="d-keyword">throws</span> IOException {
+        <span class="d-keyword">try</span> (ServerSocket servidor = <span class="d-keyword">new</span> ServerSocket(ChatProtocol.PUERTO)) {
+            System.out.<span class="d-method">println</span>(<span class="d-string">"Servidor escuchando en el puerto "</span> + ChatProtocol.PUERTO);
+            <span class="d-keyword">while</span> (<span class="d-keyword">true</span>) {
+                Socket conexion = servidor.<span class="d-method">accept</span>();   <span class="d-comment">// se bloquea hasta que llega un cliente</span>
+                ClientHandler atencion = <span class="d-keyword">new</span> ClientHandler(conexion, <span class="d-keyword">this</span>);
+                <span class="d-keyword">new</span> Thread(atencion, <span class="d-string">"cliente-"</span> + conexion.<span class="d-method">getPort</span>()).<span class="d-method">start</span>();   <span class="d-comment">// un hilo por cliente</span>
+            }
+        }
+    }
+
+    <span class="d-comment">// Al entrar, el cliente recibe el historial y después queda en la lista.</span>
+    <span class="d-keyword">void</span> <span class="d-method">registrar</span>(ClientHandler cliente) {
+        <span class="d-keyword">for</span> (Message m : repositorio.<span class="d-method">obtenerTodos</span>()) {
+            cliente.<span class="d-method">enviar</span>(ChatProtocol.<span class="d-method">codificar</span>(m));
+        }
+        clientes.<span class="d-method">add</span>(cliente);
+        System.out.<span class="d-method">println</span>(cliente.<span class="d-method">getUsuario</span>() + <span class="d-string">" entró. Conectados: "</span> + clientes.<span class="d-method">size</span>());
+    }
+
+    <span class="d-keyword">void</span> <span class="d-method">quitar</span>(ClientHandler cliente) {
+        <span class="d-keyword">if</span> (clientes.<span class="d-method">remove</span>(cliente)) {
+            System.out.<span class="d-method">println</span>(cliente.<span class="d-method">getUsuario</span>() + <span class="d-string">" salió. Conectados: "</span> + clientes.<span class="d-method">size</span>());
+        }
+    }
+
+    <span class="d-comment">// Guarda y reenvía a todos, incluido quien lo escribió.</span>
+    <span class="d-keyword">void</span> <span class="d-method">publicar</span>(Message mensaje) {
+        repositorio.<span class="d-method">guardar</span>(mensaje);
+        String linea = ChatProtocol.<span class="d-method">codificar</span>(mensaje);
+        <span class="d-keyword">for</span> (ClientHandler cliente : clientes) {
+            cliente.<span class="d-method">enviar</span>(linea);
+        }
+    }
+
+    <span class="d-keyword">public</span> <span class="d-keyword">static</span> <span class="d-keyword">void</span> <span class="d-method">main</span>(String[] args) <span class="d-keyword">throws</span> IOException {
+        <span class="d-comment">// Por defecto guarda en memoria y no hace falta MySQL. Con el argumento "mysql" usa la base.</span>
+        <span class="d-keyword">boolean</span> conMySql = args.length &gt; <span class="d-number">0</span> &amp;&amp; args[<span class="d-number">0</span>].<span class="d-method">equals</span>(<span class="d-string">"mysql"</span>);
+        MessageRepository repositorio = conMySql ? <span class="d-keyword">new</span> JdbcMessageRepository() : <span class="d-keyword">new</span> InMemoryMessageRepository();
+        System.out.<span class="d-method">println</span>(conMySql ? <span class="d-string">"Guardando los mensajes en MySQL"</span> : <span class="d-string">"Guardando los mensajes en memoria (sin MySQL)"</span>);
+        <span class="d-keyword">new</span> ChatServer(repositorio).<span class="d-method">iniciar</span>();
+    }
+}</code></pre></div><p>Al terminar de pegar, los subrayados rojos de <code class="font-mono text-sm">ClientHandler</code> deben desaparecer. Si quedan rojos, revisen que el archivo <code class="font-mono text-sm">ChatServer.java</code> esté dentro del paquete <code class="font-mono text-sm">network</code> y que la primera línea diga <code class="font-mono text-sm">package cr.ac.una.est.minidiscord.network;</code>.</p><details><summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código, línea por línea.</strong></summary><div class="code-explanation"><p><code>private final List&lt;ClientHandler&gt; clientes = new CopyOnWriteArrayList&lt;&gt;();</code> La lista de todos los clientes conectados. Varios hilos la modifican a la vez (entra y sale gente), por eso es una colección concurrente.</p><p><code>new ServerSocket(ChatProtocol.PUERTO)</code> Reserva el puerto 5050 en esta computadora. Si otro programa ya lo usa, falla con <code>BindException: Address already in use</code>.</p><p><code>Socket conexion = servidor.accept();</code> <strong>Espera</strong> hasta que llegue un cliente, y devuelve un <code>Socket</code> nuevo: la línea directa con él.</p><p><code>new Thread(atencion, "cliente-" + conexion.getPort()).start();</code> Un hilo nuevo se encarga de ese cliente, y el hilo principal vuelve de inmediato a esperar al siguiente. Con <code>start()</code> se crea el hilo; con <code>run()</code> no.</p><p><code>registrar</code> Le manda al cliente nuevo el historial de mensajes y después lo agrega a la lista, para que reciba lo que se escriba desde ese momento.</p><p><code>publicar</code> Guarda el mensaje y lo reparte a todos los clientes, incluido el que lo escribió. Si guardar falla, no se reparte nada.</p><p><code>boolean conMySql = args.length &gt; 0 &amp;&amp; args[0].equals("mysql");</code> Por defecto el servidor guarda en memoria. Solo si se le pasa el argumento <code>mysql</code> usaría la base de datos. Ustedes no necesitan hacer nada: se ejecuta tal cual.</p></div></details>
+        </div>
+
+        <!-- PASO 7 -->
+        <div class="glass-panel" style="border-left: 5px solid var(--una-gold);">
+            <h2><i class="fa-solid fa-power-off mr-2" style="color: var(--una-gold);"></i> Paso 7: Encender el servidor</h2>
+            <ol><li>Abran <code class="font-mono text-sm">ChatServer.java</code> (doble clic en el panel de la izquierda).</li><li>Busquen la línea <code class="font-mono text-sm">public static void main(String[] args)</code>. Junto a ella, en el margen izquierdo, hay un <strong>triángulo verde</strong>. Púlsenlo y escojan <strong>Run 'ChatServer.main()'</strong>.</li><li><strong>Esperen</strong>: la primera vez, IntelliJ compila todo el proyecto. Abajo se abre la ventana <strong>Run</strong> con una pestaña llamada <code class="font-mono text-sm">ChatServer</code>.</li></ol><p>Debe aparecer exactamente esto:</p><div class="darcula-editor"><div class="darcula-header"><span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span><div class="darcula-tab ml-2"><i class="fa-solid fa-terminal text-xs" style="color: #6a8759;"></i> Lo que deben ver</div></div><pre class="darcula-code text-xs"><code>Guardando los mensajes en memoria (sin MySQL)
+Servidor escuchando en el puerto 5050</code></pre></div><div class="highlight-box"><strong><i class="fa-solid fa-triangle-exclamation mr-1"></i> Muy importante:</strong> <strong>no cierren esa pestaña ni pulsen el cuadrado rojo</strong>: el servidor tiene que quedar encendido mientras prueban. Para el resto del laboratorio usen otras pestañas.</div><div class="step-sub"><h5>Si algo sale distinto</h5><ul><li>Si aparece un error <code class="font-mono text-sm">Address already in use</code>, hay otro servidor encendido en su computadora. Busquen su pestaña en la ventana Run y pulsen el cuadrado rojo, y después vuelvan a ejecutar <code class="font-mono text-sm">ChatServer</code>.</li><li>Si IntelliJ muestra una ventana que dice <code class="font-mono text-sm">'ChatServer' is not allowed to run in parallel</code> y pregunta si lo detiene, significa que <strong>ya está encendido</strong>. Pulsen <strong>Cancel</strong>.</li><li>Si aparece un error de compilación en rojo, revisen que los Pasos 2 al 6 estén completos: cada archivo en su paquete correcto y con el contenido completo.</li></ul></div>
+        </div>
+
+        <!-- PASO 8 -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-purple);">
+            <h2><i class="fa-solid fa-ear-listen mr-2" style="color: var(--accent-purple);"></i> Paso 8: El cliente: ChatClient</h2>
+            <p><code class="font-mono text-sm">ChatClient</code> es la parte de red de la ventana: se conecta al servidor, escucha en un hilo de fondo y envía lo que escribe la persona. No sabe nada de ventanas: recibe dos funciones, una para lo que llega y otra para los errores, y quien lo use decide qué hacer.</p><div class="highlight-box"><strong><i class="fa-solid fa-circle-info mr-1"></i> Dónde se crea:</strong> en el paquete <code class="font-mono text-sm">network</code>.</div><ol><li>En el panel de la izquierda (Project), hagan clic derecho sobre el paquete <code class="font-mono text-sm">network</code>.</li><li>Escojan <strong>New</strong> y después <strong>Java Class</strong>.</li><li>Escriban exactamente <code class="font-mono text-sm">ChatClient</code> y presionen <strong>Enter</strong>. Se abre el archivo <code class="font-mono text-sm">ChatClient.java</code>.</li><li>Hagan clic dentro del archivo, presionen <strong>Ctrl+A</strong> para seleccionar todo y <strong>Delete</strong> para borrarlo. El archivo debe quedar completamente vacío.</li><li>Presionen el botón <strong>Copiar</strong> del código de abajo y péguenlo en el archivo con <strong>Ctrl+V</strong>. Incluye la primera línea, que empieza con <code class="font-mono text-sm">package</code>: no la borren.</li></ol><div class="darcula-editor"><div class="darcula-header"><span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span><div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> network/ChatClient.java</div><button class="copy-btn" onclick="copiar('cod5', this)" title="Copiar el código completo"><i class="fa-regular fa-copy"></i> Copiar</button></div><pre class="darcula-code text-xs"><code id="cod5"><span class="d-keyword">package</span> cr.ac.una.est.minidiscord.network;
+
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.model.Message;
+<span class="d-keyword">import</span> java.io.BufferedReader;
+<span class="d-keyword">import</span> java.io.IOException;
+<span class="d-keyword">import</span> java.io.InputStreamReader;
+<span class="d-keyword">import</span> java.io.PrintWriter;
+<span class="d-keyword">import</span> java.net.InetSocketAddress;
+<span class="d-keyword">import</span> java.net.Socket;
+<span class="d-keyword">import</span> java.util.function.Consumer;
+
+<span class="d-comment">// Del lado del cliente: se conecta al servidor y escucha en un hilo de fondo.</span>
+<span class="d-comment">// Esta clase no conoce JavaFX; quien la use decide cómo mostrar lo que llega.</span>
+<span class="d-keyword">public</span> <span class="d-keyword">class</span> ChatClient {
+
+    <span class="d-keyword">private</span> <span class="d-keyword">static</span> <span class="d-keyword">final</span> <span class="d-keyword">int</span> ESPERA_CONEXION_MS = <span class="d-number">3000</span>;
+
+    <span class="d-keyword">private</span> Socket conexion;
+    <span class="d-comment">// volatile: la asigna el hilo de fondo y la lee el hilo de la interfaz.</span>
+    <span class="d-keyword">private</span> <span class="d-keyword">volatile</span> PrintWriter salida;
+
+    <span class="d-comment">// Bloquea hasta conectar: hay que llamarlo desde un hilo de fondo, no desde el de la interfaz.</span>
+    <span class="d-keyword">public</span> <span class="d-keyword">void</span> <span class="d-method">conectar</span>(String host, String usuario,
+                         Consumer&lt;Message&gt; alRecibir, Consumer&lt;String&gt; alError) <span class="d-keyword">throws</span> IOException {
+        conexion = <span class="d-keyword">new</span> Socket();
+        conexion.<span class="d-method">connect</span>(<span class="d-keyword">new</span> InetSocketAddress(host, ChatProtocol.PUERTO), ESPERA_CONEXION_MS);
+        salida = <span class="d-keyword">new</span> PrintWriter(conexion.<span class="d-method">getOutputStream</span>(), <span class="d-keyword">true</span>);
+        BufferedReader entrada = <span class="d-keyword">new</span> BufferedReader(<span class="d-keyword">new</span> InputStreamReader(conexion.<span class="d-method">getInputStream</span>()));
+
+        salida.<span class="d-method">println</span>(<span class="d-string">"HELLO|"</span> + usuario);
+
+        Thread oyente = <span class="d-keyword">new</span> Thread(() -&gt; <span class="d-method">escuchar</span>(entrada, alRecibir, alError), <span class="d-string">"oyente-servidor"</span>);
+        oyente.<span class="d-method">setDaemon</span>(<span class="d-keyword">true</span>);
+        oyente.<span class="d-method">start</span>();
+    }
+
+    <span class="d-comment">// Corre en el hilo "oyente": readLine bloquea hasta que el servidor manda algo.</span>
+    <span class="d-keyword">private</span> <span class="d-keyword">void</span> <span class="d-method">escuchar</span>(BufferedReader entrada, Consumer&lt;Message&gt; alRecibir, Consumer&lt;String&gt; alError) {
+        <span class="d-keyword">boolean</span> huboError = <span class="d-keyword">false</span>;
+        <span class="d-keyword">try</span> {
+            String linea;
+            <span class="d-keyword">while</span> ((linea = entrada.<span class="d-method">readLine</span>()) != <span class="d-keyword">null</span>) {
+                <span class="d-keyword">if</span> (linea.<span class="d-method">startsWith</span>(<span class="d-string">"ERR|"</span>)) {
+                    huboError = <span class="d-keyword">true</span>;
+                    alError.<span class="d-method">accept</span>(linea.<span class="d-method">substring</span>(<span class="d-number">4</span>));
+                } <span class="d-keyword">else</span> {
+                    alRecibir.<span class="d-method">accept</span>(ChatProtocol.<span class="d-method">decodificar</span>(linea));
+                }
+            }
+            <span class="d-keyword">if</span> (!huboError) {
+                alError.<span class="d-method">accept</span>(<span class="d-string">"El servidor cerró la conexión."</span>);
+            }
+        } <span class="d-keyword">catch</span> (IOException e) {
+            alError.<span class="d-method">accept</span>(<span class="d-string">"Se perdió la conexión: "</span> + e.<span class="d-method">getMessage</span>());
+        }
+    }
+
+    <span class="d-keyword">public</span> <span class="d-keyword">void</span> <span class="d-method">enviar</span>(String texto) {
+        <span class="d-keyword">if</span> (salida == <span class="d-keyword">null</span>) {
+            <span class="d-keyword">throw</span> <span class="d-keyword">new</span> IllegalStateException(<span class="d-string">"Todavía no hay conexión con el servidor."</span>);
+        }
+        salida.<span class="d-method">println</span>(<span class="d-string">"MSG|"</span> + texto);
+    }
+
+    <span class="d-keyword">public</span> <span class="d-keyword">void</span> <span class="d-method">cerrar</span>() {
+        <span class="d-keyword">try</span> {
+            <span class="d-keyword">if</span> (conexion != <span class="d-keyword">null</span>) {
+                conexion.<span class="d-method">close</span>();
+            }
+        } <span class="d-keyword">catch</span> (IOException e) {
+            <span class="d-comment">// ya se está cerrando; no hay nada más que hacer</span>
+        }
+    }
+}</code></pre></div><details><summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código, línea por línea.</strong></summary><div class="code-explanation"><p><code>private static final int ESPERA_CONEXION_MS = 3000;</code> Tiempo máximo para conectarse: tres segundos. Sin esto, si la IP está mal, la persona cree que todo se congeló.</p><p><code>private volatile PrintWriter salida;</code> <code>volatile</code> es necesario porque este campo lo escribe un hilo (el que conecta) y lo lee otro (el de la ventana, al enviar). <code>volatile</code> garantiza que el cambio que hace uno lo vea el otro de inmediato.</p><p><code>Consumer&lt;Message&gt; alRecibir, Consumer&lt;String&gt; alError</code> Un <code>Consumer</code> es una función que recibe un dato y no devuelve nada. <code>ChatClient</code> no sabe qué hacer con un mensaje que llega: se lo deja a quien lo use. Así no depende de JavaFX.</p><p><code>conexion.connect(new InetSocketAddress(host, ChatProtocol.PUERTO), ESPERA_CONEXION_MS);</code> Se conecta al servidor con un tiempo máximo. Si se vence, lanza <code>SocketTimeoutException</code>.</p><p><code>salida.println("HELLO|" + usuario);</code> El saludo: lo primero que el servidor espera.</p><p><code>Thread oyente = new Thread(() -&gt; escuchar(entrada, alRecibir, alError), "oyente-servidor");</code> El hilo oyente: se pasa la vida esperando al servidor. <code>setDaemon(true)</code> lo marca de fondo, para que no mantenga vivo el programa al cerrar la ventana.</p><p><code>escuchar</code> Se ejecuta en el hilo oyente. Si la línea empieza con <code>ERR|</code> es un error del servidor; si no, es un mensaje, y <code>ChatProtocol.decodificar</code> lo convierte en un <code>Message</code>.</p><p><code>enviar</code> Manda <code>MSG|</code> seguido del texto. Si todavía no hay conexión, lanza un error con un texto claro.</p></div></details>
+        </div>
+
+        <!-- PASO 9 -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-blue);">
+            <h2><i class="fa-solid fa-window-restore mr-2" style="color: var(--accent-blue);"></i> Paso 9: La ventana habla con el servidor: ChatViewController</h2>
+            <p>Este archivo ya existe. Lo van a <strong>reemplazar completo</strong>: la ventana ya no guarda ni lee de la base de datos, sino que habla con <code class="font-mono text-sm">ChatClient</code>.</p><div class="highlight-box"><strong><i class="fa-solid fa-circle-info mr-1"></i> Dónde está:</strong> <code class="font-mono text-sm">presentation → controller → ChatViewController.java</code>.</div><ol><li>Abran <code class="font-mono text-sm">ChatViewController.java</code> con doble clic.</li><li><strong>Ctrl+A</strong> y <strong>Delete</strong>: el archivo debe quedar completamente vacío.</li><li>Copien el código de abajo y péguenlo con <strong>Ctrl+V</strong>.</li></ol><div class="darcula-editor"><div class="darcula-header"><span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span><div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> presentation/controller/ChatViewController.java</div><button class="copy-btn" onclick="copiar('cod6', this)" title="Copiar el código completo"><i class="fa-regular fa-copy"></i> Copiar</button></div><pre class="darcula-code text-xs"><code id="cod6"><span class="d-keyword">package</span> cr.ac.una.est.minidiscord.presentation.controller;
+
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.model.Message;
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.model.User;
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.service.ChatService;
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.network.ChatClient;
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.presentation.component.Avatars;
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.presentation.component.MessageCell;
+<span class="d-keyword">import</span> javafx.application.Platform;
+<span class="d-keyword">import</span> javafx.collections.FXCollections;
+<span class="d-keyword">import</span> javafx.collections.ObservableList;
+<span class="d-keyword">import</span> javafx.concurrent.Task;
+<span class="d-keyword">import</span> javafx.fxml.FXML;
+<span class="d-keyword">import</span> javafx.scene.control.Label;
+<span class="d-keyword">import</span> javafx.scene.control.ListView;
+<span class="d-keyword">import</span> javafx.scene.control.TextField;
+<span class="d-keyword">import</span> javafx.scene.layout.StackPane;
+
+<span class="d-keyword">public</span> <span class="d-keyword">class</span> ChatViewController {
+
+    <span class="d-comment">// @FXML conecta estos campos con los elementos del archivo FXML</span>
+    <span class="d-annotation">@FXML</span> <span class="d-keyword">private</span> ListView&lt;Message&gt; messageListView;
+    <span class="d-annotation">@FXML</span> <span class="d-keyword">private</span> TextField messageInputField;
+    <span class="d-annotation">@FXML</span> <span class="d-keyword">private</span> Label statusLabel;
+    <span class="d-annotation">@FXML</span> <span class="d-keyword">private</span> Label userNameLabel;
+    <span class="d-annotation">@FXML</span> <span class="d-keyword">private</span> StackPane userAvatarHolder;
+
+    <span class="d-keyword">private</span> <span class="d-keyword">final</span> ChatService chatService = <span class="d-keyword">new</span> ChatService();
+
+    <span class="d-comment">// Lista observable (patrón Observer): cuando se agrega un Message,</span>
+    <span class="d-comment">// el ListView se actualiza solo.</span>
+    <span class="d-keyword">private</span> <span class="d-keyword">final</span> ObservableList&lt;Message&gt; messages = FXCollections.<span class="d-method">observableArrayList</span>();
+
+    <span class="d-comment">// La ventana ya no habla con la base: habla con el servidor.</span>
+    <span class="d-keyword">private</span> <span class="d-keyword">final</span> ChatClient chatClient = <span class="d-keyword">new</span> ChatClient();
+
+    <span class="d-comment">// Lo asigna App después de pedir el nombre.</span>
+    <span class="d-keyword">private</span> User currentUser;
+
+    <span class="d-annotation">@FXML</span>
+    <span class="d-keyword">public</span> <span class="d-keyword">void</span> <span class="d-method">initialize</span>() {
+        messageListView.<span class="d-method">setItems</span>(messages);
+
+        <span class="d-comment">// El cell factory dice cómo dibujar cada fila.</span>
+        messageListView.<span class="d-method">setCellFactory</span>(lista -&gt; <span class="d-keyword">new</span> MessageCell());
+
+        <span class="d-comment">// La franja roja solo ocupa espacio mientras tenga texto.</span>
+        statusLabel.<span class="d-method">visibleProperty</span>().<span class="d-method">bind</span>(statusLabel.<span class="d-method">textProperty</span>().<span class="d-method">isNotEmpty</span>());
+        statusLabel.<span class="d-method">managedProperty</span>().<span class="d-method">bind</span>(statusLabel.<span class="d-method">visibleProperty</span>());
+    }
+
+    <span class="d-keyword">public</span> <span class="d-keyword">void</span> <span class="d-method">setCurrentUser</span>(User user) {
+        <span class="d-keyword">this</span>.currentUser = user;
+        userNameLabel.<span class="d-method">setText</span>(user.<span class="d-method">getUsername</span>());
+        userAvatarHolder.<span class="d-method">getChildren</span>().<span class="d-method">setAll</span>(Avatars.<span class="d-method">create</span>(user.<span class="d-method">getUsername</span>(), <span class="d-number">16</span>));
+    }
+
+    <span class="d-comment">// Conectar bloquea hasta que el servidor responde, así que se hace en una Task.</span>
+    <span class="d-keyword">public</span> <span class="d-keyword">void</span> <span class="d-method">conectar</span>(String host) {
+        Task&lt;Void&gt; tarea = <span class="d-keyword">new</span> Task&lt;&gt;() {
+            <span class="d-annotation">@Override</span>
+            <span class="d-keyword">protected</span> Void <span class="d-method">call</span>() <span class="d-keyword">throws</span> Exception {
+                <span class="d-comment">// Estas dos funciones las llama el hilo oyente: por eso usan runLater.</span>
+                chatClient.<span class="d-method">conectar</span>(host, currentUser.<span class="d-method">getUsername</span>(),
+                        mensaje -&gt; Platform.<span class="d-method">runLater</span>(() -&gt; <span class="d-method">mostrar</span>(mensaje)),
+                        error -&gt; Platform.<span class="d-method">runLater</span>(() -&gt; statusLabel.<span class="d-method">setText</span>(error)));
+                <span class="d-keyword">return</span> <span class="d-keyword">null</span>;
+            }
+        };
+        tarea.<span class="d-method">setOnFailed</span>(e -&gt; statusLabel.<span class="d-method">setText</span>(<span class="d-string">"No se pudo conectar: "</span> + tarea.<span class="d-method">getException</span>().<span class="d-method">getMessage</span>()));
+
+        Thread hilo = <span class="d-keyword">new</span> Thread(tarea, <span class="d-string">"conectar"</span>);
+        hilo.<span class="d-method">setDaemon</span>(<span class="d-keyword">true</span>);
+        hilo.<span class="d-method">start</span>();
+    }
+
+    <span class="d-annotation">@FXML</span>
+    <span class="d-keyword">private</span> <span class="d-keyword">void</span> <span class="d-method">handleSendMessage</span>() {
+        <span class="d-keyword">try</span> {
+            <span class="d-comment">// Se valida aquí con el mismo ChatService; el servidor lo valida otra vez.</span>
+            Message nuevoMsg = chatService.<span class="d-method">processMessage</span>(currentUser, messageInputField.<span class="d-method">getText</span>());
+            chatClient.<span class="d-method">enviar</span>(nuevoMsg.<span class="d-method">getContent</span>());
+            messageInputField.<span class="d-method">clear</span>();
+            statusLabel.<span class="d-method">setText</span>(<span class="d-string">""</span>);
+        } <span class="d-keyword">catch</span> (IllegalArgumentException | IllegalStateException e) {
+            statusLabel.<span class="d-method">setText</span>(e.<span class="d-method">getMessage</span>());
+        }
+    }
+
+    <span class="d-comment">// Siempre corre en el hilo de la interfaz.</span>
+    <span class="d-keyword">private</span> <span class="d-keyword">void</span> <span class="d-method">mostrar</span>(Message mensaje) {
+        messages.<span class="d-method">add</span>(mensaje);
+        <span class="d-method">scrollToEnd</span>();
+    }
+
+    <span class="d-keyword">private</span> <span class="d-keyword">void</span> <span class="d-method">scrollToEnd</span>() {
+        <span class="d-keyword">if</span> (!messages.<span class="d-method">isEmpty</span>()) {
+            messageListView.<span class="d-method">scrollTo</span>(messages.<span class="d-method">size</span>() - <span class="d-number">1</span>);
+        }
+    }
+}</code></pre></div><details><summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código, línea por línea.</strong></summary><div class="code-explanation"><p><code>private final ChatClient chatClient = new ChatClient();</code> Reemplaza al repositorio. La ventana habla con el servidor, no con la base de datos.</p><p><code>Task&lt;Void&gt; tarea = new Task&lt;&gt;() { ... }</code> Conectar puede tardar y <strong>bloquea</strong>. Si se hiciera en el hilo de la ventana, la ventana se congelaría. Por eso se hace en una <code>Task</code>: <code>call()</code> corre en un hilo de fondo.</p><p><code>mensaje -&gt; Platform.runLater(() -&gt; mostrar(mensaje))</code> La línea más importante. La función que se le pasa a <code>ChatClient</code> la llama el <strong>hilo oyente</strong>, no el hilo de la ventana. Pero <code>mostrar</code> cambia la ventana, y eso solo se puede hacer desde el hilo de la interfaz. <code>Platform.runLater</code> le pide a ese hilo que lo haga cuando pueda. Sin esto, JavaFX lanza <code>Not on FX application thread</code>.</p><p><code>error -&gt; Platform.runLater(() -&gt; statusLabel.setText(error))</code> Lo mismo para los errores: se muestran en la franja roja, pero desde el hilo correcto.</p><p><code>tarea.setOnFailed(e -&gt; statusLabel.setText("No se pudo conectar: " + ...));</code> Si conectar falla (por ejemplo, <code>Connection refused</code>), este manejador corre en el hilo de la interfaz, así que sí puede tocar la franja roja directamente.</p><p><code>new Thread(tarea, "conectar")</code> Una <code>Task</code> es un <code>Runnable</code>: se le entrega a un hilo. Se marca <code>daemon</code> para que cerrar la ventana cierre el programa.</p><p><code>chatClient.enviar(nuevoMsg.getContent());</code> Al presionar Enter, se valida con <code>ChatService</code> como siempre y se envía el texto al servidor. El mensaje aparece en la lista cuando el servidor lo devuelve, igual que le aparece a todos los demás: así hay una sola fuente de verdad.</p><p><code>private void mostrar(Message mensaje)</code> Agrega el mensaje a la lista observable. Siempre corre en el hilo de la interfaz, porque se llama dentro de un <code>runLater</code>.</p></div></details><div class="pregunta-box"><p><i class="fa-solid fa-circle-question mr-1"></i> <strong>Para pensar:</strong> ¿Por qué conectar se hace dentro de una Task y no directamente?</p><details><summary><i class="fa-solid fa-chevron-down mr-1"></i> Ver respuesta</summary><div class="code-explanation"><p>Porque conectar bloquea hasta que el servidor responde. Si se hiciera en el hilo de la interfaz, la ventana se congelaría mientras tanto. La regla es: nada lento en el hilo de la interfaz.</p></div></details></div>
+        </div>
+
+        <!-- PASO 10 -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-green);">
+            <h2><i class="fa-solid fa-rocket mr-2" style="color: var(--accent-green);"></i> Paso 10: App pregunta en qué computadora está el servidor</h2>
+            <p>Este archivo también existe. Lo van a <strong>reemplazar completo</strong>. La diferencia es que, después de preguntar el nombre, ahora pregunta la dirección del servidor.</p><div class="highlight-box"><strong><i class="fa-solid fa-circle-info mr-1"></i> Dónde está:</strong> <code class="font-mono text-sm">App.java</code>, directamente dentro de <code class="font-mono text-sm">cr.ac.una.est.minidiscord</code>, no dentro de otra carpeta.</div><ol><li>Abran <code class="font-mono text-sm">App.java</code> con doble clic.</li><li><strong>Ctrl+A</strong> y <strong>Delete</strong>.</li><li>Copien el código de abajo y péguenlo con <strong>Ctrl+V</strong>.</li></ol><div class="darcula-editor"><div class="darcula-header"><span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span><div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> App.java</div><button class="copy-btn" onclick="copiar('cod7', this)" title="Copiar el código completo"><i class="fa-regular fa-copy"></i> Copiar</button></div><pre class="darcula-code text-xs"><code id="cod7"><span class="d-keyword">package</span> cr.ac.una.est.minidiscord;
+
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.model.User;
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.business.service.ChatService;
+<span class="d-keyword">import</span> cr.ac.una.est.minidiscord.presentation.controller.ChatViewController;
+<span class="d-keyword">import</span> javafx.application.Application;
+<span class="d-keyword">import</span> javafx.fxml.FXMLLoader;
+<span class="d-keyword">import</span> javafx.scene.Scene;
+<span class="d-keyword">import</span> javafx.scene.control.TextInputDialog;
+<span class="d-keyword">import</span> javafx.stage.Stage;
+<span class="d-keyword">import</span> java.io.IOException;
+<span class="d-keyword">import</span> java.util.Optional;
+
+<span class="d-comment">// App hereda de Application: así JavaFX sabe cómo arrancarla</span>
+<span class="d-keyword">public</span> <span class="d-keyword">class</span> App <span class="d-keyword">extends</span> Application {
+
+    <span class="d-keyword">private</span> <span class="d-keyword">static</span> <span class="d-keyword">final</span> String HOJA_ESTILOS = <span class="d-string">"/cr/ac/una/est/minidiscord/presentation/view/discord.css"</span>;
+
+    <span class="d-annotation">@Override</span>
+    <span class="d-keyword">public</span> <span class="d-keyword">void</span> <span class="d-method">start</span>(Stage stage) <span class="d-keyword">throws</span> IOException {
+        <span class="d-comment">// Primero se pregunta quién es el usuario.</span>
+        User usuario = <span class="d-method">pedirUsuario</span>();
+        <span class="d-keyword">if</span> (usuario == <span class="d-keyword">null</span>) {
+            <span class="d-keyword">return</span>; <span class="d-comment">// la persona canceló el cuadro: no se abre la ventana</span>
+        }
+
+        String servidor = <span class="d-method">pedirServidor</span>();
+        <span class="d-keyword">if</span> (servidor == <span class="d-keyword">null</span>) {
+            <span class="d-keyword">return</span>;
+        }
+
+        <span class="d-comment">// El FXMLLoader lee el archivo FXML y arma la ventana</span>
+        FXMLLoader fxmlLoader = <span class="d-keyword">new</span> FXMLLoader(App.<span class="d-keyword">class</span>.<span class="d-method">getResource</span>(<span class="d-string">"/cr/ac/una/est/minidiscord/presentation/view/chat-view.fxml"</span>));
+
+        <span class="d-comment">// La escena contiene todo lo que se ve dentro de la ventana</span>
+        Scene scene = <span class="d-keyword">new</span> Scene(fxmlLoader.<span class="d-method">load</span>(), <span class="d-number">960</span>, <span class="d-number">600</span>);
+
+        <span class="d-comment">// El CSS se aplica a toda la escena</span>
+        scene.<span class="d-method">getStylesheets</span>().<span class="d-method">add</span>(App.<span class="d-keyword">class</span>.<span class="d-method">getResource</span>(HOJA_ESTILOS).<span class="d-method">toExternalForm</span>());
+
+        <span class="d-comment">// load() ya creó el controller; aquí se le pasa el usuario</span>
+        ChatViewController controller = fxmlLoader.<span class="d-method">getController</span>();
+        controller.<span class="d-method">setCurrentUser</span>(usuario);
+
+        <span class="d-comment">// El Stage es la ventana del sistema operativo</span>
+        stage.<span class="d-method">setTitle</span>(<span class="d-string">"Mini-Discord UNA"</span>);
+        stage.<span class="d-method">setMinWidth</span>(<span class="d-number">640</span>);
+        stage.<span class="d-method">setMinHeight</span>(<span class="d-number">400</span>);
+        stage.<span class="d-method">setScene</span>(scene);
+        stage.<span class="d-method">show</span>();
+    }
+
+    <span class="d-comment">// Repite la pregunta hasta que el nombre sirva; devuelve null si cancelan.</span>
+    <span class="d-keyword">private</span> User <span class="d-method">pedirUsuario</span>() {
+        ChatService servicio = <span class="d-keyword">new</span> ChatService();
+
+        TextInputDialog dialogo = <span class="d-keyword">new</span> TextInputDialog();
+        dialogo.<span class="d-method">setTitle</span>(<span class="d-string">"Mini-Discord UNA"</span>);
+        dialogo.<span class="d-method">setHeaderText</span>(<span class="d-string">"Elija su nombre de usuario"</span>);
+        dialogo.<span class="d-method">setContentText</span>(<span class="d-string">"Usuario:"</span>);
+        dialogo.<span class="d-method">getDialogPane</span>().<span class="d-method">getStylesheets</span>().<span class="d-method">add</span>(App.<span class="d-keyword">class</span>.<span class="d-method">getResource</span>(HOJA_ESTILOS).<span class="d-method">toExternalForm</span>());
+
+        <span class="d-keyword">while</span> (<span class="d-keyword">true</span>) {
+            Optional&lt;String&gt; respuesta = dialogo.<span class="d-method">showAndWait</span>();
+            <span class="d-keyword">if</span> (respuesta.<span class="d-method">isEmpty</span>()) {
+                <span class="d-keyword">return</span> <span class="d-keyword">null</span>;
+            }
+            <span class="d-keyword">try</span> {
+                <span class="d-keyword">return</span> servicio.<span class="d-method">createUser</span>(respuesta.<span class="d-method">get</span>());
+            } <span class="d-keyword">catch</span> (IllegalArgumentException e) {
+                dialogo.<span class="d-method">setHeaderText</span>(e.<span class="d-method">getMessage</span>());
+            }
+        }
+    }
+
+    <span class="d-comment">// Pregunta en qué computadora corre el servidor. localhost es esta misma computadora.</span>
+    <span class="d-keyword">private</span> String <span class="d-method">pedirServidor</span>() {
+        TextInputDialog dialogo = <span class="d-keyword">new</span> TextInputDialog(<span class="d-string">"localhost"</span>);
+        dialogo.<span class="d-method">setTitle</span>(<span class="d-string">"Mini-Discord UNA"</span>);
+        dialogo.<span class="d-method">setHeaderText</span>(<span class="d-string">"Dirección del servidor"</span>);
+        dialogo.<span class="d-method">setContentText</span>(<span class="d-string">"IP o nombre:"</span>);
+        dialogo.<span class="d-method">getDialogPane</span>().<span class="d-method">getStylesheets</span>().<span class="d-method">add</span>(App.<span class="d-keyword">class</span>.<span class="d-method">getResource</span>(HOJA_ESTILOS).<span class="d-method">toExternalForm</span>());
+        <span class="d-keyword">return</span> dialogo.<span class="d-method">showAndWait</span>().<span class="d-method">map</span>(String::trim).<span class="d-method">filter</span>(t -&gt; !t.<span class="d-method">isEmpty</span>()).<span class="d-method">orElse</span>(<span class="d-keyword">null</span>);
+    }
+
+    <span class="d-keyword">public</span> <span class="d-keyword">static</span> <span class="d-keyword">void</span> <span class="d-method">main</span>(String[] args) {
+        <span class="d-method">launch</span>();
+    }
+}</code></pre></div><details><summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>Ver explicación del código, línea por línea.</strong></summary><div class="code-explanation"><p><code>private String pedirServidor()</code> Muestra un cuadro que pregunta en qué computadora está el servidor. El valor que aparece escrito es <code>localhost</code>, que significa "esta misma computadora", y sirve para probar solos. Si la persona cancela, devuelve <code>null</code>.</p><p><code>dialogo.showAndWait().map(String::trim).filter(t -&gt; !t.isEmpty()).orElse(null)</code> La respuesta viene en un <code>Optional</code> (una caja que puede tener texto o estar vacía). <code>map</code> le quita los espacios, <code>filter</code> descarta el texto vacío, y <code>orElse(null)</code> devuelve <code>null</code> si no quedó nada.</p><p><code>controller.conectar(servidor);</code> Después de darle el usuario a la ventana, se le pide que se conecte. Eso inicia la <code>Task</code> del paso anterior.</p></div></details><p>Después de pegar los tres archivos (ChatClient, ChatViewController y App), <strong>no deben quedar subrayados en rojo</strong>. Si queda alguno, revisen que el paquete de cada archivo sea el correcto. Para estar seguros, usen el menú <strong>Build → Rebuild Project</strong> y esperen: no debe aparecer ningún error en la ventana <strong>Build</strong>.</p>
+        </div>
+
+        <!-- PASO 11 -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-purple);">
+            <h2><i class="fa-solid fa-play mr-2" style="color: var(--accent-purple);"></i> Paso 11: Probar en una sola computadora</h2>
+            <p><strong>Antes de empezar:</strong> el servidor del Paso 7 tiene que seguir encendido. Compruébenlo mirando que en la ventana Run exista la pestaña <code class="font-mono text-sm">ChatServer</code> y que el cuadrado rojo de la izquierda esté en rojo fuerte. Si no, ejecuten <code class="font-mono text-sm">ChatServer</code> otra vez.</p><div class="step-sub"><h5>11.1 La primera ventana</h5><ol><li>Abran <code class="font-mono text-sm">App.java</code> y pulsen el <strong>triángulo verde</strong> junto a su <code class="font-mono text-sm">main</code>. Escojan <strong>Run 'App.main()'</strong>.</li><li>Aparece un cuadro: <strong>Elija su nombre de usuario</strong>. Escriban un nombre, por ejemplo <code class="font-mono text-sm">ana</code>, y pulsen <strong>OK</strong>.</li><li>Aparece otro cuadro: <strong>Dirección del servidor</strong>. Ya trae escrito <code class="font-mono text-sm">localhost</code>. Pulsen <strong>OK</strong> sin cambiarlo.</li><li>Se abre la ventana de Mini-Discord. Escriban un mensaje y presionen <strong>Enter</strong>. Debe aparecer en la lista, con su avatar, su nombre y su hora.</li></ol></div><div class="step-sub"><h5>11.2 La segunda ventana</h5><p>Ahora van a abrir una segunda ventana para ver cómo un mensaje de una llega a la otra. IntelliJ, por defecto, no deja ejecutar <code class="font-mono text-sm">App</code> dos veces, así que primero hay que permitirlo:</p><ol><li>Arriba a la derecha hay una lista desplegable que dice <code class="font-mono text-sm">App</code>. Ábranla y escojan <strong>Edit Configurations</strong>.</li><li>Seleccionen <code class="font-mono text-sm">App</code> en la lista de la izquierda.</li><li>Pulsen <strong>Modify options</strong> y activen <strong>Allow multiple instances</strong>. (Si no encuentran ese nombre, busquen una opción que diga <code class="font-mono text-sm">multiple</code> o <code class="font-mono text-sm">parallel</code>.) Pulsen <strong>OK</strong>.</li><li>Ejecuten <code class="font-mono text-sm">App</code> otra vez. Escriban otro nombre, por ejemplo <code class="font-mono text-sm">luis</code>, y dejen <code class="font-mono text-sm">localhost</code>.</li><li>La ventana de <code class="font-mono text-sm">luis</code> debe mostrar el mensaje que escribió <code class="font-mono text-sm">ana</code>: es el <strong>historial</strong>, que el servidor manda al conectarse.</li><li>Escriban un mensaje en la ventana de <code class="font-mono text-sm">luis</code>. Debe aparecer en las dos ventanas.</li></ol></div><div class="step-sub"><h5>11.3 Lo que deben comprobar</h5><ul><li>Un mensaje escrito en una ventana aparece en las dos.</li><li>Si presionan Enter con la caja vacía, aparece la franja roja con <code class="font-mono text-sm">El mensaje no puede estar vacío.</code>.</li><li>En la pestaña <code class="font-mono text-sm">ChatServer</code> de la ventana Run aparecen líneas como <code class="font-mono text-sm">ana entró. Conectados: 1</code>.</li><li>Si detienen el servidor (cuadrado rojo de su pestaña), las ventanas muestran un aviso en la franja roja y no se cierran.</li></ul></div><div class="pregunta-box"><p><i class="fa-solid fa-circle-question mr-1"></i> <strong>Para pensar:</strong> ¿Qué hilo hace cada cosa cuando luis escribe un mensaje y ana lo ve?</p><details><summary><i class="fa-solid fa-chevron-down mr-1"></i> Ver respuesta</summary><div class="code-explanation"><p>El hilo de la ventana de luis envía el texto. El hilo de ese cliente en el servidor lo recibe, lo guarda y lo reparte. En la ventana de ana, el hilo oyente recibe la línea y le pide al hilo de la ventana, con <code>Platform.runLater</code>, que la muestre. Pasa por tres hilos distintos.</p></div></details></div>
+        </div>
+
+        <!-- PASO 12 -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-peach);">
+            <h2><i class="fa-solid fa-bug mr-2" style="color: var(--accent-peach);"></i> Paso 12: Ver con sus ojos el error más común</h2>
+            <p>Este paso es opcional, pero es el mejor ejemplo de por qué existe <code class="font-mono text-sm">Platform.runLater</code>. Van a quitarlo a propósito para ver el error, y después lo devuelven.</p><ol><li>Detengan las ventanas de <code class="font-mono text-sm">App</code> con su cuadrado rojo. Dejen el servidor encendido.</li><li>En <code class="font-mono text-sm">ChatViewController.java</code>, busquen la línea <code class="font-mono text-sm">mensaje -&gt; Platform.runLater(() -&gt; mostrar(mensaje)),</code>.</li><li>Cámbienla por <code class="font-mono text-sm">mensaje -&gt; mostrar(mensaje),</code>.</li><li>Ejecuten <code class="font-mono text-sm">App</code> con dos nombres distintos (como en el Paso 11) y manden un mensaje desde una.</li><li>Miren la ventana Run de la otra: aparece <code class="font-mono text-sm">java.lang.IllegalStateException: Not on FX application thread; currentThread = oyente-servidor</code>.</li><li><strong>Devuelvan la línea a como estaba</strong> (con <code class="font-mono text-sm">Platform.runLater</code>) y comprueben que vuelve a funcionar.</li></ol><p>Ese error significa que un hilo que no es el de la ventana intentó cambiarla. La solución es siempre la misma: pedirle al hilo de la ventana que lo haga, con <code class="font-mono text-sm">Platform.runLater</code>.</p>
+        </div>
+
+        <!-- PASO 13 -->
+        <div class="glass-panel" style="border-left: 5px solid var(--una-red);">
+            <h2><i class="fa-solid fa-laptop-code mr-2" style="color: var(--una-red);"></i> Paso 13: Probar entre dos computadoras</h2>
+            <p>Para esto necesitan una <strong>segunda computadora</strong> en la <strong>misma red</strong> (el mismo Wi-Fi). En el aula, la profesora les dice a cuál red conectarse y cuál es la IP del servidor.</p><div class="step-sub"><h5>13.1 Si su computadora hace de servidor</h5><ol><li>Encienda el servidor como en el Paso 7.</li><li>Averigüen la IP de su computadora. Abran una terminal (en Windows, escriban <code class="font-mono text-sm">cmd</code> en el menú de inicio) y escriban <code class="font-mono text-sm">ipconfig</code>. Busquen el bloque que dice <strong>Adaptador de LAN inalámbrica Wi-Fi</strong> y copien la <strong>Dirección IPv4</strong>: son cuatro números separados por puntos. Ojo: si ven otras direcciones, por ejemplo de un adaptador de WSL, esas no sirven. La que sirve es la del Wi-Fi.</li><li>Si Windows muestra una ventana del firewall, marquen <strong>Redes privadas</strong> y <strong>Redes públicas</strong> y pulsen <strong>Permitir acceso</strong>.</li></ol></div><div class="step-sub"><h5>13.2 En la otra computadora</h5><ol><li>Tengan el mismo proyecto (Pasos 1 al 10). <strong>No hace falta</strong> encender el servidor ahí.</li><li>Ejecuten <code class="font-mono text-sm">App</code>. Escriban su nombre y, cuando pregunte la dirección del servidor, <strong>escriban la IP</strong> que copiaron en el paso anterior, en lugar de <code class="font-mono text-sm">localhost</code>.</li><li>Escriban mensajes en una y en otra. Deben llegar de una computadora a la otra.</li></ol></div><div class="highlight-box"><strong><i class="fa-solid fa-circle-info mr-1"></i> Si aparece "Connection refused":</strong> el servidor no está encendido o la IP es de otra computadora. Si aparece <strong>"Connect timed out"</strong> (tarda tres segundos), la IP no responde: revisen que las dos estén en la misma red, que la IP sea la del Wi-Fi y que el firewall permita a Java. Algunas redes impiden que los dispositivos se vean entre sí; si eso pasa, prueben con un hotspot de teléfono.</div>
+        </div>
+
+        <!-- SI ALGO FALLA -->
+        <div class="glass-panel" style="border-left: 5px solid var(--una-red);">
+            <h2><i class="fa-solid fa-life-ring mr-2" style="color: var(--una-red);"></i> Si algo falla</h2>
+            <p>Busquen aquí el mensaje que ven. Son los errores que sí pueden aparecer.</p>
+            <details><summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>El código aparece en rojo en IntelliJ</strong></summary><div class="code-explanation">
+                <p>Pasen el mouse sobre el subrayado rojo: IntelliJ explica qué falta. Las causas más comunes:</p>
+                <ul><li><code>Cannot resolve symbol</code> sobre el nombre de una clase: esa clase todavía no existe o se creó en el paquete equivocado. Revisen que <code class="font-mono text-sm">ChatProtocol</code>, <code class="font-mono text-sm">ClientHandler</code>, <code class="font-mono text-sm">ChatServer</code> y <code class="font-mono text-sm">ChatClient</code> estén en <code class="font-mono text-sm">network</code>, y que <code class="font-mono text-sm">InMemoryMessageRepository</code> esté en <code class="font-mono text-sm">data.dao</code>.</li><li><code>Package name does not correspond to the file path</code>: el archivo está en una carpeta que no corresponde a su línea <code class="font-mono text-sm">package</code>. Arrástrenlo con el mouse a la carpeta correcta, o bórrenlo y créenlo de nuevo desde el paquete correcto.</li><li>Quedó algo del código anterior mezclado con el nuevo: al pegar, el archivo no estaba completamente vacío. Hagan <strong>Ctrl+A</strong>, <strong>Delete</strong> y peguen de nuevo.</li><li>Se copió solo una parte del código. Usen siempre el botón <strong>Copiar</strong> del bloque, que copia todo.</li></ul>
+            </div></details>
+            <details><summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>"release version 21 not supported" o "invalid target release"</strong></summary><div class="code-explanation">
+                <p>El Java del proyecto es menor a 21. Vayan a <strong>File → Project Structure → Project</strong> y escojan en <strong>SDK</strong> un Java de versión 21 o superior (Paso 1.3).</p>
+            </div></details>
+            <details><summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>El archivo pom.xml aparece en rojo, o no se descargan las librerías</strong></summary><div class="code-explanation">
+                <p>Maven no terminó de cargar. Abran la pestaña <strong>Maven</strong> (a la derecha) y pulsen el botón de <strong>Reload All Maven Projects</strong> (dos flechas circulares). Comprueben que tienen internet.</p>
+            </div></details>
+            <details><summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>BindException: Address already in use</strong></summary><div class="code-explanation">
+                <p>Ya hay un servidor encendido en el puerto 5050. Busquen su pestaña en la ventana Run y pulsen el cuadrado rojo. Si no la encuentran, cierren IntelliJ y vuelvan a abrirlo.</p>
+            </div></details>
+            <details><summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>"ChatServer is not allowed to run in parallel"</strong></summary><div class="code-explanation">
+                <p>No es un error: significa que el servidor ya está encendido. Pulsen <strong>Cancel</strong>.</p>
+            </div></details>
+            <details><summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>La ventana abre pero dice "No se pudo conectar: Connection refused"</strong></summary><div class="code-explanation">
+                <p>El servidor no está encendido (Paso 7), o la dirección que escribieron no es la del servidor. Encienda el servidor y vuelvan a ejecutar <code class="font-mono text-sm">App</code>.</p>
+            </div></details>
+            <details><summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>"Not on FX application thread"</strong></summary><div class="code-explanation">
+                <p>Falta el <code class="font-mono text-sm">Platform.runLater</code> en <code class="font-mono text-sm">ChatViewController</code>. Compárenlo con el código del Paso 9 (Paso 12 explica este error).</p>
+            </div></details>
+            <details><summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>No puedo abrir dos ventanas de App</strong></summary><div class="code-explanation">
+                <p>Falta activar <strong>Allow multiple instances</strong> en <strong>Edit Configurations → App → Modify options</strong> (Paso 11.2).</p>
+            </div></details>
+            <details><summary><i class="fa-solid fa-chevron-down mr-1"></i> <strong>El mensaje de otro usuario no me llega, pero el mío sí</strong></summary><div class="code-explanation">
+                <p>Revisen que las dos ventanas se hayan conectado al mismo servidor (la misma IP) y que el servidor siga encendido. En la pestaña <code class="font-mono text-sm">ChatServer</code> deben verse las dos entradas.</p>
+            </div></details>
+        </div>
+
+        <!-- RETOS -->
+        <div class="glass-panel" style="border-left: 5px solid var(--accent-purple);">
+            <h2><i class="fa-solid fa-trophy mr-2" style="color: var(--accent-purple);"></i> Retos para quien termine primero</h2>
+            <p>Estos retos son opcionales. No tienen código dado: tienen que pensarlos.</p>
+            <ol><li><strong>Hilos virtuales.</strong> En <code class="font-mono text-sm">ChatServer</code>, la línea que crea el hilo de cada cliente usa <code class="font-mono text-sm">new Thread(...)</code>. Investiguen <code class="font-mono text-sm">Thread.ofVirtual()</code> (Java 21) y cámbienla. Comprueben que el chat sigue funcionando y expliquen qué cambió y qué no.</li><li><strong>La brecha del historial.</strong> En el método <code class="font-mono text-sm">registrar</code> de <code class="font-mono text-sm">ChatServer</code> hay un instante en que un mensaje nuevo se puede perder: entre mandar el historial y agregar al cliente a la lista. Identifíquenlo y propongan cómo arreglarlo con <code class="font-mono text-sm">synchronized</code>.</li><li><strong>Quién está conectado.</strong> Agreguen una línea nueva al protocolo, por ejemplo <code class="font-mono text-sm">USERS</code>, que haga que el servidor responda con los nombres de los conectados. Antes de programar, escriban qué archivos tendrían que cambiar y cuáles no.</li></ol>
+        </div>
+
+        <!-- CIERRE -->
+        <div class="glass-panel text-center" style="border-top: 6px solid var(--accent-green);">
+            <h2><i class="fa-solid fa-flag-checkered mr-2" style="color: var(--accent-green);"></i> ¡Listo!</h2>
+            <p>Mini-Discord ya es un chat entre computadoras. El servidor atiende a cada persona con su propio hilo, la ventana escucha en un hilo de fondo y muestra lo que llega con <code class="font-mono text-sm">Platform.runLater</code>, y la capa de negocio sigue siendo la misma: ni <code class="font-mono text-sm">ChatService</code> ni el FXML ni el CSS cambiaron.</p>
+            <p>Para repasar antes del examen: ¿qué hilo hace qué? ¿Por qué cada uno es necesario? Si pueden explicar eso sin mirar el código, entendieron el tema.</p>
+        </div>
+
+        <div class="text-center text-xs font-bold mt-10 mb-4" style="color: var(--text-muted); border-top: 1px solid var(--border-panel); padding-top: 2rem;">
+            <p>Laboratorio Autoguiado &bull; Programación III &bull; Universidad Nacional &bull; Semana 15 &bull; 2026</p>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            const icon = document.getElementById('theme-icon');
+            if (icon) icon.className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+            try { localStorage.setItem('theme', isDark ? 'light' : 'dark'); } catch (e) {}
+        }
+        (function () {
+            try {
+                const saved = localStorage.getItem('theme');
+                if (saved === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const icon = document.getElementById('theme-icon');
+                        if (icon) icon.className = 'fa-solid fa-sun';
+                    });
+                }
+            } catch (e) {}
+        })();
+
+        function copiar(id, btn) {
+            const texto = document.getElementById(id).innerText;
+            const listo = function () {
+                btn.classList.add('ok');
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copiado';
+                setTimeout(function () { btn.classList.remove('ok'); btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copiar'; }, 2000);
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(texto).then(listo).catch(function () { seleccionar(id); });
+            } else { seleccionar(id); }
+        }
+        function seleccionar(id) {
+            const r = document.createRange(); r.selectNodeContents(document.getElementById(id));
+            const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+            alert('Presionen Ctrl+C para copiar el código que quedó seleccionado.');
+        }
+    </script>
+
+</body>
+</html>

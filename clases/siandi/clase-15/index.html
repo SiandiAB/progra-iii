@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 15 — Programación III</title>
+
+    <link rel="icon" type="image/svg+xml" href="../../../assets/img/favicon.svg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Dependencias externas -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+
+    <!-- Recursos compartidos del proyecto -->
+    <link rel="stylesheet" href="../../../assets/css/presentacion.css">
+    <script src="../../../assets/js/curso-info.js"></script>
+
+    <!-- Estilos específicos (mismo bloque base que Semana 11) -->
+    <style>
+        .keyword { position: relative; cursor: help; border-bottom: 2px dotted currentColor; }
+        .keyword::after {
+            content: attr(data-tooltip);
+            position: absolute; bottom: calc(100% + 8px); left: 50%;
+            transform: translateX(-50%);
+            background: #2b2b2b; color: #a9b7c6;
+            padding: 10px 18px; border-radius: 8px; border: 1px solid #555555;
+            font-size: 0.85rem; font-family: 'Nunito', sans-serif; font-weight: 400;
+            white-space: normal;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 999; width: max-content; max-width: 350px; text-align: left;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); line-height: 1.5;
+        }
+        .keyword:hover::after, .keyword:focus::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-4px);
+        }
+        /* Tooltip hacia abajo: para palabras cerca del borde superior de la diapositiva */
+        .keyword-below::after { bottom: auto; top: calc(100% + 8px); }
+        .keyword-below:hover::after, .keyword-below:focus::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(4px);
+        }
+
+        /* Agenda compacta: mismo diseño vertical (timeline), tarjetas al tamaño de su texto */
+        .slide .agenda-compact { max-width: min(96%, 1050px); }
+        .agenda-compact h2 { font-size: 2rem; line-height: 1.1; margin-bottom: 0; }
+        .agenda-compact .text-xl { font-size: 0.95rem; line-height: 1.3; }
+        .agenda-compact .mb-6 { margin-bottom: 1px; }
+        .agenda-compact .wrap { padding: 4px; }
+        .agenda-compact .left-timeline, .agenda-compact .right-timeline { position: relative; justify-content: flex-start; }
+        .agenda-compact .glass-panel { width: max-content; max-width: 46%; padding: 2px 16px; }
+        .agenda-compact .left-timeline .glass-panel { margin-left: auto; margin-right: 8px; }
+        .agenda-compact .right-timeline .glass-panel { margin-left: 8px; }
+        .agenda-compact .glass-panel h3 { font-size: 0.85rem; line-height: 1.2; }
+        .agenda-compact .glass-panel p { font-size: 0.7rem; line-height: 1.2; margin-top: 0; }
+        .agenda-compact .z-20 { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 1.5rem; height: 1.5rem; font-size: 0.7rem; }
+        .agenda-compact .group:hover .z-20 { transform: translate(-50%, -50%) scale(1.08); }
+        .agenda-compact div.order-1:empty { flex: 0 0 50%; }
+        .agenda-compact .mt-4 { margin-top: 4px; }
+        .agenda-compact .text-gray-400 { font-size: 0.7rem; }
+
+        .darcula-editor {
+            background-color: #2b2b2b !important; border: 1px solid #3c3f41 !important;
+            border-radius: 0.75rem; overflow: hidden; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+        .darcula-header {
+            background-color: #313335; border-bottom: 1px solid #3c3f41;
+            padding: 6px 12px; display: flex; align-items: center; gap: 8px;
+        }
+        .darcula-tab {
+            background: #2b2b2b; color: #a9b7c6; font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem; padding: 2px 10px; border-radius: 4px 4px 0 0;
+            border-top: 2px solid #4a88c7; display: flex; align-items: center; gap: 6px;
+        }
+        .darcula-code { color: #a9b7c6; font-family: 'JetBrains Mono', monospace; line-height: 1.5; }
+        .jk-keyword { color: #cc7832; font-weight: bold; }
+        .jk-annot { color: #bbb529; }
+        .jk-type { color: #a9b7c6; }
+        .jk-method { color: #ffc66d; }
+        .jk-string { color: #6a8759; }
+        .jk-number { color: #6897bb; }
+        .jk-comment { color: #808080; font-style: italic; }
+        .jk-sql { color: #cc7832; font-weight: bold; }
+
+        .pregunta-box {
+            background: #fef9e7; border-left: 6px solid #f1c40f; padding: 12px 18px;
+            border-radius: 12px; margin-top: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .pregunta-box p { margin-bottom: 4px; }
+        .pregunta-box .respuesta {
+            font-size: 0.85rem; color: #2c3e50; background: #ecf0f1;
+            padding: 4px 12px; border-radius: 20px; display: none; margin-top: 4px;
+        }
+        .pregunta-box .respuesta.visible { display: inline-block; }
+        .toggle-respuesta-btn {
+            display: block; width: fit-content;
+            background: var(--accent-blue); color: white; border: none;
+            padding: 6px 14px; border-radius: 20px; cursor: pointer;
+            font-size: 0.8rem; font-family: 'Nunito', sans-serif; margin-top: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12); transition: transform 0.2s;
+        }
+        .toggle-respuesta-btn:hover { transform: scale(1.04); }
+
+        .glosario-btn {
+            position: fixed; bottom: 100px; right: 20px; z-index: 999;
+            background: var(--accent-blue); color: white; border: none; border-radius: 50%;
+            width: 54px; height: 54px; font-size: 1.6rem; box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+            transition: transform 0.2s; cursor: pointer;
+        }
+        .glosario-btn:hover { transform: scale(1.08); }
+        .glosario-modal .modal-content { max-width: 600px; }
+        .glosario-modal .modal-content ul { list-style: none; padding: 0; }
+        .glosario-modal .modal-content li { border-bottom: 1px solid #eee; padding: 10px 0; }
+        .glosario-modal .modal-content li strong { color: var(--accent-blue); }
+
+        .tabla-compare { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin: 8px 0; }
+        .tabla-compare th { background: #2b2b2b; color: #cdd6f4; padding: 8px 10px; text-align: left; }
+        .tabla-compare td { padding: 8px 10px; border-bottom: 1px solid #ddd; }
+        .tabla-compare tr:nth-child(even) { background: #f8f9fa; }
+
+        .er-table {
+            background: #fff; border: 2px solid #334155; border-radius: 10px; overflow: hidden;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; min-width: 200px;
+        }
+        .er-table-header { background: #334155; color: #fff; font-weight: 800; padding: 6px 10px; text-align: center; }
+        .er-table-row { padding: 5px 10px; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; gap: 10px; }
+        .er-table-row .pk { color: #b28900; font-weight: 800; }
+        .er-table-row .fk { color: #1d4ed8; font-weight: 800; }
+    </style>
+    <style>
+        /* Agenda de 8 ítems: tarjetas más grandes que en la versión compacta de la Semana 11 */
+        .agenda-compact h2 { font-size: 2.6rem; }
+        .agenda-compact .text-xl { font-size: 1.1rem; }
+        .agenda-compact .mb-6 { margin-bottom: 16px; }
+        .agenda-compact .glass-panel { padding: 8px 22px; }
+        .agenda-compact .glass-panel h3 { font-size: 1.1rem; }
+        .agenda-compact .glass-panel p { font-size: 0.85rem; margin-top: 2px; }
+        .agenda-compact .z-20 { width: 2.2rem; height: 2.2rem; font-size: 0.95rem; }
+    </style>
+</head>
+<body>
+
+    <button class="float-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar Modo">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+    <button class="float-btn" id="downloadBtn" onclick="downloadPresentation()" title="Descargar presentación para ver sin internet">
+        <i class="fa-solid fa-download"></i>
+    </button>
+    <button class="glosario-btn" onclick="openModal('modal-glosario')" title="Glosario de términos">
+        <i class="fa-solid fa-book-open"></i>
+    </button>
+
+    <div class="slides-container" id="slides-container">
+
+        <!-- ==================== SLIDE 0: Portada ==================== -->
+        <div class="slide active">
+            <div class="text-center w-full max-w-6xl z-10 relative">
+                <i class="fa-solid fa-network-wired bg-icon text-[350px] -top-20 -left-20" style="color: var(--una-red);"></i>
+                <i class="fa-solid fa-code-branch bg-icon text-[250px] -bottom-10 right-10" style="color: var(--accent-blue);"></i>
+
+                <div class="bg-white px-8 py-4 rounded-3xl inline-block mb-6 shadow-md border border-gray-100 relative z-10">
+                    <img src="../../../assets/img/Logo-UNA-Rojo_FondoTransparente.png"
+                         alt="Logo UNA" class="h-28 object-contain"
+                         onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Logo_Universidad_Nacional_%28Costa_Rica%29.svg/512px-Logo_Universidad_Nacional_%28Costa_Rica%29.svg.png'">
+                </div>
+
+                <h2 class="text-lg md:text-xl font-bold tracking-[0.2em] mb-4 uppercase" style="color: var(--text-muted);">Sección Regional Central Occidente, UNA</h2>
+
+                <h1 class="text-3xl md:text-3xl font-extrabold mb-4 tracking-tight">
+                    Programación <span style="color: var(--una-red);">III</span>
+                </h1>
+                <h2 class="text-5xl md:text-6xl font-extrabold mb-2" style="color: var(--text-main);">Semana 15</h2>
+                <h3 class="text-2xl md:text-4xl font-bold mb-6" style="color: var(--una-red);">
+                    Clases activas y comunicación entre aplicaciones: hilos y sockets
+                </h3>
+
+                <div class="glass-panel inline-block text-left py-3 px-6 border-l-4 mb-6" style="border-left-color: var(--una-gold);">
+                    <p class="text-sm"><i class="fa-solid fa-circle-exclamation mr-2" style="color: var(--una-gold);"></i>
+                    Hasta hoy, Mini-Discord es una aplicación de <strong>una sola persona</strong>, con la base de datos en su propia computadora. Hoy vemos cómo hacer <strong>varias cosas a la vez</strong> (hilos) y cómo hacer que <strong>dos programas se hablen por la red</strong> (sockets). Es el último tema del curso.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-6 relative z-10">
+                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--una-red);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-red flex items-center justify-center text-2xl"><i class="fa-solid fa-chalkboard-user"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Docente — Grupo 41</p>
+                            <p class="text-lg font-bold">Ing. Siandi Araya Bello</p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);">M 13:00 - 16:20</p>
+                        </div>
+                    </div>
+                    <div class="glass-panel text-left flex items-center gap-5 border-l-4" style="border-left-color: var(--accent-blue);">
+                        <div class="w-14 h-14 shrink-0 rounded-full tint-blue flex items-center justify-center text-2xl"><i class="fa-solid fa-book"></i></div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Material de apoyo</p>
+                            <p class="text-lg font-bold">Guía TEMA 3: Hilos y sockets</p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);">Teoría completa, con fuentes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 1: Agenda ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 agenda-compact">
+                <i class="fa-solid fa-map-location-dot bg-icon text-[350px] top-10 right-0 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-6">
+                    <h2 class="text-5xl font-bold mb-2">¿Qué vemos hoy?</h2>
+                    <p class="text-xl" style="color: var(--text-muted);">Primero la teoría de hilos y sockets; después la práctica: un chat entre computadoras.</p>
+                </div>
+
+                <div class="relative wrap overflow-hidden p-4">
+                    <div class="absolute border-opacity-20 border-gray-400 h-full border-2" style="left: 50%;"></div>
+
+                    <div class="mb-6 flex justify-between items-center w-full right-timeline group cursor-pointer" onclick="goToSlide(2)"><div class="order-1 w-5/12"></div><div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-gold justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">1</div><div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:-translate-x-2 border-r-4" style="border-right-color: var(--una-gold);"><h3 class="font-bold text-lg text-right">Programa, proceso e hilo</h3><p class="text-xs text-right" style="color: var(--text-muted);">Qué comparte cada cosa</p></div></div>
+                    <div class="mb-6 flex justify-between items-center w-full left-timeline group cursor-pointer" onclick="goToSlide(3)"><div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:translate-x-2 border-l-4" style="border-left-color: var(--accent-purple);"><h3 class="font-bold text-lg text-left">Concurrencia y paralelismo</h3><p class="text-xs text-left" style="color: var(--text-muted);">Tres palabras que se confunden</p></div><div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-purple justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">2</div><div class="order-1 w-5/12"></div></div>
+                    <div class="mb-6 flex justify-between items-center w-full right-timeline group cursor-pointer" onclick="goToSlide(4)"><div class="order-1 w-5/12"></div><div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-blue justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">3</div><div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:-translate-x-2 border-r-4" style="border-right-color: var(--accent-blue);"><h3 class="font-bold text-lg text-right">Hilos en Java</h3><p class="text-xs text-right" style="color: var(--text-muted);">Thread, Runnable, start y run</p></div></div>
+                    <div class="mb-6 flex justify-between items-center w-full left-timeline group cursor-pointer" onclick="goToSlide(7)"><div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:translate-x-2 border-l-4" style="border-left-color: var(--una-red);"><h3 class="font-bold text-lg text-left">La ventana y su hilo</h3><p class="text-xs text-left" style="color: var(--text-muted);">Por qué se congela; Task y runLater</p></div><div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-red justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">4</div><div class="order-1 w-5/12"></div></div>
+                    <div class="mb-6 flex justify-between items-center w-full right-timeline group cursor-pointer" onclick="goToSlide(9)"><div class="order-1 w-5/12"></div><div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-green justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">5</div><div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:-translate-x-2 border-r-4" style="border-right-color: var(--accent-green);"><h3 class="font-bold text-lg text-right">Datos compartidos</h3><p class="text-xs text-right" style="color: var(--text-muted);">Condiciones de carrera y cerrojos</p></div></div>
+                    <div class="mb-6 flex justify-between items-center w-full left-timeline group cursor-pointer" onclick="goToSlide(11)"><div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:translate-x-2 border-l-4" style="border-left-color: var(--accent-purple);"><h3 class="font-bold text-lg text-left">Colas y pools</h3><p class="text-xs text-left" style="color: var(--text-muted);">Mensajes entre hilos</p></div><div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-purple justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">6</div><div class="order-1 w-5/12"></div></div>
+                    <div class="mb-6 flex justify-between items-center w-full right-timeline group cursor-pointer" onclick="goToSlide(13)"><div class="order-1 w-5/12"></div><div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-blue justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">7</div><div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:-translate-x-2 border-r-4" style="border-right-color: var(--accent-blue);"><h3 class="font-bold text-lg text-right">Redes y sockets</h3><p class="text-xs text-right" style="color: var(--text-muted);">IP, puerto, TCP, ServerSocket</p></div></div>
+                    <div class="mb-6 flex justify-between items-center w-full left-timeline group cursor-pointer" onclick="goToSlide(17)"><div class="order-1 glass-panel w-5/12 px-5 py-3 transition-transform group-hover:translate-x-2 border-l-4" style="border-left-color: var(--accent-green);"><h3 class="font-bold text-lg text-left">Un servidor para muchos</h3><p class="text-xs text-left" style="color: var(--text-muted);">Todo junto en un chat</p></div><div class="z-20 flex items-center order-1 bg-white shadow-xl w-11 h-11 rounded-full tint-green justify-center font-bold border-4 border-white transition-transform group-hover:scale-110">8</div><div class="order-1 w-5/12"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Programa, proceso e hilo ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 ">
+                <i class="fa-solid fa-microchip bg-icon text-[350px] -right-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-5"><h2 class="text-5xl font-bold mb-2">Programa, proceso e hilo</h2><p class="text-xl" style="color: var(--text-muted);">Tres palabras que se confunden, y que son la base de todo lo demás.</p></div><div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4"><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-blue);"><i class="fa-solid fa-file-code text-2xl mb-2" style="color: var(--accent-blue);"></i><h4 class="font-bold text-sm mb-1">Programa</h4><p class="text-xs" style="color: var(--text-muted);">Un <strong>archivo con instrucciones</strong>. Mientras está guardado, no hace nada.</p></div><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-green);"><i class="fa-solid fa-play text-2xl mb-2" style="color: var(--accent-green);"></i><h4 class="font-bold text-sm mb-1">Proceso</h4><p class="text-xs" style="color: var(--text-muted);">El programa <strong>en ejecución</strong>, con su propio espacio de memoria y recursos. Los procesos están aislados entre sí.</p></div><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--una-red);"><i class="fa-solid fa-code-branch text-2xl mb-2" style="color: var(--una-red);"></i><h4 class="font-bold text-sm mb-1">Hilo</h4><p class="text-xs" style="color: var(--text-muted);">Una <strong>línea de ejecución dentro de un proceso</strong>. Todo proceso tiene al menos uno, y los hilos de un proceso <strong>comparten su memoria</strong>.</p></div></div><div class="glass-panel p-4 border-l-4 mb-4" style="border-left-color: var(--una-gold);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-file-lines mr-2" style="color: var(--una-gold);"></i>La analogía del documento compartido</h4><div class="text-xs" style="color: var(--text-muted);">Un documento de Google Docs es el <strong>proceso</strong>: tiene su contenido y sus permisos. Las personas que lo editan a la vez son los <strong>hilos</strong>: todas ven y cambian el mismo texto. Otro documento es otro proceso: lo que se escribe en uno no aparece en el otro.</div></div><div class="glass-panel p-4 border-l-4 " style="border-left-color: var(--accent-blue);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-circle-info mr-2" style="color: var(--accent-blue);"></i>Mini-Discord ya tiene más de un hilo</h4><div class="text-xs" style="color: var(--text-muted);">Aunque no hemos creado ninguno, JavaFX usa un hilo propio para ejecutar <code class="font-mono text-[10px]">start</code>, atender los eventos de entrada y mover las animaciones. En Java, todo programa empieza con el hilo <code class="font-mono text-[10px]">main</code>.</div></div>
+            </div>
+        </div>
+
+        <!-- ==================== Concurrencia, paralelismo y asincronía ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 ">
+                <i class="fa-solid fa-shuffle bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-5"><h2 class="text-5xl font-bold mb-2">Concurrencia, paralelismo y asincronía</h2><p class="text-xl" style="color: var(--text-muted);">Se parecen, pero no son lo mismo.</p></div><div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4"><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-blue);"><i class="fa-solid fa-comments text-2xl mb-2" style="color: var(--accent-blue);"></i><h4 class="font-bold text-sm mb-1">Concurrencia</h4><p class="text-xs" style="color: var(--text-muted);">Organizar un programa en tareas que <strong>avanzan de manera independiente</strong>. Una sola persona con tres chats abiertos, que responde un poco en cada uno. No exige varios núcleos.</p></div><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-green);"><i class="fa-solid fa-people-group text-2xl mb-2" style="color: var(--accent-green);"></i><h4 class="font-bold text-sm mb-1">Paralelismo</h4><p class="text-xs" style="color: var(--text-muted);">Ejecutar varias cosas <strong>en el mismo instante</strong>. Tres personas, cada una respondiendo su chat. Necesita varios núcleos.</p></div><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--una-red);"><i class="fa-solid fa-bell text-2xl mb-2" style="color: var(--una-red);"></i><h4 class="font-bold text-sm mb-1">Asincronía</h4><p class="text-xs" style="color: var(--text-muted);">Pedir algo y <strong>seguir con otra cosa</strong> sin esperar el resultado, que avisa cuando está listo. Una <code class="font-mono text-[10px]">Task</code> de JavaFX es un ejemplo.</p></div></div><div class="glass-panel p-4 border-l-4 " style="border-left-color: var(--accent-purple);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-clock mr-2" style="color: var(--accent-purple);"></i>Con un solo núcleo, igual hay concurrencia</h4><div class="text-xs" style="color: var(--text-muted);">El sistema operativo reparte el tiempo entre los hilos (<em>time slicing</em>) y en cada instante corre solo uno. <strong>Quien decide cuál corre y por cuánto es el sistema operativo</strong>, no nuestro programa. Por eso el orden entre hilos <strong>no es predecible</strong>, y dos ejecuciones del mismo programa pueden dar salidas distintas. Eso es normal.</div></div>
+            </div>
+        </div>
+
+        <!-- ==================== Thread y Runnable ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 ">
+                <i class="fa-solid fa-person-running bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-5"><h2 class="text-5xl font-bold mb-2">Hilos en Java: Thread y Runnable</h2><p class="text-xl" style="color: var(--text-muted);">La tarea y quien la ejecuta son dos cosas separadas.</p></div><div class="grid grid-cols-1 md:grid-cols-[1.6fr_1fr] gap-4"><div><div class="darcula-editor "><div class="darcula-header"><span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span><div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> HolaHilos.java</div></div><pre class="darcula-code p-3 text-xs leading-relaxed overflow-x-auto m-0"><code>Runnable tarea = () -&gt; System.out.<span class="jk-method">println</span>(<span class="jk-string">"Trabajando en: "</span> + Thread.<span class="jk-method">currentThread</span>().<span class="jk-method">getName</span>());
+Thread hilo = <span class="jk-keyword">new</span> Thread(tarea, <span class="jk-string">"hilo-A"</span>);
+System.out.<span class="jk-method">println</span>(<span class="jk-string">"Estado antes de start: "</span> + hilo.<span class="jk-method">getState</span>());
+System.out.<span class="jk-method">println</span>(<span class="jk-string">"main es: "</span> + Thread.<span class="jk-method">currentThread</span>().<span class="jk-method">getName</span>());
+hilo.<span class="jk-method">run</span>();     <span class="jk-comment">// NO crea un hilo nuevo: la tarea corre dentro de main</span>
+hilo.<span class="jk-method">start</span>();   <span class="jk-comment">// SI crea un hilo nuevo: la tarea corre en hilo-A</span>
+hilo.<span class="jk-method">join</span>();    <span class="jk-comment">// main espera a que hilo-A termine</span>
+System.out.<span class="jk-method">println</span>(<span class="jk-string">"Estado despues de join: "</span> + hilo.<span class="jk-method">getState</span>());</code></pre></div></div><div><div class="darcula-editor "><div class="darcula-header"><span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span><div class="darcula-tab ml-2"><i class="fa-solid fa-terminal text-xs" style="color: #6a8759;"></i> Salida real</div></div><pre class="darcula-code p-3 text-xs leading-relaxed overflow-x-auto m-0"><code>Estado antes de start: NEW
+main es: main
+Trabajando en: main
+Trabajando en: hilo-A
+Estado despues de join: TERMINATED</code></pre></div><div class="glass-panel p-4 border-l-4 mt-3" style="border-left-color: var(--una-red);"><div class="text-xs" style="color: var(--text-muted);"><strong>run()</strong> ejecuta la tarea dentro del hilo que lo llamó: salió <code class="font-mono text-[10px]">main</code>. <strong>start()</strong> sí crea un hilo nuevo: salió <code class="font-mono text-[10px]">hilo-A</code>. Un hilo se puede iniciar <strong>una sola vez</strong> (si no, <code class="font-mono text-[10px]">IllegalThreadStateException</code>).</div></div></div></div><p class="text-sm mt-3 text-center" style="color: var(--text-muted);"><span class="keyword" data-tooltip="Una interfaz con un único método, run(). Representa la tarea: qué hay que hacer. Como tiene un solo método, se puede escribir con una lambda.">Runnable</span> = la tarea · <strong>Thread</strong> = quien la ejecuta</p>
+            </div>
+        </div>
+
+        <!-- ==================== Los seis estados de un hilo ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 ">
+                <i class="fa-solid fa-diagram-project bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-5"><h2 class="text-5xl font-bold mb-2">Los seis estados de un hilo</h2><p class="text-xl" style="color: var(--text-muted);">En un momento dado, un hilo está en exactamente uno. Son estados de la máquina virtual, no del sistema operativo.</p></div><div class="glass-panel p-4 mb-4"><div class="flex flex-col md:flex-row items-center justify-center gap-3 mb-3"><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(93,173,226,0.12);"><strong>NEW</strong><br>creado, no iniciado</div><div class="flex flex-col items-center text-gray-400 text-xs"><i class="fa-solid fa-arrow-right text-xl"></i><span class="mt-1" style="color: var(--text-muted);">start()</span></div><div class="glass-panel px-4 py-3 text-center text-xs font-bold" style="background: rgba(72,201,176,0.12);"><strong>RUNNABLE</strong><br>ejecutándose o listo</div><div class="flex flex-col items-center text-gray-400 text-xs"><i class="fa-solid fa-arrow-right text-xl"></i><span class="mt-1" style="color: var(--text-muted);">run() termina</span></div><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(230,106,106,0.12);"><strong>TERMINATED</strong><br>ya terminó</div></div>
+  <div class="flex flex-col md:flex-row items-center justify-center gap-4"><i class="fa-solid fa-arrows-up-down text-xl text-gray-400"></i><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(244,208,63,0.14);"><strong>BLOCKED</strong><br>espera un cerrojo (<code class="font-mono text-[10px]">synchronized</code>)</div><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(175,122,197,0.12);"><strong>WAITING</strong><br>espera sin límite (<code class="font-mono text-[10px]">join()</code>)</div><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(235,152,78,0.12);"><strong>TIMED_WAITING</strong><br>espera con límite (<code class="font-mono text-[10px]">sleep(ms)</code>)</div><i class="fa-solid fa-arrows-up-down text-xl text-gray-400"></i></div></div><div class="glass-panel p-4 border-l-4 " style="border-left-color: var(--accent-green);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-lightbulb mr-2" style="color: var(--accent-green);"></i>Lo que hay que recordar</h4><div class="text-xs" style="color: var(--text-muted);">Un hilo terminado <strong>no se puede reiniciar</strong>. Las tres esperas (<strong>BLOCKED, WAITING, TIMED_WAITING</strong>) son estados desde los que el hilo vuelve a RUNNABLE. <code class="font-mono text-[10px]">RUNNABLE</code> no significa "corriendo ya": puede estar esperando su turno de procesador.</div></div>
+            </div>
+        </div>
+
+        <!-- ==================== sleep, join, interrupt, daemon ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 ">
+                <i class="fa-solid fa-hourglass-half bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-peach);"></i>
+                <div class="text-center mb-5"><h2 class="text-5xl font-bold mb-2">Esperar, interrumpir y los hilos daemon</h2><p class="text-xl" style="color: var(--text-muted);">Cuatro herramientas para controlar a un hilo.</p></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-blue);"><i class="fa-solid fa-bed text-2xl mb-2" style="color: var(--accent-blue);"></i><h4 class="font-bold text-sm mb-1">sleep(ms)</h4><p class="text-xs" style="color: var(--text-muted);">Pausa el <strong>hilo actual</strong> un tiempo. Conserva los cerrojos que tenga. Lanza <code class="font-mono text-[10px]">InterruptedException</code> (verificada): por eso lleva try/catch.</p></div><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-green);"><i class="fa-solid fa-link text-2xl mb-2" style="color: var(--accent-green);"></i><h4 class="font-bold text-sm mb-1">join()</h4><p class="text-xs" style="color: var(--text-muted);">Hace que un hilo <strong>espere a que otro termine</strong>. Sin tiempo, espera sin límite (estado WAITING).</p></div><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--una-red);"><i class="fa-solid fa-hand text-2xl mb-2" style="color: var(--una-red);"></i><h4 class="font-bold text-sm mb-1">interrupt()</h4><p class="text-xs" style="color: var(--text-muted);">Le <strong>pide</strong> a un hilo que se detenga, pero no lo obliga: es <strong>cooperativo</strong>. Activa una bandera, y si el hilo está en sleep/join/wait recibe la excepción.</p></div><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-purple);"><i class="fa-solid fa-moon text-2xl mb-2" style="color: var(--accent-purple);"></i><h4 class="font-bold text-sm mb-1">setDaemon(true)</h4><p class="text-xs" style="color: var(--text-muted);">Marca un hilo de <strong>segundo plano</strong>: no mantiene vivo el programa. La máquina virtual se apaga cuando terminan todos los hilos <em>no daemon</em>. Se llama antes de <code class="font-mono text-[10px]">start()</code>.</p></div></div><div class="glass-panel p-4 border-l-4 " style="border-left-color: var(--accent-peach);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-circle-question mr-2" style="color: var(--accent-peach);"></i>Por qué importa el daemon</h4><div class="text-xs" style="color: var(--text-muted);">Si una aplicación con ventana deja un hilo normal vivo, la ventana se cierra pero <strong>el programa sigue ejecutándose</strong> en segundo plano.</div></div>
+            </div>
+        </div>
+
+        <!-- ==================== El hilo de la interfaz ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 ">
+                <i class="fa-solid fa-window-maximize bg-icon text-[350px] -left-10 opacity-5" style="color: var(--una-red);"></i>
+                <div class="text-center mb-5"><h2 class="text-5xl font-bold mb-2">Por qué se congela una ventana</h2><p class="text-xl" style="color: var(--text-muted);">JavaFX usa un solo hilo para la interfaz: el JavaFX Application Thread.</p></div><div class="glass-panel p-4 mb-4"><div class="flex flex-col md:flex-row items-center justify-center gap-3 text-xs mb-3"><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(93,173,226,0.12);"><strong>atender evento</strong><br>clic, tecla, Enter</div><div class="flex flex-col items-center text-gray-400 text-xs"><i class="fa-solid fa-arrow-right text-xl"></i></div><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(72,201,176,0.12);"><strong>dibujar</strong><br>redibujar la ventana</div><div class="flex flex-col items-center text-gray-400 text-xs"><i class="fa-solid fa-arrow-right text-xl"></i></div><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(93,173,226,0.12);"><strong>atender evento</strong></div><i class="fa-solid fa-rotate text-gray-400 text-xl"></i></div>
+  <div class="flex flex-col md:flex-row items-center justify-center gap-3 text-xs"><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(93,173,226,0.12);"><strong>atender evento</strong></div><div class="flex flex-col items-center text-gray-400 text-xs"><i class="fa-solid fa-arrow-right text-xl"></i></div><div class="glass-panel px-4 py-3 text-center text-xs font-bold" style="background: rgba(230,106,106,0.12);"><strong>trabajo lento: 5 segundos sin dibujar</strong><br>la ventana "no responde"</div><div class="flex flex-col items-center text-gray-400 text-xs"><i class="fa-solid fa-arrow-right text-xl"></i></div><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(72,201,176,0.12);">dibujar</div></div></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"><div class="glass-panel p-4 border-l-4 " style="border-left-color: var(--una-red);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-1 mr-2" style="color: var(--una-red);"></i>Regla 1</h4><div class="text-xs" style="color: var(--text-muted);">Nada lento en el hilo de la interfaz: ni consultas a la base de datos, ni lecturas de la red, ni archivos grandes.</div></div><div class="glass-panel p-4 border-l-4 " style="border-left-color: var(--accent-blue);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-2 mr-2" style="color: var(--accent-blue);"></i>Regla 2</h4><div class="text-xs" style="color: var(--text-muted);">Nada de tocar la ventana desde otro hilo. El grafo de la escena no es seguro para varios hilos.</div></div></div><div class="glass-panel p-4 border-l-4 " style="border-left-color: var(--una-gold);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-gamepad mr-2" style="color: var(--una-gold);"></i>Como un videojuego</h4><div class="text-xs" style="color: var(--text-muted);">Un ciclo que se repite muchas veces por segundo: lee lo que hizo el jugador y dibuja el siguiente cuadro. Si dentro del ciclo se pone algo que tarda cinco segundos, <strong>no se dibuja ningún cuadro</strong> y el juego se congela. La solución combina las dos reglas: el trabajo lento va a <strong>un hilo de fondo</strong> y el resultado <strong>vuelve</strong> al hilo de la interfaz.</div></div>
+            </div>
+        </div>
+
+        <!-- ==================== Task y Platform.runLater ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 ">
+                <i class="fa-solid fa-list-check bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-5"><h2 class="text-5xl font-bold mb-2">Task y Platform.runLater</h2><p class="text-xl" style="color: var(--text-muted);">Cómo el trabajo lento sale de la ventana, y cómo el resultado vuelve.</p></div><div class="glass-panel p-4 mb-4"><div class="flex flex-col md:flex-row items-center justify-center gap-3 text-xs"><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(93,173,226,0.12);"><strong>Hilo de la interfaz</strong><br>crea la Task y la inicia</div><div class="flex flex-col items-center text-gray-400 text-xs"><i class="fa-solid fa-arrow-right text-xl"></i><span class="mt-1" style="color: var(--text-muted);">start</span></div><div class="glass-panel px-4 py-3 text-center text-xs font-bold" style="background: rgba(244,208,63,0.14);"><strong>Hilo de fondo</strong><br><code class="font-mono text-[10px]">call()</code>: el trabajo lento</div><div class="flex flex-col items-center text-gray-400 text-xs"><i class="fa-solid fa-arrow-right text-xl"></i><span class="mt-1" style="color: var(--text-muted);">resultado</span></div><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(72,201,176,0.12);"><strong>Hilo de la interfaz</strong><br><code class="font-mono text-[10px]">onSucceeded</code>: muestra el resultado</div></div></div>
+  <div class="grid grid-cols-1 md:grid-cols-[1.6fr_1fr] gap-4"><div><div class="darcula-editor "><div class="darcula-header"><span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span><div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> TaskEjemplo.java</div></div><pre class="darcula-code p-3 text-xs leading-relaxed overflow-x-auto m-0"><code>    Task&lt;String&gt; tarea = <span class="jk-keyword">new</span> Task&lt;&gt;() {
+        <span class="jk-annot">@Override</span>
+        <span class="jk-keyword">protected</span> String <span class="jk-method">call</span>() <span class="jk-keyword">throws</span> Exception {
+            System.out.<span class="jk-method">println</span>(<span class="jk-string">"2. call() corre en:  "</span> + Thread.<span class="jk-method">currentThread</span>().<span class="jk-method">getName</span>());
+            Thread.<span class="jk-method">sleep</span>(<span class="jk-number">500</span>);
+            <span class="jk-keyword">return</span> <span class="jk-string">"resultado"</span>;
+        }
+    };
+    tarea.<span class="jk-method">setOnSucceeded</span>(e -&gt; {
+        System.out.<span class="jk-method">println</span>(<span class="jk-string">"3. onSucceeded en:    "</span> + Thread.<span class="jk-method">currentThread</span>().<span class="jk-method">getName</span>()
+                + <span class="jk-string">" (valor: "</span> + tarea.<span class="jk-method">getValue</span>() + <span class="jk-string">")"</span>);
+        fin.<span class="jk-method">countDown</span>();
+    Thread t = <span class="jk-keyword">new</span> Thread(tarea, <span class="jk-string">"hilo-de-fondo"</span>);
+    t.<span class="jk-method">setDaemon</span>(<span class="jk-keyword">true</span>);
+    t.<span class="jk-method">start</span>();</code></pre></div></div><div><div class="darcula-editor "><div class="darcula-header"><span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span><div class="darcula-tab ml-2"><i class="fa-solid fa-terminal text-xs" style="color: #6a8759;"></i> Salida real</div></div><pre class="darcula-code p-3 text-xs leading-relaxed overflow-x-auto m-0"><code>1. Aqui estamos en: JavaFX Application Thread
+   (el hilo de la interfaz sigue libre y continua aqui)
+2. call() corre en:  hilo-de-fondo
+3. onSucceeded en:    JavaFX Application Thread (valor: resultado)</code></pre></div><div class="glass-panel p-4 border-l-4 mt-3" style="border-left-color: var(--accent-green);"><div class="text-xs" style="color: var(--text-muted);"><strong>Platform.runLater</strong> sirve cuando ya existe un hilo que vive todo el programa (por ejemplo, uno que escucha la red) y necesita cambiar algo en la ventana: pone el cambio en la <strong>cola del hilo de la interfaz</strong>, en orden.</div></div></div></div>
+            </div>
+        </div>
+
+        <!-- ==================== Condición de carrera ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 ">
+                <i class="fa-solid fa-flag-checkered bg-icon text-[350px] -left-10 opacity-5" style="color: var(--una-red);"></i>
+                <div class="text-center mb-5"><h2 class="text-5xl font-bold mb-2">Cuando los hilos comparten datos</h2><p class="text-xl" style="color: var(--text-muted);">Compartir memoria es cómodo, pero permite errores difíciles de encontrar.</p></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"><div class="glass-panel p-4"><h4 class="font-bold text-sm mb-2 text-center"><i class="fa-solid fa-calculator mr-2" style="color: var(--una-red);"></i>c++ no es una sola operación</h4><p class="text-xs mb-2" style="color: var(--text-muted);">Son tres pasos: <strong>leer</strong> el valor, <strong>sumarle uno</strong>, <strong>escribir</strong> el resultado. Dos hilos pueden intercalarlos:</p>
+  <table class="tabla-compare"><tr><th>Tiempo</th><th>Hilo A</th><th>Hilo B</th><th>c</th></tr><tr><td>1</td><td>lee 0</td><td></td><td>0</td></tr><tr><td>2</td><td></td><td>lee 0</td><td>0</td></tr><tr><td>3</td><td>escribe 1</td><td></td><td>1</td></tr><tr><td>4</td><td></td><td>escribe 1</td><td>1</td></tr></table><p class="text-xs font-bold text-center">Se hicieron dos sumas y c vale 1: se perdió una.</p></div><div><div class="darcula-editor "><div class="darcula-header"><span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span><div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> Contador.java</div></div><pre class="darcula-code p-3 text-xs leading-relaxed overflow-x-auto m-0"><code>    <span class="jk-keyword">for</span> (<span class="jk-keyword">int</span> i = <span class="jk-number">0</span>; i &lt; VUELTAS; i++) {
+        inseguro++;                          <span class="jk-comment">// leer, sumar, escribir: NO es una sola operacion</span>
+        <span class="jk-keyword">synchronized</span> (cerrojo) { sincronizado++; }
+        atomico.<span class="jk-method">incrementAndGet</span>();
+    }</code></pre></div><div class="darcula-editor mt-3"><div class="darcula-header"><span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span><div class="darcula-tab ml-2"><i class="fa-solid fa-terminal text-xs" style="color: #6a8759;"></i> Salida real</div></div><pre class="darcula-code p-3 text-xs leading-relaxed overflow-x-auto m-0"><code>Esperado:      2000000
+Sin proteger:  1993446
+synchronized:  2000000
+AtomicInteger: 2000000</code></pre></div></div></div><div class="glass-panel p-4 border-l-4 " style="border-left-color: var(--una-red);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-bug mr-2" style="color: var(--una-red);"></i>Lo peligroso: es intermitente</h4><div class="text-xs" style="color: var(--text-muted);">Dos hilos que suman un millón de veces cada uno deberían dar 2 000 000. "Sin proteger" dio 1 993 446, y en otras ejecuciones 1 977 769 y 1 989 739: <strong>siempre menos, y distinto cada vez</strong>. El resultado depende del momento exacto en que el sistema operativo intercaló los hilos. La zona de código que toca el dato compartido se llama <span class="keyword" data-tooltip="Fragmento de código que usa un dato compartido y que debe ejecutar un solo hilo a la vez.">sección crítica</span>.</div></div>
+            </div>
+        </div>
+
+        <!-- ==================== Proteger los datos compartidos ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 ">
+                <i class="fa-solid fa-shield-halved bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-5"><h2 class="text-5xl font-bold mb-2">Cómo proteger los datos compartidos</h2><p class="text-xl" style="color: var(--text-muted);">Cuatro herramientas, en el orden en que conviene probarlas.</p></div><div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4"><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-green);"><i class="fa-solid fa-lock-open text-2xl mb-2" style="color: var(--accent-green);"></i><h4 class="font-bold text-sm mb-1">1. No compartir</h4><p class="text-xs" style="color: var(--text-muted);">Un <strong>objeto inmutable</strong> (campos <code class="font-mono text-[10px]">final</code>, sin setters) no puede quedar a medias. Es lo más seguro. Nuestro <code class="font-mono text-[10px]">Message</code> es así.</p></div><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-blue);"><i class="fa-solid fa-atom text-2xl mb-2" style="color: var(--accent-blue);"></i><h4 class="font-bold text-sm mb-1">2. Atómicos</h4><p class="text-xs" style="color: var(--text-muted);"><code class="font-mono text-[10px]">AtomicInteger.incrementAndGet()</code> suma y devuelve en <strong>una sola operación</strong> que nadie puede partir.</p></div><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-purple);"><i class="fa-solid fa-layer-group text-2xl mb-2" style="color: var(--accent-purple);"></i><h4 class="font-bold text-sm mb-1">3. Colecciones concurrentes</h4><p class="text-xs" style="color: var(--text-muted);">Las de <code class="font-mono text-[10px]">java.util.concurrent</code> están hechas para varios hilos. Una <code class="font-mono text-[10px]">ArrayList</code> común, no.</p></div><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--una-gold);"><i class="fa-solid fa-lock text-2xl mb-2" style="color: var(--una-gold);"></i><h4 class="font-bold text-sm mb-1">4. synchronized</h4><p class="text-xs" style="color: var(--text-muted);">Cada objeto tiene un <strong>cerrojo</strong>. Un bloque <code class="font-mono text-[10px]">synchronized</code> lo toma al entrar y lo libera al salir, incluso con una excepción. Los demás quedan en BLOCKED.</p></div></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3"><div class="glass-panel p-4 border-l-4 " style="border-left-color: var(--accent-peach);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-eye mr-2" style="color: var(--accent-peach);"></i>Visibilidad (happens-before)</h4><div class="text-xs" style="color: var(--text-muted);">Que un hilo escriba no garantiza que otro lo vea. <code class="font-mono text-[10px]">Thread.start</code> y <code class="font-mono text-[10px]">join</code>, liberar un cerrojo y las colecciones concurrentes crean esa garantía. <code class="font-mono text-[10px]">volatile</code> hace visibles las lecturas y escrituras, pero <strong>no</strong> hace atómico <code class="font-mono text-[10px]">count++</code>.</div></div><div class="glass-panel p-4 border-l-4 " style="border-left-color: var(--una-red);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-ban mr-2" style="color: var(--una-red);"></i>Interbloqueo (deadlock)</h4><div class="text-xs" style="color: var(--text-muted);">Dos hilos bloqueados <strong>para siempre</strong>: A tiene el cerrojo 1 y pide el 2, B tiene el 2 y pide el 1. El programa se cuelga sin mostrar error. Se evita tomando los cerrojos <strong>siempre en el mismo orden</strong> y por el menor tiempo posible.</div></div></div><p class="text-xs text-center" style="color: var(--text-muted);"><i class="fa-solid fa-scale-balanced mr-1"></i> Sincronizar tiene un costo: los hilos se hacen esperar. Se sincroniza solo lo necesario.</p>
+            </div>
+        </div>
+
+        <!-- ==================== Cola productor y consumidor ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 ">
+                <i class="fa-solid fa-people-arrows bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-5"><h2 class="text-5xl font-bold mb-2">Comunicación entre hilos con una cola</h2><p class="text-xl" style="color: var(--text-muted);">En vez de compartir datos que cambian, los hilos se pasan mensajes.</p></div><div class="glass-panel p-4 mb-4"><div class="flex flex-col md:flex-row items-center justify-center gap-3 text-xs"><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(93,173,226,0.12);"><strong>Productor</strong><br><code class="font-mono text-[10px]">cola.put(mensaje)</code></div><div class="flex flex-col items-center text-gray-400 text-xs"><i class="fa-solid fa-arrow-right text-xl"></i></div><div class="glass-panel px-4 py-3 text-center text-xs font-bold" style="background: rgba(244,208,63,0.14);"><strong>BlockingQueue</strong><br>espera si está llena<br>o vacía</div><div class="flex flex-col items-center text-gray-400 text-xs"><i class="fa-solid fa-arrow-right text-xl"></i></div><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(72,201,176,0.12);"><strong>Consumidor</strong><br><code class="font-mono text-[10px]">cola.take()</code></div></div><p class="text-xs text-center mt-3" style="color: var(--text-muted);">Como la cola de reproducción de Spotify: varias personas agregan canciones, el reproductor toma una por una, y si no hay ninguna, espera.</p></div>
+  <div class="grid grid-cols-1 md:grid-cols-[1.6fr_1fr] gap-4"><div><div class="darcula-editor "><div class="darcula-header"><span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span><div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> ProductorConsumidor.java</div></div><pre class="darcula-code p-3 text-xs leading-relaxed overflow-x-auto m-0"><code>BlockingQueue&lt;String&gt; cola = <span class="jk-keyword">new</span> LinkedBlockingQueue&lt;&gt;();
+    cola.<span class="jk-method">put</span>(mensaje);
+    System.out.<span class="jk-method">println</span>(<span class="jk-string">"[productor] puso "</span> + mensaje);
+    String m = cola.<span class="jk-method">take</span>();          <span class="jk-comment">// espera si la cola esta vacia</span>
+    <span class="jk-keyword">if</span> (m.<span class="jk-method">equals</span>(FIN)) <span class="jk-keyword">break</span>;
+    System.out.<span class="jk-method">println</span>(<span class="jk-string">"   [consumidor] recibio "</span> + m);</code></pre></div></div><div><div class="darcula-editor "><div class="darcula-header"><span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span><div class="darcula-tab ml-2"><i class="fa-solid fa-terminal text-xs" style="color: #6a8759;"></i> Salida real</div></div><pre class="darcula-code p-3 text-xs leading-relaxed overflow-x-auto m-0"><code>[productor] puso mensaje 1
+   [consumidor] recibio mensaje 1
+[productor] puso mensaje 2
+   [consumidor] recibio mensaje 2
+   [consumidor] recibio mensaje 3
+[productor] puso mensaje 3</code></pre></div><p class="text-xs mt-2" style="color: var(--text-muted);">El consumidor imprimió "mensaje 3" antes que el productor. No es un error: <strong>el orden entre hilos lo decide el sistema operativo</strong>.</p></div></div><div class="glass-panel p-4 border-l-4 mt-3" style="border-left-color: var(--accent-purple);"><div class="text-xs" style="color: var(--text-muted);"><strong>Platform.runLater es exactamente esta idea</strong>: una cola de mensajes cuyo único consumidor es el hilo de la interfaz. Todos los métodos de la cola son seguros para varios hilos.</div></div>
+            </div>
+        </div>
+
+        <!-- ==================== Pools e hilos virtuales ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 ">
+                <i class="fa-solid fa-boxes-stacked bg-icon text-[350px] -right-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-5"><h2 class="text-5xl font-bold mb-2">Pools de hilos e hilos virtuales</h2><p class="text-xl" style="color: var(--text-muted);">Crear un hilo por tarea tiene un costo.</p></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-blue);"><i class="fa-solid fa-layer-group text-2xl mb-2" style="color: var(--accent-blue);"></i><h4 class="font-bold text-sm mb-1">Pool de hilos (ExecutorService)</h4><p class="text-xs" style="color: var(--text-muted);">Un grupo de hilos creado <strong>una sola vez</strong> y reutilizado para muchas tareas, que esperan en una cola cuando todos están ocupados. <code class="font-mono text-[10px]">newFixedThreadPool(n)</code>, <code class="font-mono text-[10px]">newSingleThreadExecutor()</code>. Con <code class="font-mono text-[10px]">submit</code> se recibe un <code class="font-mono text-[10px]">Future</code>.</p></div><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-green);"><i class="fa-solid fa-feather text-2xl mb-2" style="color: var(--accent-green);"></i><h4 class="font-bold text-sm mb-1">Hilos virtuales (Java 21)</h4><p class="text-xs" style="color: var(--text-muted);">Hilos <strong>livianos</strong> que administra el JDK, creados para mantener el estilo de <strong>un hilo por petición</strong> con muchísimas conexiones. Sirven con muchas tareas que pasan el tiempo esperando entrada y salida. No hacen el código más rápido y <strong>no se ponen en un pool</strong>.</p></div></div><div class="glass-panel p-4 border-l-4 mb-3" style="border-left-color: var(--una-gold);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-triangle-exclamation mr-2" style="color: var(--una-gold);"></i>Cerrar un pool</h4><div class="text-xs" style="color: var(--text-muted);">Los hilos de un ejecutor <strong>no son daemon</strong> por defecto: si nunca se llama a <code class="font-mono text-[10px]">shutdown()</code>, el programa no termina. <code class="font-mono text-[10px]">shutdown</code> termina lo enviado y no acepta más; <code class="font-mono text-[10px]">shutdownNow</code> intenta detener lo que corre, sin garantías.</div></div><p class="text-xs text-center" style="color: var(--text-muted);">Los hilos virtuales no figuran en el programa del curso, pero resuelven justo el problema de un servidor con muchos clientes.</p>
+            </div>
+        </div>
+
+        <!-- ==================== Cliente, servidor, IP y puerto ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 ">
+                <i class="fa-solid fa-network-wired bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-5"><h2 class="text-5xl font-bold mb-2">Redes: lo mínimo para entender un socket</h2><p class="text-xl" style="color: var(--text-muted);">Dos programas, una dirección y un número de puerto.</p></div><div class="glass-panel p-4 mb-4"><div class="flex flex-col md:flex-row items-center justify-center gap-3 text-xs"><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(93,173,226,0.12);"><strong>Cliente</strong><br>inicia la conexión</div><div class="flex flex-col items-center text-gray-400 text-xs"><i class="fa-solid fa-arrow-right text-xl"></i><span class="mt-1" style="color: var(--text-muted);">se conecta a IP + puerto</span></div><div class="glass-panel px-4 py-3 text-center text-xs font-bold" style="background: rgba(244,208,63,0.14);"><strong>Servidor</strong><br>espera conexiones en un puerto</div><div class="flex flex-col items-center text-gray-400 text-xs"><i class="fa-solid fa-arrow-right text-xl"></i></div><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(72,201,176,0.12);"><strong>MySQL</strong> ya es así<br>servidor en el 3306</div></div></div><div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4"><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-blue);"><i class="fa-solid fa-location-dot text-2xl mb-2" style="color: var(--accent-blue);"></i><h4 class="font-bold text-sm mb-1">Dirección IP</h4><p class="text-xs" style="color: var(--text-muted);">Identifica a una <strong>computadora</strong> en la red. <code class="font-mono text-[10px]">localhost</code> es esta misma computadora. Es la dirección de la sede.</p></div><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-green);"><i class="fa-solid fa-door-open text-2xl mb-2" style="color: var(--accent-green);"></i><h4 class="font-bold text-sm mb-1">Puerto</h4><p class="text-xs" style="color: var(--text-muted);">Identifica un <strong>servicio</strong> dentro de la computadora. Es el número de aula. De 0 a 65 535.</p></div><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--una-gold);"><i class="fa-solid fa-plug text-2xl mb-2" style="color: var(--una-gold);"></i><h4 class="font-bold text-sm mb-1">Endpoint</h4><p class="text-xs" style="color: var(--text-muted);">IP + puerto. Cada conexión TCP queda identificada por <strong>sus dos extremos</strong>.</p></div></div><div class="glass-panel p-4 border-l-4 " style="border-left-color: var(--accent-blue);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-list-ol mr-2" style="color: var(--accent-blue);"></i>Los rangos de puertos</h4><div class="text-xs" style="color: var(--text-muted);"><strong>0–1023</strong>: del sistema (servicios conocidos) · <strong>1024–49151</strong>: de usuario (MySQL usa el 3306) · <strong>49152–65535</strong>: dinámicos. Para nuestros servidores usamos números altos, como el <strong>5050</strong>.</div></div>
+            </div>
+        </div>
+
+        <!-- ==================== Protocolo, TCP y UDP ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 ">
+                <i class="fa-solid fa-envelope-open-text bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-5"><h2 class="text-5xl font-bold mb-2">Protocolo, TCP y UDP</h2><p class="text-xl" style="color: var(--text-muted);">Las reglas de la conversación, y cómo viajan los datos.</p></div><div class="glass-panel p-4 border-l-4 mb-4" style="border-left-color: var(--accent-green);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-scroll mr-2" style="color: var(--accent-green);"></i>Protocolo</h4><div class="text-xs" style="color: var(--text-muted);">Las <strong>reglas de la conversación</strong>: quién habla primero, qué formato tiene cada mensaje y cómo se termina. Todo par de cliente y servidor necesita uno. En un chat sencillo: <em>"cada mensaje es una línea de texto"</em>.</div></div><table class="tabla-compare"><tr><th></th><th>TCP</th><th>UDP</th></tr>
+  <tr><td><strong>Conexión</strong></td><td>Se establece antes de enviar datos</td><td>No hay conexión</td></tr>
+  <tr><td><strong>Fiabilidad</strong></td><td>Flujo de bytes confiable y en orden; lo perdido se reenvía</td><td>Datagramas sueltos, sin garantía de entrega</td></tr>
+  <tr><td><strong>Se parece a</strong></td><td>Descargar un archivo</td><td>Una transmisión en vivo</td></tr>
+  <tr><td><strong>Se usa en</strong></td><td>Chats, web, bases de datos</td><td>Video en vivo, juegos</td></tr></table><p class="text-sm mt-3 text-center" style="color: var(--text-muted);">Los sockets de este curso son <strong>TCP</strong>.</p>
+            </div>
+        </div>
+
+        <!-- ==================== ServerSocket y Socket ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 ">
+                <i class="fa-solid fa-socks bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-peach);"></i>
+                <div class="text-center mb-5"><h2 class="text-5xl font-bold mb-2">Sockets en Java</h2><p class="text-xl" style="color: var(--text-muted);">Un socket es un extremo de un enlace de comunicación entre dos programas.</p></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--una-gold);"><i class="fa-solid fa-server text-2xl mb-2" style="color: var(--una-gold);"></i><h4 class="font-bold text-sm mb-1">ServerSocket (servidor)</h4><p class="text-xs" style="color: var(--text-muted);"><code class="font-mono text-[10px]">new ServerSocket(5050)</code> reserva el puerto y espera. <code class="font-mono text-[10px]">accept()</code> <strong>se queda esperando</strong> hasta que llega un cliente y devuelve un <code class="font-mono text-[10px]">Socket</code> nuevo para conversar con él.</p></div><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-blue);"><i class="fa-solid fa-laptop text-2xl mb-2" style="color: var(--accent-blue);"></i><h4 class="font-bold text-sm mb-1">Socket (cliente)</h4><p class="text-xs" style="color: var(--text-muted);"><code class="font-mono text-[10px]">new Socket(ip, 5050)</code> se conecta. Cada socket tiene un <strong>flujo de entrada</strong> (lo que llega) y uno de <strong>salida</strong> (lo que se envía).</p></div></div><div class="darcula-editor "><div class="darcula-header"><span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span><div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> Lectura y escritura</div></div><pre class="darcula-code p-3 text-xs leading-relaxed overflow-x-auto m-0"><code>BufferedReader entrada = <span class="jk-keyword">new</span> BufferedReader(<span class="jk-keyword">new</span> InputStreamReader(conexion.<span class="jk-method">getInputStream</span>()));
+PrintWriter salida = <span class="jk-keyword">new</span> PrintWriter(conexion.<span class="jk-method">getOutputStream</span>(), <span class="jk-keyword">true</span>); <span class="jk-comment">// true = autoflush</span>
+
+String linea;
+<span class="jk-keyword">while</span> ((linea = entrada.<span class="jk-method">readLine</span>()) != <span class="jk-keyword">null</span>) {   <span class="jk-comment">// espera una línea completa; null = se desconectó</span>
+    salida.<span class="jk-method">println</span>(<span class="jk-string">"eco: "</span> + linea);             <span class="jk-comment">// lo envía de inmediato</span>
+}</code></pre></div><div class="glass-panel p-4 border-l-4 mt-3" style="border-left-color: var(--una-red);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-hourglass mr-2" style="color: var(--una-red);"></i>Lo que bloquea</h4><div class="text-xs" style="color: var(--text-muted);"><code class="font-mono text-[10px]">accept()</code> y <code class="font-mono text-[10px]">readLine()</code> <strong>esperan</strong>, y mientras un hilo está bloqueado no puede hacer otra cosa. De ahí sale la siguiente diapositiva.</div></div>
+            </div>
+        </div>
+
+        <!-- ==================== Errores típicos de red ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 ">
+                <i class="fa-solid fa-bug bg-icon text-[350px] -right-10 opacity-5" style="color: var(--una-red);"></i>
+                <div class="text-center mb-5"><h2 class="text-5xl font-bold mb-2">Los errores que van a ver</h2><p class="text-xl" style="color: var(--text-muted);">Cada mensaje de error dice qué pasó.</p></div><div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4"><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--una-red);"><i class="fa-solid fa-ban text-2xl mb-2" style="color: var(--una-red);"></i><h4 class="font-bold text-sm mb-1">BindException</h4><p class="text-xs" style="color: var(--text-muted);"><code class="font-mono text-[10px]">Address already in use</code>. Ya hay otro programa (casi siempre un servidor viejo) usando ese puerto: el servidor no arranca.</p></div><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--una-gold);"><i class="fa-solid fa-circle-xmark text-2xl mb-2" style="color: var(--una-gold);"></i><h4 class="font-bold text-sm mb-1">ConnectException</h4><p class="text-xs" style="color: var(--text-muted);"><code class="font-mono text-[10px]">Connection refused</code>. La computadora sí se encontró, pero <strong>nadie escucha</strong> en ese puerto: servidor apagado o IP equivocada.</p></div><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-blue);"><i class="fa-solid fa-clock text-2xl mb-2" style="color: var(--accent-blue);"></i><h4 class="font-bold text-sm mb-1">SocketTimeoutException</h4><p class="text-xs" style="color: var(--text-muted);"><code class="font-mono text-[10px]">Connect timed out</code>. La IP <strong>no responde</strong>: firewall, otra red, o dispositivos aislados entre sí.</p></div></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4 "><div class="glass-panel p-4 border-l-4 " style="border-left-color: var(--accent-purple);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-question mr-2" style="color: var(--accent-purple);"></i>UnknownHostException</h4><div class="text-xs" style="color: var(--text-muted);">El nombre del host no se puede resolver. Escriban la IP con números.</div></div><div class="glass-panel p-4 border-l-4 " style="border-left-color: var(--accent-green);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-fire-flame-curved mr-2" style="color: var(--accent-green);"></i>Firewall y red</h4><div class="text-xs" style="color: var(--text-muted);">Si el firewall de Windows pregunta, hay que permitir el acceso a Java. Las dos computadoras deben estar en la <strong>misma red</strong>.</div></div></div>
+            </div>
+        </div>
+
+        <!-- ==================== Un hilo por cliente ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 ">
+                <i class="fa-solid fa-sitemap bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-5"><h2 class="text-5xl font-bold mb-2">Un servidor para muchos clientes</h2><p class="text-xl" style="color: var(--text-muted);">Un solo hilo no alcanza: mientras espera a uno, no puede atender a otro.</p></div><div class="glass-panel p-4 mb-4"><div class="flex flex-col md:flex-row items-center justify-center gap-4 text-xs"><div class="flex flex-col gap-2"><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(93,173,226,0.12);">Cliente 1</div><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(93,173,226,0.12);">Cliente 2</div><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(93,173,226,0.12);">Cliente 3</div></div><div class="flex flex-col items-center text-gray-400 text-xs"><i class="fa-solid fa-arrow-right text-xl"></i></div><div class="glass-panel px-4 py-3 text-center text-xs font-bold" style="background: rgba(244,208,63,0.14);"><strong>Servidor</strong><br>hilo principal<br><code class="font-mono text-[10px]">accept()</code> en un ciclo</div><div class="flex flex-col items-center text-gray-400 text-xs"><i class="fa-solid fa-arrow-right text-xl"></i><span class="mt-1" style="color: var(--text-muted);">crea un hilo por cada cliente</span></div><div class="flex flex-col gap-2"><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(72,201,176,0.12);">Hilo del cliente 1</div><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(72,201,176,0.12);">Hilo del cliente 2</div><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(72,201,176,0.12);">Hilo del cliente 3</div></div></div></div><div class="darcula-editor "><div class="darcula-header"><span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span><div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> Servidor.java</div></div><pre class="darcula-code p-3 text-xs leading-relaxed overflow-x-auto m-0"><code><span class="jk-keyword">while</span> (<span class="jk-keyword">true</span>) {
+    Socket conexion = servidor.<span class="jk-method">accept</span>();              <span class="jk-comment">// espera al siguiente cliente</span>
+    <span class="jk-keyword">new</span> Thread(() -&gt; <span class="jk-method">atender</span>(conexion)).<span class="jk-method">start</span>();     <span class="jk-comment">// un hilo nuevo se encarga de este cliente</span>
+}</code></pre></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4 "><div class="glass-panel p-4 border-l-4 mt-3" style="border-left-color: var(--accent-green);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-video mr-2" style="color: var(--accent-green);"></i>Como las salas de Zoom</h4><div class="text-xs" style="color: var(--text-muted);">Alguien atiende la entrada y, por cada persona que llega, abre una sala aparte con su propio anfitrión. Quien está en una sala no hace esperar a las demás.</div></div><div class="glass-panel p-4 border-l-4 mt-3" style="border-left-color: var(--una-gold);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-scale-unbalanced mr-2" style="color: var(--una-gold);"></i>Tiene un costo</h4><div class="text-xs" style="color: var(--text-muted);">Cada hilo ocupa memoria. Por eso existen los pools y los hilos virtuales. Para un chat de práctica, un hilo por cliente alcanza.</div></div></div>
+            </div>
+        </div>
+
+        <!-- ==================== Reenviar a todos ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 ">
+                <i class="fa-solid fa-bullhorn bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-5"><h2 class="text-5xl font-bold mb-2">Reenviar un mensaje a todos</h2><p class="text-xl" style="color: var(--text-muted);">Para un chat falta un paso: lo que escribe uno lo ven todos.</p></div><div class="grid grid-cols-1 md:grid-cols-[1.6fr_1fr] gap-4"><div><div class="glass-panel p-4 border-l-4 " style="border-left-color: var(--accent-purple);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-list mr-2" style="color: var(--accent-purple);"></i>Una lista de clientes conectados</h4><div class="text-xs" style="color: var(--text-muted);">El servidor guarda la <strong>salida de cada cliente</strong> en una lista. Cuando alguien escribe, se la manda a todos. Esa lista la <strong>modifican varios hilos a la vez</strong> (cuando alguien entra o sale) y a la vez se recorre: es una condición de carrera.</div></div><div class="glass-panel p-4 border-l-4 mt-3" style="border-left-color: var(--accent-green);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-shield-halved mr-2" style="color: var(--accent-green);"></i>La solución: una colección concurrente</h4><div class="text-xs" style="color: var(--text-muted);"><code class="font-mono text-[10px]">CopyOnWriteArrayList</code> encaja cuando se recorre mucho más de lo que se modifica: cada cambio copia el arreglo, pero quien recorre trabaja sobre una <strong>copia fija</strong> y nunca falla.</div></div></div><div><div class="darcula-editor "><div class="darcula-header"><span class="w-2.5 h-2.5 rounded-full" style="background: #ff5f57;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #febc2e;"></span><span class="w-2.5 h-2.5 rounded-full" style="background: #28c840;"></span><div class="darcula-tab ml-2"><i class="fa-brands fa-java text-xs" style="color: #e8833a;"></i> Servidor.java</div></div><pre class="darcula-code p-3 text-xs leading-relaxed overflow-x-auto m-0"><code><span class="jk-keyword">static</span> <span class="jk-keyword">final</span> List&lt;PrintWriter&gt; clientes =
+        <span class="jk-keyword">new</span> CopyOnWriteArrayList&lt;&gt;();
+
+<span class="jk-keyword">static</span> <span class="jk-keyword">void</span> <span class="jk-method">difundir</span>(String mensaje) {
+    <span class="jk-keyword">for</span> (PrintWriter cliente : clientes) {
+        cliente.<span class="jk-method">println</span>(mensaje);
+    }
+}</code></pre></div><p class="text-xs mt-3" style="color: var(--text-muted);"><i class="fa-solid fa-door-open mr-1"></i> Cuando <code class="font-mono text-[10px]">readLine()</code> devuelve <code class="font-mono text-[10px]">null</code>, el cliente se fue: hay que quitarlo de la lista y cerrar su conexión.</p></div></div>
+            </div>
+        </div>
+
+        <!-- ==================== El cliente con ventana ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 ">
+                <i class="fa-solid fa-comments bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-green);"></i>
+                <div class="text-center mb-5"><h2 class="text-5xl font-bold mb-2">Un cliente con ventana: se juntan los tres temas</h2><p class="text-xl" style="color: var(--text-muted);">Hilos, interfaz y sockets en un solo lugar.</p></div><div class="glass-panel p-4 mb-4"><div class="flex flex-col md:flex-row items-center justify-center gap-3 text-xs"><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(244,208,63,0.14);"><strong>Servidor</strong><br>manda un mensaje</div><div class="flex flex-col items-center text-gray-400 text-xs"><i class="fa-solid fa-arrow-right text-xl"></i><span class="mt-1" style="color: var(--text-muted);">socket</span></div><div class="glass-panel px-4 py-3 text-center text-xs font-bold" style="background: rgba(72,201,176,0.12);"><strong>Hilo oyente</strong><br><code class="font-mono text-[10px]">readLine()</code> espera</div><div class="flex flex-col items-center text-gray-400 text-xs"><i class="fa-solid fa-arrow-right text-xl"></i><span class="mt-1" style="color: var(--text-muted);">Platform.runLater</span></div><div class="glass-panel px-4 py-3 text-center text-xs " style="background: rgba(93,173,226,0.12);"><strong>Hilo de la interfaz</strong><br>agrega el mensaje a la lista</div></div></div><div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3"><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-blue);"><i class="fa-solid fa-ear-listen text-2xl mb-2" style="color: var(--accent-blue);"></i><h4 class="font-bold text-sm mb-1">Escuchar todo el tiempo</h4><p class="text-xs" style="color: var(--text-muted);">El cliente necesita escuchar al servidor siempre, pero <code class="font-mono text-[10px]">readLine()</code> bloquea. Por la regla 1, <strong>no puede ser el hilo de la interfaz</strong>: lo hace un hilo de fondo.</p></div><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-green);"><i class="fa-solid fa-window-restore text-2xl mb-2" style="color: var(--accent-green);"></i><h4 class="font-bold text-sm mb-1">Mostrar lo que llega</h4><p class="text-xs" style="color: var(--text-muted);">Por la regla 2, ese hilo no puede tocar la ventana. Cada mensaje se pide con <code class="font-mono text-[10px]">Platform.runLater</code>.</p></div><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--una-red);"><i class="fa-solid fa-plug-circle-bolt text-2xl mb-2" style="color: var(--una-red);"></i><h4 class="font-bold text-sm mb-1">Conectar también espera</h4><p class="text-xs" style="color: var(--text-muted);"><code class="font-mono text-[10px]">connect</code> puede tardar: se hace en una <strong>Task</strong>, con un tiempo máximo.</p></div></div><p class="text-xs text-center" style="color: var(--text-muted);"><i class="fa-solid fa-cubes mr-1"></i> Esto es lo que vamos a hacer en la práctica de hoy.</p>
+            </div>
+        </div>
+
+        <!-- ==================== Dónde se usa esto en el trabajo ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 ">
+                <i class="fa-solid fa-briefcase bg-icon text-[350px] -right-10 opacity-5" style="color: var(--una-gold);"></i>
+                <div class="text-center mb-5"><h2 class="text-5xl font-bold mb-2">Dónde se usa esto en el trabajo</h2><p class="text-xl" style="color: var(--text-muted);">Casi nadie escribe ServerSocket a mano, pero las piezas son las mismas.</p></div><div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4"><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-blue);"><i class="fa-solid fa-bolt text-2xl mb-2" style="color: var(--accent-blue);"></i><h4 class="font-bold text-sm mb-1">Netty</h4><p class="text-xs" style="color: var(--text-muted);">Un marco de red <strong>asíncrono y dirigido por eventos</strong> para construir servidores y clientes de protocolos. Menciona servidores TCP y UDP entre sus usos.</p></div><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-green);"><i class="fa-solid fa-globe text-2xl mb-2" style="color: var(--accent-green);"></i><h4 class="font-bold text-sm mb-1">WebSocket</h4><p class="text-xs" style="color: var(--text-muted);">El protocolo de los <strong>chats en el navegador</strong>: mensajes en los dos sentidos por una sola conexión entre una página web y un servidor, sobre TCP.</p></div><div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-purple);"><i class="fa-solid fa-feather text-2xl mb-2" style="color: var(--accent-purple);"></i><h4 class="font-bold text-sm mb-1">Hilos virtuales</h4><p class="text-xs" style="color: var(--text-muted);">Java 21: un hilo por petición con muchísimas conexiones, el estilo de nuestro servidor.</p></div></div><div class="glass-panel p-4 border-l-4 " style="border-left-color: var(--una-gold);"><h4 class="font-bold text-sm mb-2"><i class="fa-solid fa-lightbulb mr-2" style="color: var(--una-gold);"></i>La idea</h4><div class="text-xs" style="color: var(--text-muted);">Entender <strong>hilos, bloqueo, condiciones de carrera, protocolos y puertos</strong> es lo que permite entender cualquiera de esas herramientas. Lo de hoy es la base de lo que usan por dentro.</div></div>
+            </div>
+        </div>
+
+        <!-- ==================== Preguntas de repaso ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 ">
+                <i class="fa-solid fa-circle-question bg-icon text-[350px] -left-10 opacity-5" style="color: var(--accent-peach);"></i>
+                <div class="text-center mb-5"><h2 class="text-4xl font-bold mb-2">Preguntas para comprobar que entendieron</h2><p class="text-xl" style="color: var(--text-muted);">Respondan antes de abrir la respuesta.</p></div><div class="pregunta-box"><p><i class="fa-solid fa-circle-question mr-2 text-yellow-600"></i><strong>Pregunta 1:</strong></p><p class="text-sm">¿En qué hilo se ejecuta la tarea si llaman a <code class="font-mono text-xs">run()</code> en lugar de <code class="font-mono text-xs">start()</code>?</p><button class="toggle-respuesta-btn" onclick="toggleRespuesta(this)"><i class="fa-solid fa-eye"></i> Ver respuesta</button><span class="respuesta"><i class="fa-solid fa-lightbulb"></i> En el mismo hilo que lo llamó (main): no se crea ningún hilo nuevo. Solo start() crea el hilo.</span></div><div class="pregunta-box"><p><i class="fa-solid fa-window-maximize mr-2 text-yellow-600"></i><strong>Pregunta 2:</strong></p><p class="text-sm">Una ventana guarda en una base lenta dentro del manejador de un clic. ¿Qué pasa y cómo se evita?</p><button class="toggle-respuesta-btn" onclick="toggleRespuesta(this)"><i class="fa-solid fa-eye"></i> Ver respuesta</button><span class="respuesta"><i class="fa-solid fa-lightbulb"></i> El hilo de la interfaz queda ocupado y la ventana se congela. Se evita pasando el trabajo lento a una Task (hilo de fondo) y mostrando el resultado en onSucceeded.</span></div><div class="pregunta-box"><p><i class="fa-solid fa-bolt mr-2 text-yellow-600"></i><strong>Pregunta 3:</strong></p><p class="text-sm">¿Por qué <code class="font-mono text-xs">contador++</code> no es seguro entre dos hilos? ¿Cómo se arregla?</p><button class="toggle-respuesta-btn" onclick="toggleRespuesta(this)"><i class="fa-solid fa-eye"></i> Ver respuesta</button><span class="respuesta"><i class="fa-solid fa-lightbulb"></i> Son tres pasos (leer, sumar, escribir) que se pueden intercalar y perder una suma. Se arregla con un AtomicInteger, con synchronized, o evitando compartir el dato.</span></div><div class="pregunta-box"><p><i class="fa-solid fa-server mr-2 text-yellow-600"></i><strong>Pregunta 4:</strong></p><p class="text-sm">¿Por qué un servidor necesita un hilo por cliente?</p><button class="toggle-respuesta-btn" onclick="toggleRespuesta(this)"><i class="fa-solid fa-eye"></i> Ver respuesta</button><span class="respuesta"><i class="fa-solid fa-lightbulb"></i> Porque accept() y readLine() esperan. Con un solo hilo, mientras espera a un cliente no puede atender a otro ni aceptar uno nuevo.</span></div><div class="pregunta-box"><p><i class="fa-solid fa-window-restore mr-2 text-yellow-600"></i><strong>Pregunta 5:</strong></p><p class="text-sm">¿Por qué el hilo que escucha al servidor no cambia la ventana directamente? ¿Qué usa?</p><button class="toggle-respuesta-btn" onclick="toggleRespuesta(this)"><i class="fa-solid fa-eye"></i> Ver respuesta</button><span class="respuesta"><i class="fa-solid fa-lightbulb"></i> Porque la ventana solo se toca desde el hilo de la interfaz. Usa Platform.runLater, que pone el cambio en la cola de ese hilo.</span></div>
+            </div>
+        </div>
+
+        <!-- ==================== Fuentes ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10 ">
+                <i class="fa-solid fa-book bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-blue);"></i>
+                <div class="text-center mb-5"><h2 class="text-4xl font-bold mb-2">Fuentes de esta clase</h2><p class="text-xl" style="color: var(--text-muted);">Documentación oficial y estándares. La guía TEMA 3 las cita una por una.</p></div><div class="glass-panel p-5"><ul class="text-xs space-y-2" style="color: var(--text-muted);">
+  <li><i class="fa-solid fa-link mr-2" style="color: var(--accent-blue);"></i><strong>Oracle.</strong> The Java Tutorials, Lesson: Concurrency (procesos e hilos, sincronización, condiciones de carrera, deadlock, colecciones concurrentes, pools). <a class="underline" href="https://docs.oracle.com/javase/tutorial/essential/concurrency/" target="_blank" rel="noopener">docs.oracle.com/javase/tutorial/essential/concurrency</a></li>
+  <li><i class="fa-solid fa-link mr-2" style="color: var(--accent-blue);"></i><strong>Oracle.</strong> The Java Tutorials, Lesson: All About Sockets. <a class="underline" href="https://docs.oracle.com/javase/tutorial/networking/sockets/" target="_blank" rel="noopener">docs.oracle.com/javase/tutorial/networking/sockets</a></li>
+  <li><i class="fa-solid fa-link mr-2" style="color: var(--accent-green);"></i><strong>Oracle.</strong> Java SE 21 API: Thread, Thread.State, ExecutorService, BlockingQueue, ServerSocket, Socket. <a class="underline" href="https://docs.oracle.com/en/java/javase/21/docs/api/" target="_blank" rel="noopener">docs.oracle.com/en/java/javase/21/docs/api</a></li>
+  <li><i class="fa-solid fa-link mr-2" style="color: var(--accent-green);"></i><strong>OpenJFX.</strong> JavaFX 21: Application, Platform, Task. <a class="underline" href="https://openjfx.io/javadoc/21/" target="_blank" rel="noopener">openjfx.io/javadoc/21</a></li>
+  <li><i class="fa-solid fa-link mr-2" style="color: var(--una-gold);"></i><strong>OpenJDK.</strong> JEP 444: Virtual Threads. <a class="underline" href="https://openjdk.org/jeps/444" target="_blank" rel="noopener">openjdk.org/jeps/444</a></li>
+  <li><i class="fa-solid fa-link mr-2" style="color: var(--una-gold);"></i><strong>IETF.</strong> RFC 9293 (TCP), RFC 768 (UDP), RFC 6335 (rangos de puertos), RFC 6455 (WebSocket). <a class="underline" href="https://www.rfc-editor.org/" target="_blank" rel="noopener">rfc-editor.org</a></li>
+  <li><i class="fa-solid fa-link mr-2" style="color: var(--una-red);"></i><strong>Gerrand, A.</strong> "Concurrency is not parallelism", The Go Blog, 2013. <a class="underline" href="https://go.dev/blog/waza-talk" target="_blank" rel="noopener">go.dev/blog/waza-talk</a></li>
+  </ul></div>
+            </div>
+        </div>
+
+        <!-- ==================== CIERRE ==================== -->
+        <div class="slide">
+            <div class="w-full max-w-[92%] mx-auto relative z-10">
+                <i class="fa-solid fa-flag-checkered bg-icon text-[350px] -right-10 opacity-5" style="color: var(--accent-purple);"></i>
+                <div class="text-center mb-4">
+                    <h2 class="text-4xl font-bold mb-2">Cierre — ahora lo programamos</h2>
+                    <p class="text-base" style="color: var(--text-muted);">Esta fue la teoría. Lo que sigue es construir el chat, paso a paso, entre computadoras.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-green);">
+                        <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Paso 1</p>
+                        <p class="font-bold text-sm">Un servidor que devuelve lo que le escriben</p>
+                    </div>
+                    <div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-blue);">
+                        <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Paso 2</p>
+                        <p class="font-bold text-sm">Un hilo por cliente</p>
+                    </div>
+                    <div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--una-gold);">
+                        <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Paso 3</p>
+                        <p class="font-bold text-sm">Nombres y reparto a todos</p>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 border-l-4 mb-4" style="border-left-color: var(--accent-blue);">
+                    <h4 class="font-bold text-base mb-1"><i class="fa-solid fa-book-open mr-2" style="color: var(--accent-blue);"></i>Para repasar</h4>
+                    <p class="text-xs" style="color: var(--text-muted);">Programa, proceso e hilo · concurrencia, paralelismo y asincronía · <code class="font-mono text-[10px]">start</code> frente a <code class="font-mono text-[10px]">run</code> y los seis estados · el hilo de la interfaz, <code class="font-mono text-[10px]">Task</code> y <code class="font-mono text-[10px]">Platform.runLater</code> · condición de carrera y sus cuatro herramientas · deadlock · <code class="font-mono text-[10px]">BlockingQueue</code> · IP, puerto, protocolo, TCP y UDP · <code class="font-mono text-[10px]">ServerSocket</code> y <code class="font-mono text-[10px]">Socket</code> · un hilo por cliente · el cliente con ventana.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--una-red);">
+                        <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Entrega</p>
+                        <p class="font-bold text-sm">Proyecto #2: 1 de noviembre</p>
+                    </div>
+                    <div class="glass-panel p-4 text-center border-t-4" style="border-color: var(--accent-purple);">
+                        <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted);">Evaluación</p>
+                        <p class="font-bold text-sm">Examen final individual: 3 de noviembre</p>
+                    </div>
+                </div>
+
+                <div class="text-center mt-6">
+                    <button class="px-8 py-3 rounded-full text-lg font-bold tint-red transition-transform hover:scale-105 shadow-xl">
+                        <i class="fa-solid fa-network-wired mr-2"></i> ¡A conectar computadoras de verdad!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <button class="float-btn" id="prevBtn" onclick="changeSlide(-1)"><i class="fa-solid fa-arrow-left"></i></button>
+    <button class="float-btn" id="nextBtn" onclick="changeSlide(1)"><i class="fa-solid fa-arrow-right"></i></button>
+
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+    </div>
+
+    <script src="../../../assets/js/presentacion.js"></script>
+
+    <!-- ========== MODAL: GLOSARIO FLOTANTE ========== -->
+    <div class="modal-backdrop glosario-modal" id="modal-glosario">
+        <div class="modal-content max-w-lg">
+            <button class="close-modal" onclick="closeModal('modal-glosario')"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-2xl font-bold mb-4 text-center" style="color: var(--accent-blue);">
+                <i class="fa-solid fa-book-open mr-2"></i> Glosario de Términos Clave — Semana 15
+            </h3>
+            <ul class="text-sm space-y-3">
+                <li><strong>Proceso:</strong> un programa en ejecución, con su propia memoria. Los procesos están aislados entre sí.</li>
+                <li><strong>Hilo (thread):</strong> una línea de ejecución dentro de un proceso. Los hilos de un proceso comparten su memoria.</li>
+                <li><strong>Concurrencia:</strong> organizar un programa en tareas que avanzan de manera independiente, aunque se alternen en un solo núcleo.</li>
+                <li><strong>Paralelismo:</strong> ejecutar varias cosas en el mismo instante, con varios núcleos.</li>
+                <li><strong>Asincronía:</strong> pedir algo y seguir con otra cosa sin esperar el resultado.</li>
+                <li><strong>Hilo de la interfaz:</strong> el único hilo de JavaFX que dibuja la ventana y atiende los eventos. Si se ocupa con algo lento, la ventana se congela.</li>
+                <li><strong>Task / Platform.runLater:</strong> Task hace trabajo lento en un hilo de fondo y avisa al terminar. runLater le pide un cambio al hilo de la interfaz.</li>
+                <li><strong>Condición de carrera:</strong> error que ocurre cuando dos hilos modifican a la vez el mismo dato sin coordinarse, y se pierde una actualización.</li>
+                <li><strong>Sección crítica:</strong> zona de código que usa un dato compartido y que debe ejecutar un solo hilo a la vez.</li>
+                <li><strong>synchronized:</strong> toma el cerrojo de un objeto al entrar a un bloque, y lo libera al salir. Los demás hilos esperan en BLOCKED.</li>
+                <li><strong>Interbloqueo (deadlock):</strong> dos o más hilos bloqueados para siempre, cada uno esperando algo que solo el otro puede dar.</li>
+                <li><strong>BlockingQueue:</strong> cola segura para varios hilos: put espera si está llena y take espera si está vacía.</li>
+                <li><strong>IP y puerto:</strong> la IP identifica a una computadora en la red; el puerto, un servicio dentro de ella (0 a 65 535).</li>
+                <li><strong>Protocolo:</strong> las reglas de la conversación entre dos programas: quién habla primero y qué formato tiene cada mensaje.</li>
+                <li><strong>TCP / UDP:</strong> TCP entrega un flujo confiable y en orden; UDP envía datagramas sin garantía de entrega.</li>
+                <li><strong>Socket / ServerSocket:</strong> el extremo de una conexión de red; ServerSocket es el que espera clientes y Socket el que se conecta.</li>
+                <li><strong>Bloqueo (blocking):</strong> cuando una llamada como accept() o readLine() deja al hilo esperando; mientras espera, no puede hacer otra cosa.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function toggleRespuesta(btn) {
+            const box = btn.closest('.pregunta-box');
+            const respuesta = box ? box.querySelector('.respuesta') : null;
+            if (!respuesta) return;
+            const visible = respuesta.classList.toggle('visible');
+            btn.innerHTML = visible
+                ? '<i class="fa-solid fa-eye-slash"></i> Ocultar respuesta'
+                : '<i class="fa-solid fa-eye"></i> Ver respuesta';
+        }
+    </script>
+
+</body>
+</html>
