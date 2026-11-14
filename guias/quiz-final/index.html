@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía de estudio — Quiz final | Programación III</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f8fafc; --panel:#ffffff; --fg:#1e293b; --muted:#56627a; --line:#e2e8f0;
+  --red:#c94b4b; --red-soft:#fdecec; --gold:#9a7b08; --gold-soft:#fbf4dc;
+  --blue:#2f7fb5; --blue-soft:#e8f2fa; --ok:#15803d; --ok-soft:#e8f7ee; --hint:#b45309; --hint-soft:#fff4e5;
+  --code-bg:#f1f4f8;
+  --f-body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12161d; --panel:#1a2029; --fg:#e5e9f0; --muted:#9aa5b5; --line:#2c3442;
+  --red:#ef7d7d; --red-soft:#3a2224; --gold:#e3bf43; --gold-soft:#332c16;
+  --blue:#6cb6e6; --blue-soft:#182f3e; --ok:#4ade80; --ok-soft:#163021; --hint:#fbbf24; --hint-soft:#352a12;
+  --code-bg:#0f1319; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12161d; --panel:#1a2029; --fg:#e5e9f0; --muted:#9aa5b5; --line:#2c3442;
+  --red:#ef7d7d; --red-soft:#3a2224; --gold:#e3bf43; --gold-soft:#332c16;
+  --blue:#6cb6e6; --blue-soft:#182f3e; --ok:#4ade80; --ok-soft:#163021; --hint:#fbbf24; --hint-soft:#352a12;
+  --code-bg:#0f1319; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.6}
+.wrap{max-width:880px;margin:0 auto;padding-left:16px;padding-right:16px}
+h1,h2,h3,h4{line-height:1.25;margin:0;text-wrap:balance}
+p{margin:0}
+a{color:var(--blue)}
+code,pre{font-family:var(--f-mono);font-size:.87em}
+code{background:var(--code-bg);padding:.08em .35em;border-radius:4px;overflow-wrap:anywhere}
+pre{background:var(--code-bg);padding:10px 14px;border-radius:8px;overflow-x:auto;margin:0;border:1px solid var(--line);line-height:1.5}
+pre code{background:none;padding:0;overflow-wrap:normal}
+
+/* Encabezado */
+header.top{background:var(--panel);border-bottom:1px solid var(--line)}
+header.top .wrap{padding-block:22px 20px;display:grid;gap:10px}
+.toprow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.back{font-weight:700;font-size:.9rem;text-decoration:none}
+.theme{font:inherit;font-size:.85rem;font-weight:700;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}
+.eyebrow{font-size:.76rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--red)}
+header h1{font-size:clamp(1.7rem,4.5vw,2.3rem);font-weight:800}
+header p{color:var(--muted);max-width:68ch}
+.facts{display:flex;flex-wrap:wrap;gap:8px}
+.fact{font-size:.84rem;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--gold-soft);border:1px solid var(--line)}
+
+/* Navegación de bloques */
+nav.blocks{position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
+nav.blocks .wrap{display:flex;gap:6px;overflow-x:auto;padding-block:8px}
+nav.blocks a{flex:0 0 auto;text-decoration:none;color:var(--fg);font-weight:700;font-size:.84rem;padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);display:flex;gap:6px;align-items:center}
+nav.blocks a:hover,nav.blocks a:focus-visible{border-color:var(--red);outline:none}
+nav.blocks .n{color:var(--red);font-variant-numeric:tabular-nums}
+nav.blocks .prog{font-size:.72rem;color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
+
+/* Filtro de vista: Todo / Materia / Preguntas */
+.vista{flex:0 0 auto;display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--bg)}
+.vista button{font:inherit;font-size:.82rem;font-weight:800;padding:6px 11px;border:0;background:transparent;color:var(--muted);cursor:pointer}
+.vista button + button{border-left:1px solid var(--line)}
+.vista button[aria-pressed="true"]{background:var(--red);color:#fff}
+.vista button:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}
+.sep{flex:0 0 1px;background:var(--line);margin-block:4px}
+.materia-part{display:grid;gap:18px}
+body[data-vista="preguntas"] .materia-part,
+body[data-vista="preguntas"] #formato,
+body[data-vista="preguntas"] #repaso{display:none}
+body[data-vista="materia"] .practice{display:none}
+.solo-preguntas{display:none;background:var(--blue-soft);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:.92rem}
+body[data-vista="preguntas"] .solo-preguntas{display:block}
+.practice{scroll-margin-top:64px}
+
+main .wrap{display:grid;gap:48px;padding-block:30px 64px}
+main .wrap > *, .bloque > *, .cards > *{min-width:0}
+.intro{display:grid;gap:14px}
+.intro h2,.bloque > .bhead h2{font-size:1.45rem;font-weight:800}
+.intro h3{font-size:1.05rem;font-weight:800}
+.welcome{background:var(--blue-soft);border:1px solid var(--line);border-radius:12px;padding:14px 18px;display:grid;gap:6px}
+.types{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.type{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px 14px;display:grid;gap:3px}
+.type b{font-size:.95rem}
+.type span{font-size:.88rem;color:var(--muted)}
+ul.tips{margin:0;padding-left:1.2em;display:grid;gap:4px}
+
+/* Bloques */
+.bloque{display:grid;gap:18px;scroll-margin-top:64px}
+.bhead{display:grid;gap:4px;border-top:3px solid var(--red);padding-top:14px}
+.bnum{font-size:.76rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--red)}
+.bhead p{color:var(--muted);font-size:.95rem}
+.sub{font-size:1.05rem;font-weight:800}
+.concepts{display:grid;gap:10px}
+.concept{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;display:grid;gap:6px}
+.concept h4{font-size:1rem;font-weight:800}
+.concept p{max-width:72ch}
+.ok-line{color:var(--ok);font-weight:700}
+.tag{display:inline-block;font-size:.68rem;font-weight:800;letter-spacing:.06em;padding:1px 7px;border-radius:999px;background:var(--blue-soft);color:var(--blue);vertical-align:middle;margin-left:6px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--gold-soft);font-weight:800}
+tr:last-child td{border-bottom:0}
+.remember{background:var(--gold-soft);border:1px solid var(--line);border-radius:10px;padding:12px 16px;display:grid;gap:6px}
+.remember h4{color:var(--gold);font-size:.8rem;letter-spacing:.1em;text-transform:uppercase}
+.remember ul{margin:0;padding-left:1.2em;display:grid;gap:4px}
+
+/* Práctica */
+.practice{display:grid;gap:12px}
+.phead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.score{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.cards{display:grid;gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;gap:10px}
+.card .k{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.opts{display:grid;gap:6px}
+.opt{font:inherit;text-align:left;cursor:pointer;display:block;width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);line-height:1.45}
+.opt:hover:not([disabled]){border-color:var(--blue)}
+.opt:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.opt.right{background:var(--ok-soft);border-color:var(--ok);font-weight:700}
+.opt.tried{background:var(--hint-soft);border-color:var(--hint)}
+.opt[disabled]{cursor:default}
+.fill{display:flex;gap:8px;flex-wrap:wrap}
+.fill input{flex:1 1 200px;min-width:0;font:inherit;font-family:var(--f-mono);font-size:.92rem;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg)}
+.fill input:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+.btn{font:inherit;font-weight:700;font-size:.88rem;padding:8px 14px;border-radius:8px;border:1px solid var(--red);background:var(--red);color:#fff;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--red)}
+.btn:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.fb{font-size:.93rem;border-radius:8px;padding:9px 12px}
+.fb.ok{background:var(--ok-soft);border-left:4px solid var(--ok)}
+.fb.hint{background:var(--hint-soft);border-left:4px solid var(--hint)}
+
+.lab{border:1px dashed var(--blue);border-radius:12px;padding:14px 16px;display:grid;gap:8px;background:var(--blue-soft)}
+.lab h4{color:var(--blue);font-size:1rem}
+.lab ol{margin:0;padding-left:1.3em;display:grid;gap:4px}
+
+.check{display:grid;gap:12px}
+.checklist{display:grid;gap:6px}
+.checklist label{display:flex;gap:10px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer}
+.checklist input{margin-top:.3em;accent-color:var(--red);width:18px;height:18px;flex:0 0 auto}
+footer{color:var(--muted);font-size:.85rem;border-top:1px solid var(--line)}
+footer .wrap{padding-block:18px}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap">
+  <div class="toprow">
+    <a class="back" href="../../">← Volver a las clases</a>
+    <button class="theme" type="button" id="themeBtn">Cambiar tema</button>
+  </div>
+  <div class="eyebrow">Programación III · EIF206 · UNA Sede Regional Central Occidente</div>
+  <h1>Guía de estudio para el quiz final</h1>
+  <p>Aquí está todo lo que entra en el quiz, explicado de forma breve y con ejemplos. Lea cada bloque, revise las tablas de repaso y practique: cada ejercicio le explica la respuesta correcta, acierte o no.</p>
+  <div class="facts">
+    <span class="fact">Duración: 3 horas</span>
+    <span class="fact">En el aula virtual (Moodle)</span>
+    <span class="fact">Materia: todo el curso</span>
+    <span class="fact">Grupos 40 y 41</span>
+  </div>
+</div></header>
+
+<nav class="blocks" aria-label="Bloques de la guía"><div class="wrap" id="nav"></div></nav>
+
+<main><div class="wrap">
+
+<p class="solo-preguntas">Está viendo <b>solo las preguntas de práctica</b>. Para volver a ver la materia, elija <b>Todo</b> o <b>Materia</b> en el menú de arriba.</p>
+
+<section class="intro" id="formato">
+  <h2>Antes de empezar</h2>
+  <div class="welcome">
+    <p><b>Este semestre perdimos varias clases por motivos ajenos a ustedes.</b> Por eso esta guía reúne lo esencial de cada tema en un solo lugar. No hace falta memorizar las presentaciones completas: si entiende lo que está aquí, está preparado para el quiz.</p>
+    <p>Sugerencia: estudie un bloque por sesión, practique y, si algo no le queda claro, vuelva a la presentación de esa clase.</p>
+  </div>
+  <h3>Tipos de pregunta que va a encontrar</h3>
+  <div class="types">
+    <div class="type"><b>Opción múltiple</b><span>Una sola respuesta correcta. Algunas traen código para leer.</span></div>
+    <div class="type"><b>Selección múltiple</b><span>«Seleccione todas las correctas». Marque solo las que está seguro.</span></div>
+    <div class="type"><b>Verdadero / Falso</b><span>Fíjese en palabras como «siempre», «nunca» o «imposible».</span></div>
+    <div class="type"><b>Emparejamiento</b><span>Relacione cada concepto con su definición. Puede haber opciones de más.</span></div>
+    <div class="type"><b>Completar código</b><span>Escriba el método o la palabra que falta, por ejemplo <code>executeUpdate</code>.</span></div>
+    <div class="type"><b>Seleccionar o arrastrar palabras</b><span>Complete un texto eligiendo la palabra de cada espacio.</span></div>
+    <div class="type"><b>Numérica</b><span>Responda solo con el número.</span></div>
+    <div class="type"><b>Desarrollo</b><span>Explicar y escribir un poco de código. Se califica con rúbrica, así que cuenta lo que sí sabe.</span></div>
+  </div>
+  <h3>Consejos para el día del quiz</h3>
+  <ul class="tips">
+    <li>Muchas preguntas usan el código de los laboratorios: Streaming, Taquilla de cine, Museo y Mini-Discord.</li>
+    <li>En las preguntas de código, siga la ejecución línea por línea antes de responder.</li>
+    <li>Reserve unos 45 minutos para las preguntas de desarrollo.</li>
+    <li>Los temas marcados con <span class="tag">G40</span> o <span class="tag">G41</span> solo se vieron en ese grupo, y solo salen en el quiz de ese grupo.</li>
+  </ul>
+</section>
+
+<div id="bloques"></div>
+
+<section class="check" id="repaso">
+  <h2>Lista de repaso final</h2>
+  <p>Marque lo que ya domina. Se guarda en su navegador.</p>
+  <div class="checklist" id="checks"></div>
+</section>
+
+</div></main>
+
+<footer><div class="wrap">Programación III — EIF206 · Universidad Nacional, Costa Rica. Guía de estudio basada en las presentaciones y laboratorios del curso.</div></footer>
+
+<script>
+/* Cada bloque: conceptos (qué es lo correcto + ejemplo), tabla de repaso, recuerde, práctica y laboratorio. */
+const BLOQUES = [
+{
+  id:"git", titulo:"Fundamentos y Git", clases:"Clase 1",
+  intro:"Qué hace que un software sea profesional y cómo se trabaja en equipo con Git.",
+  conceptos:[
+    {t:"Los 5 pilares del software profesional", d:"<b>Robustez:</b> maneja los errores sin caerse. <b>Flexibilidad:</b> permite agregar funciones sin reescribir lo que ya existe. <b>Fluidez:</b> el código es limpio y otras personas lo entienden. <b>Portabilidad:</b> corre igual en Windows, Mac o Linux. <b>Reutilización:</b> usa bibliotecas ya probadas en vez de reinventar la rueda."},
+    {t:"Ejemplos para reconocerlos", d:"Un cajero que muestra «Fondos insuficientes» en vez de cerrarse = robustez. Uber agregando PayPal sin rehacer su app = flexibilidad. Variables llamadas <code>totalFactura</code> en vez de <code>x1</code> = fluidez. Programar en Mac y presentar en Windows sin cambios = portabilidad. Usar JFreeChart para gráficos = reutilización."},
+    {t:"Git y GitHub", d:"<b>Git</b> guarda el historial de versiones en su computadora. <b>GitHub</b> es la nube donde vive el repositorio. En los laboratorios usamos <b>GitHub Desktop</b> porque se instala sin permisos de administrador."},
+    {t:"Conflicto de merge", d:"Git une los cambios solo casi siempre. El conflicto aparece cuando dos personas cambian <b>la misma línea del mismo archivo</b>: Git le pide a una persona que elija qué versión queda."}
+  ],
+  tabla:{cab:["Operación","Qué hace","Para recordar"], filas:[
+    ["Commit","Guarda una «foto» de sus cambios en su computadora","Es local"],
+    ["Push","Envía sus commits a GitHub","Sube"],
+    ["Clone","Descarga el proyecto completo por primera vez","Primer día"],
+    ["Fetch","Revisa si hay cambios en la nube, sin tocar sus archivos","Solo mira"],
+    ["Pull","Descarga los cambios y los aplica en su copia","Mira y trae"],
+    ["Merge","Une su código con el de otra rama","Fusiona"],
+    ["Pull Request","Pide que otra persona revise antes de unir","Pide permiso"]]},
+  recuerde:["Fetch solo revisa; Pull además descarga y aplica.","Push envía commits: primero haga commit."],
+  practica:[
+    {t:"mc", q:"Su equipo debe aceptar SINPE Móvil mañana y, gracias al diseño modular, solo hay que agregar una pieza nueva. ¿Qué pilar se está aprovechando?", o:["Flexibilidad","Robustez","Portabilidad","Fluidez"], a:0, e:"Flexibilidad es poder agregar funciones nuevas sin reescribir lo que ya funciona."},
+    {t:"mc", q:"Usted sabe que María subió código anoche y lo quiere en su computadora. ¿Qué operación usa?", o:["Pull","Fetch","Commit","Clone"], a:0, e:"Pull descarga y aplica. Fetch solo le habría avisado de que hay cambios."},
+    {t:"fill", q:"¿Qué operación de Git se usa la primera vez para descargar un proyecto completo desde GitHub?", a:["clone"], r:"Clone", e:"Clone descarga todo el historial y los archivos. Después se usa Pull para traer cambios nuevos."},
+    {t:"mc", q:"¿Cuándo ocurre un conflicto de merge?", o:["Cuando dos personas cambian la misma línea del mismo archivo","Cada vez que se hace Push","Cuando se borra la carpeta local","Cuando se hace un commit sin mensaje"], a:0, e:"Git no puede decidir solo qué versión de esa línea conservar, así que se lo pregunta a una persona."}
+  ],
+  lab:{titulo:"Práctica sugerida: Laboratorio 0", pasos:["Cree un repositorio en GitHub Desktop (File → New Repository).","Agregue <code>Laboratorio0.txt</code>, haga commit y publíquelo.","Modifique el archivo, haga otro commit y Push.","Borre la carpeta local y recupérela con Clone."]}
+},
+{
+  id:"java", titulo:"Características de Java", clases:"Clase 2",
+  intro:"Cómo se ejecuta Java, cómo maneja la memoria y qué tipos de datos tiene.",
+  conceptos:[
+    {t:"Compilación híbrida y JVM", d:"<code>javac</code> convierte el <code>.java</code> en un <code>.class</code> con <b>bytecode</b>, un código intermedio. La <b>JVM</b> de cada sistema operativo traduce ese bytecode a instrucciones nativas. Por eso el mismo <code>.class</code> corre en cualquier sistema: «Write Once, Run Anywhere»."},
+    {t:"Garbage Collector (GC)", d:"Libera automáticamente los objetos que ya nadie referencia; en C++ hay que usar <code>delete</code> a mano. <b>Ojo:</b> si su programa guarda referencias que ya no usa (por ejemplo, en una lista que nunca limpia), el GC no las puede liberar y hay una <b>fuga de memoria</b>."},
+    {t:"Wrappers y autoboxing", d:"Cada primitivo tiene una clase envoltorio: <code>int → Integer</code>, <code>double → Double</code>, <code>char → Character</code>… Se usan para tres cosas: guardar números en colecciones (<code>ArrayList&lt;Integer&gt;</code>), permitir <code>null</code> y usar métodos como <code>Integer.parseInt(\"123\")</code>. Son objetos, así que son más lentos que los primitivos.", c:"Integer x = 5;   // autoboxing: int → Integer\nint y = x;       // unboxing: Integer → int"},
+    {t:"static", d:"Un atributo <code>static</code> tiene <b>una sola copia compartida</b> por todos los objetos de la clase. Si no es static, cada objeto tiene la suya. Pregúntese: «¿este valor debería ser igual para todos?». Si sí, va con static. <code>main</code> es static porque la JVM lo llama antes de que exista cualquier objeto.", c:"private static int totalCarros = 0; // uno para todos\nprivate String color;               // uno por cada carro\n// 3 x new Carro(...) → Carro.getTotalCarros() devuelve 3"},
+    {t:"Recursividad", d:"Una función que se llama a sí misma. Necesita un <b>caso base</b> que la detenga y un <b>caso recursivo</b> que acerque el problema al caso base. Sin caso base se llama infinitamente y ocurre un <b>StackOverflowError</b>.", c:"public static int factorial(int n) {\n    if (n <= 1) return 1;          // caso base\n    return n * factorial(n - 1);   // caso recursivo\n}"}
+  ],
+  tabla:{cab:["Primitivo","Tamaño","Wrapper"], filas:[
+    ["byte","8 bits","Byte"],["short","16 bits","Short"],["int","32 bits","Integer"],["long","64 bits","Long"],
+    ["float","32 bits","Float"],["double","64 bits","Double"],["char","16 bits (Unicode)","Character"],["boolean","true / false","Boolean"]]},
+  tabla2:{cab:["En C#","En Java"], filas:[
+    ["List&lt;T&gt;","ArrayList&lt;T&gt;"],["lista.Add(x)","lista.add(x)"],["foreach (Estudiante e in lista)","for (Estudiante e : lista)"],
+    ["Console.WriteLine(...)","System.out.println(...)"],["Métodos en PascalCase (GetNombre)","Métodos en camelCase (getNombre)"]]},
+  recuerde:["Java tiene 8 tipos primitivos.","Los literales enteros grandes de tipo long llevan L: <code>8_000_000_000L</code>.","Hacer unboxing de un Integer que vale null lanza NullPointerException."],
+  practica:[
+    {t:"mc", q:"¿Qué produce javac?", o:["Un archivo .class con bytecode","Un .exe de Windows","Código máquina del procesador","Un .jar con el código fuente"], a:0, e:"El bytecode es el idioma intermedio que entiende cualquier JVM."},
+    {t:"mc", q:"¿Qué ocurre al ejecutar este código?", c:"Integer x = null;\nint y = x;", o:["NullPointerException","y vale 0","y vale null","Error de compilación"], a:0, e:"Un int no puede ser null. Al hacer unboxing de null, Java lanza NullPointerException."},
+    {t:"fill", q:"Escriba la llamada que convierte el texto \"42\" en un int (Clase.metodo).", a:["integer.parseint","integer.parseint(\"42\")","integer.parseint()"], r:"Integer.parseInt(\"42\")", e:"Es un método static de la clase Integer: no necesita crear un objeto."},
+    {t:"mc", q:"Se crean 4 objetos Estudiante y cada constructor hace <code>total++</code>. Si <code>total</code> es static, ¿cuánto vale al final?", o:["4","1","0","Depende del objeto"], a:0, e:"Con static hay una sola copia compartida que los 4 constructores incrementan. Sin static, cada objeto tendría 1."},
+    {t:"mc", q:"¿Para qué <b>no</b> sirve un wrapper como Integer?", o:["Para que los cálculos en bucles sean más rápidos","Para guardar números en un ArrayList","Para representar «no hay dato» con null","Para convertir texto a número"], a:0, e:"Los wrappers son objetos en el Heap: son más lentos que los primitivos. Para cálculos intensivos use int."}
+  ],
+  lab:{titulo:"Práctica sugerida: Laboratorio 1 (C# → Java)", pasos:["Cree la clase Estudiante (atributos private, constructor y getters).","En Main use <code>ArrayList&lt;Estudiante&gt;</code> y un for-each para el promedio (84.666…).","Agregue un contador <code>static</code> de estudiantes."]}
+},
+{
+  id:"poo", titulo:"Clases, objetos y modularidad", clases:"Clase 3",
+  intro:"Cómo se organiza un proyecto y cómo se comportan los objetos en memoria.",
+  conceptos:[
+    {t:"Estructura del proyecto en IntelliJ", d:"<code>src/</code> guarda el código fuente; <code>out/</code> o <code>target/</code>, el código compilado; <code>.idea/</code>, la configuración personal del IDE, que <b>no</b> se sube a Git. Todo archivo .java va dentro de src/."},
+    {t:"Paquete vs. carpeta", d:"Un <b>paquete</b> es un espacio de nombres de Java que se escribe con puntos (<code>seguridad.streaming.model</code>). Cada archivo lo declara en su primera línea (<code>package seguridad.streaming.model;</code>). Permite tener dos clases con el mismo nombre en paquetes distintos. En IntelliJ use <b>New → Package</b>."},
+    {t:"Stack, Heap y aliasing", d:"Todo lo creado con <code>new</code> vive en el <b>Heap</b>. Una variable de objeto guarda una <b>referencia</b> (una dirección). Asignar <code>b = a</code> no copia el objeto: las dos variables apuntan al mismo. Eso se llama <b>aliasing</b>.", c:"Cuenta tv = new Cuenta(\"ana@mail.com\");\nCuenta movil = tv;      // mismo objeto, no una copia\nmovil.bloquearCuenta();\ntv.isBloqueada();       // true"},
+    {t:"int o Integer para datos opcionales", d:"Si un dato puede no existir (como un PIN parental que el usuario no configuró), use <code>Integer</code>: puede valer <code>null</code> = «no configurado». Un <code>int</code> valdría 0 y el sistema creería que el PIN es 0000."},
+    {t:"Genéricos (&lt;T&gt;)", d:"Le ponen una «etiqueta» de tipo a una clase o colección. El compilador revisa los tipos mientras usted escribe, sin castings manuales. Sin genéricos, un error de tipo aparece al ejecutar como <code>ClassCastException</code>.", c:"ArrayList<Cuenta> cuentas = new ArrayList<>();\ncuentas.add(\"texto\");   // el compilador lo marca en rojo\nCuenta c = cuentas.get(0);  // sin casting"},
+    {t:"record", d:"Clase de datos <b>inmutable</b> en una línea. Java genera el constructor, los accesores (<code>usuario()</code>), <code>equals</code>, <code>hashCode</code> y <code>toString</code>. <b>No</b> tiene setters. Ideal para auditoría: nadie puede alterar el registro.", c:"public record LogSesion(String usuario, String dispositivo, long timestamp) {}"},
+    {t:"Herencia, interfaces y polimorfismo", d:"<code>extends</code>: hereda de <b>una sola</b> clase («CuentaVIP es una Cuenta»); <code>super(...)</code> va en la <b>primera línea</b> del constructor y <code>protected</code> deja que la subclase use los atributos. <code>implements</code>: puede implementar <b>varias</b> interfaces. <b>Polimorfismo</b>: una variable del tipo de la interfaz ejecuta el método del objeto real.", c:"public class Pato extends Animal implements Volador, Nadador { ... }\n\nMascota m = new Gato();\nm.hacerSonido();   // ejecuta el de Gato: \"Miau\""},
+    {t:"Comodines y @FunctionalInterface", g:"G40", d:"<code>List&lt;? extends Number&gt;</code> acepta listas de Number o de sus subtipos (Integer, Double). <code>List&lt;?&gt;</code> acepta cualquier lista. <code>@FunctionalInterface</code> marca una interfaz con un solo método abstracto, la que se puede usar con lambdas."}
+  ],
+  tabla:{cab:["Tipo (New → Java Class)","Para qué sirve","Ejemplo"], filas:[
+    ["Class","Entidades, lógica, controladores","Cuenta"],["Interface","Contrato de métodos sin implementar","Protegible"],
+    ["Record","Datos inmutables","LogSesion"],["Enum","Lista fija de constantes","PlanStreaming"]]},
+  recuerde:["<code>==</code> entre objetos compara referencias, no contenido.","Una clase: un extends, muchos implements."],
+  practica:[
+    {t:"mc", q:"¿Qué imprime?", c:"Cuenta a = new Cuenta(\"ana@mail.com\");\nCuenta b = new Cuenta(\"ana@mail.com\");\nSystem.out.println(a == b);", o:["false","true","ana@mail.com","Error de compilación"], a:0, e:"Son dos objetos distintos (dos new). == compara si son el mismo objeto, no si tienen el mismo contenido."},
+    {t:"fill", q:"¿Qué palabra reservada se usa para que CuentaVIP herede de Cuenta?", a:["extends"], r:"extends", e:"public class CuentaVIP extends Cuenta { ... }"},
+    {t:"mc", q:"¿Qué <b>no</b> genera automáticamente un record?", o:["Métodos set","Constructor","Accesores como usuario()","toString()"], a:0, e:"Un record es inmutable: no se puede cambiar después de crearlo, así que no tiene setters."},
+    {t:"mc", q:"¿Cuál declaración es válida?", o:["class Pato extends Animal implements Volador, Nadador","class Pato extends Animal, Ave","class Pato implements Animal extends Volador","class Pato extends Volador, Nadador (siendo interfaces)"], a:0, e:"Primero el extends (una sola clase) y luego implements (varias interfaces separadas por coma)."},
+    {t:"mc", q:"En un sistema de streaming, el PIN parental es opcional. ¿Cómo se declara?", o:["private Integer pin; (null = sin PIN)","private int pin; (0 = sin PIN)","private static int pin;","private String pin = \"0000\";"], a:0, e:"Integer acepta null para representar que el usuario no lo configuró."}
+  ],
+  lab:{titulo:"Práctica sugerida: Streaming-Lab3", pasos:["Paquete <code>seguridad.streaming.model</code> con la clase Cuenta (MAX_INTENTOS, totalSesionesActivas).","iniciarSesion() bloquea la cuenta al tercer intento fallido.","Record LogSesion en el paquete audit.","CuentaVIP extends Cuenta con <code>Integer pinControlParental</code>."]}
+},
+{
+  id:"swing", titulo:"Interfaces gráficas (Swing)", clases:"Clase 4",
+  intro:"Cómo se construye una ventana y cómo se ordenan sus componentes.",
+  conceptos:[
+    {t:"De la consola a la ventana", d:"En consola el código manda: <code>Scanner</code> detiene el programa hasta que el usuario escribe. En una <b>GUI</b> manda el usuario: hace clic donde quiere y el programa <b>reacciona a eventos</b>."},
+    {t:"AWT vs. Swing", d:"<b>AWT</b> le pide al sistema operativo que dibuje cada control (componentes <i>heavyweight</i>), así que la ventana se ve distinta en cada sistema. <b>Swing</b> (<code>javax.swing</code>) dibuja todo con Java (<i>lightweight</i>) y se ve igual en todos. Sus clases empiezan con J: JButton, JLabel…"},
+    {t:"Jerarquía de contenedores", d:"<b>JFrame</b> es la ventana, el nivel superior, y no puede ir dentro de otro contenedor. <b>JPanel</b> agrupa componentes y usa un layout. Los <b>componentes atómicos</b> no contienen a otros: JLabel (texto fijo), JTextField (una línea), JTextArea (varias líneas), JButton, JCheckBox (varias opciones), JRadioButton (una sola opción entre varias) y JComboBox (lista desplegable).", c:"JFrame ventana = new JFrame(\"Sistema\");\nventana.setSize(400, 300);\nventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // terminar al cerrar\nJPanel panel = new JPanel();\npanel.add(new JLabel(\"Nombre:\"));\npanel.add(new JButton(\"Guardar\"));\nventana.setContentPane(panel);\nventana.setVisible(true);  // sin esto no aparece"},
+    {t:"EXIT_ON_CLOSE y pack()", d:"Sin <code>EXIT_ON_CLOSE</code>, al presionar la X la ventana solo se oculta y el programa puede seguir ejecutándose. <code>pack()</code> ajusta el tamaño de la ventana al tamaño preferido de su contenido."},
+    {t:"GUI Designer de IntelliJ", d:"Un GUI Form crea dos archivos: un <code>.form</code> (XML con el diseño, solo para el IDE) y un <code>.java</code> (la clase). Se trabaja con la Paleta (arrastrar componentes), el Component Tree (la jerarquía) y el Inspector (propiedades). Cada componente lleva un <b>field name</b> con prefijo: <code>btn</code>, <code>txt</code>, <code>lbl</code>, <code>cbx</code>."},
+    {t:"El antipatrón Smart UI", d:"Ocurre cuando la ventana calcula, valida y guarda datos dentro del listener. <span class='ok-line'>Lo correcto:</span> la vista solo toma los datos y muestra el resultado; un <b>servicio</b> hace los cálculos y las reglas; la <b>capa de datos</b> guarda. Así, si cambia el impuesto, solo se modifica el servicio.", c:"// Bien: la vista solo delega\nbtnFacturar.addActionListener(e -> {\n    double total = servicio.procesarVenta(txtPrecio.getText(), txtCant.getText());\n    lblTotal.setText(\"Total: \" + total);\n});"}
+  ],
+  tabla:{cab:["Layout","Cómo acomoda","Dato clave"], filas:[
+    ["BorderLayout","5 regiones: NORTH, SOUTH, EAST, WEST, CENTER","Por defecto en JFrame; CENTER toma el espacio que sobra"],
+    ["FlowLayout","Uno tras otro en fila; si no caben, pasa a la siguiente","Por defecto en JPanel"],
+    ["CardLayout","Apila paneles y muestra uno a la vez","Para alternar login / registro"],
+    ["GridBagLayout","Cuadrícula flexible; una celda puede abarcar varias","Control total, pero verboso"],
+    ["GridLayoutManager","Cuadrícula automática","Por defecto en el GUI Designer"]]},
+  recuerde:["JPanel → FlowLayout; JFrame → BorderLayout.","Elegir solo una opción entre varias = JRadioButton."],
+  practica:[
+    {t:"mc", q:"El usuario debe escribir una descripción de varios párrafos. ¿Qué componente usa?", o:["JTextArea","JTextField","JLabel","JComboBox"], a:0, e:"JTextField es de una sola línea; JTextArea admite varias."},
+    {t:"mc", q:"En un BorderLayout, ¿qué región ocupa el espacio que sobra?", o:["CENTER","NORTH","EAST","SOUTH"], a:0, e:"Las regiones de los bordes se ajustan a su contenido y CENTER se expande."},
+    {t:"mc", q:"¿Qué layout permite alternar el panel de login y el de registro en la misma ventana?", o:["CardLayout","FlowLayout","BorderLayout","GridBagLayout"], a:0, e:"CardLayout funciona como un mazo de tarjetas: muestra una a la vez."},
+    {t:"fill", q:"¿Qué prefijo lleva el field name de un JTextField? (ej.: ___Nombre)", a:["txt"], r:"txt", e:"txtNombre. Los otros: btn = JButton, lbl = JLabel, cbx = JComboBox."},
+    {t:"mc", q:"¿Por qué Swing se ve igual en Windows y en Mac?", o:["Dibuja sus componentes con Java en lugar de pedírselos al sistema operativo","Porque es más antiguo que AWT","Porque usa GridLayoutManager","Porque no necesita JVM"], a:0, e:"Componentes lightweight dibujados con Java 2D = el mismo aspecto en todas partes."}
+  ],
+  lab:{titulo:"Práctica sugerida: ventana a mano", pasos:["Programe un JFrame con un JPanel, dos JLabel, dos JTextField y un JButton.","Al presionar el botón, muestre los datos con <code>JOptionPane.showMessageDialog</code>.","Cambie el layout a BorderLayout y ubique cada componente en una región."]}
+},
+{
+  id:"eventos", titulo:"Eventos y EDT", clases:"Clase 5",
+  intro:"Cómo una ventana reacciona a clics y teclas, y por qué a veces se congela.",
+  conceptos:[
+    {t:"Modelo de delegación de eventos", d:"Tiene tres piezas. El <b>origen</b> (Event Source) es el componente con el que se interactúa, por ejemplo un JButton. El <b>objeto evento</b> (Event Object) guarda los detalles, por ejemplo un ActionEvent; todos derivan de EventObject. El <b>listener</b> es una interfaz como ActionListener, cuyo método (actionPerformed) se ejecuta."},
+    {t:"El EDT (Event Dispatch Thread)", d:"Cada clic o tecla se convierte en un objeto que entra a la <b>cola de eventos</b>. Un solo hilo, el <b>EDT</b>, saca los eventos de la cola, ejecuta los listeners y además dibuja la ventana. Si un listener tarda (un <code>Thread.sleep</code>, una descarga), el EDT queda ocupado y <b>la ventana se congela</b>. Los listeners deben terminar en milisegundos. Para crear la ventana de forma segura: <code>SwingUtilities.invokeLater(...)</code>."},
+    {t:"Eventos de bajo nivel (hardware)", d:"<b>MouseEvent:</b> MouseListener obliga a escribir 5 métodos; con <b>MouseAdapter</b> escribe solo el que necesita (por ejemplo mouseEntered). <b>KeyEvent:</b> <code>keyPressed</code> sirve para teclas especiales como Enter; <code>keyTyped</code>, para caracteres (validar solo dígitos); <code>keyReleased</code>, para búsquedas en tiempo real.", c:"txtTelefono.addKeyListener(new KeyAdapter() {\n    @Override\n    public void keyTyped(KeyEvent e) {\n        if (!Character.isDigit(e.getKeyChar())) {\n            e.consume();   // descarta la tecla: no se escribe\n        }\n    }\n});"},
+    {t:"Enter que guarda", d:"Se compara el código de la tecla con <code>KeyEvent.VK_ENTER</code> y se llama a <code>btnGuardar.doClick()</code>, que simula un clic y ejecuta el mismo ActionListener del botón."},
+    {t:"Eventos de sistema: confirmar al cerrar", d:"Para preguntar «¿Desea salir?» al presionar la X, primero se cancela el cierre automático con <code>DO_NOTHING_ON_CLOSE</code> y luego se usa un WindowAdapter con <code>windowClosing</code>.", c:"frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);\nframe.addWindowListener(new WindowAdapter() {\n    @Override\n    public void windowClosing(WindowEvent e) {\n        int r = JOptionPane.showConfirmDialog(frame, \"¿Salir?\");\n        if (r == JOptionPane.YES_OPTION) System.exit(0);\n    }\n});"},
+    {t:"Eventos semánticos (pseudoeventos)", d:"Representan la <b>intención</b> del usuario, sin importar cómo la expresó. El ActionListener de un botón se ejecuta con un clic, con la barra espaciadora si el botón tiene el foco, o con <code>doClick()</code>. Otros: <b>ItemEvent</b> (cambio en checkbox o combo) y <b>DocumentEvent</b> (cambio de texto, incluso al pegar). También puede crear eventos propios que extiendan EventObject; esa es la base del patrón Observer."},
+    {t:"Un listener para varios botones", d:"Si un mismo listener atiende varios botones, <code>e.getSource()</code> devuelve el componente que disparó el evento, y se compara con cada botón."}
+  ],
+  tabla:{cab:["Forma de escribir el listener","Cómo se ve"], filas:[
+    ["La ventana implementa ActionListener","Un solo actionPerformed con if y e.getSource()"],
+    ["Clase interna anónima","new ActionListener() { ... } dentro del addActionListener"],
+    ["Expresión lambda (Java 8+)","btn.addActionListener(e -> guardar());"],
+    ["Clase Adapter","new MouseAdapter() { ... } sobrescribiendo un solo método"]]},
+  tabla2:{cab:["Bajo nivel (hardware)","Semánticos (intención)"], filas:[
+    ["MouseEvent, KeyEvent, FocusEvent, WindowEvent","ActionEvent, ItemEvent, DocumentEvent, AdjustmentEvent"]]},
+  recuerde:["Pasar el puntero sobre un botón es un MouseEvent (mouseEntered), no un ActionEvent.","Nada lento dentro de un listener."],
+  practica:[
+    {t:"mc", q:"Dentro de actionPerformed se descarga un archivo de 500 MB. ¿Qué pasa?", o:["La ventana se congela hasta que termina la descarga","Solo el botón se desactiva","Java crea otro hilo automáticamente","Nada visible"], a:0, e:"El EDT queda ocupado con la descarga y no puede redibujar ni atender clics."},
+    {t:"mc", q:"¿Qué evento detecta un cambio en el texto aunque el usuario haya pegado con Ctrl+V?", o:["DocumentEvent","KeyEvent","MouseEvent","WindowEvent"], a:0, e:"DocumentEvent vigila el contenido sin importar cómo entró el texto."},
+    {t:"fill", q:"¿Qué método se llama dentro de keyTyped para que una letra no se escriba en el campo?", a:["consume","e.consume","e.consume()","consume()"], r:"e.consume()", e:"consume() descarta el evento antes de que llegue al campo de texto."},
+    {t:"mc", q:"¿Por qué se usa MouseAdapter en lugar de MouseListener?", o:["Para escribir solo el método que interesa en lugar de los 5","Porque es más rápido","Porque MouseListener no existe en Swing","Para usar el teclado"], a:0, e:"Los Adapter son clases con todos los métodos vacíos: usted sobrescribe solo el que necesita."},
+    {t:"mc", q:"¿En cuál de estos casos <b>no</b> se ejecuta el ActionListener de un botón?", o:["Cuando el puntero pasa por encima","Cuando se hace clic","Cuando se llama a doClick()","Cuando tiene el foco y se presiona la barra espaciadora"], a:0, e:"Pasar el puntero genera un MouseEvent. El ActionEvent representa «se activó el botón», sin importar cómo."}
+  ],
+  lab:{titulo:"Práctica sugerida: Laboratorio 4 (Museo)", pasos:["Modelo ObraArte (código, título y año como Integer) y MuseoService con <code>ArrayList&lt;ObraArte&gt;</code>.","Vista con GUI Designer; atrape NumberFormatException y muestre un JOptionPane.","Enter en el campo del año guarda; MouseAdapter cambia el color del botón."]}
+},
+{
+  id:"arq", titulo:"Arquitectura y patrones", clases:"Clases 6, 7 y 8",
+  intro:"Cómo separar el código en partes con una sola responsabilidad cada una.",
+  conceptos:[
+    {t:"Principio de Responsabilidad Única (SRP)", d:"Un módulo debe tener <b>una sola razón para cambiar</b>. Por eso separamos tres cosas: mostrar la pantalla, procesar la lógica y guardar los datos."},
+    {t:"Tres capas y la regla de dependencia", d:"<b>Presentación</b> (la vista y el controlador) → <b>Negocio</b> (el servicio, con las reglas) → <b>Datos</b> (DAO o Repository). Las dependencias van solo en esa dirección. Si ChatService importara clases de la vista, ya no se podría reutilizar sin JavaFX."},
+    {t:"MVC", d:"<b>Modelo:</b> los datos y el estado (Message, User); no sabe que existe una ventana. <b>Vista:</b> el FXML o el formulario; muestra datos y captura clics. <b>Controlador:</b> escucha los eventos, le pide al servicio que actúe y actualiza la vista. El controlador <b>no</b> guarda archivos; eso le toca a la capa de datos. Variantes: <b>MVP</b> (un Presenter actualiza la vista mediante interfaces) y <b>MVVM</b> (enlace de datos bidireccional, en WPF y Android)."},
+    {t:"Patrones dentro de MVC (JavaFX)", d:"<b>Observer:</b> una ObservableList avisa al ListView y este se actualiza solo; con un ArrayList común no se actualizaría. <b>Composite:</b> el árbol de nodos (BorderPane contiene VBox, que contiene Button) se trata de forma uniforme. <b>Strategy:</b> el botón delega su respuesta al EventHandler que se le asigne en onAction."},
+    {t:"Arquitectura vs. patrón de diseño", d:"La diferencia es la <b>escala</b>. La arquitectura es la estructura global del sistema, como los planos de una casa. Un patrón resuelve un problema puntual dentro de un módulo, como la bisagra de una puerta."},
+    {t:"N-Layers vs. N-Tiers", d:"<b>N-Layers</b> es la división <b>lógica</b> del código en capas o paquetes. <b>N-Tiers</b> es la distribución <b>física</b> en computadoras distintas: 1 tier = todo en una máquina; 2 tiers = la app en la PC y la base de datos en un servidor remoto; 3 tiers = cliente → servidor de API → servidor de base de datos."},
+    {t:"DAO vs. DTO", d:"El <b>DAO</b> (Data Access Object) <b>sabe</b> leer y escribir los datos en un archivo o una base de datos, como el camión repartidor. El <b>DTO</b> (Data Transfer Object) es una clase plana, solo atributos y getters/setters, que <b>viaja</b> entre capas sin lógica, como la caja dentro del camión. Si el DAO cambia su forma de guardar, ninguna otra clase cambia."},
+    {t:"Serialización", d:"Serializar es convertir un objeto en bytes para guardarlo o enviarlo. La clase debe implementar <code>Serializable</code>.", c:"public class Message implements Serializable { ... }\n// Binaria: ObjectOutputStream.writeObject(lista)\n// XML:     XMLEncoder.writeObject(listaDeDTOs)  (requires java.desktop;)"}
+  ],
+  tabla:{cab:["Categoría GoF","Pregunta que responde","Patrones del curso"], filas:[
+    ["Creacional","¿Cómo se construye el objeto?","Singleton, Factory Method, Builder"],
+    ["Estructural","¿Cómo se ensamblan las clases?","Composite, Adapter, Facade"],
+    ["Comportamiento","¿Cómo se comunican en ejecución?","Observer, Strategy, Command"]]},
+  tabla2:{cab:["Situación","Patrón"], filas:[
+    ["Solo debe existir una instancia (por ejemplo, el gestor de conexión)","Singleton"],
+    ["Varias pantallas se actualizan solas cuando cambia el modelo","Observer"],
+    ["Tratar una carpeta y un archivo de la misma forma (árbol)","Composite"],
+    ["Un botón cambia de comportamiento según el modo, sin muchos if","Strategy"],
+    ["Binaria (ObjectOutputStream) vs. XML (XMLEncoder)","Binaria: rápida pero ilegible · XML: legible y portable, pero más pesada"]]},
+  recuerde:["N-Layers = lógica; N-Tiers = física.","DAO hace el trabajo; DTO solo transporta."],
+  practica:[
+    {t:"mc", q:"¿Qué variante de MVC usa enlace de datos bidireccional y es popular en WPF y Android?", o:["MVVM","MVP","N-Tier","DAO"], a:0, e:"MVVM: Model-View-ViewModel."},
+    {t:"mc", q:"¿En qué categoría GoF está Facade?", o:["Estructural","Creacional","Comportamiento","No es GoF"], a:0, e:"Facade ofrece una interfaz simplificada para un conjunto de clases: trata de cómo se ensamblan."},
+    {t:"mc", q:"Una app web habla con un servidor de API, que habla con un servidor MySQL. ¿Cuántos tiers tiene?", o:["3","1","2","4"], a:0, e:"Tres computadoras distintas: cliente, API y base de datos."},
+    {t:"mc", q:"Si MessageDAO pasa a guardar en un servidor remoto, en una arquitectura bien separada, ¿qué más cambia?", o:["Nada más: solo el DAO","El controlador","La vista","El modelo"], a:0, e:"Esa es la prueba de que las capas están bien separadas."},
+    {t:"mc", q:"¿Cuál es tarea de la capa de datos y no del controlador?", o:["Escribir los mensajes en un archivo","Escuchar el clic en «Enviar»","Pedirle al servicio que procese el mensaje","Limpiar el campo de texto"], a:0, e:"Persistir es trabajo del DAO o Repository."}
+  ],
+  lab:{titulo:"Práctica sugerida: Mini-Discord", pasos:["User y Message (Serializable), ChatService.processMessage() y ChatViewController con ObservableList.","MessageDAO binario: cargar en initialize() y guardar al enviar.","MessageDTO + MessageXmlExporter con XMLEncoder; abra el .xml y compruebe que se puede leer."]}
+},
+{
+  id:"bd", titulo:"Persistencia con SABD", clases:"Clases 11 a 14",
+  intro:"Guardar los datos en MySQL desde Java, de forma ordenada y segura.",
+  conceptos:[
+    {t:"Base de datos y SABD", d:"Una base de datos es una colección organizada de información que se puede buscar, agregar, modificar y borrar fácilmente. El <b>SABD</b> es el <b>software</b> que la administra; MySQL es un SABD. MySQL funciona como <b>cliente-servidor</b>: un servicio escucha en el puerto <b>3306</b> y la app de Java y Workbench se conectan como clientes."},
+    {t:"Impedance mismatch", d:"Es la fricción entre dos formas de ver los datos. En Java, un Message tiene una <b>referencia</b> a su User; en MySQL solo hay <b>tablas</b>, y la relación es un número (<code>usuario_id</code>). Se resuelve con <b>mapeo de datos</b>: al guardar se extrae el id del usuario; al leer se hace un <b>JOIN</b> y el código Java vuelve a armar el objeto."},
+    {t:"Llaves", d:"<b>PK (llave primaria):</b> identifica cada fila; no se repite ni puede estar vacía. <b>FK (llave foránea):</b> columna que apunta a la PK de otra tabla, como <code>mensajes.usuario_id → usuarios.id</code>. <b>Llave compuesta:</b> una PK formada por dos o más columnas juntas, como (estudiante_id, curso_id)."},
+    {t:"Normalización (1FN, 2FN, 3FN)", d:"<b>1FN:</b> cada celda guarda un solo valor; nada de «8888-1111, 8777-2222». <b>2FN:</b> cada columna depende de la llave <b>completa</b>; importa cuando la llave es compuesta. <b>3FN:</b> ninguna columna depende de otra columna que no sea la llave (sin dependencias transitivas).", c:"✗ empleado(id, nombre, depto_id, nombre_depto)   -- nombre_depto depende de depto_id → viola 3FN\n✓ empleado(id, nombre, depto_id)  +  depto(id, nombre)"},
+    {t:"JDBC y el driver", d:"<b>JDBC</b> es la API estándar de Java: define <b>qué</b> se puede hacer. El <b>driver</b> (mysql-connector-j, en el pom.xml) sabe <b>cómo</b> decírselo a MySQL. Si cambia de motor, cambia el driver y el código casi no cambia."},
+    {t:"Las 4 piezas de JDBC y PreparedStatement", d:"DriverManager → <b>Connection</b> → <b>PreparedStatement</b> → <b>ResultSet</b>. Use <code>?</code> en el SQL y llénelos con <code>setInt</code> o <code>setString</code>; el primero es el <b>1</b>. <code>executeQuery()</code> (SELECT) devuelve un ResultSet; <code>executeUpdate()</code> (INSERT, UPDATE, DELETE) devuelve las filas afectadas. El <b>try-with-resources</b> cierra todo solo, incluso si hay error.", c:"String sql = \"INSERT INTO mensajes (usuario_id, contenido) VALUES (?, ?)\";\ntry (Connection con = DriverManager.getConnection(url, user, pass);\n     PreparedStatement ps = con.prepareStatement(sql)) {\n    ps.setInt(1, usuarioId);\n    ps.setString(2, contenido);\n    ps.executeUpdate();\n}"},
+    {t:"Inyección SQL", d:"Si concatena el texto del usuario dentro del SQL, ese texto se interpreta como comando. Por ejemplo, <code>hola'); DROP TABLE mensajes; --</code> borraría la tabla. <span class='ok-line'>Lo correcto:</span> usar PreparedStatement con <code>?</code>, porque así los valores viajan separados del SQL."},
+    {t:"Repository", d:"Una interfaz (<code>MessageRepository</code>) con varias implementaciones: archivo binario (MessageDAO) y MySQL (JdbcMessageRepository). El controlador programa contra la interfaz y no sabe cuál se está usando."},
+    {t:"IntelliJ Database Tools", d:"Conectar la base desde la ventana <i>Database</i> sirve para explorar tablas y probar SQL a mano. Es <b>otra</b> conexión, aparte de la de su aplicación: la app igual necesita <code>DriverManager.getConnection(...)</code>."},
+    {t:"Procedimientos almacenados y mínimo privilegio", g:"G40", d:"Un procedimiento es una operación guardada en el servidor que se llama por su nombre, con <code>CallableStatement</code> y <code>con.prepareCall(\"{CALL sp_insertar_vehiculo(?,?)}\")</code>. <b>Mínimo privilegio:</b> la app no se conecta como root, sino con una cuenta propia (<code>flota_app</code>) que solo recibe <code>GRANT EXECUTE</code> sobre esos procedimientos. Con <code>SQL SECURITY DEFINER</code>, el procedimiento corre con los permisos de quien lo definió. Las credenciales se leen de variables de entorno, nunca se escriben en el código."}
+  ],
+  tabla:{cab:["IMEC (español)","CRUD (inglés)","SQL"], filas:[
+    ["Insertar","Create","INSERT INTO …"],["Mostrar","Read","SELECT …"],["Editar","Update","UPDATE … SET …"],["Cancelar (eliminar)","Delete","DELETE FROM …"]]},
+  tabla2:{cab:["Tipo de instrucción","Para qué","Ejemplos"], filas:[
+    ["DDL (definición)","Crear o cambiar la estructura","CREATE TABLE, ALTER TABLE"],
+    ["DLM (manipulación)","Trabajar con los datos","INSERT, SELECT, UPDATE, DELETE"]]},
+  recuerde:["Los parámetros ? empiezan en 1.","executeQuery → ResultSet; executeUpdate → número de filas."],
+  practica:[
+    {t:"mc", q:"En <code>matricula(estudiante_id, curso_id, nota)</code>, solo la combinación de las dos primeras columnas identifica la fila. ¿Qué es?", o:["Una llave compuesta","Una llave foránea","Una violación de 1FN","Un índice"], a:0, e:"Una llave primaria formada por dos columnas juntas."},
+    {t:"mc", q:"¿Qué pasa con esta línea?", c:"PreparedStatement ps = con.prepareStatement(\"SELECT * FROM usuarios WHERE id = ?\");\nps.setInt(0, 5);", o:["SQLException: el primer parámetro es el 1","Busca el usuario 5","Busca el usuario 0","Error de compilación"], a:0, e:"Debe ser ps.setInt(1, 5)."},
+    {t:"fill", q:"¿Qué sentencia SQL corresponde a la M de IMEC (Mostrar)?", a:["select"], r:"SELECT", e:"Insertar = INSERT, Mostrar = SELECT, Editar = UPDATE, Cancelar = DELETE."},
+    {t:"mc", q:"La tabla <code>libro(id, titulo, autor_id, nacionalidad_autor)</code>: la nacionalidad depende del autor, no del libro. ¿Qué forma normal viola?", o:["3FN","1FN","2FN","Ninguna"], a:0, e:"Es una dependencia transitiva (id → autor_id → nacionalidad). Solución: una tabla autor aparte."},
+    {t:"mc", q:"¿Por qué PreparedStatement evita la inyección SQL?", o:["Porque los valores viajan separados del texto del SQL","Porque cifra la base de datos","Porque es más rápido","Porque no permite DELETE"], a:0, e:"Lo que escribe el usuario se trata como dato, nunca como parte del comando."},
+    {t:"mc", q:"¿Qué es MySQL?", o:["Un SABD: el software que administra la base de datos","Los datos guardados en las tablas","Un driver de Java","Un lenguaje de programación"], a:0, e:"Los datos y el programa que los administra no son lo mismo."}
+  ],
+  lab:{titulo:"Práctica sugerida: Mini-Discord con MySQL", pasos:["Cree <code>usuarios(id PK, username)</code> y <code>mensajes(id PK, usuario_id FK, contenido, fecha_envio)</code>.","Pruebe un INSERT a mano desde IntelliJ Database Tools.","Programe guardar() con PreparedStatement y obtenerTodos() con un SELECT y un JOIN."]}
+},
+{
+  id:"hilos", titulo:"Hilos y sockets", clases:"Clases 14 y 15",
+  intro:"Hacer varias cosas a la vez y comunicar programas por la red.",
+  conceptos:[
+    {t:"Programa, proceso e hilo", d:"<b>Programa:</b> un archivo con instrucciones; guardado, no hace nada. <b>Proceso:</b> el programa en ejecución, con su propia memoria, aislada de otros procesos. <b>Hilo:</b> una línea de ejecución dentro de un proceso. Los hilos de un mismo proceso <b>comparten la memoria</b>, por eso se pueden estorbar y necesitan coordinarse."},
+    {t:"Concurrencia, paralelismo y asincronía", d:"<b>Concurrencia:</b> varias tareas avanzan alternándose; es posible con un solo núcleo. <b>Paralelismo:</b> varias tareas corren en el mismo instante; necesita varios núcleos. <b>Asincronía:</b> pedir algo y seguir sin esperar el resultado. El <b>sistema operativo</b> decide qué hilo corre y cuándo; por eso el orden de la salida puede cambiar entre ejecuciones."},
+    {t:"Thread y Runnable: start() vs. run()", d:"<b>Runnable</b> es la tarea; <b>Thread</b> es quien la ejecuta. <code>start()</code> crea un hilo nuevo. <code>run()</code> ejecuta la tarea en el hilo actual, sin crear ninguno. <code>join()</code> hace que un hilo espere a que otro termine. <code>sleep(ms)</code> pausa el hilo y lanza InterruptedException, por eso va en try/catch.", c:"Thread hilo = new Thread(() ->\n    System.out.println(Thread.currentThread().getName()), \"hilo-A\");\nhilo.run();    // imprime \"main\"\nhilo.start();  // imprime \"hilo-A\"\nhilo.join();   // main espera a hilo-A"},
+    {t:"Estados de un hilo", g:"G41", d:"NEW (creado) → RUNNABLE (corriendo o esperando turno) → TERMINATED (terminó). Esperas: BLOCKED (espera un cerrojo synchronized), WAITING (join sin tiempo), TIMED_WAITING (sleep). Un hilo terminado no se reinicia: llamar <code>start()</code> dos veces lanza IllegalThreadStateException. Con <code>setDaemon(true)</code>, antes de start, el hilo no mantiene vivo el programa."},
+    {t:"Hilos y ventanas", d:"Regla 1: <b>nada lento en el hilo de la interfaz</b>; las consultas a la base de datos o a la red congelan la ventana. Regla 2: <b>no tocar la ventana desde otro hilo</b>. El trabajo lento va a un hilo de fondo y el resultado vuelve al hilo de la interfaz: en Swing con <code>SwingUtilities.invokeLater</code>; en JavaFX con <code>Platform.runLater</code> <span class='tag'>G41</span> o con una <code>Task</code> (<code>call()</code> en el fondo y <code>onSucceeded</code> en la interfaz)."},
+    {t:"Condición de carrera y cómo evitarla", d:"<code>contador++</code> son tres pasos (leer, sumar, escribir). Si dos hilos los intercalan, se pierden sumas: dos hilos que suman un millón cada uno dan <b>menos</b> de 2 000 000, y un número distinto en cada ejecución. <span class='ok-line'>Soluciones:</span> no compartir el dato (objetos inmutables), <code>AtomicInteger</code>, colecciones concurrentes o un bloque <code>synchronized</code>. <code>volatile</code> <b>no</b> alcanza.", c:"synchronized (cerrojo) { contador++; }   // un hilo a la vez\natomico.incrementAndGet();                // operación indivisible"},
+    {t:"Deadlock, colas y pools", d:"<b>Deadlock (interbloqueo):</b> A tiene el cerrojo 1 y pide el 2; B tiene el 2 y pide el 1; los dos esperan para siempre. Se evita tomando los cerrojos siempre en el mismo orden. <b>BlockingQueue:</b> <code>put</code> espera si la cola está llena y <code>take</code> espera si está vacía. <b>ExecutorService:</b> un grupo de hilos reutilizables; hay que llamar a <code>shutdown()</code> o el programa no termina."},
+    {t:"Redes: IP, puerto y TCP", d:"La <b>IP</b> identifica la computadora; el <b>puerto</b> identifica el servicio dentro de ella (de 0 a 65 535; MySQL usa el 3306 y nuestros chats, el 5050). <b>TCP</b> establece una conexión y entrega los datos completos y en orden; se usa en chats, la web y bases de datos. <b>UDP</b> <span class='tag'>G41</span> envía datagramas sueltos, sin garantía de entrega; se usa en video en vivo y juegos."},
+    {t:"Sockets en Java", d:"El servidor crea <code>new ServerSocket(5050)</code> y espera con <code>accept()</code>, que <b>bloquea</b> hasta que llega un cliente y devuelve un <code>Socket</code>. El cliente se conecta con <code>new Socket(ip, 5050)</code>. Se lee con <code>BufferedReader.readLine()</code>, que devuelve <code>null</code> cuando el cliente se desconecta, y se escribe con <code>PrintWriter</code>. Como accept() y readLine() bloquean, el servidor usa <b>un hilo por cliente</b>.", c:"ServerSocket servidor = new ServerSocket(5050);\nwhile (true) {\n    Socket conexion = servidor.accept();          // espera un cliente\n    new Thread(() -> atender(conexion)).start();  // un hilo por cliente\n}"},
+    {t:"Lista de clientes y errores comunes", g:"G41", d:"La lista de clientes del chat se guarda en <code>CopyOnWriteArrayList</code>, porque varios hilos la modifican mientras otros la recorren. Errores: <b>BindException</b> (el puerto ya está en uso), <b>ConnectException</b> (nadie escucha en ese puerto), <b>SocketTimeoutException</b> (la IP no responde) y <b>UnknownHostException</b> (el nombre no se resuelve)."}
+  ],
+  tabla:{cab:["","Proceso","Hilo"], filas:[
+    ["Memoria","Propia y aislada","Compartida con los otros hilos del proceso"],
+    ["Comunicación","Mecanismos explícitos (sockets)","Comparten objetos; requieren coordinación"],
+    ["Costo de crear","Mayor","Menor"]]},
+  recuerde:["run() no crea un hilo; start() sí.","Para ver el mensaje en la ventana, vuelva al hilo de la interfaz (runLater o invokeLater)."],
+  practica:[
+    {t:"mc", q:"¿Qué imprime <code>hilo.run()</code> si la tarea imprime el nombre del hilo actual y se llama desde main?", o:["main","hilo-A","Nada","Lanza una excepción"], a:0, e:"run() ejecuta la tarea en el hilo que lo llama. Solo start() crea uno nuevo."},
+    {t:"fill", q:"¿Qué método hace que main espere hasta que otro hilo termine?", a:["join","join()"], r:"join()", e:"hilo.join() bloquea a main hasta que hilo termine."},
+    {t:"mc", q:"Dos hilos hacen <code>contador++</code> un millón de veces cada uno, sin protección. ¿Qué resultado es esperable?", o:["Menos de 2 000 000, distinto cada vez","Siempre 2 000 000","Siempre 1 000 000","Error de compilación"], a:0, e:"Los tres pasos de ++ se intercalan y se pierden sumas: es una condición de carrera."},
+    {t:"mc", q:"¿Qué garantiza TCP?", o:["Conexión previa y datos completos en orden","Que los datos van cifrados","Datagramas sin garantía","Que el servidor tenga IP fija"], a:0, e:"Por eso se usa en chats y bases de datos."},
+    {t:"mc", q:"En <code>while ((linea = entrada.readLine()) != null)</code>, ¿qué significa que readLine devuelva null?", o:["El cliente se desconectó","El cliente envió una línea vacía","El puerto está ocupado","Hubo un error de compilación"], a:0, e:"Hay que quitar al cliente de la lista y cerrar su conexión."},
+    {t:"mc", q:"¿Por qué un servidor necesita un hilo por cliente?", o:["Porque accept() y readLine() bloquean: con un solo hilo no podría atender a otro cliente","Porque así la red es más rápida","Porque Java lo exige para el puerto 5050","Porque los sockets no funcionan en main"], a:0, e:"Mientras un hilo espera a un cliente, no puede hacer otra cosa."}
+  ],
+  lab:{titulo:"Práctica sugerida: chat entre computadoras", pasos:["Servidor de eco con ServerSocket(5050), accept() y readLine().","Un hilo por cliente: <code>new Thread(() -&gt; atender(conexion)).start()</code>.","Difunda cada mensaje a todos los clientes conectados.","Compare un contador sin proteger con AtomicInteger y con synchronized."]}
+}
+];
+
+const CHECKS = [
+  "Reconozco los 5 pilares y sé qué hace cada operación de Git.",
+  "Explico JVM, bytecode, GC, los 8 primitivos, los wrappers y static.",
+  "Entiendo paquetes, referencias y aliasing, record, herencia, interfaces y genéricos.",
+  "Sé armar una ventana Swing y qué hace cada layout.",
+  "Explico el EDT, el modelo de delegación y los listeners de ratón, teclado y ventana.",
+  "Puedo pasar una ventana Smart UI a tres capas (modelo, servicio, vista).",
+  "Explico MVC, Observer/Composite/Strategy, las categorías GoF, N-Layers vs. N-Tiers y DAO vs. DTO.",
+  "Puedo normalizar una tabla hasta 3FN e identificar PK, FK y llave compuesta.",
+  "Sé escribir un INSERT con PreparedStatement y try-with-resources.",
+  "Explico start() vs. run(), la condición de carrera y cómo evitarla.",
+  "Explico por qué se congela una ventana y cómo usar un hilo de fondo.",
+  "Entiendo cómo un servidor con ServerSocket atiende a varios clientes."
+];
+
+/* ---------- Utilidades ---------- */
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const store = {
+  get(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+const estado = store.get("guia-quiz-p3") || {};
+const norm = s => s.trim().toLowerCase().replace(/\s+/g,"").replace(/;$/,"");
+
+/* ---------- Tema claro/oscuro ---------- */
+(function(){
+  const root = document.documentElement;
+  const t = store.get("guia-quiz-p3-tema"); if(t) root.setAttribute("data-theme", t);
+  document.getElementById("themeBtn").addEventListener("click", ()=>{
+    const oscuro = root.getAttribute("data-theme")==="dark" ||
+      (!root.getAttribute("data-theme") && matchMedia("(prefers-color-scheme: dark)").matches);
+    const nuevo = oscuro ? "light" : "dark";
+    root.setAttribute("data-theme", nuevo); store.set("guia-quiz-p3-tema", nuevo);
+  });
+})();
+
+function tabla(t){
+  return `<div class="tablewrap"><table><thead><tr>${t.cab.map(h=>`<th>${h}</th>`).join("")}</tr></thead>
+    <tbody>${t.filas.map(f=>`<tr>${f.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+}
+
+function contar(b){ return b.practica.filter((_,j)=>estado[b.id+"-"+j]).length; }
+function actualizar(b){
+  const t = `${contar(b)}/${b.practica.length}`;
+  const p = document.getElementById("prog-"+b.id); if(p) p.textContent = t;
+  const s = document.getElementById("score-"+b.id); if(s) s.textContent = `Acertadas: ${t}`;
+  store.set("guia-quiz-p3", estado);
+}
+
+function tarjeta(b, p, j){
+  const id = b.id+"-"+j;
+  const el = document.createElement("div"); el.className="card";
+  el.innerHTML = `<div class="k">Ejercicio ${j+1}</div><p>${p.q}</p>` + (p.c?`<pre><code>${esc(p.c)}</code></pre>`:"");
+  const fb = document.createElement("div"); fb.hidden = true;
+  const explicar = (bien, extra)=>{
+    fb.hidden = false;
+    fb.className = "fb " + (bien ? "ok" : "hint");
+    fb.innerHTML = (bien ? "<b>¡Correcto!</b> " : "<b>Casi.</b> " + (extra||"") + " ") + p.e;
+  };
+  if(p.t==="mc"){
+    const box = document.createElement("div"); box.className="opts";
+    const orden = p.o.map((_,k)=>k).sort((x,y)=>((x*7+j*3+b.id.length)%5)-((y*7+j*3+b.id.length)%5));
+    const botones = orden.map(k=>{
+      const btn = document.createElement("button"); btn.type="button"; btn.className="opt"; btn.innerHTML=p.o[k]; btn.dataset.k=k;
+      btn.addEventListener("click", ()=>{
+        const bien = k===p.a;
+        botones.forEach(x=>{ x.disabled=true; if(+x.dataset.k===p.a) x.classList.add("right"); });
+        if(!bien) btn.classList.add("tried");
+        explicar(bien, "La respuesta correcta está marcada en verde.");
+        estado[id]=bien; actualizar(b); otra.hidden=false;
+      });
+      box.appendChild(btn); return btn;
+    });
+    const otra = document.createElement("button"); otra.type="button"; otra.className="btn ghost"; otra.textContent="Intentar de nuevo"; otra.hidden=true;
+    otra.addEventListener("click", ()=>{ botones.forEach(x=>{x.disabled=false;x.classList.remove("right","tried");}); fb.hidden=true; otra.hidden=true; });
+    el.append(box, fb, otra);
+  } else {
+    const form = document.createElement("form"); form.className="fill";
+    form.innerHTML = `<input id="in-${id}" type="text" autocomplete="off" spellcheck="false" aria-label="Su respuesta" placeholder="Escriba su respuesta">
+      <div class="row"><button class="btn" type="submit">Revisar</button><button class="btn ghost" type="button">Ver respuesta</button></div>`;
+    form.addEventListener("submit", ev=>{
+      ev.preventDefault();
+      const v = norm(form.querySelector("input").value); if(!v) return;
+      const bien = p.a.some(x=>norm(x)===v);
+      explicar(bien, `La respuesta es <code>${esc(p.r)}</code>.`);
+      if(bien){ estado[id]=true; actualizar(b); }
+    });
+    form.querySelector(".btn.ghost").addEventListener("click", ()=>{
+      fb.hidden=false; fb.className="fb ok"; fb.innerHTML = `<b>Respuesta:</b> <code>${esc(p.r)}</code>. ${p.e}`;
+    });
+    el.append(form, fb);
+  }
+  return el;
+}
+
+/* ---------- Filtro de vista ---------- */
+const VISTAS = [["todo","Todo"],["materia","Materia"],["preguntas","Preguntas"]];
+function pintarNav(){
+  const v = document.body.dataset.vista || "todo";
+  const destino = b => v==="preguntas" ? `#${b.id}-practica` : `#${b.id}`;
+  document.getElementById("nav").innerHTML =
+    `<div class="vista" role="group" aria-label="Mostrar">${VISTAS.map(([k,t])=>
+      `<button type="button" data-v="${k}" aria-pressed="${k===v}">${t}</button>`).join("")}</div><span class="sep"></span>` +
+    (v!=="preguntas" ? `<a href="#formato">Inicio</a>` : "") +
+    BLOQUES.map((b,i)=>`<a href="${destino(b)}"><span class="n">${i+1}</span><span>${b.titulo}</span>${v!=="materia"?`<span class="prog" id="prog-${b.id}"></span>`:""}</a>`).join("") +
+    (v!=="preguntas" ? `<a href="#repaso">Repaso</a>` : "");
+  document.querySelectorAll(".vista button").forEach(btn=>btn.addEventListener("click", ()=>cambiarVista(btn.dataset.v)));
+  BLOQUES.forEach(b=>{ const p=document.getElementById("prog-"+b.id); if(p) p.textContent=`${contar(b)}/${b.practica.length}`; });
+}
+function cambiarVista(v, sinScroll){
+  document.body.dataset.vista = v;
+  store.set("guia-quiz-p3-vista", v);
+  pintarNav();
+  if(!sinScroll) window.scrollTo({top:0});
+}
+
+function render(){
+  const cont = document.getElementById("bloques");
+  BLOQUES.forEach((b,i)=>{
+    const s = document.createElement("section"); s.className="bloque"; s.id=b.id;
+    s.innerHTML = `
+      <div class="bhead"><span class="bnum">Bloque ${i+1} · ${b.clases}</span><h2>${b.titulo}</h2><p>${b.intro}</p></div>
+      <div class="materia-part">
+      <h3 class="sub">Lo que tiene que saber</h3>
+      <div class="concepts">${b.conceptos.map(c=>`
+        <div class="concept"><h4>${c.t}${c.g?`<span class="tag">${c.g}</span>`:""}</h4><p>${c.d}</p>${c.c?`<pre><code>${esc(c.c)}</code></pre>`:""}</div>`).join("")}</div>
+      <h3 class="sub">Tabla de repaso</h3>
+      ${tabla(b.tabla)}${b.tabla2?tabla(b.tabla2):""}
+      <div class="remember"><h4>Recuerde</h4><ul>${b.recuerde.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+      </div>
+      <div class="practice" id="${b.id}-practica"><div class="phead"><h3 class="sub">Practique</h3><span class="score" id="score-${b.id}"></span></div><div class="cards"></div></div>
+      <div class="lab materia-part"><h4>${b.lab.titulo}</h4><ol>${b.lab.pasos.map(x=>`<li>${x}</li>`).join("")}</ol></div>`;
+    const cards = s.querySelector(".cards");
+    b.practica.forEach((p,j)=>cards.appendChild(tarjeta(b,p,j)));
+    cont.appendChild(s);
+    actualizar(b);
+  });
+  const marc = store.get("guia-quiz-p3-checks") || {};
+  const c = document.getElementById("checks");
+  CHECKS.forEach((t,i)=>{
+    const l = document.createElement("label");
+    l.innerHTML = `<input type="checkbox" id="chk-${i}" ${marc[i]?"checked":""}><span>${t}</span>`;
+    l.querySelector("input").addEventListener("change", e=>{ marc[i]=e.target.checked; store.set("guia-quiz-p3-checks", marc); });
+    c.appendChild(l);
+  });
+}
+render();
+cambiarVista(store.get("guia-quiz-p3-vista") || "todo", true);
+</script>
+</body>
+</html>
